@@ -5,7 +5,7 @@ export type RouteType = {
   path: string;
   element: JSX.Element;
   children?: {
-    path: string;
+    path?: string;
     element: JSX.Element;
     index?: boolean;
   }[];

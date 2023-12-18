@@ -1,13 +1,16 @@
+import { NotFoundPage } from "@pages/NotFound";
 import { RouteType } from ".";
+
+import Login from "@pages/Auth/Login";
 
 const routes: RouteType = [
   {
     path: "/",
-    element: <h1>Public</h1>,
+    element: <Login />,
   },
   {
     path: "*",
-    element: <h1>404</h1>,
+    element: <NotFoundPage />,
   },
 ];
 

@@ -22,7 +22,6 @@
 
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"],
       "@components/*": ["components/*"],
       "@hooks/*": ["hooks/*"],
       "@pages/*": ["pages/*"],
@@ -30,10 +29,10 @@
       "@assets": ["assets/*"],
       "@styles/*": ["styles/*"],
       "@utils/*": ["utils/*"],
-      "@types/*": ["types/*"],
+      "@interfaces/*": ["interfaces/*"],
       "@config/*": ["config/*"],
       "@constants/*": ["constants/*"],
-      "@context/*": ["context/*"],
+      "@contexts/*": ["contexts/*"],
     },
   },
   "include": ["src"],
