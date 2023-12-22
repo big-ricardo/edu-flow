@@ -1,37 +1,66 @@
 import mongoose, { Schema } from "mongoose";
-import { IInstitute } from "./Institute";
 
-export interface IUser {
+type BaseUser = {
   _id: string;
   name: string;
   email: string;
   cpf: string;
   password: string;
   matriculation: string;
-  role: "admin" | "student" | "teacher";
-}
+  institute: string;
+  active: boolean;
+  university_degree?: string;
+};
 
-export interface IUserWithInstitute extends IUser {
-  institute: IInstitute;
-}
+type AdminOrStudent = BaseUser & { role: "admin" | "student" };
+type Teacher = BaseUser & { role: "teacher"; university_degree: string };
 
-const UserSchema: Schema = new Schema(
+export type IUser = AdminOrStudent | Teacher;
+
+export const schema: Schema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     cpf: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    active: { type: Boolean, default: true },
     matriculation: { type: String, required: true, unique: true },
     role: {
       type: String,
       required: true,
       enum: ["admin", "student", "teacher"],
     },
-    institute: { type: Schema.Types.ObjectId, ref: "Institute", required: true },
+    institute: {
+      type: Schema.Types.ObjectId,
+      ref: "Institute",
+      required: true,
+    },
+    university_degree: {
+      type: String,
+      required: () => (this as IUser).role === "teacher",
+      enum: ["mastermind", "doctor"],
+    },
   },
   {
     timestamps: true,
   }
-);
+)
+  .index({ cpf: 1 })
+  .pre("save", function (next) {
+    if (this.role !== "teacher") {
+      this.university_degree = null;
+    }
+    next();
+  });
 
-export default mongoose.model<IUser>("User", UserSchema);
+export default class User {
+  conn: mongoose.Connection;
+
+  constructor(conn: mongoose.Connection) {
+    this.conn = conn;
+  }
+
+  model() {
+    return this.conn.model<IUser>("User", schema);
+  }
+}

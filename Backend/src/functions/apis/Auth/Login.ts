@@ -41,7 +41,7 @@ export default new Http(handler)
     body: schema.object().shape({
       cpf: schema
         .string()
-        .matches(/^[0-9]{11}$/)
+        .matches(/^\d{11}$/)
         .required(),
       password: schema.string().required(),
     }),
@@ -50,5 +50,6 @@ export default new Http(handler)
     name: "Login",
     options: {
       methods: ["POST"],
+      route: "auth/login",
     },
   });

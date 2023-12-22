@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Connection } from "mongoose";
 import models from "../models";
 
 const {
@@ -14,23 +14,23 @@ if (!MONGO_HOST || !MONGO_USER || !MONGO_PASS) {
 
 const conn_string = `mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}:${MONGO_PORT}`;
 
-export async function connect(db: string): Promise<typeof mongoose> {
+export function connect(db: string): Connection {
   const uri = `${conn_string}/${db}?authSource=admin&readPreference=primary&ssl=false&directConnection=true`;
-  const conn = await mongoose.connect(uri);
+  const conn = mongoose.createConnection(uri);
+  conn.useDb(db);
 
   Object.keys(models).forEach((key) => {
     conn.model(key, models[key]);
   });
-
   return conn;
 }
 
-export async function disconnect(conn: typeof mongoose) {
+export async function disconnect(conn: Connection): Promise<void> {
   if (!conn) {
     return;
   }
 
-  await conn.disconnect();
+  await conn.close();
 }
 
 export default {

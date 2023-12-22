@@ -10,7 +10,7 @@ import * as yup from "yup";
 import res from "../utils/apiResponse";
 import jwt from "../services/jwt";
 import mongo from "../services/mongo";
-import mongoose from "mongoose";
+import { Connection } from "mongoose";
 
 const hasBody = ["POST", "PUT", "PATCH"];
 
@@ -34,7 +34,7 @@ interface User {
 }
 
 export type HttpHandler = (
-  conn: typeof mongoose,
+  conn: Connection,
   request: THttpRequest,
   context: InvocationContext
 ) => Promise<HttpResponseInit>;
@@ -61,7 +61,7 @@ export default class Http {
     headers: yup.object().shape({}).nullable(),
   });
   private name: string;
-  private conn: typeof mongoose | null = null;
+  private conn: Connection | null = null;
 
   constructor(handler: typeof Http.prototype.handler) {
     this.handler = handler;
@@ -120,7 +120,7 @@ export default class Http {
 
       return res.internalServerError();
     } finally {
-      await mongo.disconnect(this.conn);
+      // await mongo.disconnect(this.conn);
     }
   };
 

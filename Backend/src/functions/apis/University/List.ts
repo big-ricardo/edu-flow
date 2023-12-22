@@ -1,35 +1,31 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Institute from "../../../models/Institute";
+import University from "../../../models/University";
 
 interface Query {
   page?: number;
   limit?: number;
 }
 
-const handler: HttpHandler = async (conn, req) => {
+const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const institutes = await new Institute(conn)
+  const universities = await new University(conn)
     .model()
     .find()
     .skip((page - 1) * limit)
-    .limit(limit)
-    .populate("university", {
-      _id: 1,
-      acronym: 1,
-    });
+    .limit(limit);
 
-  const total = await new Institute(conn).model().countDocuments();
+  const total = await new University(conn).model().countDocuments();
   const totalPages = Math.ceil(total / limit);
 
   return res.success({
-    institutes,
+    universities,
     pagination: {
       page: Number(page),
       total,
       totalPages,
-      count: institutes.length + (page - 1) * limit,
+      count: universities.length + (page - 1) * limit,
     },
   });
 };
@@ -52,9 +48,9 @@ export default new Http(handler)
       .optional(),
   }))
   .configure({
-    name: "InstituteList",
+    name: "UniversityList",
     options: {
       methods: ["GET"],
-      route: "institutes",
+      route: "universities",
     },
   });
