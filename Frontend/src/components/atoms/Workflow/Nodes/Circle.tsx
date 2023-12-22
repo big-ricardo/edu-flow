@@ -1,6 +1,6 @@
 import { Flex, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
-import { Handle, NodeProps, NodeToolbar, Position } from "reactflow";
+import { Handle, NodeProps, Position } from "reactflow";
 
 interface CircleNodeProps extends NodeProps {
   data: {
@@ -14,8 +14,8 @@ const CircleNode: React.FC<CircleNodeProps> = ({ data }) => {
   return (
     <Flex
       bg={useColorModeValue("gray.300", "gray.700")}
-      width="80px"
-      height="80px"
+      width="50px"
+      height="50px"
       borderRadius="50%"
       alignItems="center"
       justifyContent="center"
@@ -27,7 +27,7 @@ const CircleNode: React.FC<CircleNodeProps> = ({ data }) => {
         <Handle
           type="target"
           position={Position.Left}
-          style={{ background: "#555" }}
+          style={{ background: "#555", left: "-10px" }}
         />
       )}
 
@@ -35,7 +35,7 @@ const CircleNode: React.FC<CircleNodeProps> = ({ data }) => {
         <Handle
           type="source"
           position={Position.Right}
-          style={{ background: "#555" }}
+          style={{ background: "#555", right: "-10px" }}
         />
       )}
     </Flex>

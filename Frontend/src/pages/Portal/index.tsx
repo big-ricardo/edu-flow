@@ -41,8 +41,7 @@ function Dashboard() {
         minH={"100vh"}
         w={"100%"}
         ml={12}
-        p={5}
-        bg={useColorModeValue("gray.200", "gray.800")}
+        bg={useColorModeValue("gray.200", "gray.900")}
       >
         <Outlet />
       </Flex>

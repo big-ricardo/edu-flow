@@ -33,6 +33,7 @@
       "@config/*": ["config/*"],
       "@constants/*": ["constants/*"],
       "@contexts/*": ["contexts/*"],
+      "@apis/*": ["apis/*"],
     },
   },
   "include": ["src"],

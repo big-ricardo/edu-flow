@@ -18,6 +18,7 @@ export default defineConfig({
       "@config": "/src/config",
       "@constants": "/src/constants",
       "@contexts": "/src/contexts",
+      "@apis": "/src/apis",
     },
   },
 });

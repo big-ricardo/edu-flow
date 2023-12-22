@@ -12,13 +12,14 @@
   "dependencies": {
     "@chakra-ui/react": "^2.8.1",
     "@hookform/resolvers": "^3.3.2",
+    "@tanstack/react-query": "^5.14.1",
     "axios": "^1.6.2",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-email-editor": "^1.7.9",
     "react-hook-form": "^7.49.2",
     "react-icons": "^4.12.0",
-    "react-query": "^3.39.3",
     "react-router-dom": "^6.21.0",
     "react-select": "^5.8.0",
     "reactflow": "^11.10.1",
@@ -26,6 +27,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.12.1",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",

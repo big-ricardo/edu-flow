@@ -1,4 +1,4 @@
-export default interface Req<T> {
+export default interface IResponse<T> {
   status: number;
   message: string;
   error: string;

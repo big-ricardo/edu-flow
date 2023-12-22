@@ -3,8 +3,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { ChakraProvider } from "@chakra-ui/react";
 import Theme from "./styles/theme";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthContext from "./contexts/AuthContext";
+import "./styles/global.css";
 
 const queryClient = new QueryClient();
 

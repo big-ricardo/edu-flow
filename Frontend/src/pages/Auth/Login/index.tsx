@@ -1,33 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   Box,
   useToast,
   Card,
   CardBody,
   Hide,
   Text,
-  FormHelperText,
-  IconButton,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { useMutation } from "react-query";
-import api from "@services/api";
+import { useMutation } from "@tanstack/react-query";
 import useAuth from "@hooks/useAuth";
-import {
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaLock,
-  FaLockOpen,
-} from "react-icons/fa";
-import Req from "@interfaces/Req";
+import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import InputText from "@components/atoms/Inputs/Text";
+import Password from "@components/atoms/Inputs/Password";
+import { login } from "@apis/auth";
 
 const schema = z.object({
   cpf: z
@@ -39,15 +31,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-interface LoginResponse {
-  token: string;
-}
-
-const login = async (data: FormData) => {
-  const response = await api.post<Req<LoginResponse>>("/auth/login", data);
-  return response.data.data;
-};
-
 const Login: React.FC = () => {
   const {
     handleSubmit,
@@ -57,34 +40,34 @@ const Login: React.FC = () => {
     resolver: zodResolver(schema),
   });
 
-  const toast = useToast();
+  const toast = useToast({
+    position: "top-right",
+    variant: "left-accent",
+    isClosable: true,
+  });
   const [, setAuth] = useAuth();
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const handlePasswordVisibility = () => setShowPassword((prev) => !prev);
-  const { mutateAsync, isLoading } = useMutation(login, {
-    onSuccess: (data) => {
-      setAuth(data.token);
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: login,
+    onSuccess: ({ data }) => {
       toast({
         title: "Login realizado com sucesso",
-        description: "Sucesso",
-        duration: 2500,
-        isClosable: true,
         status: "success",
-        position: "top-right",
+        duration: 9000,
+        isClosable: true,
         icon: <FaCheckCircle />,
       });
+      setAuth(data.token);
       navigate("/portal");
     },
-    onError: (error: AxiosError<Req<LoginResponse>>) => {
+    onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
-        title: "Erro ao realizar login",
-        description: error?.response?.data?.message ?? "Erro ao realizar login",
-        duration: 2500,
-        isClosable: true,
+        title: "Erro ao fazer login",
+        description: error?.response?.data?.message ?? error.message,
         status: "error",
-        position: "top-right",
+        duration: 9000,
+        isClosable: true,
         icon: <FaExclamationCircle />,
       });
     },
@@ -103,6 +86,7 @@ const Login: React.FC = () => {
       justifyContent="center"
       height="100vh"
       gap="10"
+      bg={useColorModeValue("gray.200", "gray.900")}
     >
       <Hide below="md">
         <Text
@@ -114,52 +98,34 @@ const Login: React.FC = () => {
           Faça o login para acessar sua conta
         </Text>
       </Hide>
-      <Card p="10" w={{ base: "100%", md: "450px" }}>
+      <Card p="10" w={{ base: "100%", md: "450px" }} boxShadow="lg">
         <CardBody>
           <form onSubmit={onSubmit}>
-            <FormControl id="cpf" mt={4} isInvalid={!!errors.cpf}>
-              <FormLabel>CPF</FormLabel>
-              <Input {...register("cpf")} />
+            <InputText
+              input={{
+                id: "cpf",
+                label: "CPF",
+                placeholder: "CPF",
+              }}
+              register={register}
+              errors={errors}
+            />
 
-              {errors.cpf && (
-                <FormHelperText color="red">
-                  {errors.cpf.message}
-                </FormHelperText>
-              )}
-            </FormControl>
-            <FormControl
-              id="password"
-              mt={4}
-              isInvalid={!!errors.password}
-              position="relative"
-            >
-              <FormLabel>Senha</FormLabel>
-              <Input
-                {...register("password")}
-                type={showPassword ? "text" : "password"}
-              />
-              <IconButton
-                bg="transparent !important"
-                variant="ghost"
-                aria-label={showPassword ? "Mask password" : "Show password"}
-                icon={showPassword ? <FaLockOpen /> : <FaLock />}
-                onClick={handlePasswordVisibility}
-                position="absolute"
-                right="0"
-                zIndex={2}
-              />
+            <Password
+              input={{
+                id: "password",
+                label: "Senha",
+                placeholder: "Senha",
+              }}
+              register={register}
+              errors={errors}
+            />
 
-              {errors.password && (
-                <FormHelperText color="red">
-                  {errors.password.message}
-                </FormHelperText>
-              )}
-            </FormControl>
             <Button
               mt={4}
               colorScheme="teal"
               type="submit"
-              isLoading={isLoading}
+              isLoading={isPending}
             >
               Entrar
             </Button>

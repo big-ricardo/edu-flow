@@ -18,6 +18,8 @@ import {
   BsFileEarmarkText,
   BsPostcardFill,
 } from "react-icons/bs";
+import { FaRegEnvelope, FaUniversity } from "react-icons/fa";
+
 import { GoWorkflow } from "react-icons/go";
 import React, { useMemo } from "react";
 import useAuth from "../../../hooks/useAuth";
@@ -27,9 +29,11 @@ const links = [{ to: "/portal", label: "Dashboard", icon: BsHouse }];
 const coordinatorLinks = [
   { to: "/portal/users", label: "Usuários", icon: BsPerson },
   { to: "/portal/institutes", label: "Instituições", icon: BsBuilding },
+  { to: "/portal/universities", label: "Universidades", icon: FaUniversity},
   { to: "/portal/status", label: "Status", icon: BsTag },
-  { to: "/portal/workflows", label: "Fluxos", icon: GoWorkflow },
+  { to: "/portal/emails", label: "Emails", icon: FaRegEnvelope },
   { to: "/portal/forms", label: "Formulários", icon: BsFileEarmarkText },
+  { to: "/portal/workflows", label: "Fluxos", icon: GoWorkflow },
   { to: "/portal/reportings", label: "Relatórios", icon: BsPostcardFill },
 ];
 
@@ -69,7 +73,10 @@ function Sidebar() {
         <NavLink
           key={data.to}
           {...data}
-          active={location.pathname === data.to}
+          active={
+            location.pathname.includes(data.to) &&
+            (data.to !== "/portal" || location.pathname === "/portal")
+          }
         />
       ))}
     </List>
@@ -99,9 +106,9 @@ const NavLink = React.memo(
           id={to.replace("/portal/", "")}
         >
           <CustomCard
-            _hover={{ textDecor: "none", color: "green_light" }}
+            _hover={{ textDecor: "none", color: "blue.500" }}
             _focus={{ outline: "none" }}
-            color={active ? "green_light" : "icons.500"}
+            color={active ? "blue.500" : ""}
           >
             <Icon size={24} />
           </CustomCard>
