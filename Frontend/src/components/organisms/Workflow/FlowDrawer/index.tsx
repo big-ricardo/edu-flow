@@ -5,36 +5,65 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  Divider,
 } from "@chakra-ui/react";
 import BlockConfig from "@components/molecules/Workflow/FlowPanel/BlockConfig";
 import useDrawer from "@hooks/useDrawer";
-import { useState } from "react";
-import { Node, useOnSelectionChange } from "reactflow";
+import { NodeTypes } from "@interfaces/Workflow";
+import { useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useOnSelectionChange, useReactFlow } from "reactflow";
 
 interface FlowDrawerProps {}
 
 const FlowDrawer: React.FC<FlowDrawerProps> = () => {
   const { isOpen, onClose } = useDrawer();
-  const [node, setNode] = useState<Node | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { getNode } = useReactFlow();
+
+  const node = getNode(searchParams.get("node") ?? "");
+
+  const { setNodes } = useReactFlow();
 
   useOnSelectionChange({
     onChange: ({ nodes }) => {
       if (nodes.length === 1) {
-        setNode(nodes[0]);
+        setSearchParams({ node: nodes[0].id });
       } else {
-        setNode(null);
+        setSearchParams({});
       }
     },
   });
+
+  const onSave = useCallback(
+    (data: object) => {
+      setNodes((nodes) => {
+        const newNodes = [...nodes];
+
+        const nodeIndex = newNodes.findIndex((el) => el.id === node?.id);
+
+        newNodes[nodeIndex].data = { ...newNodes[nodeIndex].data, ...data };
+
+        return newNodes;
+      });
+      onClose();
+    },
+    [setNodes, onClose, node?.id]
+  );
 
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="md">
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Create your account</DrawerHeader>
+        <DrawerHeader>Configurações</DrawerHeader>
+        <Divider />
         <DrawerBody>
-          <BlockConfig node={node} />
+          <BlockConfig
+            type={node?.type as NodeTypes}
+            data={node?.data}
+            onSave={onSave}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

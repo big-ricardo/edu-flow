@@ -30,7 +30,7 @@ const coordinatorLinks = [
   { to: "/portal/users", label: "Usuários", icon: BsPerson },
   { to: "/portal/institutes", label: "Instituições", icon: BsBuilding },
   { to: "/portal/universities", label: "Universidades", icon: FaUniversity},
-  { to: "/portal/status", label: "Status", icon: BsTag },
+  { to: "/portal/statuses", label: "Status", icon: BsTag },
   { to: "/portal/emails", label: "Emails", icon: FaRegEnvelope },
   { to: "/portal/forms", label: "Formulários", icon: BsFileEarmarkText },
   { to: "/portal/workflows", label: "Fluxos", icon: GoWorkflow },

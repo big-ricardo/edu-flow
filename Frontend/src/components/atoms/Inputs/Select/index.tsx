@@ -17,6 +17,7 @@ interface SelectProps {
   errors: FieldErrors<FieldValues>;
   control: Control<any>;
   isMulti?: boolean;
+  isClearable?: boolean;
   isLoading?: boolean;
 }
 
@@ -25,6 +26,7 @@ const Select: React.FC<SelectProps> = ({
   input,
   control,
   isMulti,
+  isClearable,
   isLoading,
 }) => {
   const { colorMode } = useColorMode();
@@ -95,7 +97,7 @@ const Select: React.FC<SelectProps> = ({
   ]);
 
   const searchValue = useCallback(
-    (value: string) => {
+    (value: string | string[]) => {
       const allOptions = input.options
         .map((option) => {
           if ('options' in option) {
@@ -106,9 +108,13 @@ const Select: React.FC<SelectProps> = ({
         })
         .flat();
 
-      return allOptions.find(
-        (option) => option?.value && option?.value === value
-      );
+      if (Array.isArray(value)) {
+        return allOptions.filter((option) =>
+          option?.value && value.includes(option.value)
+        );
+      } else {
+        return allOptions.find((option) => option?.value === value) ?? null;
+      }
     },
     [input.options]
   );
@@ -137,6 +143,7 @@ const Select: React.FC<SelectProps> = ({
             options={input?.options}
             placeholder={input.placeholder}
             isMulti={isMulti}
+            isClearable={isClearable}
             styles={styles}
             isLoading={isLoading}
           />

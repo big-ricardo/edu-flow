@@ -12,6 +12,8 @@ import Institute from "@pages/Portal/Institutes/Institute";
 import University from "@pages/Portal/Universities/University";
 import Universities from "@pages/Portal/Universities";
 import User from "@pages/Portal/Users/User";
+import Statuses from "@pages/Portal/Statuses";
+import Status from "@pages/Portal/Statuses/Status";
 
 const routes: RouteType = [
   {
@@ -27,7 +29,7 @@ const routes: RouteType = [
         element: <Workflows />,
       },
       {
-        path: "/portal/workflow/:id",
+        path: "/portal/workflow/:id?",
         element: <Workflow />,
       },
       {
@@ -35,7 +37,7 @@ const routes: RouteType = [
         element: <EmailsTemplate />,
       },
       {
-        path: "/portal/email/:id",
+        path: "/portal/email/:id?",
         element: <EmailTemplate />,
       },
       {
@@ -43,11 +45,7 @@ const routes: RouteType = [
         element: <Users />,
       },
       {
-        path: "/portal/user/:id",
-        element: <User />,
-      },
-      {
-        path: "/portal/user",
+        path: "/portal/user/:id?",
         element: <User />,
       },
       {
@@ -55,11 +53,7 @@ const routes: RouteType = [
         element: <Institutes />,
       },
       {
-        path: "/portal/institute/:id",
-        element: <Institute />,
-      },
-      {
-        path: "/portal/institute",
+        path: "/portal/institute/:id?",
         element: <Institute />,
       },
       {
@@ -67,12 +61,15 @@ const routes: RouteType = [
         element: <Universities />,
       },
       {
-        path: "/portal/university/:id",
+        path: "/portal/university/:id?",
         element: <University />,
       },
       {
-        path: "/portal/university",
-        element: <University />,
+        path: "/portal/statuses",
+        element: <Statuses />,
+      },{
+        path: "/portal/status/:id?",
+        element: <Status />,
       },
     ],
   },

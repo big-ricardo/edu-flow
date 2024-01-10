@@ -1,46 +1,72 @@
-import { Box, Button, Flex, useColorModeValue } from "@chakra-ui/react";
-import React, { useCallback } from "react";
+import {
+  Badge,
+  Box,
+  Button,
+  Flex,
+  useColorMode,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import React, { useCallback, useMemo } from "react";
 import { Handle, NodeProps, Position, useReactFlow } from "reactflow";
 import { BsX } from "react-icons/bs";
-import { BiSliderAlt, BiMailSend } from "react-icons/bi";
+import { BiSliderAlt, BiInfoCircle } from "react-icons/bi";
 import useDrawer from "@hooks/useDrawer";
+import CustomHandle from "../CustomHandle";
 
 interface WrapperNodeProps extends NodeProps {
   children: React.ReactNode;
+  deletable?: boolean;
 }
 
 const WrapperNode: React.FC<WrapperNodeProps> = ({
   id,
   children,
   selected,
+  deletable,
 }) => {
   const { deleteElements, getNode } = useReactFlow();
   const { onOpen } = useDrawer();
+  const node = getNode(id);
+
+  const theme = useColorMode();
 
   const onRemove = useCallback(() => {
-    const node = getNode(id);
-
     if (!node) return;
 
     deleteElements({
       nodes: [node],
     });
-  }, [deleteElements, getNode, id]);
+  }, [deleteElements, node]);
 
   const menuBg = useColorModeValue("white", "gray.700");
+
+  const borderColor = useMemo(() => {
+    if (selected) return "black.500";
+    if (theme.colorMode === "light") return "gray.300";
+    return "gray.600";
+  }, [selected, theme.colorMode]);
 
   return (
     <Flex
       bg={useColorModeValue("white", "gray.700")}
-      width="150px"
-      height="100px"
+      width="100px"
+      height="50px"
       alignItems="center"
+      direction={"column"}
       justifyContent="center"
-      border="2px solid"
-      borderColor={selected ? "blue.700" : "blue.400"}
-      borderRadius="10px"
+      border="1px solid"
+      borderColor={borderColor}
+      borderRadius="3px"
       transition="border-color 0.3s ease-in-out"
     >
+      {!Object.keys(node?.data ?? {}).length && (
+        <Box position="absolute" top={-1} right={1} textAlign="center">
+          <Badge colorScheme="red">
+            <BiInfoCircle />
+          </Badge>
+        </Box>
+      )}
+
       {selected && (
         <Flex
           position="absolute"
@@ -51,16 +77,18 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
           p="3px"
           gap="1"
         >
-          <Button
-            className="edgebutton"
-            onClick={onRemove}
-            size="xs"
-            rounded="full"
-            colorScheme="red"
-            p={0}
-          >
-            <BsX size="15px"/>
-          </Button>
+          {!deletable && (
+            <Button
+              className="edgebutton"
+              onClick={onRemove}
+              size="xs"
+              rounded="full"
+              colorScheme="red"
+              p={0}
+            >
+              <BsX size="15px" />
+            </Button>
+          )}
           <Button
             className="edgebutton"
             onClick={onOpen}
@@ -78,7 +106,7 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
         position={Position.Left}
         style={{ background: "#555", left: "-10px" }}
       />
-      <Handle
+      <CustomHandle
         type="source"
         position={Position.Right}
         style={{ background: "#555", right: "-10px" }}
@@ -89,27 +117,3 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
 };
 
 export default WrapperNode;
-
-export function SendEmailIcon() {
-  return (
-    <Flex
-      bg={useColorModeValue("white", "gray.100")}
-      width="100px"
-      height="100px"
-      alignItems="center"
-      justifyContent="center"
-      border="1px solid"
-      borderColor={useColorModeValue("blue.400", "blue.600")}
-    >
-      <Box
-        as={BiMailSend}
-        size="60px"
-        color={useColorModeValue("blue.400", "blue.600")}
-        border="2px solid"
-        borderColor={useColorModeValue("blue.400", "blue.600")}
-        borderRadius="50%"
-        p="10px"
-      />
-    </Flex>
-  );
-}

@@ -12,6 +12,7 @@ function App() {
     },
     (error) => {
       if (error.response?.status === 401) {
+        window.location.href = "/";
         setAuth(null);
       }
       return Promise.reject(error);

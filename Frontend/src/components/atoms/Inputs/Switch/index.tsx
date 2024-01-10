@@ -33,7 +33,7 @@ const Switch: React.FC<SwitchProps> = ({ control, errors, input }) => {
           name={input.id}
           control={control}
           render={({ field: { onChange, value } }) => (
-            <SwitchChackra onChange={onChange} isChecked={value} ml={2}/>
+            <SwitchChackra onChange={onChange} isChecked={value} ml={2} defaultChecked/>
           )}
           rules={{ required: !!input.required }}
         />

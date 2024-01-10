@@ -1,9 +1,10 @@
 import { Box } from "@chakra-ui/react";
+import { NodeTypes } from "@interfaces/Workflow";
 import React, { useCallback } from "react";
 
 interface PanelItemProps {
   children: React.ReactNode;
-  nodeType: string;
+  nodeType: NodeTypes;
 }
 
 const PanelItem: React.FC<PanelItemProps> = ({ children, nodeType }) => {
@@ -24,6 +25,7 @@ const PanelItem: React.FC<PanelItemProps> = ({ children, nodeType }) => {
       height="50px"
       cursor="pointer"
       draggable
+      shadow="md"
       onDragStart={onDragStart}
       pb="2"
     >

@@ -1,9 +1,9 @@
 import { Box, Flex, useColorModeValue, Text } from "@chakra-ui/react";
 import { NodeProps } from "reactflow";
 import WrapperNode from "./Wrapper";
-import { BiMailSend } from "react-icons/bi";
+import { TfiExchangeVertical } from "react-icons/tfi";
 
-interface SendEmailProps extends NodeProps {
+interface ChangeStatusProps extends NodeProps {
   data: {
     to: string;
     subject: string;
@@ -12,11 +12,11 @@ interface SendEmailProps extends NodeProps {
   };
 }
 
-const SendEmail: React.FC<SendEmailProps> = (props) => {
+const ChangeStatus: React.FC<ChangeStatusProps> = (props) => {
   return (
     <WrapperNode {...props}>
       <Box
-        as={BiMailSend}
+        as={TfiExchangeVertical}
         size="30px"
         color={useColorModeValue("gray.500", "gray.300")}
       />
@@ -27,9 +27,9 @@ const SendEmail: React.FC<SendEmailProps> = (props) => {
   );
 };
 
-export default SendEmail;
+export default ChangeStatus;
 
-export function SendEmailIcon() {
+export function ChangeStatusIcon() {
   return (
     <Flex
       bg={useColorModeValue("white", "gray.800")}
@@ -43,7 +43,7 @@ export function SendEmailIcon() {
       transition="border-color 0.3s ease-in-out"
     >
       <Box
-        as={BiMailSend}
+        as={TfiExchangeVertical}
         size="50px"
         color={useColorModeValue("gray.500", "gray.300")}
       />

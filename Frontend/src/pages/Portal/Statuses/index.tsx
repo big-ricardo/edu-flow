@@ -10,9 +10,9 @@ import { useQuery } from "@tanstack/react-query";
 import React, { memo, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiRefresh, BiEdit } from "react-icons/bi";
+import { getStatuses } from "@apis/status";
 import Pagination from "@components/organisms/Pagination";
-import { getWorkflows } from "@apis/workflows";
-import { IWorkflow } from "@interfaces/Workflow";
+import IStatus from "@interfaces/Status";
 
 const columns = [
   {
@@ -20,8 +20,8 @@ const columns = [
     label: "Nome",
   },
   {
-    key: "active",
-    label: "Status",
+    key: "type",
+    label: "Tipo",
   },
   {
     key: "actions",
@@ -29,12 +29,18 @@ const columns = [
   },
 ];
 
-const Action = memo((workflow: Pick<IWorkflow, "name" | "active" | "_id">) => {
+const StatusType = {
+  done: "Concluído",
+  progress: "Em progresso",
+  canceled: "Cancelado",
+};
+
+const Action = memo((status: IStatus) => {
   const navigate = useNavigate();
 
   const handleEdit = useCallback(() => {
-    navigate(`/portal/workflow/${workflow._id}`);
-  }, [navigate, workflow._id]);
+    navigate(`/portal/status/${status._id}`);
+  }, [navigate, status._id]);
 
   return (
     <div>
@@ -49,13 +55,13 @@ const Create = memo(() => {
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
-    navigate(`/portal/workflow`);
+    navigate(`/portal/status`);
   }, [navigate]);
 
   return (
     <div>
       <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-        Criar Workflow
+        Criar Status
       </Button>
     </div>
   );
@@ -67,24 +73,24 @@ const Statuses: React.FC = () => {
   const page = searchParams.get("page") ?? 1;
 
   const {
-    data: { workflows, pagination } = {},
+    data: { statuses, pagination } = {},
     isFetching,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["workflows", String(page)],
-    queryFn: getWorkflows,
+    queryKey: ["statuses", String(page)],
+    queryFn: getStatuses,
   });
 
   const data = useMemo(() => {
-    if (!workflows) return [];
+    if (!statuses) return [];
 
-    return workflows.map((workflow) => ({
-      ...workflow,
-      active: workflow.active ? "Ativo" : "Inativo",
-      actions: <Action {...workflow} />,
+    return statuses.map((status) => ({
+      ...status,
+      type: StatusType[status.type] ?? "Não definido",
+      actions: <Action {...status} />,
     }));
-  }, [workflows]);
+  }, [statuses]);
 
   return (
     <Box width="100%" p="10">

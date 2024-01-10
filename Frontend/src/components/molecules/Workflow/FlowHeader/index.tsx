@@ -6,9 +6,22 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
+import { FaArrowLeft, FaSave } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { Panel } from "reactflow";
 
-const FlowPanel: React.FC = () => {
+interface FlowPanelProps {
+  onSave: () => void;
+  isPending?: boolean;
+}
+
+const FlowPanel: React.FC<FlowPanelProps> = ({ onSave, isPending }) => {
+  const navigate = useNavigate();
+
+  const handleNavigate = React.useCallback(() => {
+    navigate("/portal/workflows");
+  }, [navigate]);
+
   return (
     <Panel position="top-center" style={{ width: "100%", margin: 0 }}>
       <Flex
@@ -21,14 +34,20 @@ const FlowPanel: React.FC = () => {
         p={2}
         shadow={"md"}
       >
-        <Heading fontSize="lg">Flow Panel</Heading>
+        <Heading fontSize="lg">Workflow</Heading>
 
         <Box>
-          <Button colorScheme="red" mr={2}>
-            Cancelar
+          <Button colorScheme="red" mr={2} onClick={handleNavigate} size="sm">
+            <FaArrowLeft />
           </Button>
-          <Button colorScheme="green" mr={2}>
-            Salvar
+          <Button
+            colorScheme="green"
+            mr={2}
+            onClick={onSave}
+            size="sm"
+            isLoading={isPending}
+          >
+            <FaSave />
           </Button>
         </Box>
       </Flex>

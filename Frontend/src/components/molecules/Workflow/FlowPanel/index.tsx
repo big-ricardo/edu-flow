@@ -1,8 +1,10 @@
 import { Flex, useColorModeValue } from "@chakra-ui/react";
+import { ChangeStatusIcon } from "@components/atoms/Workflow/Nodes/ChangeStatus";
 import { SendEmailIcon } from "@components/atoms/Workflow/Nodes/SendEmail";
 import PanelItem from "@components/atoms/Workflow/PanelItem";
 import React from "react";
 import { Panel } from "reactflow";
+import { NodeTypes } from "@interfaces/Workflow";
 
 const FlowPanel: React.FC = () => {
   return (
@@ -15,13 +17,17 @@ const FlowPanel: React.FC = () => {
         justifyContent="center"
         px="10"
         py="2"
+        gap={2}
         borderRadius="10px"
         border="1px solid"
         borderColor={useColorModeValue("gray.400", "gray.600")}
         position={"relative"}
       >
-        <PanelItem nodeType="send_email">
+        <PanelItem nodeType={NodeTypes.SendEmail}>
           <SendEmailIcon />
+        </PanelItem>
+        <PanelItem nodeType={NodeTypes.ChangeStatus}>
+          <ChangeStatusIcon />
         </PanelItem>
       </Flex>
     </Panel>

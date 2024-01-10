@@ -1,0 +1,52 @@
+import IPagination from "@interfaces/Pagination";
+import Response from "@interfaces/Response";
+import IStatus from "@interfaces/Status";
+import api from "@services/api";
+
+type Status = Pick<IStatus, "_id" | "name" | "type">;
+type ReqStatuses = Response<{ statuses: Status[] } & IPagination>;
+type ReqStatus = Response<Status>;
+
+export const getStatuses = async ({
+  queryKey: [, page = "1", limit = "10"],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqStatuses>("/statuses", {
+    params: { page, limit },
+  });
+
+  return res.data.data;
+};
+
+export const getStatus = async ({
+  queryKey: [, id],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqStatus>(`/status/${id}`);
+
+  return res.data.data;
+};
+
+export const createUniversity = async (data: Omit<Status, "_id">) => {
+  const res = await api.post<ReqStatus>("/status", data);
+
+  return res.data.data;
+};
+
+export const updateStatus = async (data: Status) => {
+  const res = await api.put<ReqStatus>(`/status/${data._id}`, data);
+
+  return res.data.data;
+};
+
+export const createOrUpdateStatus= async (
+  data: Omit<Status, "_id"> & { _id?: string }
+) => {
+  if (data?._id) {
+    return updateStatus(data as Status);
+  }
+
+  return createUniversity(data);
+};
