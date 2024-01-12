@@ -21,7 +21,6 @@ export interface IChangeStatus {
 
 export interface ICircle {
   name: string;
-  active?: boolean;
   visible: false;
 }
 
@@ -48,8 +47,9 @@ export type IStep = {
 export type IWorkflow = {
   _id: string;
   name: string;
-  active: boolean;
+  status: "draft" | "published";
   steps: IStep[];
+  parent: string | null;
   viewport: { x: number; y: number; zoom: number };
   createdAt: string;
   updatedAt: string;
@@ -57,8 +57,10 @@ export type IWorkflow = {
 
 export const schema: Schema = new Schema(
   {
-    name: { type: String, required: true, unique: true },
-    active: { type: Boolean, default: true },
+    name: { type: String, required: true },
+    version: { type: Number, default: 1, auto: true },
+    status: { type: String, default: "draft", enum: ["draft", "published"] },
+    parent: { type: Schema.Types.ObjectId, ref: "Workflow" },
     viewport: {
       x: { type: Number, default: 0 },
       y: { type: Number, default: 0 },
@@ -66,6 +68,7 @@ export const schema: Schema = new Schema(
     },
     steps: [
       {
+        _id: { type: Schema.Types.ObjectId, auto: true },
         id: { type: String, required: true },
         type: {
           type: String,
@@ -86,7 +89,7 @@ export const schema: Schema = new Schema(
   {
     timestamps: true,
   }
-);
+).index({ name: 1, version: 1 }, { unique: true });
 
 export default class Workflow {
   conn: mongoose.Connection;

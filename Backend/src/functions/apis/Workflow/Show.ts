@@ -19,15 +19,15 @@ const convertBackToReactFlowObject = (nodesArray: IStep[]) => {
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const workflow = (await new Workflow(conn).model().findById(id));
+  const workflow = await new Workflow(conn).model().findById(id);
   if (!workflow) {
     return res.notFound("Workflow not found");
   }
-
-  const flow = convertBackToReactFlowObject(workflow.toObject().steps);
+  const { steps, ...obj } = workflow.toObject();
+  const flow = convertBackToReactFlowObject(steps);
 
   return res.success({
-    viewport: workflow.viewport,
+    ...obj,
     edges: flow.edges,
     nodes: flow.nodes,
   });

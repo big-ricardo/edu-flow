@@ -129,27 +129,16 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
         );
       case NodeTypes.Circle:
         return (
-          <>
-            <Text
-              input={{
-                label: "Nome",
-                id: "name",
-                placeholder: "Nome do Workflow",
-                required: true,
-              }}
-              register={register}
-              errors={errors}
-            />
-            <Switch
-              input={{
-                label: "Ativo",
-                id: "active",
-                required: true,
-              }}
-              control={control}
-              errors={errors}
-            />
-          </>
+          <Text
+            input={{
+              label: "Nome",
+              id: "name",
+              placeholder: "Nome do Workflow",
+              required: true,
+            }}
+            register={register}
+            errors={errors}
+          />
         );
       default:
         return <h1>Default</h1>;

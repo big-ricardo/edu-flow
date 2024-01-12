@@ -11,11 +11,9 @@ interface CheckboxProps {
   input: {
     id: string;
     label: string;
-    placeholder: string;
-    type: string;
     required?: boolean;
   };
-  control: Control;
+  control: Control<any>;
   errors: FieldErrors<FieldValues>;
 }
 

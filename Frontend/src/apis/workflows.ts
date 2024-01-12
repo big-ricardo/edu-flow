@@ -4,10 +4,13 @@ import { IWorkflow } from "@interfaces/Workflow";
 import api from "@services/api";
 import { ReactFlowJsonObject } from "reactflow";
 
-export type ReqWorkflow = Response<ReactFlowJsonObject>;
+export type ReqWorkflow = Response<
+  ReactFlowJsonObject & Omit<IWorkflow, "steps">
+>;
+
 type ReqWorkflows = Response<
   {
-    workflows: Pick<IWorkflow, "name" | "active" | "_id">[];
+    workflows: Pick<IWorkflow, "name" | "status" | "_id">[];
   } & IPagination
 >;
 type Workflow = Pick<IWorkflow, "steps" | "_id">;
@@ -42,6 +45,14 @@ export const createWorkflow = async (data: Omit<Workflow, "_id">) => {
 
 export const updateWorkflow = async (data: IWorkflow) => {
   const res = await api.put<ReqWorkflow>(`/workflow/${data._id}`, data);
+
+  return res.data.data;
+};
+
+export const publishUnpublish = async (
+  data: Pick<IWorkflow, "_id" | "status">
+) => {
+  const res = await api.patch<ReqWorkflow>(`/workflow/${data._id}`, data);
 
   return res.data.data;
 };

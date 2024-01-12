@@ -4,6 +4,7 @@ export enum NodeTypes {
   ChangeStatus = "change_status",
   SendEmail = "send_email",
   Circle = "circle",
+  SwapWorkflow = "swap_workflow",
 }
 
 export interface ISendEmail {
@@ -49,7 +50,10 @@ export type IStep = {
 export type IWorkflow = {
   _id: string;
   name: string;
+  status: "draft" | "published";
+  version: number;
   active: boolean;
+  parent: string;
   steps: IStep[];
   viewport: Viewport;
 }

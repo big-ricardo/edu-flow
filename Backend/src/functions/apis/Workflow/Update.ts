@@ -17,13 +17,11 @@ const handler: HttpHandler = async (conn, req) => {
   const {
     name,
     visible,
-    active = true,
   } = steps.find((step) => step.id === "start")?.data as ICircle;
 
   const workflow = await new Workflow(conn).model().findByIdAndUpdate(id,{
     name,
     visible,
-    active,
     steps,
     viewport,
   }, {new: true});

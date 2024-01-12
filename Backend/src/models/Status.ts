@@ -1,9 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 
+export enum StatusType {
+  PROGRESS = "progress",
+  DONE = "done",
+  CANCELED = "canceled",
+}
+
 export interface IStatus extends mongoose.Document {
   _id: string;
   name: string;
-  type: "progress" | "done" | "canceled";
+  type: StatusType;
 }
 
 export const schema: Schema = new Schema(

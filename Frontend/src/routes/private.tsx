@@ -14,6 +14,8 @@ import Universities from "@pages/Portal/Universities";
 import User from "@pages/Portal/Users/User";
 import Statuses from "@pages/Portal/Statuses";
 import Status from "@pages/Portal/Statuses/Status";
+import Forms from "@pages/Portal/Forms";
+import Form from "@pages/Portal/Forms/Form";
 
 const routes: RouteType = [
   {
@@ -29,7 +31,15 @@ const routes: RouteType = [
         element: <Workflows />,
       },
       {
-        path: "/portal/workflow/:id?",
+        path: "/portal/workflow",
+        element: <Workflow />,
+      },
+      {
+        path: "/portal/workflow/:id/view",
+        element: <Workflow isView />,
+      },
+      {
+        path: "/portal/workflow/:id/edit",
         element: <Workflow />,
       },
       {
@@ -67,9 +77,18 @@ const routes: RouteType = [
       {
         path: "/portal/statuses",
         element: <Statuses />,
-      },{
+      },
+      {
         path: "/portal/status/:id?",
         element: <Status />,
+      },
+      {
+        path: "/portal/forms",
+        element: <Forms />,
+      },
+      {
+        path: "/portal/form/:id?",
+        element: <Form />,
       },
     ],
   },

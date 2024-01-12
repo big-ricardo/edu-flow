@@ -1,9 +1,9 @@
 import { Box, Flex, useColorModeValue, Text } from "@chakra-ui/react";
 import { NodeProps } from "reactflow";
 import WrapperNode from "./Wrapper";
-import { GoTag } from "react-icons/go";
+import { GoWorkflow } from "react-icons/go";
 
-interface ChangeStatusProps extends NodeProps {
+interface SwapWorkflowProps extends NodeProps {
   data: {
     to: string;
     subject: string;
@@ -12,11 +12,11 @@ interface ChangeStatusProps extends NodeProps {
   };
 }
 
-const ChangeStatus: React.FC<ChangeStatusProps> = (props) => {
+const SwapWorkflow: React.FC<SwapWorkflowProps> = (props) => {
   return (
     <WrapperNode {...props}>
       <Box
-        as={GoTag}
+        as={GoWorkflow}
         size="30px"
         color={useColorModeValue("gray.500", "gray.300")}
       />
@@ -27,9 +27,9 @@ const ChangeStatus: React.FC<ChangeStatusProps> = (props) => {
   );
 };
 
-export default ChangeStatus;
+export default SwapWorkflow;
 
-export function ChangeStatusIcon() {
+export function SwapWorkflowIcon() {
   return (
     <Flex
       bg={useColorModeValue("white", "gray.800")}
@@ -43,7 +43,7 @@ export function ChangeStatusIcon() {
       transition="border-color 0.3s ease-in-out"
     >
       <Box
-        as={GoTag}
+        as={GoWorkflow}
         size="50px"
         color={useColorModeValue("gray.500", "gray.300")}
       />

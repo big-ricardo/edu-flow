@@ -7,19 +7,18 @@ import {
   FieldErrors,
 } from "react-hook-form";
 
-interface TextProps {
+interface TextAreaProps {
   input: {
     id: string;
     label?: string;
     placeholder?: string;
     required?: boolean;
-    type?: string;
   };
-  register: UseFormRegister,
+  register: UseFormRegister<any>,
   errors: FieldErrors<FieldValues>;
 }
 
-const Text: React.FC<TextProps> = ({ register, errors, input }) => {
+const TextArea: React.FC<TextAreaProps> = ({ register, errors, input }) => {
   return (
     <FormControl
       id={input.id}
@@ -28,7 +27,7 @@ const Text: React.FC<TextProps> = ({ register, errors, input }) => {
     >
       <FormLabel>{input?.label}</FormLabel>
       <Input
-        type={input?.type ?? "text"}
+        as="textarea"
         placeholder={input?.placeholder}
         {...register(input.id)}
       />
@@ -37,4 +36,4 @@ const Text: React.FC<TextProps> = ({ register, errors, input }) => {
   );
 };
 
-export default Text;
+export default TextArea;

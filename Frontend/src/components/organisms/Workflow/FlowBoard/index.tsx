@@ -65,7 +65,11 @@ const initialNodes: Node[] = [
 ];
 const initialEdges: Edge[] = [];
 
-const FlowBoard: React.FC = () => {
+interface FlowBoardProps {
+  isView?: boolean;
+}
+
+const FlowBoard: React.FC<FlowBoardProps> = ({ isView }) => {
   const queryClient = useQueryClient();
   const params = useParams<{ id?: string }>();
   const id = params?.id ?? "";
@@ -91,18 +95,18 @@ const FlowBoard: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workflows"] });
       toast({
-        title: `Instituto ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: `Workflow ${isEditing ? "editada" : "criada"} com sucesso`,
         status: "success",
         duration: 3000,
         isClosable: true,
         variant: "left-accent",
         position: "top-right",
       });
-      navigate(-1);
+      navigate(`/portal/workflow/${id}/view`);
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} instituto`,
+        title: `Erro ao ${isEditing ? "editar" : "criar"} workflow`,
         description: error?.response?.data?.message ?? error.message,
         status: "error",
         duration: 3000,
@@ -128,9 +132,9 @@ const FlowBoard: React.FC = () => {
         viewport: flow.viewport,
       };
 
-      mutateAsync(isEditing ? { _id: id, ...data } : data);
+      mutateAsync(isEditing ? { _id: workflow?.parent ?? id, ...data } : data);
     }
-  }, [reactFlowInstance, mutateAsync, id, isEditing]);
+  }, [reactFlowInstance, mutateAsync, id, isEditing, workflow?.parent]);
 
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
@@ -203,6 +207,9 @@ const FlowBoard: React.FC = () => {
         fitView
         nodeTypes={NodeTypes}
         edgeTypes={EdgeTypes}
+        elementsSelectable={!isView}
+        nodesConnectable={!isView}
+        nodesDraggable={!isView}
         proOptions={{
           hideAttribution: true,
         }}
@@ -218,11 +225,19 @@ const FlowBoard: React.FC = () => {
         onInit={setReactFlowInstance}
         onDragOver={onDragOver}
       >
-        <FlowHeader onSave={onSave} isPending={isPending} />
+        <FlowHeader
+          onSave={onSave}
+          isPending={isPending}
+          isView={isView}
+          status={workflow?.status}
+        />
         <Background color="#aaa" gap={16} size={1} />
-        <Controls />
         <MiniMap />
-        <FlowPanel />
+        {!isView && (
+          <>
+            <FlowPanel /> <Controls />
+          </>
+        )}
       </ReactFlow>
     </div>
   );

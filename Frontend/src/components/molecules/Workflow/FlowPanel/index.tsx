@@ -5,6 +5,7 @@ import PanelItem from "@components/atoms/Workflow/PanelItem";
 import React from "react";
 import { Panel } from "reactflow";
 import { NodeTypes } from "@interfaces/Workflow";
+import { SwapWorkflowIcon } from "@components/atoms/Workflow/Nodes/SwapWorkflow";
 
 const FlowPanel: React.FC = () => {
   return (
@@ -28,6 +29,9 @@ const FlowPanel: React.FC = () => {
         </PanelItem>
         <PanelItem nodeType={NodeTypes.ChangeStatus}>
           <ChangeStatusIcon />
+        </PanelItem>
+        <PanelItem nodeType={NodeTypes.SwapWorkflow}>
+          <SwapWorkflowIcon />
         </PanelItem>
       </Flex>
     </Panel>

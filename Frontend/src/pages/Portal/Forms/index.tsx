@@ -10,14 +10,18 @@ import { useQuery } from "@tanstack/react-query";
 import React, { memo, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiRefresh, BiEdit } from "react-icons/bi";
+import { getForms } from "@apis/form";
 import Pagination from "@components/organisms/Pagination";
-import { getWorkflows } from "@apis/workflows";
-import { IWorkflow } from "@interfaces/Workflow";
+import IForm from "@interfaces/Form";
 
 const columns = [
   {
     key: "name",
     label: "Nome",
+  },
+  {
+    key: "type",
+    label: "Tipo",
   },
   {
     key: "status",
@@ -29,12 +33,18 @@ const columns = [
   },
 ];
 
-const Action = memo((workflow: Pick<IWorkflow, "name" | "status" | "_id">) => {
+const FormTypes = {
+  created: "Criação",
+  interaction: "Interação",
+  available: "Avaliação",
+};
+
+const Action = memo((form: Pick<IForm, "_id">) => {
   const navigate = useNavigate();
 
   const handleEdit = useCallback(() => {
-    navigate(`/portal/workflow/${workflow._id}/view`);
-  }, [navigate, workflow._id]);
+    navigate(`/portal/form/${form._id}`);
+  }, [navigate, form._id]);
 
   return (
     <div>
@@ -49,46 +59,47 @@ const Create = memo(() => {
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
-    navigate(`/portal/workflow`);
+    navigate(`/portal/form`);
   }, [navigate]);
 
   return (
     <div>
       <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-        Criar Workflow
+        Criar Formulário
       </Button>
     </div>
   );
 });
 
-const Statuses: React.FC = () => {
+const Forms: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const page = searchParams.get("page") ?? 1;
 
   const {
-    data: { workflows, pagination } = {},
+    data: { forms, pagination } = {},
     isFetching,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["workflows", String(page)],
-    queryFn: getWorkflows,
+    queryKey: ["forms", String(page)],
+    queryFn: getForms,
   });
 
   const data = useMemo(() => {
-    if (!workflows) return [];
+    if (!forms) return [];
 
-    return workflows.map((workflow) => ({
-      ...workflow,
-      status: workflow.status === "draft" ? "Rascunho" : "Publicado",
-      actions: <Action {...workflow} />,
+    return forms.map((form) => ({
+      ...form,
+      status: form.status === "draft" ? "Rascunho" : "Publicado",
+      type: FormTypes[form.type],
+      actions: <Action {...form} />,
     }));
-  }, [workflows]);
+  }, [forms]);
 
   return (
     <Box width="100%" p="10">
-      <Heading>Workflow</Heading>
+      <Heading>Status</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -122,4 +133,4 @@ const Statuses: React.FC = () => {
   );
 };
 
-export default Statuses;
+export default Forms;
