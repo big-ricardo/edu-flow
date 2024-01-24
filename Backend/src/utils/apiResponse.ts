@@ -1,5 +1,6 @@
 import { HttpResponseInit } from "@azure/functions";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import moment from "moment";
 
 const response = (
   status: StatusCodes,
@@ -12,6 +13,7 @@ const response = (
       status,
       message: err ?? (getReasonPhrase(status) || "Unknown error"),
       data,
+      timestamp: moment.utc().toISOString(),
     },
     null,
     2

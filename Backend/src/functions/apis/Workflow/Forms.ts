@@ -3,6 +3,7 @@ import res from "../../../utils/apiResponse";
 import Email from "../../../models/Email";
 import Status from "../../../models/Status";
 import User from "../../../models/User";
+import Workflow, { IWorkflowStatus } from "../../../models/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const emails = (
@@ -60,10 +61,26 @@ const handler: HttpHandler = async (conn, req) => {
     value: status._id,
   }));
 
+  const workflows = (
+    await new Workflow(conn)
+      .model()
+      .find({
+        status: IWorkflowStatus.Published,
+      })
+      .select({
+        _id: 1,
+        name: 1,
+      })
+  ).map((status) => ({
+    label: status.name,
+    value: status._id,
+  }));
+
   return res.success({
     emails,
     statuses,
     users: userOptions,
+    workflows,
   });
 };
 

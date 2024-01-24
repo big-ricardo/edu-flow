@@ -25,7 +25,6 @@ const Switch: React.FC<SwitchProps> = ({ control, errors, input }) => {
       isRequired={input.required}
       display="flex"
       alignItems="end"
-      w="150px"
     >
       <FormLabel htmlFor={input.id}>
         {input.label}

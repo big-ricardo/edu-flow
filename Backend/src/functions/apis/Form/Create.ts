@@ -1,11 +1,18 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Form, { IForm } from "../../../models/Form";
+import moment from "moment";
 
 const handler: HttpHandler = async (conn, req) => {
-  const formData = req.body as IForm;
+  const { period, ...formData } = req.body as IForm;
 
-  const form = await new Form(conn).model().create(formData);
+  const form = await new Form(conn).model().create({
+    ...formData,
+    period: {
+      open: period.open ? moment.utc(period.open).toDate() : null,
+      close: period.close ? moment.utc(period.close).toDate() : null,
+    },
+  });
 
   form.save();
 
@@ -16,6 +23,12 @@ export default new Http(handler)
   .setSchemaValidator((schema) => ({
     body: schema.object().shape({
       name: schema.string().required().min(3).max(255),
+      slug: schema
+        .string()
+        .required()
+        .min(3)
+        .max(30)
+        .matches(/^[a-z0-9-]+$/),
       type: schema
         .string()
         .required()
@@ -27,15 +40,26 @@ export default new Http(handler)
         return schema.nullable().default(null);
       }),
       period: schema.object().shape({
-        open: schema.date().required().nullable(),
-        close: schema.date().required().nullable(),
+        open: schema.string().optional().nullable(),
+        close: schema.string().when("period.open", ([open], schema) => {
+          if (open) {
+            return schema.required();
+          }
+          return schema.nullable().default(null);
+        }),
+      }),
+      workflow: schema.string().when("type", ([type], schema) => {
+        if (type === "created") {
+          return schema.required();
+        }
+        return schema.nullable().default(null);
       }),
       fields: schema.array().of(
         schema.object().shape({
           id: schema
             .string()
             .required()
-            .matches(/^[0-9a-fA-F]{24}$/),
+            .matches(/(\{\{[a-z]+\.[a-z]+\}\})|([a-z]+(?:-[a-z]+)*)|([a-z]+)/),
           type: schema
             .string()
             .required()
@@ -50,7 +74,7 @@ export default new Http(handler)
               "select",
               "date",
               "file",
-              "teachers",
+              "multiselect",
             ]),
           value: schema.string().nullable(),
           visible: schema.boolean().default(true),

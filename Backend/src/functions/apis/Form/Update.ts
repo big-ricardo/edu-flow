@@ -1,14 +1,25 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Form, { IForm } from "../../../models/Form";
+import moment from "moment";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;
-  const formData = req.body as IForm;
+  const { period, ...formData } = req.body as IForm;
 
-  const form = await new Form(conn).model().findByIdAndUpdate(id, formData, {
-    new: true,
-  });
+  const form = await new Form(conn).model().findByIdAndUpdate(
+    id,
+    {
+      ...formData,
+      period: {
+        open: period.open ? moment.utc(period.open).toDate() : null,
+        close: period.close ? moment.utc(period.close).toDate() : null,
+      },
+    },
+    {
+      new: true,
+    }
+  );
 
   form.save();
 
@@ -22,6 +33,12 @@ export default new Http(handler)
     }),
     body: schema.object().shape({
       name: schema.string().required().min(3).max(255),
+      slug: schema
+        .string()
+        .required()
+        .min(3)
+        .max(30)
+        .matches(/^[a-z0-9-]+$/),
       type: schema
         .string()
         .required()
@@ -31,12 +48,18 @@ export default new Http(handler)
         open: schema.date().required().nullable(),
         close: schema.date().required().nullable(),
       }),
+      workflow: schema.string().when("type", ([type], schema) => {
+        if (type === "created") {
+          return schema.required();
+        }
+        return schema.nullable().default(null);
+      }),
       fields: schema.array().of(
         schema.object().shape({
           id: schema
             .string()
             .required()
-            .matches(/^[0-9a-fA-F]{24}$/),
+            .matches(/(\{\{[a-z]+\.[a-z]+\}\})|([a-z]+(?:-[a-z]+)*)|([a-z]+)/),
           type: schema
             .string()
             .required()
@@ -51,7 +74,7 @@ export default new Http(handler)
               "select",
               "date",
               "file",
-              "teachers",
+              "multiselect",
             ]),
           value: schema.string().nullable(),
           visible: schema.boolean().default(true),
@@ -80,6 +103,6 @@ export default new Http(handler)
     name: "FormUpdate",
     options: {
       methods: ["PUT"],
-      route: "form",
+      route: "form/{id}",
     },
   });

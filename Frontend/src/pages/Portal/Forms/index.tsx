@@ -4,6 +4,14 @@ import {
   Flex,
   Heading,
   useColorModeValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +21,7 @@ import { BiRefresh, BiEdit } from "react-icons/bi";
 import { getForms } from "@apis/form";
 import Pagination from "@components/organisms/Pagination";
 import IForm from "@interfaces/Form";
+import { BsFillEyeFill } from "react-icons/bs";
 
 const columns = [
   {
@@ -39,17 +48,24 @@ const FormTypes = {
   available: "Avaliação",
 };
 
-const Action = memo((form: Pick<IForm, "_id">) => {
+const Action = memo((form: Pick<IForm, "_id" | "slug">) => {
   const navigate = useNavigate();
 
   const handleEdit = useCallback(() => {
     navigate(`/portal/form/${form._id}`);
   }, [navigate, form._id]);
 
+  const handlePreview = useCallback(() => {
+    navigate(`/portal/form/${form.slug}/preview`);
+  }, [navigate, form.slug]);
+
   return (
     <div>
       <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
         <BiEdit size={20} />
+      </Button>
+      <Button colorScheme="blue" mr={2} onClick={handlePreview} size="sm">
+        <BsFillEyeFill size={20} />
       </Button>
     </div>
   );
@@ -57,16 +73,46 @@ const Action = memo((form: Pick<IForm, "_id">) => {
 
 const Create = memo(() => {
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleCreate = useCallback(() => {
-    navigate(`/portal/form`);
-  }, [navigate]);
+  const handleSelect = useCallback(
+    (formType: string) => {
+      onClose();
+      navigate(`/portal/form?type=${formType}`);
+    },
+    [navigate, onClose]
+  );
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
+      <Button colorScheme="blue" mr={2} onClick={onOpen} size="sm">
         Criar Formulário
       </Button>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Selecione o tipo de formulário</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex
+              justifyContent="center"
+              alignItems="start"
+              mt="4"
+              direction="row"
+              gap="4"
+              width="100%"
+            >
+              {Object.entries(FormTypes).map(([key, value]) => (
+                <Button key={key} onClick={() => handleSelect(key)}>
+                  {value}
+                </Button>
+              ))}
+            </Flex>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 });
@@ -99,7 +145,7 @@ const Forms: React.FC = () => {
 
   return (
     <Box width="100%" p="10">
-      <Heading>Status</Heading>
+      <Heading>Fomulários</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}

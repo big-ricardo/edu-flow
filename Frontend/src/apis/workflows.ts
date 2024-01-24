@@ -71,6 +71,7 @@ type ReqWorkflowForms = Response<{
   statuses: { label: string; options: { label: string; value: string }[] }[];
   emails: { label: string; value: string }[];
   users: { label: string; value: string }[];
+  workflows: { label: string; value: string }[];
 }>;
 
 export const getWorkflowForms = async () => {

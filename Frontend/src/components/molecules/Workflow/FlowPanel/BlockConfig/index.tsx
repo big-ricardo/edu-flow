@@ -140,6 +140,41 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             errors={errors}
           />
         );
+      case NodeTypes.SwapWorkflow:
+        return (
+          <>
+            <Text
+              input={{
+                label: "Nome",
+                id: "name",
+                placeholder: "Nome do bloco",
+                required: true,
+              }}
+              register={register}
+              errors={errors}
+            />
+            <Select
+              input={{
+                label: "Workflow",
+                id: "workflow",
+                placeholder: "Selecione um workflow que será executado",
+                options: formsData?.workflows ?? [],
+                required: true,
+              }}
+              control={control}
+              errors={errors}
+            />
+            <Switch
+              input={{
+                label: "Visivel",
+                id: "visible",
+                required: true,
+              }}
+              control={control}
+              errors={errors}
+            />
+          </>
+        );
       default:
         return <h1>Default</h1>;
     }

@@ -14,6 +14,7 @@ interface TextProps {
     placeholder?: string;
     required?: boolean;
     type?: string;
+    isDisabled?: boolean;
   };
   register: UseFormRegister,
   errors: FieldErrors<FieldValues>;
@@ -31,6 +32,7 @@ const Text: React.FC<TextProps> = ({ register, errors, input }) => {
         type={input?.type ?? "text"}
         placeholder={input?.placeholder}
         {...register(input.id)}
+        isDisabled={input?.isDisabled}
       />
       <ErrorMessage error={errors?.[input.id]} />
     </FormControl>

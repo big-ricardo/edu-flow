@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Status, { StatusType } from "../../../models/Status";
+import Workflow, { IWorkflowStatus } from "../../../models/Workflow";
 
 const handler: HttpHandler = async (conn) => {
   const status = (
@@ -12,8 +13,25 @@ const handler: HttpHandler = async (conn) => {
     label: s.name,
   }));
 
+  const workflows = (
+    await new Workflow(conn)
+      .model()
+      .find()
+      .select({
+        _id: 1,
+        name: 1,
+      })
+      .where({
+        status: IWorkflowStatus.Published,
+      })
+  ).map((w) => ({
+    value: w._id,
+    label: w.name,
+  }));
+
   return res.success({
     status,
+    workflows,
   });
 };
 

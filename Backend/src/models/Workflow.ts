@@ -4,6 +4,7 @@ export enum NodeTypes {
   ChangeStatus = "change_status",
   SendEmail = "send_email",
   Circle = "circle",
+  SwapWorkflow = "swap_workflow",
 }
 
 export interface ISendEmail {
@@ -44,6 +45,11 @@ export type IStep = {
     }
 );
 
+export enum IWorkflowStatus {
+  Draft = "draft",
+  Published = "published",
+}
+
 export type IWorkflow = {
   _id: string;
   name: string;
@@ -72,7 +78,7 @@ export const schema: Schema = new Schema(
         id: { type: String, required: true },
         type: {
           type: String,
-          enum: ["circle", "send_email", "change_status"],
+          enum: Object.values(NodeTypes),
         },
         next_step_id: { type: String, default: null },
         position: {

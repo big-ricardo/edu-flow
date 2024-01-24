@@ -104,9 +104,10 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
                 onClick={handlePublish}
                 size="sm"
                 isLoading={isPendingPublish}
+                isDisabled={status !== "draft"}
               >
                 <FaPushed /> &nbsp;
-                {status === "draft" ? "Publicar" : "Despublicar"}
+                {status === "draft" ? "Publicar" : "Publicado"}
               </Button>
             </>
           )}

@@ -6,10 +6,7 @@ import api from "@services/api";
 type Form = IForm;
 type ReqForms = Response<
   {
-    forms: Pick<
-      IForm,
-      "_id" | "name" | "description" | "initial_status" | "status" | "type"
-    >[];
+    forms: Pick<IForm, "_id" | "name" | "slug" | "type" | "status">[];
   } & IPagination
 >;
 type ReqForm = Response<Form>;
@@ -29,7 +26,17 @@ export const getForms = async ({
 export const getForm = async ({ queryKey: [, id] }: { queryKey: string[] }) => {
   const res = await api.get<ReqForm>(`/form/${id}`);
 
-  return res.data.data;
+  return {
+    ...res.data.data,
+    period: {
+      open: res.data.data.period?.open
+        ? res.data.data.period.open.split("T")[0]
+        : null,
+      close: res.data.data.period?.close
+        ? res.data.data.period.close.split("T")[0]
+        : null,
+    },
+  };
 };
 
 export const createForm = async (data: Omit<Form, "_id">) => {
@@ -47,7 +54,6 @@ export const updateForm = async (data: Form) => {
 export const createOrUpdateForm = async (
   data: Omit<Form, "_id"> & { _id?: string }
 ) => {
-
   if (data?._id) {
     return updateForm(data as Form);
   }
@@ -55,8 +61,29 @@ export const createOrUpdateForm = async (
   return createForm(data);
 };
 
+export const getFormBySlug = async ({
+  queryKey: [, slug],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqForm>(`/form/slug/${slug}`);
+
+  return {
+    ...res.data.data,
+    period: {
+      open: res.data.data.period?.open
+        ? res.data.data.period.open.split("T")[0]
+        : null,
+      close: res.data.data.period?.close
+        ? res.data.data.period.close.split("T")[0]
+        : null,
+    },
+  };
+};
+
 type ReqFormForms = Response<{
   status: { label: string; value: string }[];
+  workflows: { label: string; value: string }[];
 }>;
 export const getFormForms = async () => {
   const res = await api.get<ReqFormForms>("/form/forms");

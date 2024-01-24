@@ -29,7 +29,9 @@ export type IField = {
   name: string;
   type: FieldTypes;
   required?: boolean;
+  predefined?: "teachers" | "students" | "institution";
   visible: boolean;
+  system?: boolean;
   options?: { label: string; value: string }[];
 };
 
@@ -48,17 +50,23 @@ export const schema: Schema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     status: { type: String, required: true, enum: ["draft", "published"] },
-    initial_status: { type: Schema.Types.ObjectId, ref: "Status" },
+    initial_status: {
+      type: Schema.Types.ObjectId,
+      ref: "Status",
+      default: null,
+    },
+    slug: { type: String, required: true, unique: true },
     type: {
       type: String,
       required: true,
       enum: ["created", "interaction", "available"],
     },
     period: { open: Date, close: Date },
+    workflow: { type: Schema.Types.ObjectId, ref: "Workflow", default: null },
     description: { type: String, required: false, default: "" },
     fields: [
       {
-        name: { type: String, required: true },
+        id: { type: String, required: true },
         type: {
           type: String,
           required: true,
@@ -73,12 +81,21 @@ export const schema: Schema = new Schema(
             "select",
             "date",
             "file",
-            "teachers",
+            "multiselect",
           ],
         },
+        predefined: {
+          type: String,
+          required: false,
+          enum: ["teachers", "students", "institutions"],
+          default: null,
+        },
+        label: { type: String, required: false, default: "" },
+        placeholder: { type: String, required: false, default: "" },
         value: { type: String, default: null },
         required: { type: Boolean, required: false },
         visible: { type: Boolean, required: false },
+        system: { type: Boolean, required: false, default: false },
         options: {
           type: [
             {
@@ -95,7 +112,7 @@ export const schema: Schema = new Schema(
   {
     timestamps: true,
   }
-);
+).index({ slug: 1, status: 1, "period.open": 1, "period.close": 1 });
 
 export default class Form {
   conn: mongoose.Connection;

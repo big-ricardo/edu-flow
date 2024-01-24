@@ -16,6 +16,7 @@ import Statuses from "@pages/Portal/Statuses";
 import Status from "@pages/Portal/Statuses/Status";
 import Forms from "@pages/Portal/Forms";
 import Form from "@pages/Portal/Forms/Form";
+import Response from "@pages/Response";
 
 const routes: RouteType = [
   {
@@ -90,7 +91,15 @@ const routes: RouteType = [
         path: "/portal/form/:id?",
         element: <Form />,
       },
+      {
+        path: "/portal/form/:slug/preview",
+        element: <Response isPreview />,
+      },
     ],
+  },
+  {
+    path: "/response/:slug",
+    element: <Response />,
   },
 ];
 

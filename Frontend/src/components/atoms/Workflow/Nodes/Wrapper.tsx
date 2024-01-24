@@ -16,6 +16,7 @@ import CustomHandle from "../CustomHandle";
 interface WrapperNodeProps extends NodeProps {
   children: React.ReactNode;
   deletable?: boolean;
+  numberOfSources?: number;
 }
 
 const WrapperNode: React.FC<WrapperNodeProps> = ({
@@ -23,6 +24,7 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
   children,
   selected,
   deletable,
+  numberOfSources = 1,
 }) => {
   const { deleteElements, getNode } = useReactFlow();
   const { onOpen } = useDrawer();
@@ -106,11 +108,14 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
         position={Position.Left}
         style={{ background: "#555", left: "-10px" }}
       />
-      <CustomHandle
-        type="source"
-        position={Position.Right}
-        style={{ background: "#555", right: "-10px" }}
-      />
+      {Array.from(Array(numberOfSources).keys()).map((i) => (
+        <CustomHandle
+          key={i}
+          type="source"
+          position={Position.Right}
+          style={{ background: "#555", right: "-10px" }}
+        />
+      ))}
       {children}
     </Flex>
   );

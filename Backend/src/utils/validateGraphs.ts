@@ -38,17 +38,6 @@ export default function validateGraph(steps: IStep[]) {
     throw err;
   }
 
-  const end = steps.find((step) => step.id === "end");
-
-  if (!end) {
-    const err = {
-      status: 400,
-      message: `Sem step final`,
-    };
-
-    throw err;
-  }
-
   const visited = new Set<string>();
 
   const dfs = (step: IStep) => {
@@ -66,15 +55,4 @@ export default function validateGraph(steps: IStep[]) {
       }
     }
   };
-
-  dfs(start);
-
-  if (!visited.has(end.id)) {
-    const err = {
-      status: 400,
-      message: `Fluxo Invalido`,
-    };
-
-    throw err;
-  }
 }

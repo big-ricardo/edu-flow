@@ -24,6 +24,11 @@ const schemas: NodeSchemas = {
     active: z.boolean().default(true),
     visible: z.boolean().default(false),
   }),
+  [NodeTypes.SwapWorkflow]: z.object({
+    name: z.string().min(3, { message: "Nome é obrigatório" }),
+    workflow: z.string().min(3, { message: "Selecione um workflow" }),
+    visible: z.boolean().default(false),
+  }),
 };
 
 export type SchemaTypes = keyof typeof schemas;

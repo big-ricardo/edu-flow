@@ -13,6 +13,12 @@ const handler: HttpHandler = async (conn, req, context) => {
   const forms = await new Form(conn)
     .model()
     .find()
+    .select({
+      name: 1,
+      type: 1,
+      status: 1,
+      slug: 1,
+    })
     .skip((page - 1) * limit)
     .limit(limit);
 

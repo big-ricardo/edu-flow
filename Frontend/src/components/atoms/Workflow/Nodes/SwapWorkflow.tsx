@@ -14,7 +14,7 @@ interface SwapWorkflowProps extends NodeProps {
 
 const SwapWorkflow: React.FC<SwapWorkflowProps> = (props) => {
   return (
-    <WrapperNode {...props}>
+    <WrapperNode {...props} numberOfSources={0}>
       <Box
         as={GoWorkflow}
         size="30px"

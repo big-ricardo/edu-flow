@@ -10,6 +10,7 @@ interface SelectProps {
     label: string;
     placeholder?: string;
     required?: boolean;
+    isDisabled?: boolean;
     options:
       | { value: string; label: string }[]
       | { label: string; options: { value: string; label: string }[] }[];
@@ -17,7 +18,6 @@ interface SelectProps {
   errors: FieldErrors<FieldValues>;
   control: Control<any>;
   isMulti?: boolean;
-  isClearable?: boolean;
   isLoading?: boolean;
 }
 
@@ -26,7 +26,6 @@ const Select: React.FC<SelectProps> = ({
   input,
   control,
   isMulti,
-  isClearable,
   isLoading,
 }) => {
   const { colorMode } = useColorMode();
@@ -51,6 +50,7 @@ const Select: React.FC<SelectProps> = ({
         "&:focus": {
           borderColor: borderColor,
         },
+        opacity: input.isDisabled ? 0.4 : 1,
       }),
       input: (provided) => ({
         ...provided,
@@ -94,13 +94,14 @@ const Select: React.FC<SelectProps> = ({
     backgroundColorSelected,
     backgroundColorHover,
     color,
+    input.isDisabled,
   ]);
 
   const searchValue = useCallback(
     (value: string | string[]) => {
       const allOptions = input.options
         .map((option) => {
-          if ('options' in option) {
+          if ("options" in option) {
             return option?.options;
           } else {
             return option;
@@ -109,8 +110,8 @@ const Select: React.FC<SelectProps> = ({
         .flat();
 
       if (Array.isArray(value)) {
-        return allOptions.filter((option) =>
-          option?.value && value.includes(option.value)
+        return allOptions.filter(
+          (option) => option?.value && value.includes(option.value)
         );
       } else {
         return allOptions.find((option) => option?.value === value) ?? null;
@@ -124,6 +125,7 @@ const Select: React.FC<SelectProps> = ({
       id={input.id}
       isInvalid={!!errors?.[input.id]}
       isRequired={input.required}
+      isDisabled={input?.isDisabled}
     >
       <FormLabel>{input.label}</FormLabel>
       <Controller
@@ -143,9 +145,10 @@ const Select: React.FC<SelectProps> = ({
             options={input?.options}
             placeholder={input.placeholder}
             isMulti={isMulti}
-            isClearable={isClearable}
+            isClearable={!input?.required}
             styles={styles}
             isLoading={isLoading}
+            isDisabled={input?.isDisabled}
           />
         )}
         rules={{ required: !!input.required }}

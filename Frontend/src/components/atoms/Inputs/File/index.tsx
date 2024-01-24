@@ -1,7 +1,15 @@
-import { InputGroup, InputLeftElement, Icon, Input } from "@chakra-ui/react";
+import {
+  InputGroup,
+  InputLeftElement,
+  Icon,
+  Input,
+  FormLabel,
+  FormControl,
+} from "@chakra-ui/react";
 import React, { useRef, useEffect } from "react";
 import { UseFormRegister, FieldValues, FieldErrors } from "react-hook-form";
 import { FiFile } from "react-icons/fi";
+import ErrorMessage from "../ErrorMessage";
 
 interface FileProps {
   input: {
@@ -9,15 +17,12 @@ interface FileProps {
     label: string;
     placeholder?: string;
     required?: boolean;
-    options: { label: string; value: string }[];
   };
   errors: FieldErrors<FieldValues>;
-  register: UseFormRegister<any>;
-  isMulti?: boolean;
-  isLoading?: boolean;
+  register: UseFormRegister<FieldValues>;
 }
 
-const InputFile: React.FC<FileProps> = ({ input, register }) => {
+const File: React.FC<FileProps> = ({ input, register, errors }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { ref, ...rest } = register(input.id) as {
     ref: (instance: HTMLInputElement | null) => void;
@@ -42,31 +47,41 @@ const InputFile: React.FC<FileProps> = ({ input, register }) => {
   }, []);
 
   return (
-    <InputGroup
-      onClick={() => {
-        inputRef.current?.click();
-      }}
+    <FormControl
+      id={input.id}
+      isInvalid={!!errors?.[input.id]}
+      isRequired={input.required}
     >
-      <InputLeftElement pointerEvents="none" children={<Icon as={FiFile} />} />
-      <Input
-        type="file"
-        {...rest}
-        ref={(e) => {
-          ref(e);
-          inputRef.current = e;
+      <FormLabel>{input.label}</FormLabel>
+      <InputGroup
+        onClick={() => {
+          inputRef.current?.click();
         }}
-        hidden
-      />
-      <Input
-        type="text"
-        cursor="pointer"
-        placeholder={
-          haveFile ? inputRef.current?.files?.[0].name : input.placeholder
-        }
-        readOnly
-      />
-    </InputGroup>
+      >
+        <InputLeftElement pointerEvents="none">
+          <Icon as={FiFile} />
+        </InputLeftElement>
+        <Input
+          type="file"
+          {...rest}
+          ref={(e) => {
+            ref(e);
+            inputRef.current = e;
+          }}
+          hidden
+        />
+        <Input
+          type="text"
+          cursor="pointer"
+          placeholder={
+            haveFile ? inputRef.current?.files?.[0].name : input.placeholder
+          }
+          readOnly
+        />
+      </InputGroup>
+      <ErrorMessage error={errors?.[input.id]} />
+    </FormControl>
   );
 };
 
-export default InputFile;
+export default File;

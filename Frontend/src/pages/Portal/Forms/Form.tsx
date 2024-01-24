@@ -16,47 +16,100 @@ import {
   Spinner,
   useToast,
 } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
 import { createOrUpdateForm, getForm, getFormForms } from "@apis/form";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import FieldArray from "@components/molecules/FieldArray";
+import getTemplate from "./templates";
+import { FaPlus } from "react-icons/fa";
 
-const formSchema = z.object({
-  name: z.string(),
-  status: z.enum(["draft", "published"]).default("draft"),
-  initial_status: z.string().optional(),
-  type: z.enum(["created", "interaction", "available"]),
-  period: z.object({ open: z.string(), close: z.string() }).optional(),
-  description: z.string().max(255),
-  fields: z
-    .array(
-      z.object({
-        name: z.string(),
-        type: z.enum([
-          "text",
-          "number",
-          "email",
-          "password",
-          "textarea",
-          "checkbox",
-          "radio",
-          "select",
-          "date",
-          "file",
-          "teachers",
-        ]),
-        required: z.boolean().optional(),
-        value: z.string().optional(),
-        visible: z.boolean(),
-        options: z
-          .array(z.object({ label: z.string(), value: z.string() }))
-          .optional(),
+const formSchema = z
+  .object({
+    name: z.string(),
+    slug: z
+      .string()
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+        message: "Slug inválido, utilize apenas letras e números e -",
       })
-    )
-    .min(1, "É necessário ter pelo menos um campo"),
-});
+      .min(3),
+    status: z.enum(["draft", "published"]).default("draft"),
+    initial_status: z.string().optional(),
+    type: z.enum(["created", "interaction", "available"]),
+    workflow: z.string().optional(),
+    period: z.object({
+      open: z.string().nullable(),
+      close: z.string().nullable(),
+    }),
+    description: z.string().max(255),
+    fields: z
+      .array(
+        z.object({
+          id: z.string(),
+          label: z.string(),
+          placeholder: z.string().optional(),
+          type: z.enum([
+            "text",
+            "number",
+            "email",
+            "password",
+            "textarea",
+            "checkbox",
+            "radio",
+            "select",
+            "multiselect",
+            "date",
+            "file",
+          ]),
+          required: z.boolean().optional(),
+          value: z.string().optional().nullable(),
+          visible: z.boolean(),
+          system: z.boolean().optional(),
+          predefined: z
+            .enum(["teachers", "students", "institutions"])
+            .nullable()
+            .default(null),
+          options: z
+            .array(z.object({ label: z.string(), value: z.string() }))
+            .optional(),
+        })
+      )
+      .min(1, "É necessário ter pelo menos um campo"),
+  })
+  .refine(
+    (data) => {
+      if (data.type === "created") {
+        return !!data.workflow;
+      }
+      return true;
+    },
+    {
+      message: "É necessário selecionar um workflow",
+      path: ["workflow"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.type === "created") {
+        return !!data.initial_status;
+      }
+      return true;
+    },
+    {
+      message: "É necessário selecionar um status inicial",
+      path: ["initial_status"],
+    }
+  )
+  .refine((data) => {
+    const selectFields = data.fields.filter((field) =>
+      ["select", "multiselect"].includes(field.type)
+    );
+
+    return selectFields.every(
+      (field) => field?.predefined ?? field.options?.length
+    );
+  });
 
 export type formFormSchema = z.infer<typeof formSchema>;
 
@@ -65,6 +118,9 @@ export default function Form() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+
+  const type = searchParams.get("type");
 
   const isEditing = !!params?.id;
   const id = params?.id ?? "";
@@ -98,7 +154,7 @@ export default function Form() {
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} status`,
+        title: `Erro ao ${isEditing ? "editar" : "criar"} formulário`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -117,15 +173,16 @@ export default function Form() {
     formState: { errors },
   } = useForm<formFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: form ?? {},
+    defaultValues: form ?? getTemplate(type),
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, insert, remove, swap } = useFieldArray({
     control,
     name: "fields",
   });
 
-  const isCreated = watch("type") === "created";
+  const formType = watch("type");
+  const isCreated = formType === "created";
 
   const onSubmit = handleSubmit(async (data) => {
     await mutateAsync(isEditing ? { ...data, _id: id } : data);
@@ -159,7 +216,7 @@ export default function Form() {
         borderRadius={8}
         h="fit-content"
         w="100%"
-        maxW="600px"
+        maxW="1000px"
       >
         <CardHeader>
           <Box textAlign="center" fontSize="lg" fontWeight="bold">
@@ -178,22 +235,49 @@ export default function Form() {
             errors={errors}
           />
 
-          {isEditing && (
-            <Select
-              input={{
-                id: "status",
-                label: "Status",
-                placeholder: "Status",
-                required: true,
-                options: [
-                  { label: "Rascunho", value: "draft" },
-                  { label: "Publicado", value: "published" },
-                ],
-              }}
-              control={control}
-              errors={errors}
-            />
-          )}
+          <Text
+            input={{
+              id: "slug",
+              label: "Digite um sluf único para o formulário",
+              placeholder: "Slug",
+              required: true,
+            }}
+            register={register}
+            errors={errors}
+          />
+
+          <Flex gap="4">
+            {isEditing && (
+              <Select
+                input={{
+                  id: "status",
+                  label: "Status",
+                  placeholder: "Status",
+                  required: true,
+                  options: [
+                    { label: "Rascunho", value: "draft" },
+                    { label: "Publicado", value: "published" },
+                  ],
+                }}
+                control={control}
+                errors={errors}
+              />
+            )}
+
+            {isCreated && (
+              <Select
+                input={{
+                  id: "workflow",
+                  label: "Workflow",
+                  placeholder: "Workflow Acionado",
+                  required: true,
+                  options: formsData?.workflows ?? [],
+                }}
+                control={control}
+                errors={errors}
+              />
+            )}
+          </Flex>
 
           <Flex gap="4">
             <Select
@@ -203,10 +287,11 @@ export default function Form() {
                 placeholder: "Tipo",
                 required: true,
                 options: [
-                  { label: "Criado", value: "created" },
-                  { label: "Interativo", value: "interaction" },
-                  { label: "Disponível", value: "available" },
+                  { label: "Criação de Atividade", value: "created" },
+                  { label: "Interação com Atividade", value: "interaction" },
+                  { label: "Avaliação de Atividade", value: "available" },
                 ],
+                isDisabled: true,
               }}
               control={control}
               errors={errors}
@@ -262,36 +347,57 @@ export default function Form() {
             />
           </Flex>
 
-          <Heading size="md">Campos</Heading>
+          <Heading size="md">Campos do formulário</Heading>
           <Divider />
 
           {fields.map((field, index) => (
-            <FieldArray
-              field={field}
-              index={index}
-              register={register}
-              control={control}
-              remove={remove}
-              errors={errors}
-              haveOptions={["select", "radio", "checkbox"].includes(watch(`fields.${index}.type`))}
-            />
+            <Flex key={field.id} direction="column" gap="4">
+              <FieldArray
+                field={field}
+                index={index}
+                register={register}
+                control={control}
+                remove={remove}
+                errors={errors}
+                swap={swap}
+                haveOptions={[
+                  "select",
+                  "multiselect",
+                  "radio",
+                  "checkbox",
+                ].includes(watch(`fields.${index}.type`))}
+                isSelect={["select", "multiselect"].includes(
+                  watch(`fields.${index}.type`)
+                )}
+                isPredefined={!!watch(`fields.${index}.predefined`)}
+              />
+              <Button
+                type="button"
+                onClick={() =>
+                  insert(
+                    index + 1,
+                    {
+                      id: `field-${fields.length}`,
+                      label: "",
+                      placeholder: "",
+                      type: "text",
+                      required: false,
+                      value: "",
+                      visible: true,
+                      predefined: null,
+                    },
+                    { shouldFocus: true }
+                  )
+                }
+                colorScheme="blue"
+                mx="auto"
+                size="sm"
+                variant="outline"
+              >
+                <FaPlus />
+              </Button>
+            </Flex>
           ))}
-
-          <Button
-            type="button"
-            onClick={() =>
-              append({
-                name: "",
-                type: "text",
-                required: false,
-                value: "",
-                visible: true,
-              })
-            }
-            colorScheme="blue"
-          >
-            Adicionar campo
-          </Button>
 
           <Flex mt="8" justify="flex-end" gap="4">
             <Button

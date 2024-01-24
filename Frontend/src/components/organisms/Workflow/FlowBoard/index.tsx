@@ -19,7 +19,7 @@ import "reactflow/dist/style.css";
 import NodeTypes from "@components/atoms/Workflow/Nodes";
 import EdgeTypes from "@components/atoms/Workflow/Edges";
 import FlowPanel from "@components/molecules/Workflow/FlowPanel";
-import FlowHeader from "@components/molecules/Workflow/FlowHeader";
+import FlowHeader from "@components/organisms/Workflow/FlowHeader";
 import { createOrUpdateWorkflow, getWorkflow } from "@apis/workflows";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
@@ -69,7 +69,7 @@ interface FlowBoardProps {
   isView?: boolean;
 }
 
-const FlowBoard: React.FC<FlowBoardProps> = ({ isView }) => {
+const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
   const queryClient = useQueryClient();
   const params = useParams<{ id?: string }>();
   const id = params?.id ?? "";
@@ -241,7 +241,6 @@ const FlowBoard: React.FC<FlowBoardProps> = ({ isView }) => {
       </ReactFlow>
     </div>
   );
-};
+});
 
-const FlowBoardMemo = memo(FlowBoard);
-export default FlowBoardMemo;
+export default FlowBoard;
