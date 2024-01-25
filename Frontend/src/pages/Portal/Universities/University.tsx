@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -68,16 +68,16 @@ export default function University() {
     },
   });
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<UniversityFormInputs>({
+  const methods = useForm<UniversityFormInputs>({
     resolver: zodResolver(universitySchema),
     defaultValues: university ?? {},
   });
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     await mutateAsync(isEditing ? { ...data, _id: id } : data);
@@ -97,68 +97,62 @@ export default function University() {
 
   return (
     <Flex w="100%" my="6" mx="auto" px="6" justify="center">
-      <Card
-        as="form"
-        onSubmit={onSubmit}
-        borderRadius={8}
-        h="fit-content"
-        w="100%"
-        maxW="600px"
-      >
-        <CardHeader>
-          <Box textAlign="center" fontSize="lg" fontWeight="bold">
-            {isEditing ? "Editar" : "Criar"} Universidade
-          </Box>
-        </CardHeader>
-        <CardBody display="flex" flexDirection="column" gap="4">
-          <Text
-            input={{
-              id: "name",
-              label: "Nome",
-              placeholder: "Nome",
-              required: true,
-            }}
-            register={register}
-            errors={errors}
-          />
+      <FormProvider {...methods}>
+        <Card
+          as="form"
+          onSubmit={onSubmit}
+          borderRadius={8}
+          h="fit-content"
+          w="100%"
+          maxW="600px"
+        >
+          <CardHeader>
+            <Box textAlign="center" fontSize="lg" fontWeight="bold">
+              {isEditing ? "Editar" : "Criar"} Universidade
+            </Box>
+          </CardHeader>
+          <CardBody display="flex" flexDirection="column" gap="4">
+            <Text
+              input={{
+                id: "name",
+                label: "Nome",
+                placeholder: "Nome",
+                required: true,
+              }}
+            />
 
-          <Text
-            input={{
-              id: "acronym",
-              label: "Sigla",
-              placeholder: "Sigla",
-              required: true,
-            }}
-            register={register}
-            errors={errors}
-          />
+            <Text
+              input={{
+                id: "acronym",
+                label: "Sigla",
+                placeholder: "Sigla",
+                required: true,
+              }}
+            />
 
-          <Switch
-            input={{ id: "active", label: "Ativo" }}
-            control={control}
-            errors={errors}
-          />
+            <Switch input={{ id: "active", label: "Ativo" }} />
 
-          <Flex mt="8" justify="flex-end" gap="4">
-            <Button
-              mt={4}
-              colorScheme="gray"
-              variant="outline"
-              onClick={handleCancel}
-            >
-              Cancelar
-            </Button>
-            <Button
-              mt={4}
-              colorScheme="blue"
-              isLoading={isPending || isLoading}
-              type="submit"
-            >
-              {isEditing ? "Editar" : "Criar"}
-            </Button>
-          </Flex>
-        </CardBody>
-      </Card>
+            <Flex mt="8" justify="flex-end" gap="4">
+              <Button
+                mt={4}
+                colorScheme="gray"
+                variant="outline"
+                onClick={handleCancel}
+              >
+                Cancelar
+              </Button>
+              <Button
+                mt={4}
+                colorScheme="blue"
+                isLoading={isPending || isLoading}
+                type="submit"
+              >
+                {isEditing ? "Editar" : "Criar"}
+              </Button>
+            </Flex>
+          </CardBody>
+        </Card>
+      </FormProvider>
     </Flex>
   );
 }

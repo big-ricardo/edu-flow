@@ -1,10 +1,4 @@
 import React, { memo } from "react";
-import {
-  FieldErrors,
-  FieldValues,
-  UseFormRegister,
-  Control,
-} from "react-hook-form";
 import Select from "./Select";
 import TextArea from "./TextArea";
 import File from "./File";
@@ -15,9 +9,6 @@ import { IField } from "@interfaces/Form";
 
 interface Props {
   fields: IField[];
-  register: UseFormRegister<FieldValues>;
-  errors: FieldErrors<FieldValues>;
-  control: Control<FieldValues>;
 }
 
 const fieldComponents: {
@@ -38,25 +29,19 @@ const fieldComponents: {
   default: Text,
 };
 
-const Inputs: React.FC<Props> = memo(
-  ({ fields, register, errors, control }) => {
-    const renderInput = (input: IField) => {
-      const FieldComponent =
-        fieldComponents[input.type as keyof typeof fieldComponents] ||
-        fieldComponents.default;
-      return (
-        <FieldComponent
-          input={input}
-          {...{ register, errors, control }}
-          isMulti={input.type === "multiselect"}
-        />
-      );
-    };
+const Inputs: React.FC<Props> = memo(({ fields }) => {
+  const renderInput = (input: IField) => {
+    const FieldComponent =
+      fieldComponents[input.type as keyof typeof fieldComponents] ||
+      fieldComponents.default;
+    return (
+      <FieldComponent input={input} isMulti={input.type === "multiselect"} />
+    );
+  };
 
-    return fields.map((input: IField) => (
-      <React.Fragment key={input.id}>{renderInput(input)}</React.Fragment>
-    ));
-  }
-);
+  return fields.map((input: IField) => (
+    <React.Fragment key={input.id}>{renderInput(input)}</React.Fragment>
+  ));
+});
 
 export default Inputs;

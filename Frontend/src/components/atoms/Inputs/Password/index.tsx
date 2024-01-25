@@ -1,11 +1,6 @@
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  IconButton,
-} from "@chakra-ui/react";
+import { FormControl, FormLabel, Input, IconButton } from "@chakra-ui/react";
 import React, { useCallback } from "react";
-import { UseFormRegister, FieldErrors, FieldValues } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import ErrorMessage from "../ErrorMessage";
 
@@ -16,11 +11,14 @@ interface TextProps {
     placeholder?: string;
     required?: boolean;
   };
-  register: UseFormRegister<any>;
-  errors: FieldErrors<FieldValues>;
 }
 
-const Password: React.FC<TextProps> = ({ register, errors, input }) => {
+const Password: React.FC<TextProps> = ({ input }) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handlePasswordVisibility = useCallback(

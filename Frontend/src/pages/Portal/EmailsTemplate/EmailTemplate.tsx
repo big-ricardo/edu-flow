@@ -4,7 +4,7 @@ import MdxEditor from "@components/organisms/EmailTemplate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import React, { useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { createOrUpdateEmail, getEmail } from "@apis/email";
@@ -64,14 +64,15 @@ const EmailTemplate: React.FC = () => {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EmailFormSchema>({
+  const methods = useForm<EmailFormSchema>({
     resolver: zodResolver(emailSchema),
     defaultValues: email ?? {},
   });
+
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods;
 
   const onSave = useCallback(
     async (htmlTemplate: string) => {
@@ -90,43 +91,41 @@ const EmailTemplate: React.FC = () => {
 
   return (
     <Flex justify="center" align="center" w="100%">
-      <Box w="100%" h="100%" p="4">
-        <Heading size="md" mb="5">
-          {isEditing ? "Editar" : "Criar"} Email
-        </Heading>
+      <FormProvider {...methods}>
+        <Box w="100%" h="100%" p="4">
+          <Heading size="md" mb="5">
+            {isEditing ? "Editar" : "Criar"} Email
+          </Heading>
 
-        <Text
-          input={{
-            id: "slug",
-            label: "Slug",
-            placeholder: "Insira um nome de identificação",
-          }}
-          register={register}
-          errors={errors}
-        />
+          <Text
+            input={{
+              id: "slug",
+              label: "Slug",
+              placeholder: "Insira um nome de identificação",
+            }}
+          />
 
-        <Text
-          input={{
-            id: "subject",
-            label: "Assunto",
-            placeholder: "Insira um assunto pro email",
-          }}
-          register={register}
-          errors={errors}
-        />
+          <Text
+            input={{
+              id: "subject",
+              label: "Assunto",
+              placeholder: "Insira um assunto pro email",
+            }}
+          />
 
-        <Box mt="4">
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <MdxEditor
-              onSave={onSave}
-              data={email?.htmlTemplate}
-              isPending={isPending}
-            />
-          )}
+          <Box mt="4">
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <MdxEditor
+                onSave={onSave}
+                data={email?.htmlTemplate}
+                isPending={isPending}
+              />
+            )}
+          </Box>
         </Box>
-      </Box>
+      </FormProvider>
     </Flex>
   );
 };

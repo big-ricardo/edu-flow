@@ -6,7 +6,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import React from "react";
-import { FieldValues, FieldErrors, Controller, Control } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 
 type IOption = { value: string; label: string };
@@ -20,11 +20,14 @@ interface RadioProps {
     required?: boolean;
     options: IOption[];
   };
-  control: Control;
-  errors: FieldErrors<FieldValues>;
 }
 
-const Radio: React.FC<RadioProps> = ({ control, errors, input }) => {
+const Radio: React.FC<RadioProps> = ({ input }) => {
+  const {
+    formState: { errors },
+    control,
+  } = useFormContext();
+
   return (
     <FormControl
       id={input.id}

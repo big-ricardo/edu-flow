@@ -1,11 +1,7 @@
 import { FormControl, FormLabel, Input } from "@chakra-ui/react";
 import React from "react";
 import ErrorMessage from "../ErrorMessage";
-import {
-  UseFormRegister,
-  FieldValues,
-  FieldErrors,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 interface TextProps {
   input: {
@@ -16,11 +12,14 @@ interface TextProps {
     type?: string;
     isDisabled?: boolean;
   };
-  register: UseFormRegister,
-  errors: FieldErrors<FieldValues>;
 }
 
-const Text: React.FC<TextProps> = ({ register, errors, input }) => {
+const Text: React.FC<TextProps> = ({ input }) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+
   return (
     <FormControl
       id={input.id}

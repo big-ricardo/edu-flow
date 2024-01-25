@@ -1,7 +1,7 @@
 import { FormControl, FormLabel, useColorMode } from "@chakra-ui/react";
 import React, { useCallback, useMemo } from "react";
 import ErrorMessage from "../ErrorMessage";
-import { FieldValues, FieldErrors, Control, Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import ReactSelect, { StylesConfig } from "react-select";
 
 interface SelectProps {
@@ -15,20 +15,17 @@ interface SelectProps {
       | { value: string; label: string }[]
       | { label: string; options: { value: string; label: string }[] }[];
   };
-  errors: FieldErrors<FieldValues>;
-  control: Control<any>;
   isMulti?: boolean;
   isLoading?: boolean;
 }
 
-const Select: React.FC<SelectProps> = ({
-  errors,
-  input,
-  control,
-  isMulti,
-  isLoading,
-}) => {
+const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
   const { colorMode } = useColorMode();
+
+  const {
+    formState: { errors },
+    control,
+  } = useFormContext();
 
   const borderColor = colorMode === "light" ? "#cbd5e0" : "#4a5568";
   const backgroundColor = colorMode === "light" ? "#fff" : "#2D3748";

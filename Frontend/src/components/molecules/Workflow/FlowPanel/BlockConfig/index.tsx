@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { NodeTypes } from "@interfaces/Workflow";
 import React, { useCallback } from "react";
 import Select from "@components/atoms/Inputs/Select";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { Button, Flex, Spinner } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Text from "@components/atoms/Inputs/Text";
@@ -17,16 +17,12 @@ interface BlockConfigProps {
 }
 
 const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<BlockFormInputs>({
+  const methods = useForm<BlockFormInputs>({
     defaultValues: data,
     resolver: zodResolver(nodesSchema[type]),
   });
+
+  const { handleSubmit, reset } = methods;
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
     queryKey: ["workflows", "forms"],
@@ -55,8 +51,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 placeholder: "Nome do bloco",
                 required: true,
               }}
-              register={register}
-              errors={errors}
             />
             <Select
               input={{
@@ -66,8 +60,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 options: formsData?.users ?? [],
                 required: true,
               }}
-              control={control}
-              errors={errors}
               isMulti
             />
             <Select
@@ -78,8 +70,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 options: formsData?.emails ?? [],
                 required: true,
               }}
-              control={control}
-              errors={errors}
             />
             <Switch
               input={{
@@ -87,8 +77,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 id: "visible",
                 required: true,
               }}
-              control={control}
-              errors={errors}
             />
           </>
         );
@@ -102,8 +90,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 placeholder: "Nome do bloco",
                 required: true,
               }}
-              register={register}
-              errors={errors}
             />
             <Select
               input={{
@@ -113,8 +99,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 options: formsData?.statuses ?? [],
                 required: true,
               }}
-              control={control}
-              errors={errors}
             />
             <Switch
               input={{
@@ -122,8 +106,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 id: "visible",
                 required: true,
               }}
-              control={control}
-              errors={errors}
             />
           </>
         );
@@ -136,8 +118,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
               placeholder: "Nome do Workflow",
               required: true,
             }}
-            register={register}
-            errors={errors}
           />
         );
       case NodeTypes.SwapWorkflow:
@@ -150,8 +130,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 placeholder: "Nome do bloco",
                 required: true,
               }}
-              register={register}
-              errors={errors}
             />
             <Select
               input={{
@@ -161,8 +139,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 options: formsData?.workflows ?? [],
                 required: true,
               }}
-              control={control}
-              errors={errors}
             />
             <Switch
               input={{
@@ -170,24 +146,24 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 id: "visible",
                 required: true,
               }}
-              control={control}
-              errors={errors}
             />
           </>
         );
       default:
         return <h1>Default</h1>;
     }
-  }, [type, formsData, register, control, errors]);
+  }, [type, formsData]);
 
   return (
     <Flex direction="column" justify="space-between" h="100%">
       {isLoadingForms ? (
         <Spinner />
       ) : (
-        <Flex justify="start" gap={5} direction="column">
-          <RenderInputs />
-        </Flex>
+        <FormProvider {...methods}>
+          <Flex justify="start" gap={5} direction="column">
+            <RenderInputs />
+          </Flex>
+        </FormProvider>
       )}
       <Flex justify="flex-end" mb={5}>
         <Button mr={3} onClick={onCancel}>

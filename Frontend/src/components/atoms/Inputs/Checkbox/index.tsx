@@ -4,7 +4,7 @@ import {
   Checkbox as CheckboxChackra,
 } from "@chakra-ui/react";
 import React from "react";
-import { FieldValues, FieldErrors, Controller, Control } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 
 interface CheckboxProps {
@@ -13,11 +13,14 @@ interface CheckboxProps {
     label: string;
     required?: boolean;
   };
-  control: Control<any>;
-  errors: FieldErrors<FieldValues>;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ control, errors, input }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ input }) => {
+  const {
+    formState: { errors },
+    control,
+  } = useFormContext();
+
   return (
     <FormControl
       id={input.id}

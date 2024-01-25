@@ -50,10 +50,7 @@ const predefinedOptions = Object.entries(predefinedTypes).map(
 interface FieldFormsProps {
   field: FieldArrayWithId<formFormSchema, "fields", "id">;
   index: number;
-  register: UseFormRegister<formFormSchema>;
-  control: Control<formFormSchema>;
   remove: UseFieldArrayRemove;
-  errors: FieldErrors<FieldValues>;
   haveOptions: boolean;
   isSelect: boolean;
   isPredefined?: boolean | null;
@@ -61,18 +58,7 @@ interface FieldFormsProps {
 }
 
 const FieldArray: React.FC<FieldFormsProps> = memo(
-  ({
-    field,
-    index,
-    register,
-    control,
-    remove,
-    errors,
-    haveOptions,
-    isSelect,
-    isPredefined,
-    swap,
-  }) => {
+  ({ field, index, remove, haveOptions, isSelect, isPredefined, swap }) => {
     const border = useColorModeValue("gray.200", "gray.600");
 
     return (
@@ -135,8 +121,6 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
                 label: "Campo obrigatório",
                 required: false,
               }}
-              control={control}
-              errors={errors}
             />
 
             <Switch
@@ -145,8 +129,6 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
                 label: "Visivel para o usuário",
                 required: false,
               }}
-              control={control}
-              errors={errors}
             />
           </Flex>
         )}
@@ -158,8 +140,6 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
             placeholder: "Identificação",
             isDisabled: field.system,
           }}
-          register={register}
-          errors={errors}
         />
 
         <Flex direction={["column", "row"]} gap={4}>
@@ -170,8 +150,6 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               placeholder: "Label",
               required: true,
             }}
-            register={register}
-            errors={errors}
           />
 
           <Text
@@ -181,8 +159,6 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               placeholder: "Placeholder",
               required: false,
             }}
-            register={register}
-            errors={errors}
           />
         </Flex>
 
@@ -196,8 +172,6 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               options: fieldOptions,
               isDisabled: field.system,
             }}
-            control={control}
-            errors={errors}
           />
 
           {isSelect && (
@@ -210,20 +184,11 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
                 options: predefinedOptions,
                 isDisabled: field.system,
               }}
-              control={control}
-              errors={errors}
             />
           )}
         </Flex>
 
-        {haveOptions && !isPredefined && (
-          <FieldArrayOption
-            index={index}
-            register={register}
-            control={control}
-            errors={errors}
-          />
-        )}
+        {haveOptions && !isPredefined && <FieldArrayOption index={index} />}
       </Flex>
     );
   }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -109,17 +109,17 @@ export default function User() {
     },
   });
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm<UniversityFormInputs>({
+  const methods = useForm<UniversityFormInputs>({
     resolver: zodResolver(Schema),
     defaultValues: institute ?? {},
   });
+
+  const {
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = methods;
 
   const isTeacher = watch("role") === "teacher";
 
@@ -141,161 +141,141 @@ export default function User() {
 
   return (
     <Flex w="100%" my="6" mx="auto" px="6" justify="center">
-      <Card
-        as="form"
-        onSubmit={onSubmit}
-        borderRadius={8}
-        h="fit-content"
-        w="100%"
-        maxW="1000px"
-      >
-        <CardHeader>
-          <Box textAlign="center" fontSize="lg" fontWeight="bold">
-            {isEditing ? "Editar" : "Criar"} Instituto
-          </Box>
-        </CardHeader>
-        <CardBody display="flex" flexDirection="column" gap="4">
-          <Flex justify="space-between" gap="4" direction={["column", "row"]}>
-            <Text
-              input={{
-                id: "name",
-                label: "Nome",
-                placeholder: "Nome",
-                required: true,
-              }}
-              register={register}
-              errors={errors}
-            />
-            <Switch
-              input={{ id: "active", label: "Ativo" }}
-              control={control}
-              errors={errors}
-            />
-          </Flex>
-          <Flex justify="space-between" gap="4" direction={["column", "row"]}>
-            <Text
-              input={{
-                id: "matriculation",
-                label: "Matrícula",
-                placeholder: "Matrícula",
-                required: true,
-              }}
-              register={register}
-              errors={errors}
-            />
-            <Select
-              input={{
-                id: "role",
-                label: "Perfil",
-                placeholder: "Perfil",
-                required: true,
-                options: formsData?.roles ?? [],
-              }}
-              control={control}
-              errors={errors}
-              isLoading={isLoadingForms}
-            />
-            <Select
-              input={{
-                id: "institute",
-                label: "Instituto",
-                placeholder: "Instituto",
-                required: true,
-                options: formsData?.institutes ?? [],
-              }}
-              control={control}
-              errors={errors}
-              isLoading={isLoadingForms}
-            />
-          </Flex>
-          <Flex justify="space-between" gap="4" direction={["column", "row"]}>
-            <Text
-              input={{
-                id: "email",
-                label: "Email",
-                placeholder: "Email",
-                required: true,
-              }}
-              register={register}
-              errors={errors}
-            />
-
-            <Text
-              input={{
-                id: "cpf",
-                label: "CPF",
-                placeholder: "CPF",
-                required: true,
-              }}
-              register={register}
-              errors={errors}
-            />
-
-            {isTeacher && (
+      <FormProvider {...methods}>
+        <Card
+          as="form"
+          onSubmit={onSubmit}
+          borderRadius={8}
+          h="fit-content"
+          w="100%"
+          maxW="1000px"
+        >
+          <CardHeader>
+            <Box textAlign="center" fontSize="lg" fontWeight="bold">
+              {isEditing ? "Editar" : "Criar"} Instituto
+            </Box>
+          </CardHeader>
+          <CardBody display="flex" flexDirection="column" gap="4">
+            <Flex justify="space-between" gap="4" direction={["column", "row"]}>
+              <Text
+                input={{
+                  id: "name",
+                  label: "Nome",
+                  placeholder: "Nome",
+                  required: true,
+                }}
+              />
+              <Switch input={{ id: "active", label: "Ativo" }} />
+            </Flex>
+            <Flex justify="space-between" gap="4" direction={["column", "row"]}>
+              <Text
+                input={{
+                  id: "matriculation",
+                  label: "Matrícula",
+                  placeholder: "Matrícula",
+                  required: true,
+                }}
+              />
               <Select
                 input={{
-                  id: "university_degree",
-                  label: "Titulação",
-                  placeholder: "Titulação",
-                  options: [
-                    {
-                      label: "Mestrado",
-                      value: "mastermind",
-                    },
-                    {
-                      label: "Doutorado",
-                      value: "doctor",
-                    },
-                  ],
+                  id: "role",
+                  label: "Perfil",
+                  placeholder: "Perfil",
+                  required: true,
+                  options: formsData?.roles ?? [],
                 }}
-                control={control}
-                errors={errors}
+                isLoading={isLoadingForms}
               />
-            )}
-          </Flex>
+              <Select
+                input={{
+                  id: "institute",
+                  label: "Instituto",
+                  placeholder: "Instituto",
+                  required: true,
+                  options: formsData?.institutes ?? [],
+                }}
+                isLoading={isLoadingForms}
+              />
+            </Flex>
+            <Flex justify="space-between" gap="4" direction={["column", "row"]}>
+              <Text
+                input={{
+                  id: "email",
+                  label: "Email",
+                  placeholder: "Email",
+                  required: true,
+                }}
+              />
 
-          <Flex justify="space-between" gap="4" direction={["column", "row"]}>
-            <Password
-              input={{
-                id: "password",
-                label: "Senha",
-                placeholder: "Senha",
-              }}
-              register={register}
-              errors={errors}
-            />
+              <Text
+                input={{
+                  id: "cpf",
+                  label: "CPF",
+                  placeholder: "CPF",
+                  required: true,
+                }}
+              />
 
-            <Password
-              input={{
-                id: "confirmPassword",
-                label: "Confirmar Senha",
-                placeholder: "Confirmar Senha",
-              }}
-              register={register}
-              errors={errors}
-            />
-          </Flex>
+              {isTeacher && (
+                <Select
+                  input={{
+                    id: "university_degree",
+                    label: "Titulação",
+                    placeholder: "Titulação",
+                    options: [
+                      {
+                        label: "Mestrado",
+                        value: "mastermind",
+                      },
+                      {
+                        label: "Doutorado",
+                        value: "doctor",
+                      },
+                    ],
+                  }}
+                />
+              )}
+            </Flex>
 
-          <Flex mt="8" justify="flex-end" gap="4">
-            <Button
-              mt={4}
-              colorScheme="gray"
-              variant="outline"
-              onClick={handleCancel}
-            >
-              Cancelar
-            </Button>
-            <Button
-              mt={4}
-              colorScheme="blue"
-              isLoading={isPending || isLoading}
-              type="submit"
-            >
-              {isEditing ? "Editar" : "Criar"}
-            </Button>
-          </Flex>
-        </CardBody>
-      </Card>
+            <Flex justify="space-between" gap="4" direction={["column", "row"]}>
+              <Password
+                input={{
+                  id: "password",
+                  label: "Senha",
+                  placeholder: "Senha",
+                }}
+              />
+
+              <Password
+                input={{
+                  id: "confirmPassword",
+                  label: "Confirmar Senha",
+                  placeholder: "Confirmar Senha",
+                }}
+              />
+            </Flex>
+
+            <Flex mt="8" justify="flex-end" gap="4">
+              <Button
+                mt={4}
+                colorScheme="gray"
+                variant="outline"
+                onClick={handleCancel}
+              >
+                Cancelar
+              </Button>
+              <Button
+                mt={4}
+                colorScheme="blue"
+                isLoading={isPending || isLoading}
+                type="submit"
+              >
+                {isEditing ? "Editar" : "Criar"}
+              </Button>
+            </Flex>
+          </CardBody>
+        </Card>
+      </FormProvider>
     </Flex>
   );
 }

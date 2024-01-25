@@ -4,7 +4,7 @@ import {
   Switch as SwitchChackra,
 } from "@chakra-ui/react";
 import React from "react";
-import { FieldValues, FieldErrors, Controller, Control } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 
 interface SwitchProps {
@@ -13,11 +13,14 @@ interface SwitchProps {
     label: string;
     required?: boolean;
   };
-  control: Control<any>;
-  errors: FieldErrors<FieldValues>;
 }
 
-const Switch: React.FC<SwitchProps> = ({ control, errors, input }) => {
+const Switch: React.FC<SwitchProps> = ({ input }) => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
+
   return (
     <FormControl
       id={input.id}
@@ -32,7 +35,12 @@ const Switch: React.FC<SwitchProps> = ({ control, errors, input }) => {
           name={input.id}
           control={control}
           render={({ field: { onChange, value } }) => (
-            <SwitchChackra onChange={onChange} isChecked={value} ml={2} defaultChecked/>
+            <SwitchChackra
+              onChange={onChange}
+              isChecked={value}
+              ml={2}
+              defaultChecked
+            />
           )}
           rules={{ required: !!input.required }}
         />

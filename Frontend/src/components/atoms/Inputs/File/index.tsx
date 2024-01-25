@@ -7,7 +7,7 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 import React, { useRef, useEffect } from "react";
-import { UseFormRegister, FieldValues, FieldErrors } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { FiFile } from "react-icons/fi";
 import ErrorMessage from "../ErrorMessage";
 
@@ -18,11 +18,14 @@ interface FileProps {
     placeholder?: string;
     required?: boolean;
   };
-  errors: FieldErrors<FieldValues>;
-  register: UseFormRegister<FieldValues>;
 }
 
-const File: React.FC<FileProps> = ({ input, register, errors }) => {
+const File: React.FC<FileProps> = ({ input }) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { ref, ...rest } = register(input.id) as {
     ref: (instance: HTMLInputElement | null) => void;

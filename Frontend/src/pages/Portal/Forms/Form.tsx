@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -164,17 +164,18 @@ export default function Form() {
     },
   });
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm<formFormSchema>({
+  const methods = useForm<formFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: form ?? getTemplate(type),
   });
+
+  const {
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    formState: { errors, isDirty },
+  } = methods;
 
   const { fields, insert, remove, swap } = useFieldArray({
     control,
@@ -210,215 +211,197 @@ export default function Form() {
 
   return (
     <Flex w="100%" my="6" mx="auto" px="6" justify="center">
-      <Card
-        as="form"
-        onSubmit={onSubmit}
-        borderRadius={8}
-        h="fit-content"
-        w="100%"
-        maxW="1000px"
-      >
-        <CardHeader>
-          <Box textAlign="center" fontSize="lg" fontWeight="bold">
-            {isEditing ? "Editar" : "Criar"} Formulário
-          </Box>
-        </CardHeader>
-        <CardBody display="flex" flexDirection="column" gap="4">
-          <Text
-            input={{
-              id: "name",
-              label: "Nome",
-              placeholder: "Nome",
-              required: true,
-            }}
-            register={register}
-            errors={errors}
-          />
+      <FormProvider {...methods}>
+        <Card
+          as="form"
+          onSubmit={onSubmit}
+          borderRadius={8}
+          h="fit-content"
+          w="100%"
+          maxW="1000px"
+        >
+          <CardHeader>
+            <Box textAlign="center" fontSize="lg" fontWeight="bold">
+              {isEditing ? "Editar" : "Criar"} Formulário
+            </Box>
+          </CardHeader>
+          <CardBody display="flex" flexDirection="column" gap="4">
+            <Text
+              input={{
+                id: "name",
+                label: "Nome",
+                placeholder: "Nome",
+                required: true,
+              }}
+            />
 
-          <Text
-            input={{
-              id: "slug",
-              label: "Digite um sluf único para o formulário",
-              placeholder: "Slug",
-              required: true,
-            }}
-            register={register}
-            errors={errors}
-          />
+            <Text
+              input={{
+                id: "slug",
+                label: "Digite um sluf único para o formulário",
+                placeholder: "Slug",
+                required: true,
+              }}
+            />
 
-          <Flex gap="4">
-            {isEditing && (
+            <Flex gap="4">
+              {isEditing && (
+                <Select
+                  input={{
+                    id: "status",
+                    label: "Status",
+                    placeholder: "Status",
+                    required: true,
+                    options: [
+                      { label: "Rascunho", value: "draft" },
+                      { label: "Publicado", value: "published" },
+                    ],
+                  }}
+                />
+              )}
+
+              {isCreated && (
+                <Select
+                  input={{
+                    id: "workflow",
+                    label: "Workflow",
+                    placeholder: "Workflow Acionado",
+                    required: true,
+                    options: formsData?.workflows ?? [],
+                  }}
+                />
+              )}
+            </Flex>
+
+            <Flex gap="4">
               <Select
                 input={{
-                  id: "status",
-                  label: "Status",
-                  placeholder: "Status",
+                  id: "type",
+                  label: "Tipo",
+                  placeholder: "Tipo",
                   required: true,
                   options: [
-                    { label: "Rascunho", value: "draft" },
-                    { label: "Publicado", value: "published" },
+                    { label: "Criação de Atividade", value: "created" },
+                    { label: "Interação com Atividade", value: "interaction" },
+                    { label: "Avaliação de Atividade", value: "available" },
                   ],
+                  isDisabled: true,
                 }}
-                control={control}
-                errors={errors}
               />
-            )}
 
-            {isCreated && (
-              <Select
-                input={{
-                  id: "workflow",
-                  label: "Workflow",
-                  placeholder: "Workflow Acionado",
-                  required: true,
-                  options: formsData?.workflows ?? [],
-                }}
-                control={control}
-                errors={errors}
-              />
-            )}
-          </Flex>
+              {isCreated && (
+                <Select
+                  input={{
+                    id: "initial_status",
+                    label: "Status inicial da atividade",
+                    placeholder: "Status inicial",
+                    required: true,
+                    options: formsData?.status ?? [],
+                  }}
+                />
+              )}
+            </Flex>
 
-          <Flex gap="4">
-            <Select
+            <TextArea
               input={{
-                id: "type",
-                label: "Tipo",
-                placeholder: "Tipo",
+                id: "description",
+                label: "Descrição",
+                placeholder: "Descrição",
                 required: true,
-                options: [
-                  { label: "Criação de Atividade", value: "created" },
-                  { label: "Interação com Atividade", value: "interaction" },
-                  { label: "Avaliação de Atividade", value: "available" },
-                ],
-                isDisabled: true,
               }}
-              control={control}
-              errors={errors}
             />
 
-            {isCreated && (
-              <Select
+            <Flex gap="4" mb="5">
+              <Text
                 input={{
-                  id: "initial_status",
-                  label: "Status inicial da atividade",
-                  placeholder: "Status inicial",
-                  required: true,
-                  options: formsData?.status ?? [],
+                  id: "period.open",
+                  label: "Abertura",
+                  placeholder: "Abertura",
+                  type: "date",
                 }}
-                control={control}
-                errors={errors}
               />
-            )}
-          </Flex>
 
-          <TextArea
-            input={{
-              id: "description",
-              label: "Descrição",
-              placeholder: "Descrição",
-              required: true,
-            }}
-            register={register}
-            errors={errors}
-          />
-
-          <Flex gap="4" mb="5">
-            <Text
-              input={{
-                id: "period.open",
-                label: "Abertura",
-                placeholder: "Abertura",
-                type: "date",
-              }}
-              register={register}
-              errors={errors}
-            />
-
-            <Text
-              input={{
-                id: "period.close",
-                label: "Fechamento",
-                placeholder: "Fechamento",
-                type: "date",
-              }}
-              register={register}
-              errors={errors}
-            />
-          </Flex>
-
-          <Heading size="md">Campos do formulário</Heading>
-          <Divider />
-
-          {fields.map((field, index) => (
-            <Flex key={field.id} direction="column" gap="4">
-              <FieldArray
-                field={field}
-                index={index}
-                register={register}
-                control={control}
-                remove={remove}
-                errors={errors}
-                swap={swap}
-                haveOptions={[
-                  "select",
-                  "multiselect",
-                  "radio",
-                  "checkbox",
-                ].includes(watch(`fields.${index}.type`))}
-                isSelect={["select", "multiselect"].includes(
-                  watch(`fields.${index}.type`)
-                )}
-                isPredefined={!!watch(`fields.${index}.predefined`)}
+              <Text
+                input={{
+                  id: "period.close",
+                  label: "Fechamento",
+                  placeholder: "Fechamento",
+                  type: "date",
+                }}
               />
+            </Flex>
+
+            <Heading size="md">Campos do formulário</Heading>
+            <Divider />
+
+            {fields.map((field, index) => (
+              <Flex key={field.id} direction="column" gap="4">
+                <FieldArray
+                  field={field}
+                  index={index}
+                  remove={remove}
+                  swap={swap}
+                  haveOptions={[
+                    "select",
+                    "multiselect",
+                    "radio",
+                    "checkbox",
+                  ].includes(watch(`fields.${index}.type`))}
+                  isSelect={["select", "multiselect"].includes(
+                    watch(`fields.${index}.type`)
+                  )}
+                  isPredefined={!!watch(`fields.${index}.predefined`)}
+                />
+                <Button
+                  type="button"
+                  onClick={() =>
+                    insert(
+                      index + 1,
+                      {
+                        id: `field-${fields.length}`,
+                        label: "",
+                        placeholder: "",
+                        type: "text",
+                        required: false,
+                        value: "",
+                        visible: true,
+                        predefined: null,
+                      },
+                      { shouldFocus: true }
+                    )
+                  }
+                  colorScheme="blue"
+                  mx="auto"
+                  size="sm"
+                  variant="outline"
+                >
+                  <FaPlus />
+                </Button>
+              </Flex>
+            ))}
+
+            <Flex mt="8" justify="flex-end" gap="4">
               <Button
-                type="button"
-                onClick={() =>
-                  insert(
-                    index + 1,
-                    {
-                      id: `field-${fields.length}`,
-                      label: "",
-                      placeholder: "",
-                      type: "text",
-                      required: false,
-                      value: "",
-                      visible: true,
-                      predefined: null,
-                    },
-                    { shouldFocus: true }
-                  )
-                }
-                colorScheme="blue"
-                mx="auto"
-                size="sm"
+                mt={4}
+                colorScheme="gray"
                 variant="outline"
+                onClick={handleCancel}
               >
-                <FaPlus />
+                Cancelar
+              </Button>
+              <Button
+                mt={4}
+                colorScheme="blue"
+                isLoading={isPending || isLoading}
+                type="submit"
+                isDisabled={!isDirty}
+              >
+                {isEditing ? "Editar" : "Criar"}
               </Button>
             </Flex>
-          ))}
-
-          <Flex mt="8" justify="flex-end" gap="4">
-            <Button
-              mt={4}
-              colorScheme="gray"
-              variant="outline"
-              onClick={handleCancel}
-            >
-              Cancelar
-            </Button>
-            <Button
-              mt={4}
-              colorScheme="blue"
-              isLoading={isPending || isLoading}
-              type="submit"
-            >
-              {isEditing ? "Editar" : "Criar"}
-            </Button>
-          </Flex>
-        </CardBody>
-      </Card>
+          </CardBody>
+        </Card>
+      </FormProvider>
     </Flex>
   );
 }
