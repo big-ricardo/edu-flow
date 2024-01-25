@@ -11,7 +11,7 @@ const schemas: NodeSchemas = {
     email: z.string().min(3, { message: "Selecione um template de email" }),
     to: z
       .array(z.string())
-      .min(1, { message: "Selecione peo menos 1 destinatario" }),
+      .min(1, { message: "Selecione pelo menos 1 destinatario" }),
     visible: z.boolean().default(true),
   }),
   [NodeTypes.ChangeStatus]: z.object({
@@ -28,6 +28,12 @@ const schemas: NodeSchemas = {
     name: z.string().min(3, { message: "Nome é obrigatório" }),
     workflow: z.string().min(3, { message: "Selecione um workflow" }),
     visible: z.boolean().default(false),
+  }),
+  [NodeTypes.Interaction]: z.object({
+    name: z.string().min(3, { message: "Nome é obrigatório" }),
+    to: z.string().min(1, { message: "Selecione pelo menos 1 destinatario" }),
+    form: z.string().min(1, { message: "Selecione um formulário" }),
+    visible: z.boolean().default(true),
   }),
 };
 

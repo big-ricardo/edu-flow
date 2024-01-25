@@ -5,12 +5,9 @@ import { formFormSchema } from "@pages/Portal/Forms/Form";
 import { memo } from "react";
 import {
   FieldArrayWithId,
-  UseFormRegister,
-  Control,
   UseFieldArrayRemove,
-  FieldErrors,
-  FieldValues,
   UseFieldArraySwap,
+  useFormContext,
 } from "react-hook-form";
 import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa";
 import FieldArrayOption from "@components/atoms/FieldArrayOption";
@@ -51,15 +48,23 @@ interface FieldFormsProps {
   field: FieldArrayWithId<formFormSchema, "fields", "id">;
   index: number;
   remove: UseFieldArrayRemove;
-  haveOptions: boolean;
-  isSelect: boolean;
-  isPredefined?: boolean | null;
   swap: UseFieldArraySwap;
+  isEnd: boolean;
 }
 
 const FieldArray: React.FC<FieldFormsProps> = memo(
-  ({ field, index, remove, haveOptions, isSelect, isPredefined, swap }) => {
+  ({ field, index, remove, swap, isEnd }) => {
     const border = useColorModeValue("gray.200", "gray.600");
+
+    const { watch } = useFormContext<formFormSchema>();
+
+    const haveOptions = ["select", "multiselect", "radio", "checkbox"].includes(
+      watch(`fields.${index}.type`)
+    );
+    const isSelect = ["select", "multiselect"].includes(
+      watch(`fields.${index}.type`)
+    );
+    const isPredefined = !!watch(`fields.${index}.predefined`);
 
     return (
       <Flex
@@ -97,7 +102,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
             variant="outline"
             size="sm"
             onClick={() => swap(index, index + 1)}
-            isDisabled={index === 0}
+            isDisabled={index === 0 || isEnd}
           >
             <FaArrowDown />
           </Button>

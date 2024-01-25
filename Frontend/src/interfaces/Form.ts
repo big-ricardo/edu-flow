@@ -29,7 +29,7 @@ export type IField = {
     | "multiselect";
   required?: boolean;
   predefined: "teachers" | "students" | "institutions" | null;
-  value: string | null;
+  value?: string | null;
   visible: boolean;
   options:
     | { label: string; value: string }[]

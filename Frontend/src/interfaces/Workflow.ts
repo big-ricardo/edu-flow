@@ -5,6 +5,7 @@ export enum NodeTypes {
   SendEmail = "send_email",
   Circle = "circle",
   SwapWorkflow = "swap_workflow",
+  Interaction = "interaction",
 }
 
 export interface ISendEmail {
@@ -26,6 +27,13 @@ export interface ICircle {
   visible: false;
 }
 
+export interface IInteraction {
+  name: string;
+  form: string;
+  to: string;
+  visible: true;
+}
+
 export type IStep = {
   id: string;
   name: string;
@@ -45,6 +53,10 @@ export type IStep = {
       type: NodeTypes.Circle;
       data: ICircle;
     }
+  | {
+      type: NodeTypes.Interaction;
+      data: IInteraction;
+    }
 );
 
 export type IWorkflow = {
@@ -56,4 +68,4 @@ export type IWorkflow = {
   parent: string;
   steps: IStep[];
   viewport: Viewport;
-}
+};

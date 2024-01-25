@@ -4,8 +4,9 @@ import Email from "../../../models/Email";
 import Status from "../../../models/Status";
 import User from "../../../models/User";
 import Workflow, { IWorkflowStatus } from "../../../models/Workflow";
+import { FormStatus, FormType } from "../../../models/Form";
 
-const handler: HttpHandler = async (conn, req) => {
+const handler: HttpHandler = async (conn) => {
   const emails = (
     await new Email(conn).model().find().select({
       _id: 1,
@@ -76,11 +77,53 @@ const handler: HttpHandler = async (conn, req) => {
     value: status._id,
   }));
 
+  const formsInteraction = (
+    await new Workflow(conn)
+      .model()
+      .find({
+        type: FormType.Interaction,
+        status: FormStatus.Published,
+      })
+      .select({
+        _id: 1,
+        name: 1,
+      })
+      .where({
+        status: IWorkflowStatus.Published,
+      })
+  ).map((w) => ({
+    value: w._id,
+    label: w.name,
+  }));
+
+  const formsAvailable = (
+    await new Workflow(conn)
+      .model()
+      .find({
+        type: FormType.Available,
+        status: FormStatus.Published,
+      })
+      .select({
+        _id: 1,
+        name: 1,
+      })
+      .where({
+        status: IWorkflowStatus.Published,
+      })
+  ).map((w) => ({
+    value: w._id,
+    label: w.name,
+  }));
+
   return res.success({
     emails,
     statuses,
     users: userOptions,
     workflows,
+    forms: {
+      interaction: formsInteraction,
+      available: formsAvailable,
+    },
   });
 };
 

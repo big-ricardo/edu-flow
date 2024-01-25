@@ -43,7 +43,7 @@ export const getUser = async ({ queryKey: [, id] }: { queryKey: string[] }) => {
   return res.data.data;
 };
 
-export const createUser = async (data: Omit<User, "_id">) => {
+export const createUser = async (data: Omit<User, "_id" | "password">) => {
   const res = await api.post<ReqUser>("/user", data);
 
   return res.data.data;
@@ -56,7 +56,7 @@ export const updateUser = async (data: User) => {
 };
 
 export const createOrUpdateUser = async (
-  data: Omit<User, "_id"> & { _id?: string }
+  data: Omit<User, "_id" | "password"> & { _id?: string; password?: string }
 ) => {
   if (data?._id) {
     return updateUser(data as User);

@@ -55,17 +55,10 @@ const Action = memo((form: Pick<IForm, "_id" | "slug">) => {
     navigate(`/portal/form/${form._id}`);
   }, [navigate, form._id]);
 
-  const handlePreview = useCallback(() => {
-    navigate(`/portal/form/${form.slug}/preview`);
-  }, [navigate, form.slug]);
-
   return (
     <div>
       <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
         <BiEdit size={20} />
-      </Button>
-      <Button colorScheme="blue" mr={2} onClick={handlePreview} size="sm">
-        <BsFillEyeFill size={20} />
       </Button>
     </div>
   );

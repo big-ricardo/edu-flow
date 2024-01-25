@@ -40,12 +40,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
     queryFn: getFormBySlug,
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = useForm({});
+  const { handleSubmit } = useForm({});
 
   const { mutateAsync, isPending: isSubmitting } = useMutation({
     mutationFn: async (data: FieldValues) => console.log(data),
@@ -133,12 +128,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
 
           <form onSubmit={onSubmit}>
             <Flex direction="column" align="center" justify="center" gap="3">
-              <Inputs
-                fields={form?.fields ?? []}
-                register={register}
-                errors={errors}
-                control={control}
-              />
+              <Inputs fields={form?.fields ?? []} />
 
               <Stack direction="row" justifyContent="flex-end" mt={4}>
                 <Button

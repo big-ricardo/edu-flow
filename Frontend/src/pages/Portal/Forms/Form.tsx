@@ -1,14 +1,17 @@
-import { useCallback, useEffect } from "react";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Box,
   Button,
   Card,
   CardBody,
-  CardHeader,
   Center,
   Divider,
   Flex,
@@ -23,7 +26,9 @@ import { createOrUpdateForm, getForm, getFormForms } from "@apis/form";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import FieldArray from "@components/molecules/FieldArray";
 import getTemplate from "./templates";
-import { FaPlus } from "react-icons/fa";
+import { FaArrowLeft, FaEye, FaPen, FaPlus, FaTrashAlt } from "react-icons/fa";
+import Inputs from "@components/atoms/Inputs";
+import IForm from "@interfaces/Form";
 
 const formSchema = z
   .object({
@@ -46,8 +51,8 @@ const formSchema = z
     fields: z
       .array(
         z.object({
-          id: z.string(),
-          label: z.string(),
+          id: z.string().min(3),
+          label: z.string().min(3),
           placeholder: z.string().optional(),
           type: z.enum([
             "text",
@@ -62,16 +67,19 @@ const formSchema = z
             "date",
             "file",
           ]),
-          required: z.boolean().optional(),
+          required: z.boolean().optional().default(false),
           value: z.string().optional().nullable(),
-          visible: z.boolean(),
-          system: z.boolean().optional(),
+          visible: z.boolean().optional().default(true),
+          system: z.boolean().optional().default(false),
           predefined: z
             .enum(["teachers", "students", "institutions"])
             .nullable()
             .default(null),
           options: z
-            .array(z.object({ label: z.string(), value: z.string() }))
+            .array(
+              z.object({ label: z.string().min(3), value: z.string().min(3) })
+            )
+            .nullable()
             .optional(),
         })
       )
@@ -119,20 +127,18 @@ export default function Form() {
   const params = useParams<{ id?: string }>();
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
+  const [isPreview, setPreview] = useState<boolean>(false);
 
   const type = searchParams.get("type");
 
   const isEditing = !!params?.id;
   const id = params?.id ?? "";
 
-  const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["form", "forms"],
-    queryFn: getFormForms,
-    retryOnMount: false,
-    staleTime: 1000 * 60 * 60,
-  });
-
-  const { data: form, isLoading } = useQuery({
+  const {
+    data: form,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["form", id],
     queryFn: getForm,
     enabled: isEditing,
@@ -171,16 +177,11 @@ export default function Form() {
 
   const {
     handleSubmit,
-    control,
     reset,
     watch,
-    formState: { errors, isDirty },
+    getValues,
+    formState: { errors, isDirty, isValid },
   } = methods;
-
-  const { fields, insert, remove, swap } = useFieldArray({
-    control,
-    name: "fields",
-  });
 
   const formType = watch("type");
   const isCreated = formType === "created";
@@ -190,6 +191,14 @@ export default function Form() {
   });
 
   const handleCancel = useCallback(() => {
+    reset(form);
+  }, [form, reset]);
+
+  const handlePreview = useCallback(() => {
+    setPreview((prev) => !prev);
+  }, [setPreview]);
+
+  const handleBack = useCallback(() => {
     navigate(-1);
   }, [navigate]);
 
@@ -201,207 +210,289 @@ export default function Form() {
 
   useEffect(() => {}, [errors]);
 
-  if (isLoadingForms) {
+  if (isError) {
     return (
-      <Center w="100%" h="100%">
-        <Spinner />
+      <Center h="100vh" w="100%">
+        <Heading>Erro ao carregar formulário</Heading>
       </Center>
     );
   }
 
   return (
-    <Flex w="100%" my="6" mx="auto" px="6" justify="center">
-      <FormProvider {...methods}>
-        <Card
-          as="form"
-          onSubmit={onSubmit}
-          borderRadius={8}
-          h="fit-content"
-          w="100%"
-          maxW="1000px"
-        >
-          <CardHeader>
-            <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {isEditing ? "Editar" : "Criar"} Formulário
-            </Box>
-          </CardHeader>
-          <CardBody display="flex" flexDirection="column" gap="4">
-            <Text
-              input={{
-                id: "name",
-                label: "Nome",
-                placeholder: "Nome",
-                required: true,
-              }}
-            />
+    <Flex w="100%" h="100%" direction="column">
+      <Card
+        w="100%"
+        h="100%"
+        display="flex"
+        direction="row"
+        borderRadius={0}
+        justifyContent="space-between"
+        alignItems="center"
+        p="2"
+        position="sticky"
+        top="0"
+        zIndex="sticky"
+      >
+        <Flex direction="row" gap="3">
+          <Heading size="md" fontWeight="bold">
+            {isEditing ? "Editar" : "Criar"} Formulário
+          </Heading>
+          <Button
+            colorScheme="blue"
+            onClick={handleBack}
+            variant="ghost"
+            size="sm"
+            title="Voltar"
+          >
+            <FaArrowLeft />
+          </Button>
+        </Flex>
 
-            <Text
-              input={{
-                id: "slug",
-                label: "Digite um sluf único para o formulário",
-                placeholder: "Slug",
-                required: true,
-              }}
-            />
+        <Flex gap="2" align="center">
+          <Button
+            colorScheme="red"
+            onClick={handleCancel}
+            variant="outline"
+            size="sm"
+            title="Descartar Alterações"
+          >
+            <FaTrashAlt />
+          </Button>
 
-            <Flex gap="4">
-              {isEditing && (
-                <Select
-                  input={{
-                    id: "status",
-                    label: "Status",
-                    placeholder: "Status",
-                    required: true,
-                    options: [
-                      { label: "Rascunho", value: "draft" },
-                      { label: "Publicado", value: "published" },
-                    ],
-                  }}
-                />
+          <Button
+            colorScheme="blue"
+            onClick={handlePreview}
+            variant="outline"
+            isDisabled={!isValid}
+            size="sm"
+            title={isPreview ? "Editar" : "Preview"}
+          >
+            {isPreview ? <FaPen /> : <FaEye />}
+          </Button>
+
+          <Button
+            colorScheme="blue"
+            isLoading={isPending}
+            isDisabled={!isDirty || !isValid}
+            onClick={onSubmit}
+          >
+            Salvar
+          </Button>
+        </Flex>
+      </Card>
+
+      <Flex w="100%" my="6" mx="auto" px="6" justify="center">
+        <FormProvider {...methods}>
+          <Card
+            as="form"
+            onSubmit={onSubmit}
+            borderRadius={8}
+            h="fit-content"
+            w="100%"
+            maxW="1000px"
+          >
+            <CardBody display="flex" flexDirection="column" gap="4">
+              {isPreview ? (
+                <Preview form={getValues()} />
+              ) : (
+                <FormEdit {...{ isEditing, isCreated, isLoading }} />
               )}
-
-              {isCreated && (
-                <Select
-                  input={{
-                    id: "workflow",
-                    label: "Workflow",
-                    placeholder: "Workflow Acionado",
-                    required: true,
-                    options: formsData?.workflows ?? [],
-                  }}
-                />
-              )}
-            </Flex>
-
-            <Flex gap="4">
-              <Select
-                input={{
-                  id: "type",
-                  label: "Tipo",
-                  placeholder: "Tipo",
-                  required: true,
-                  options: [
-                    { label: "Criação de Atividade", value: "created" },
-                    { label: "Interação com Atividade", value: "interaction" },
-                    { label: "Avaliação de Atividade", value: "available" },
-                  ],
-                  isDisabled: true,
-                }}
-              />
-
-              {isCreated && (
-                <Select
-                  input={{
-                    id: "initial_status",
-                    label: "Status inicial da atividade",
-                    placeholder: "Status inicial",
-                    required: true,
-                    options: formsData?.status ?? [],
-                  }}
-                />
-              )}
-            </Flex>
-
-            <TextArea
-              input={{
-                id: "description",
-                label: "Descrição",
-                placeholder: "Descrição",
-                required: true,
-              }}
-            />
-
-            <Flex gap="4" mb="5">
-              <Text
-                input={{
-                  id: "period.open",
-                  label: "Abertura",
-                  placeholder: "Abertura",
-                  type: "date",
-                }}
-              />
-
-              <Text
-                input={{
-                  id: "period.close",
-                  label: "Fechamento",
-                  placeholder: "Fechamento",
-                  type: "date",
-                }}
-              />
-            </Flex>
-
-            <Heading size="md">Campos do formulário</Heading>
-            <Divider />
-
-            {fields.map((field, index) => (
-              <Flex key={field.id} direction="column" gap="4">
-                <FieldArray
-                  field={field}
-                  index={index}
-                  remove={remove}
-                  swap={swap}
-                  haveOptions={[
-                    "select",
-                    "multiselect",
-                    "radio",
-                    "checkbox",
-                  ].includes(watch(`fields.${index}.type`))}
-                  isSelect={["select", "multiselect"].includes(
-                    watch(`fields.${index}.type`)
-                  )}
-                  isPredefined={!!watch(`fields.${index}.predefined`)}
-                />
-                <Button
-                  type="button"
-                  onClick={() =>
-                    insert(
-                      index + 1,
-                      {
-                        id: `field-${fields.length}`,
-                        label: "",
-                        placeholder: "",
-                        type: "text",
-                        required: false,
-                        value: "",
-                        visible: true,
-                        predefined: null,
-                      },
-                      { shouldFocus: true }
-                    )
-                  }
-                  colorScheme="blue"
-                  mx="auto"
-                  size="sm"
-                  variant="outline"
-                >
-                  <FaPlus />
-                </Button>
-              </Flex>
-            ))}
-
-            <Flex mt="8" justify="flex-end" gap="4">
-              <Button
-                mt={4}
-                colorScheme="gray"
-                variant="outline"
-                onClick={handleCancel}
-              >
-                Cancelar
-              </Button>
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isPending || isLoading}
-                type="submit"
-                isDisabled={!isDirty}
-              >
-                {isEditing ? "Editar" : "Criar"}
-              </Button>
-            </Flex>
-          </CardBody>
-        </Card>
-      </FormProvider>
+            </CardBody>
+          </Card>
+        </FormProvider>
+      </Flex>
     </Flex>
   );
 }
+
+interface PreviewProps {
+  form: Omit<IForm, "_id">;
+}
+
+const Preview: React.FC<PreviewProps> = memo(({ form }) => {
+  return (
+    <React.Fragment>
+      <Heading>{form.name}</Heading>
+      <span>{form.description}</span>
+      <Divider />
+      <Inputs fields={form.fields} />
+    </React.Fragment>
+  );
+});
+
+interface FormEditProps {
+  isEditing: boolean;
+  isCreated: boolean;
+}
+
+const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, isCreated }) => {
+  const { control } = useFormContext<formFormSchema>();
+
+  const { data: formsData, isLoading: isLoadingForms } = useQuery({
+    queryKey: ["form", "forms"],
+    queryFn: getFormForms,
+    retryOnMount: false,
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const { fields, insert, remove, swap } = useFieldArray({
+    control,
+    name: "fields",
+  });
+
+  return (
+    <React.Fragment>
+      <Heading size="md">Configurações</Heading>
+      <Divider />
+
+      <Text
+        input={{
+          id: "name",
+          label: "Nome",
+          placeholder: "Nome",
+          required: true,
+        }}
+      />
+
+      <Text
+        input={{
+          id: "slug",
+          label: "Digite um sluf único para o formulário",
+          placeholder: "Slug",
+          required: true,
+        }}
+      />
+
+      <Flex gap="4">
+        {isEditing && (
+          <Select
+            input={{
+              id: "status",
+              label: "Status",
+              placeholder: "Status",
+              required: true,
+              options: [
+                { label: "Rascunho", value: "draft" },
+                { label: "Publicado", value: "published" },
+              ],
+            }}
+            isLoading={isLoadingForms}
+          />
+        )}
+
+        {isCreated && (
+          <Select
+            input={{
+              id: "workflow",
+              label: "Workflow",
+              placeholder: "Workflow Acionado",
+              required: true,
+              options: formsData?.workflows ?? [],
+            }}
+            isLoading={isLoadingForms}
+          />
+        )}
+      </Flex>
+
+      <Flex gap="4">
+        <Select
+          input={{
+            id: "type",
+            label: "Tipo",
+            placeholder: "Tipo",
+            required: true,
+            options: [
+              { label: "Criação de Atividade", value: "created" },
+              { label: "Interação com Atividade", value: "interaction" },
+              { label: "Avaliação de Atividade", value: "available" },
+            ],
+            isDisabled: true,
+          }}
+        />
+
+        {isCreated && (
+          <Select
+            input={{
+              id: "initial_status",
+              label: "Status inicial da atividade",
+              placeholder: "Status inicial",
+              required: true,
+              options: formsData?.status ?? [],
+            }}
+            isLoading={isLoadingForms}
+          />
+        )}
+      </Flex>
+
+      <TextArea
+        input={{
+          id: "description",
+          label: "Descrição",
+          placeholder: "Descrição",
+          required: true,
+        }}
+      />
+
+      <Flex gap="4" mb="5">
+        <Text
+          input={{
+            id: "period.open",
+            label: "Abertura",
+            placeholder: "Abertura",
+            type: "date",
+          }}
+        />
+
+        <Text
+          input={{
+            id: "period.close",
+            label: "Fechamento",
+            placeholder: "Fechamento",
+            type: "date",
+          }}
+        />
+      </Flex>
+
+      <Heading size="md">Campos do formulário</Heading>
+      <Divider />
+
+      {fields.map((field, index) => (
+        <Flex key={field.id} direction="column" gap="4">
+          <FieldArray
+            field={field}
+            index={index}
+            remove={remove}
+            swap={swap}
+            isEnd={index === fields.length - 1}
+          />
+          <Button
+            type="button"
+            onClick={() =>
+              insert(
+                index + 1,
+                {
+                  id: `field-${fields.length}`,
+                  label: "",
+                  placeholder: "",
+                  type: "text",
+                  required: false,
+                  system: false,
+                  value: "",
+                  visible: true,
+                  predefined: null,
+                },
+                { shouldFocus: true }
+              )
+            }
+            colorScheme="blue"
+            mx="auto"
+            size="sm"
+            variant="outline"
+          >
+            <FaPlus />
+          </Button>
+        </Flex>
+      ))}
+    </React.Fragment>
+  );
+});

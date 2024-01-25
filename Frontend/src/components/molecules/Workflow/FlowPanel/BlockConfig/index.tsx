@@ -22,7 +22,11 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
     resolver: zodResolver(nodesSchema[type]),
   });
 
-  const { handleSubmit, reset } = methods;
+  const {
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = methods;
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
     queryKey: ["workflows", "forms"],
@@ -149,6 +153,37 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             />
           </>
         );
+      case NodeTypes.Interaction:
+        return (
+          <>
+            <Text
+              input={{
+                label: "Nome",
+                id: "name",
+                placeholder: "Nome do bloco",
+                required: true,
+              }}
+            />
+            <Select
+              input={{
+                label: "Destinatario",
+                id: "to",
+                placeholder: "Selecione um formulário",
+                options: formsData?.users ?? [],
+                required: true,
+              }}
+            />
+            <Select
+              input={{
+                label: "Formulário",
+                id: "form",
+                placeholder: "Selecione o formulário que será enviado",
+                options: formsData?.forms.interaction ?? [],
+                required: true,
+              }}
+            />
+          </>
+        );
       default:
         return <h1>Default</h1>;
     }
@@ -169,7 +204,12 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
         <Button mr={3} onClick={onCancel}>
           Cancelar
         </Button>
-        <Button colorScheme="blue" mr={3} onClick={onSubmit}>
+        <Button
+          colorScheme="blue"
+          mr={3}
+          onClick={onSubmit}
+          isDisabled={!isDirty}
+        >
           Salvar
         </Button>
       </Flex>
