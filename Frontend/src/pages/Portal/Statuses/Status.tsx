@@ -51,6 +51,7 @@ export default function Status() {
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["statuses"] });
+      queryClient.invalidateQueries({ queryKey: ["forms"] });
       navigate(-1);
     },
     onError: () => {

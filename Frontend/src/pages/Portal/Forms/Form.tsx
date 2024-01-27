@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import {
   FormProvider,
+  UseFieldArrayInsert,
   useFieldArray,
   useForm,
   useFormContext,
@@ -26,7 +27,14 @@ import { createOrUpdateForm, getForm, getFormForms } from "@apis/form";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import FieldArray from "@components/molecules/FieldArray";
 import getTemplate from "./templates";
-import { FaArrowLeft, FaEye, FaPen, FaPlus, FaTrashAlt } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaEye,
+  FaPen,
+  FaPlus,
+  FaSave,
+  FaTrashAlt,
+} from "react-icons/fa";
 import Inputs from "@components/atoms/Inputs";
 import IForm from "@interfaces/Form";
 
@@ -40,9 +48,9 @@ const formSchema = z
       })
       .min(3),
     status: z.enum(["draft", "published"]).default("draft"),
-    initial_status: z.string().optional(),
+    initial_status: z.string().optional().nullable(),
     type: z.enum(["created", "interaction", "available"]),
-    workflow: z.string().optional(),
+    workflow: z.string().optional().nullable(),
     period: z.object({
       open: z.string().nullable(),
       close: z.string().nullable(),
@@ -109,15 +117,21 @@ const formSchema = z
       path: ["initial_status"],
     }
   )
-  .refine((data) => {
-    const selectFields = data.fields.filter((field) =>
-      ["select", "multiselect"].includes(field.type)
-    );
+  .refine(
+    (data) => {
+      const selectFields = data.fields.filter((field) =>
+        ["select", "multiselect"].includes(field.type)
+      );
 
-    return selectFields.every(
-      (field) => field?.predefined ?? field.options?.length
-    );
-  });
+      return selectFields.every(
+        (field) => field?.predefined ?? field.options?.length
+      );
+    },
+    {
+      message: "É necessário selecionar uma opção",
+      path: ["fields"],
+    }
+  );
 
 export type formFormSchema = z.infer<typeof formSchema>;
 
@@ -156,6 +170,7 @@ export default function Form() {
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["statuses"] });
+      queryClient.invalidateQueries({ queryKey: ["forms"] });
       navigate(-1);
     },
     onError: () => {
@@ -185,7 +200,6 @@ export default function Form() {
 
   const formType = watch("type");
   const isCreated = formType === "created";
-
   const onSubmit = handleSubmit(async (data) => {
     await mutateAsync(isEditing ? { ...data, _id: id } : data);
   });
@@ -222,7 +236,6 @@ export default function Form() {
     <Flex w="100%" h="100%" direction="column">
       <Card
         w="100%"
-        h="100%"
         display="flex"
         direction="row"
         borderRadius={0}
@@ -233,7 +246,7 @@ export default function Form() {
         top="0"
         zIndex="sticky"
       >
-        <Flex direction="row" gap="3">
+        <Flex direction="row" gap="3" alignItems="center">
           <Heading size="md" fontWeight="bold">
             {isEditing ? "Editar" : "Criar"} Formulário
           </Heading>
@@ -271,12 +284,13 @@ export default function Form() {
           </Button>
 
           <Button
-            colorScheme="blue"
+            colorScheme="green"
             isLoading={isPending}
             isDisabled={!isDirty || !isValid}
             onClick={onSubmit}
+            size="sm"
           >
-            Salvar
+            <FaSave /> &nbsp; Salvar Alterações
           </Button>
         </Flex>
       </Card>
@@ -329,7 +343,7 @@ const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, isCreated }) => {
   const { control } = useFormContext<formFormSchema>();
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["form", "forms"],
+    queryKey: ["forms", "forms"],
     queryFn: getFormForms,
     retryOnMount: false,
     staleTime: 1000 * 60 * 60,
@@ -456,6 +470,8 @@ const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, isCreated }) => {
       <Heading size="md">Campos do formulário</Heading>
       <Divider />
 
+      <ButtonAdd insert={insert} />
+
       {fields.map((field, index) => (
         <Flex key={field.id} direction="column" gap="4">
           <FieldArray
@@ -465,34 +481,53 @@ const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, isCreated }) => {
             swap={swap}
             isEnd={index === fields.length - 1}
           />
-          <Button
-            type="button"
-            onClick={() =>
-              insert(
-                index + 1,
-                {
-                  id: `field-${fields.length}`,
-                  label: "",
-                  placeholder: "",
-                  type: "text",
-                  required: false,
-                  system: false,
-                  value: "",
-                  visible: true,
-                  predefined: null,
-                },
-                { shouldFocus: true }
-              )
-            }
-            colorScheme="blue"
-            mx="auto"
-            size="sm"
-            variant="outline"
-          >
-            <FaPlus />
-          </Button>
+          <ButtonAdd insert={insert} index={index} length={fields.length} />
         </Flex>
       ))}
     </React.Fragment>
   );
 });
+
+interface ButtonAddProps {
+  insert: UseFieldArrayInsert<formFormSchema, "fields">;
+  index?: number;
+  length?: number;
+}
+
+const ButtonAdd: React.FC<ButtonAddProps> = ({
+  insert,
+  index = 0,
+  length = 0,
+}) => {
+  const handleAddField = useCallback(() => {
+    insert(
+      index + 1,
+      {
+        id: `field-${length}`,
+        label: "",
+        placeholder: "",
+        type: "text",
+        required: false,
+        system: false,
+        value: "",
+        visible: true,
+        predefined: null,
+      },
+      { shouldFocus: true }
+    );
+  }, [insert, index, length]);
+
+  return (
+    <Button
+      colorScheme="blue"
+      variant="outline"
+      size="sm"
+      onClick={handleAddField}
+      title="Adicionar campo"
+      w="fit-content"
+      margin="auto"
+    >
+      <FaPlus />
+    </Button>
+  );
+};

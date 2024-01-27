@@ -43,7 +43,12 @@ export default new Http(handler)
         .string()
         .required()
         .oneOf(["created", "interaction", "available"]),
-      initial_status: schema.string().required(),
+      initial_status: schema.string().when("type", ([type], schema) => {
+        if (type === "created") {
+          return schema.required();
+        }
+        return schema.nullable().default(null);
+      }),
       period: schema.object().shape({
         open: schema.date().required().nullable(),
         close: schema.date().required().nullable(),

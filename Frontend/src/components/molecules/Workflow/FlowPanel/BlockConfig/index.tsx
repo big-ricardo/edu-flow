@@ -29,7 +29,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
   } = methods;
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["workflows", "forms"],
+    queryKey: ["forms", "workflow"],
     queryFn: getWorkflowForms,
     retryOnMount: false,
     staleTime: 1000 * 60 * 60,
@@ -69,7 +69,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             <Select
               input={{
                 label: "Template de Email",
-                id: "email",
+                id: "email_id",
                 placeholder: "Selecione um template de email",
                 options: formsData?.emails ?? [],
                 required: true,
@@ -98,7 +98,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             <Select
               input={{
                 label: "Status",
-                id: "status",
+                id: "status_id",
                 placeholder: "Selecione um status",
                 options: formsData?.statuses ?? [],
                 required: true,
@@ -138,7 +138,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             <Select
               input={{
                 label: "Workflow",
-                id: "workflow",
+                id: "workflow_id",
                 placeholder: "Selecione um workflow que será executado",
                 options: formsData?.workflows ?? [],
                 required: true,
@@ -176,7 +176,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             <Select
               input={{
                 label: "Formulário",
-                id: "form",
+                id: "form_id",
                 placeholder: "Selecione o formulário que será enviado",
                 options: formsData?.forms.interaction ?? [],
                 required: true,

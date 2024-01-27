@@ -60,6 +60,7 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
       borderColor={borderColor}
       borderRadius="3px"
       transition="border-color 0.3s ease-in-out"
+      title={node?.data?.name}
     >
       {!Object.keys(node?.data ?? {}).length && (
         <Box position="absolute" top={-1} right={1} textAlign="center">

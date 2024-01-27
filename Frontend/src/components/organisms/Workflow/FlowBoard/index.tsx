@@ -37,6 +37,7 @@ const convertReactFlowObject = (
       position: node.position,
       data: node.data,
       type: node.type,
+      deletable: node?.deletable,
       next_step_id: edge ? edge.target : null,
     } as IStep;
   });
@@ -52,13 +53,6 @@ const initialNodes: Node[] = [
       hasMenu: true,
       visible: false,
     },
-    type: "circle",
-    deletable: false,
-  },
-  {
-    id: "end",
-    position: { x: 100, y: 0 },
-    data: { label: "Fim", hasHandleLeft: true, visible: false, name: "end" },
     type: "circle",
     deletable: false,
   },
@@ -93,7 +87,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createOrUpdateWorkflow,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workflows"] });
+      queryClient.invalidateQueries({ queryKey: ["forms"] });
       toast({
         title: `Workflow ${isEditing ? "editada" : "criada"} com sucesso`,
         status: "success",

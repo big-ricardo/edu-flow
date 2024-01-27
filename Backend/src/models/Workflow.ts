@@ -5,24 +5,38 @@ export enum NodeTypes {
   SendEmail = "send_email",
   Circle = "circle",
   SwapWorkflow = "swap_workflow",
+  Interaction = "interaction",
 }
 
 export interface ISendEmail {
   name: string;
-  email: string;
+  email_id: string;
   to: string[];
   visible: boolean;
 }
 
 export interface IChangeStatus {
   name: string;
-  status: string;
+  status_id: string;
   visible: boolean;
 }
 
 export interface ICircle {
   name: string;
   visible: false;
+}
+
+export interface ISwapWorkflow {
+  name: string;
+  workflow_id: string;
+  visible: false;
+}
+
+export interface IInteraction {
+  name: string;
+  form_id: string;
+  to: string;
+  visible: true;
 }
 
 export type IStep = {
@@ -42,6 +56,14 @@ export type IStep = {
   | {
       type: NodeTypes.Circle;
       data: ICircle;
+    }
+  | {
+      type: NodeTypes.SwapWorkflow;
+      data: ISwapWorkflow;
+    }
+  | {
+      type: NodeTypes.Interaction;
+      data: IInteraction;
     }
 );
 
@@ -85,6 +107,7 @@ export const schema: Schema = new Schema(
           x: { type: Number, required: true },
           y: { type: Number, required: true },
         },
+        deletable: { type: Boolean },
         data: {
           type: Object,
           required: true,

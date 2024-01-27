@@ -49,7 +49,7 @@ export default function Institute() {
   });
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["universities", "forms"],
+    queryKey: ["forms", "institute"],
     queryFn: getInstituteForms,
     retryOnMount: false,
     staleTime: 1000 * 60 * 60,

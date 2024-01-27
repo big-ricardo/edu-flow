@@ -77,7 +77,7 @@ export default function User() {
   });
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["institutes", "forms"],
+    queryKey: ["forms", "institute"],
     queryFn: getUserForms,
     retryOnMount: false,
     staleTime: 1000 * 60 * 60,
@@ -87,6 +87,7 @@ export default function User() {
     mutationFn: createOrUpdateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["forms"] });
       toast({
         title: `Usuário ${isEditing ? "editada" : "criada"} com sucesso`,
         status: "success",

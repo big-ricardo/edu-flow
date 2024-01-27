@@ -4,7 +4,7 @@ import Email from "../../../models/Email";
 import Status from "../../../models/Status";
 import User from "../../../models/User";
 import Workflow, { IWorkflowStatus } from "../../../models/Workflow";
-import { FormStatus, FormType } from "../../../models/Form";
+import Form, { FormStatus, FormType } from "../../../models/Form";
 
 const handler: HttpHandler = async (conn) => {
   const emails = (
@@ -78,7 +78,7 @@ const handler: HttpHandler = async (conn) => {
   }));
 
   const formsInteraction = (
-    await new Workflow(conn)
+    await new Form(conn)
       .model()
       .find({
         type: FormType.Interaction,
@@ -88,16 +88,13 @@ const handler: HttpHandler = async (conn) => {
         _id: 1,
         name: 1,
       })
-      .where({
-        status: IWorkflowStatus.Published,
-      })
   ).map((w) => ({
     value: w._id,
     label: w.name,
   }));
 
   const formsAvailable = (
-    await new Workflow(conn)
+    await new Form(conn)
       .model()
       .find({
         type: FormType.Available,
@@ -106,9 +103,6 @@ const handler: HttpHandler = async (conn) => {
       .select({
         _id: 1,
         name: 1,
-      })
-      .where({
-        status: IWorkflowStatus.Published,
       })
   ).map((w) => ({
     value: w._id,

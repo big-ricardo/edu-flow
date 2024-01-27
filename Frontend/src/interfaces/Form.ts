@@ -37,14 +37,27 @@ export type IField = {
   system?: boolean;
 };
 
-export default interface IForm {
+type IForm = {
   _id: string;
   name: string;
   slug: string;
   status: "draft" | "published";
-  initial_status?: string;
   type: "created" | "interaction" | "available";
   period: { open?: string | null; close?: string | null };
   description: string;
   fields: IField[];
-}
+} & (
+  | {
+      type: "created";
+      initial_status: string;
+      workflow: string;
+    }
+  | {
+      type: "interaction";
+    }
+  | {
+      type: "available";
+    }
+);
+
+export default IForm;

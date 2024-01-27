@@ -8,7 +8,7 @@ type NodeSchemas = {
 const schemas: NodeSchemas = {
   [NodeTypes.SendEmail]: z.object({
     name: z.string().min(3, { message: "Nome é obrigatório" }),
-    email: z.string().min(3, { message: "Selecione um template de email" }),
+    email_id: z.string().min(3, { message: "Selecione um template de email" }),
     to: z
       .array(z.string())
       .min(1, { message: "Selecione pelo menos 1 destinatario" }),
@@ -16,7 +16,7 @@ const schemas: NodeSchemas = {
   }),
   [NodeTypes.ChangeStatus]: z.object({
     name: z.string().min(3, { message: "Nome é obrigatório" }),
-    status: z.string().min(3, { message: "Selecione um status" }),
+    status_id: z.string().min(3, { message: "Selecione um status" }),
     visible: z.boolean().default(true),
   }),
   [NodeTypes.Circle]: z.object({
@@ -26,13 +26,13 @@ const schemas: NodeSchemas = {
   }),
   [NodeTypes.SwapWorkflow]: z.object({
     name: z.string().min(3, { message: "Nome é obrigatório" }),
-    workflow: z.string().min(3, { message: "Selecione um workflow" }),
+    workflow_id: z.string().min(3, { message: "Selecione um workflow" }),
     visible: z.boolean().default(false),
   }),
   [NodeTypes.Interaction]: z.object({
     name: z.string().min(3, { message: "Nome é obrigatório" }),
     to: z.string().min(1, { message: "Selecione pelo menos 1 destinatario" }),
-    form: z.string().min(1, { message: "Selecione um formulário" }),
+    form_id: z.string().min(1, { message: "Selecione um formulário" }),
     visible: z.boolean().default(true),
   }),
 };

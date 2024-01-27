@@ -10,26 +10,31 @@ export enum NodeTypes {
 
 export interface ISendEmail {
   name: string;
-  email: string;
+  email_id: string;
   to: string[];
   visible: boolean;
 }
 
 export interface IChangeStatus {
   name: string;
-  status: string;
+  status_id: string;
   visible: boolean;
 }
 
 export interface ICircle {
   name: string;
-  active: boolean;
+  visible: false;
+}
+
+export interface ISwapWorkflow {
+  name: string;
+  workflow_id: string;
   visible: false;
 }
 
 export interface IInteraction {
   name: string;
-  form: string;
+  form_id: string;
   to: string;
   visible: true;
 }
@@ -40,6 +45,7 @@ export type IStep = {
   visible: boolean;
   next_step_id: string | null;
   position: XYPosition;
+  deletable?: boolean;
 } & (
   | {
       type: NodeTypes.SendEmail;
@@ -52,6 +58,10 @@ export type IStep = {
   | {
       type: NodeTypes.Circle;
       data: ICircle;
+    }
+  | {
+      type: NodeTypes.SwapWorkflow;
+      data: ISwapWorkflow;
     }
   | {
       type: NodeTypes.Interaction;

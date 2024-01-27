@@ -10,7 +10,14 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React from "react";
-import { FaArrowLeft, FaEdit, FaPushed, FaSave } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaEdit,
+  FaEye,
+  FaPen,
+  FaPushed,
+  FaSave,
+} from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { Panel } from "reactflow";
 
@@ -45,6 +52,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["workflow", id] });
+      queryClient.invalidateQueries({ queryKey: ["forms"] });
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
@@ -66,13 +74,13 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
     });
   }, [mutateAsync, id, status]);
 
-  const handleNavigate = React.useCallback(() => {
+  const handleBack = React.useCallback(() => {
     navigate("/portal/workflows");
   }, [navigate]);
 
-  const handleEdit = React.useCallback(() => {
-    navigate(`/portal/workflow/${id}/edit`);
-  }, [navigate, id]);
+  const handleNavigate = React.useCallback(() => {
+    navigate(`/portal/workflow/${id}/${isView ? "edit" : "view"}`);
+  }, [navigate, id, isView]);
 
   return (
     <Panel position="top-center" style={{ width: "100%", margin: 0 }}>
@@ -86,31 +94,31 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
         p={2}
         shadow={"md"}
       >
-        <Heading fontSize="lg">Workflow</Heading>
-
-        <Box>
-          <Button colorScheme="red" mr={2} onClick={handleNavigate} size="sm">
+        <Flex alignItems="center" gap={2}>
+          <Heading size="md" fontWeight="bold">
+            Workflow
+          </Heading>
+          <Button
+            colorScheme="blue"
+            onClick={handleBack}
+            variant="ghost"
+            size="sm"
+            title="Voltar"
+          >
             <FaArrowLeft />
           </Button>
+        </Flex>
 
-          {isView && (
-            <>
-              <Button colorScheme="green" mr={2} onClick={handleEdit} size="sm">
-                <FaEdit /> &nbsp; Editar
-              </Button>
-              <Button
-                colorScheme="blue"
-                mr={2}
-                onClick={handlePublish}
-                size="sm"
-                isLoading={isPendingPublish}
-                isDisabled={status !== "draft"}
-              >
-                <FaPushed /> &nbsp;
-                {status === "draft" ? "Publicar" : "Publicado"}
-              </Button>
-            </>
-          )}
+        <Flex gap="2" align="center">
+          <Button
+            colorScheme="blue"
+            onClick={handleNavigate}
+            variant="outline"
+            size="sm"
+            title={isView ? "Editar" : "Visualizar"}
+          >
+            {isView ? <FaPen /> : <FaEye />}
+          </Button>
 
           {!isView && (
             <Button
@@ -120,11 +128,23 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
               size="sm"
               isLoading={isPending}
             >
-              <FaSave /> &nbsp;
-              Salvar Alterações
+              <FaSave /> &nbsp; Salvar Alterações
             </Button>
           )}
-        </Box>
+
+          <Button
+            colorScheme="blue"
+            onClick={handlePublish}
+            variant="outline"
+            size="sm"
+            title={isView ? "Editar" : "Visualizar"}
+            isDisabled={status === "published"}
+            isLoading={isPendingPublish}
+          >
+            <Box as={FaPushed} transform="rotate(90deg)" /> &nbsp;
+            {status === "published" ? "Publicado" : "Publicar"}
+          </Button>
+        </Flex>
       </Flex>
     </Panel>
   );

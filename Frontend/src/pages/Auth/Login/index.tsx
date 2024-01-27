@@ -1,5 +1,5 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -32,13 +32,11 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Login: React.FC = () => {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<FormData>({
+  const methods = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  const { handleSubmit } = methods;
 
   const toast = useToast({
     position: "top-right",
@@ -88,50 +86,48 @@ const Login: React.FC = () => {
       gap="10"
       bg={useColorModeValue("gray.200", "gray.900")}
     >
-      <Hide below="md">
-        <Text
-          variant="title"
-          w={{ base: "30%", xl: "40%" }}
-          fontSize="5xl"
-          fontWeight="semibold"
-        >
-          Faça o login para acessar sua conta
-        </Text>
-      </Hide>
-      <Card p="10" w={{ base: "100%", md: "450px" }} boxShadow="lg">
-        <CardBody>
-          <form onSubmit={onSubmit}>
-            <InputText
-              input={{
-                id: "cpf",
-                label: "CPF",
-                placeholder: "CPF",
-              }}
-              register={register}
-              errors={errors}
-            />
+      <FormProvider {...methods}>
+        <Hide below="md">
+          <Text
+            variant="title"
+            w={{ base: "30%", xl: "40%" }}
+            fontSize="5xl"
+            fontWeight="semibold"
+          >
+            Faça o login para acessar sua conta
+          </Text>
+        </Hide>
+        <Card p="10" w={{ base: "100%", md: "450px" }} boxShadow="lg">
+          <CardBody>
+            <form onSubmit={onSubmit}>
+              <InputText
+                input={{
+                  id: "cpf",
+                  label: "CPF",
+                  placeholder: "CPF",
+                }}
+              />
 
-            <Password
-              input={{
-                id: "password",
-                label: "Senha",
-                placeholder: "Senha",
-              }}
-              register={register}
-              errors={errors}
-            />
+              <Password
+                input={{
+                  id: "password",
+                  label: "Senha",
+                  placeholder: "Senha",
+                }}
+              />
 
-            <Button
-              mt={4}
-              colorScheme="teal"
-              type="submit"
-              isLoading={isPending}
-            >
-              Entrar
-            </Button>
-          </form>
-        </CardBody>
-      </Card>
+              <Button
+                mt={4}
+                colorScheme="teal"
+                type="submit"
+                isLoading={isPending}
+              >
+                Entrar
+              </Button>
+            </form>
+          </CardBody>
+        </Card>
+      </FormProvider>
     </Box>
   );
 };

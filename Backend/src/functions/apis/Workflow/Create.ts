@@ -49,6 +49,7 @@ export default new Http(handler)
             x: schema.number().required(),
             y: schema.number().required(),
           }),
+          deletable: schema.boolean().optional(),
           data: schema
             .object()
             .when("type", ([type]) => nodeValidator(type, schema)),

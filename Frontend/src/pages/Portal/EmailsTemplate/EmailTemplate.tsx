@@ -49,7 +49,7 @@ const EmailTemplate: React.FC = () => {
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["emails"] });
-      queryClient.invalidateQueries({ queryKey: ["email"] });
+      queryClient.invalidateQueries({ queryKey: ["forms"] });
       navigate(-1);
     },
     onError: () => {
