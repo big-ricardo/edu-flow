@@ -16,7 +16,7 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+  undefined,
 );
 
 interface AuthProviderProps {
@@ -52,7 +52,7 @@ function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   const providerValue = useMemo(
     () => ({ token, setToken: setTokenValue }),
-    [token, setTokenValue]
+    [token, setTokenValue],
   );
 
   return (

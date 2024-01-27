@@ -52,7 +52,7 @@ export const updateForm = async (data: Form) => {
 };
 
 export const createOrUpdateForm = async (
-  data: Omit<Form, "_id"> & { _id?: string }
+  data: Omit<Form, "_id"> & { _id?: string },
 ) => {
   if (data?._id) {
     return updateForm(data as Form);

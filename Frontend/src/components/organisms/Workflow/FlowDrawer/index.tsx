@@ -48,7 +48,7 @@ const FlowDrawer: React.FC<FlowDrawerProps> = () => {
       });
       onClose();
     },
-    [setNodes, onClose, node?.id]
+    [setNodes, onClose, node?.id],
   );
 
   return (

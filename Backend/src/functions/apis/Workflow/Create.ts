@@ -13,10 +13,8 @@ const handler: HttpHandler = async (conn, req) => {
 
   validateGraph(steps);
 
-  const {
-    name,
-    visible,
-  } = steps.find((step) => step.id === "start")?.data as ICircle;
+  const { name, visible } = steps.find((step) => step.id === "start")
+    ?.data as ICircle;
 
   const workflow = await new Workflow(conn).model().create({
     name,
@@ -41,10 +39,7 @@ export default new Http(handler)
       steps: schema.array().of(
         schema.object().shape({
           id: schema.string().required(),
-          type: schema
-            .mixed()
-            .oneOf(Object.values(NodeTypes))
-            .required(),
+          type: schema.mixed().oneOf(Object.values(NodeTypes)).required(),
           position: schema.object().shape({
             x: schema.number().required(),
             y: schema.number().required(),
@@ -54,7 +49,7 @@ export default new Http(handler)
             .object()
             .when("type", ([type]) => nodeValidator(type, schema)),
           nextStepId: schema.string().optional(),
-        })
+        }),
       ),
     }),
   }))

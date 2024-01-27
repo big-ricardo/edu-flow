@@ -28,7 +28,7 @@ import { IStep, IWorkflow } from "@interfaces/Workflow";
 import { AxiosError } from "axios";
 
 const convertReactFlowObject = (
-  reactFlowObject: ReactFlowJsonObject
+  reactFlowObject: ReactFlowJsonObject,
 ): IWorkflow["steps"] => {
   return reactFlowObject.nodes.map((node) => {
     const edge = reactFlowObject.edges.find((edge) => edge.source === node.id);
@@ -113,7 +113,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    [setEdges],
   );
 
   const onSave = useCallback(() => {
@@ -171,7 +171,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         },
       ]);
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowInstance, setNodes],
   );
 
   useEffect(() => {

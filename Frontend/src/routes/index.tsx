@@ -1,5 +1,5 @@
-import privateRoutes from './private';
-import publicRoutes from './public';
+import privateRoutes from "./private";
+import publicRoutes from "./public";
 
 export type RouteType = {
   path: string;

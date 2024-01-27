@@ -13,10 +13,14 @@ const handler: HttpHandler = async (conn, req) => {
   const { name, acronym, active } = req.body as DtoUniversity;
 
   const university = new University(conn).model();
-  const updatedUniversity = await university.findByIdAndUpdate(id, { name, acronym, active }, { new: true });
+  const updatedUniversity = await university.findByIdAndUpdate(
+    id,
+    { name, acronym, active },
+    { new: true },
+  );
 
   if (!updatedUniversity) {
-    return res.notFound('University not found');
+    return res.notFound("University not found");
   }
 
   return res.success(updatedUniversity);

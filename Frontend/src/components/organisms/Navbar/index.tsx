@@ -29,7 +29,7 @@ const links = [{ to: "/portal", label: "Dashboard", icon: BsHouse }];
 const coordinatorLinks = [
   { to: "/portal/users", label: "Usuários", icon: BsPerson },
   { to: "/portal/institutes", label: "Instituições", icon: BsBuilding },
-  { to: "/portal/universities", label: "Universidades", icon: FaUniversity},
+  { to: "/portal/universities", label: "Universidades", icon: FaUniversity },
   { to: "/portal/statuses", label: "Status", icon: BsTag },
   { to: "/portal/emails", label: "Emails", icon: FaRegEnvelope },
   { to: "/portal/forms", label: "Formulários", icon: BsFileEarmarkText },
@@ -52,7 +52,7 @@ const CustomCard = React.forwardRef<HTMLSpanElement, TagProps>(
         <TagLabel>{children}</TagLabel>
       </Tag>
     </Box>
-  )
+  ),
 );
 
 function Sidebar() {
@@ -115,7 +115,7 @@ const NavLink = React.memo(
         </Tooltip>
       </ChakraLink>
     </ListItem>
-  )
+  ),
 );
 
 export default Sidebar;

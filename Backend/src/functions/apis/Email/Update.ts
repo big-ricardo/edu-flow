@@ -10,7 +10,7 @@ const handler: HttpHandler = async (conn, req) => {
   const updateEmail = await status.findByIdAndUpdate(
     id,
     { slug, htmlTemplate, subject },
-    { new: true }
+    { new: true },
   );
 
   if (!updateEmail) {

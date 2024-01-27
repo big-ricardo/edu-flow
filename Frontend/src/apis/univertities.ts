@@ -42,7 +42,7 @@ export const updateUniversity = async (data: University) => {
 };
 
 export const createOrUpdateUniversity = async (
-  data: Omit<University, "_id"> & { _id?: string }
+  data: Omit<University, "_id"> & { _id?: string },
 ) => {
   if (data?._id) {
     return updateUniversity(data as University);

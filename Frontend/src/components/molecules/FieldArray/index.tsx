@@ -41,7 +41,7 @@ const predefinedOptions = Object.entries(predefinedTypes).map(
   ([value, label]) => ({
     value,
     label,
-  })
+  }),
 );
 
 interface FieldFormsProps {
@@ -59,10 +59,10 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
     const { watch } = useFormContext<formFormSchema>();
 
     const haveOptions = ["select", "multiselect", "radio", "checkbox"].includes(
-      watch(`fields.${index}.type`)
+      watch(`fields.${index}.type`),
     );
     const isSelect = ["select", "multiselect"].includes(
-      watch(`fields.${index}.type`)
+      watch(`fields.${index}.type`),
     );
     const isPredefined = !!watch(`fields.${index}.predefined`);
 
@@ -196,7 +196,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
         {haveOptions && !isPredefined && <FieldArrayOption index={index} />}
       </Flex>
     );
-  }
+  },
 );
 
 export default FieldArray;

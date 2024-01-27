@@ -36,12 +36,12 @@ interface User {
 export type HttpHandler = (
   conn: Connection,
   request: THttpRequest,
-  context: InvocationContext
+  context: InvocationContext,
 ) => Promise<HttpResponseInit>;
 
 type AzureFunctionHandler = (
   request: HttpRequest,
-  context: InvocationContext
+  context: InvocationContext,
 ) => Promise<HttpResponseInit>;
 
 type callbackSchema = (schema: typeof yup) => {
@@ -105,7 +105,7 @@ export default class Http {
           headers,
           user,
         },
-        context
+        context,
       );
     } catch (error) {
       context.error(error);

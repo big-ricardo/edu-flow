@@ -20,7 +20,7 @@ export default function validateGraph(steps: IStep[]) {
     if (step.next_step_id && !ids.has(step.next_step_id)) {
       const err = {
         status: 400,
-        message: `O Step ${step.id} possui um proximo step inválido`, 
+        message: `O Step ${step.id} possui um proximo step inválido`,
       };
 
       throw err;

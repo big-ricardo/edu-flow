@@ -85,17 +85,17 @@ export default new Http(handler)
               schema.object().shape({
                 label: schema.string().required(),
                 value: schema.string().required(),
-              })
+              }),
             )
             .when("type", ([type], schema) => {
               if (["select", "radio", "checkbox"].includes(type)) {
                 return schema.required(
-                  "options is required for select, radio and checkbox fields"
+                  "options is required for select, radio and checkbox fields",
                 );
               }
               return schema.nullable().default(null);
             }),
-        })
+        }),
       ),
     }),
   }))

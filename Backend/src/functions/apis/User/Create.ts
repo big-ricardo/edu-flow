@@ -65,7 +65,7 @@ export default new Http(handler)
         .when("role", ([role], schema) =>
           role === "teacher"
             ? schema.required()
-            : schema.notRequired().nullable()
+            : schema.notRequired().nullable(),
         ),
     }),
   }))

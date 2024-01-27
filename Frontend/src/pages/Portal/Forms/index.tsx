@@ -73,7 +73,7 @@ const Create = memo(() => {
       onClose();
       navigate(`/portal/form?type=${formType}`);
     },
-    [navigate, onClose]
+    [navigate, onClose],
   );
 
   return (

@@ -25,7 +25,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 class Institute {
@@ -38,7 +38,7 @@ class Institute {
   model() {
     return this.conn.model<IInstitute | IInstituteWithUniversity>(
       "Institute",
-      schema
+      schema,
     );
   }
 }

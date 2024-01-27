@@ -5,7 +5,7 @@ import moment from "moment";
 const response = (
   status: StatusCodes,
   data: any,
-  err = null
+  err = null,
 ): HttpResponseInit => ({
   status,
   body: JSON.stringify(
@@ -16,7 +16,7 @@ const response = (
       timestamp: moment.utc().toISOString(),
     },
     null,
-    2
+    2,
   ),
   headers: {
     "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export const internalServerError = (): HttpResponseInit =>
 export const error = (
   status: number,
   body: any,
-  message: any
+  message: any,
 ): HttpResponseInit => response(status, null, message);
 
 export default {

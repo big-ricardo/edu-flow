@@ -43,7 +43,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 )
   .index({ cpf: 1 })
   .pre("save", function (next) {

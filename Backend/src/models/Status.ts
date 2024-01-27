@@ -23,7 +23,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default class Status {

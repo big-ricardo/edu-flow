@@ -23,7 +23,7 @@ const Password: React.FC<TextProps> = ({ input }) => {
 
   const handlePasswordVisibility = useCallback(
     () => setShowPassword((prev) => !prev),
-    []
+    [],
   );
 
   return (

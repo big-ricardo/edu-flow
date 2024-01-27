@@ -13,14 +13,14 @@ const predefinedValues = {
 
 const getPredefinedValues = async (
   conn: Parameters<HttpHandler>[0],
-  value: "teachers" | "students" | "institution"
+  value: "teachers" | "students" | "institution",
 ) => {
   if (value === "institution") {
     predefinedValues[value] = (await new Institute(conn).model().find()).map(
       (user) => ({
         label: user.name,
         value: user._id,
-      })
+      }),
     );
     return;
   }

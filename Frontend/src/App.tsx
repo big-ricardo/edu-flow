@@ -16,7 +16,7 @@ function App() {
         setAuth(null);
       }
       return Promise.reject(error);
-    }
+    },
   );
 
   return (

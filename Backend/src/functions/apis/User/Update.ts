@@ -54,7 +54,7 @@ const handler: HttpHandler = async (conn, req, context) => {
           ? university_degree ?? existingUser.university_degree
           : null,
     },
-    { new: true }
+    { new: true },
   );
 
   return res.success({
@@ -91,7 +91,7 @@ export default new Http(handler)
         .when("role", ([role], schema) =>
           role === "teacher"
             ? schema.required()
-            : schema.notRequired().nullable()
+            : schema.notRequired().nullable(),
         ),
     }),
     params: schema.object().shape({

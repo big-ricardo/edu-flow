@@ -1,6 +1,11 @@
 import { FormHelperText } from "@chakra-ui/react";
 import React from "react";
-import { FieldError, Merge, FieldErrorsImpl, FieldValues } from "react-hook-form";
+import {
+  FieldError,
+  Merge,
+  FieldErrorsImpl,
+  FieldValues,
+} from "react-hook-form";
 
 interface ErrorMessageProps {
   error?: FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>>;

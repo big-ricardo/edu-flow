@@ -9,8 +9,8 @@ type BaseUser = {
   active: boolean;
 };
 
-type AdminOrStudent = BaseUser & { role: "admin" | "student"; };
-type Teacher = BaseUser & { role: "teacher"; university_degree: string; };
+type AdminOrStudent = BaseUser & { role: "admin" | "student" };
+type Teacher = BaseUser & { role: "teacher"; university_degree: string };
 
 type IUser = AdminOrStudent | Teacher;
 

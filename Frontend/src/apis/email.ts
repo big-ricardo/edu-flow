@@ -42,7 +42,7 @@ export const updateEmail = async (data: Email) => {
 };
 
 export const createOrUpdateEmail = async (
-  data: Omit<Email, "_id"> & { _id?: string }
+  data: Omit<Email, "_id"> & { _id?: string },
 ) => {
   if (data?._id) {
     return updateEmail(data as Email);

@@ -13,7 +13,7 @@ interface DrawerContextType {
 }
 
 export const DrawerContext = createContext<DrawerContextType | undefined>(
-  undefined
+  undefined,
 );
 
 interface AuthProviderProps {
@@ -29,7 +29,7 @@ function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   const providerValue = useMemo(
     () => ({ isOpen, onOpen, onClose }),
-    [isOpen, onOpen, onClose]
+    [isOpen, onOpen, onClose],
   );
 
   return (

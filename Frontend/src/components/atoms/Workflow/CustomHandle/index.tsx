@@ -8,7 +8,9 @@ import {
   useStore,
 } from "reactflow";
 
-interface WrapperNodeProps extends HandleProps, React.HTMLAttributes<HTMLDivElement> {}
+interface WrapperNodeProps
+  extends HandleProps,
+    React.HTMLAttributes<HTMLDivElement> {}
 
 const CustomHandle: React.FC<WrapperNodeProps> = (props) => {
   const id = useNodeId() ?? "";

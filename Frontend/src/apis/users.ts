@@ -56,7 +56,7 @@ export const updateUser = async (data: User) => {
 };
 
 export const createOrUpdateUser = async (
-  data: Omit<User, "_id" | "password"> & { _id?: string; password?: string }
+  data: Omit<User, "_id" | "password"> & { _id?: string; password?: string },
 ) => {
   if (data?._id) {
     return updateUser(data as User);

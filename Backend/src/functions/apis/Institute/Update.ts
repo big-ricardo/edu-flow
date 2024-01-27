@@ -26,7 +26,7 @@ const handler: HttpHandler = async (conn, req) => {
   const updatedUniversity = await institute.findByIdAndUpdate(
     id,
     { name, acronym, active, university },
-    { new: true }
+    { new: true },
   );
 
   if (!updatedUniversity) {

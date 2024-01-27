@@ -84,7 +84,7 @@ const EmailTemplate: React.FC = () => {
         });
       })();
     },
-    [handleSubmit, mutateAsync, id, isEditing]
+    [handleSubmit, mutateAsync, id, isEditing],
   );
 
   useEffect(() => {}, [errors]);

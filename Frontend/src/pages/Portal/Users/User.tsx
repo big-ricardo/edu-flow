@@ -45,14 +45,14 @@ const Schema = z
     {
       message: "Titulação é obrigatória para professores",
       path: ["university_degree"],
-    }
+    },
   )
   .refine(
     (data) => !data.password || (data.password && data.password.length >= 6),
     {
       message: "Senha precisa ter no mínimo 6 caracteres",
       path: ["password"],
-    }
+    },
   )
   .refine((data) => data.password === data.confirmPassword, {
     message: "Senhas não coincidem",

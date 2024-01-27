@@ -1,7 +1,4 @@
-import {
-  Table as ChakraTable,
-  TableCaption,
-} from "@chakra-ui/react";
+import { Table as ChakraTable, TableCaption } from "@chakra-ui/react";
 import TableBody, { TableData } from "@components/molecules/Table/TableBody";
 import TableHead, {
   TableHeadProps,
@@ -14,11 +11,7 @@ type TableProps = {
   isLoading?: boolean;
 };
 
-const Table: React.FC<TableProps> = ({
-  columns,
-  data,
-  tableTitle,
-}) => {
+const Table: React.FC<TableProps> = ({ columns, data, tableTitle }) => {
   return (
     <ChakraTable variant="striped">
       <TableCaption>{tableTitle}</TableCaption>

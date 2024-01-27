@@ -17,7 +17,6 @@ import {
   Divider,
   Flex,
   Heading,
-  Spinner,
   useToast,
 } from "@chakra-ui/react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -85,11 +84,11 @@ const formSchema = z
             .default(null),
           options: z
             .array(
-              z.object({ label: z.string().min(3), value: z.string().min(3) })
+              z.object({ label: z.string().min(3), value: z.string().min(3) }),
             )
             .nullable()
             .optional(),
-        })
+        }),
       )
       .min(1, "É necessário ter pelo menos um campo"),
   })
@@ -103,7 +102,7 @@ const formSchema = z
     {
       message: "É necessário selecionar um workflow",
       path: ["workflow"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -115,22 +114,22 @@ const formSchema = z
     {
       message: "É necessário selecionar um status inicial",
       path: ["initial_status"],
-    }
+    },
   )
   .refine(
     (data) => {
       const selectFields = data.fields.filter((field) =>
-        ["select", "multiselect"].includes(field.type)
+        ["select", "multiselect"].includes(field.type),
       );
 
       return selectFields.every(
-        (field) => field?.predefined ?? field.options?.length
+        (field) => field?.predefined ?? field.options?.length,
       );
     },
     {
       message: "É necessário selecionar uma opção",
       path: ["fields"],
-    }
+    },
   );
 
 export type formFormSchema = z.infer<typeof formSchema>;
@@ -513,7 +512,7 @@ const ButtonAdd: React.FC<ButtonAddProps> = ({
         visible: true,
         predefined: null,
       },
-      { shouldFocus: true }
+      { shouldFocus: true },
     );
   }, [insert, index, length]);
 

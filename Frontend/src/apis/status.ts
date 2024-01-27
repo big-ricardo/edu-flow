@@ -41,8 +41,8 @@ export const updateStatus = async (data: Status) => {
   return res.data.data;
 };
 
-export const createOrUpdateStatus= async (
-  data: Omit<Status, "_id"> & { _id?: string }
+export const createOrUpdateStatus = async (
+  data: Omit<Status, "_id"> & { _id?: string },
 ) => {
   if (data?._id) {
     return updateStatus(data as Status);

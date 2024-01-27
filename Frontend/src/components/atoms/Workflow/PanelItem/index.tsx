@@ -13,7 +13,7 @@ const PanelItem: React.FC<PanelItemProps> = ({ children, nodeType }) => {
       event.dataTransfer.setData("application/reactflow", nodeType);
       event.dataTransfer.effectAllowed = "move";
     },
-    [nodeType]
+    [nodeType],
   );
 
   return (

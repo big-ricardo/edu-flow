@@ -4,7 +4,10 @@ import IInstitute from "@interfaces/Institute";
 import api from "@services/api";
 import IUniversity from "@interfaces/University";
 
-type Institute = Pick<IInstitute, "_id" | "name" | "acronym" | "active" | "university">;
+type Institute = Pick<
+  IInstitute,
+  "_id" | "name" | "acronym" | "active" | "university"
+>;
 type ReqInstitutes = Response<
   {
     institutes: (Omit<Institute, "university"> & {
@@ -23,7 +26,7 @@ export const getInstitutes = async ({
     params: { page, limit },
   });
 
-  return res.data.data
+  return res.data.data;
 };
 
 export const getInstitute = async ({
@@ -49,7 +52,7 @@ export const updateInstitute = async (data: Institute) => {
 };
 
 export const createOrUpdateInstitute = async (
-  data: Omit<Institute, "_id"> & { _id?: string; university: string }
+  data: Omit<Institute, "_id"> & { _id?: string; university: string },
 ) => {
   if (data?._id) {
     return updateInstitute(data as Institute);

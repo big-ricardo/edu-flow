@@ -11,7 +11,7 @@ const handler: HttpHandler = async (conn, req) => {
     {
       status,
     },
-    { new: true }
+    { new: true },
   );
 
   workflow.save();

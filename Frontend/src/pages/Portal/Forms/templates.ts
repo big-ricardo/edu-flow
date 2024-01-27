@@ -68,7 +68,7 @@ const templates: {
 const keys = Object.keys(templates);
 
 export default function getTemplate(
-  templateId: string | undefined | null
+  templateId: string | undefined | null,
 ): Template | object {
   if (!templateId) return {};
 

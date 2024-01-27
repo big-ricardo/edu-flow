@@ -10,7 +10,7 @@ const handler: HttpHandler = async (conn, req) => {
   const updateStatus = await status.findByIdAndUpdate(
     id,
     { name, type },
-    { new: true }
+    { new: true },
   );
 
   if (!updateStatus) {

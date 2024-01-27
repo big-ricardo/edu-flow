@@ -50,7 +50,7 @@ export const updateWorkflow = async (data: IWorkflow) => {
 };
 
 export const publishUnpublish = async (
-  data: Pick<IWorkflow, "_id" | "status">
+  data: Pick<IWorkflow, "_id" | "status">,
 ) => {
   const res = await api.patch<ReqWorkflow>(`/workflow/${data._id}`, data);
 
@@ -58,7 +58,7 @@ export const publishUnpublish = async (
 };
 
 export const createOrUpdateWorkflow = async (
-  data: Pick<IWorkflow, "steps" | "viewport"> & { _id?: string }
+  data: Pick<IWorkflow, "steps" | "viewport"> & { _id?: string },
 ) => {
   if (data?._id) {
     return updateWorkflow(data as IWorkflow);

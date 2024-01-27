@@ -37,7 +37,7 @@ const handler: HttpHandler = async (conn) => {
   const roles = [
     { label: "Admin", value: "admin" },
     { label: "Docente", value: "teacher" },
-    { label: "Discente", value: "student" }, 
+    { label: "Discente", value: "student" },
   ];
 
   return res.success({

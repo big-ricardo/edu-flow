@@ -111,7 +111,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 ).index({ slug: 1, status: 1, "period.open": 1, "period.close": 1 });
 
 export default class Form {
