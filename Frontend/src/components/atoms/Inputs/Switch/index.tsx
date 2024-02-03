@@ -13,9 +13,10 @@ interface SwitchProps {
     label: string;
     required?: boolean;
   };
+  isDisabled?: boolean;
 }
 
-const Switch: React.FC<SwitchProps> = ({ input }) => {
+const Switch: React.FC<SwitchProps> = ({ input, isDisabled }) => {
   const {
     control,
     formState: { errors },
@@ -28,6 +29,7 @@ const Switch: React.FC<SwitchProps> = ({ input }) => {
       isRequired={input.required}
       display="flex"
       alignItems="end"
+      isDisabled={isDisabled}
     >
       <FormLabel htmlFor={input.id}>
         {input.label}
@@ -45,7 +47,7 @@ const Switch: React.FC<SwitchProps> = ({ input }) => {
           rules={{ required: !!input.required }}
         />
       </FormLabel>
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };

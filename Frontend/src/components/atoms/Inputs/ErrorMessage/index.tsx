@@ -1,24 +1,32 @@
 import { FormHelperText } from "@chakra-ui/react";
 import React from "react";
-import {
-  FieldError,
-  Merge,
-  FieldErrorsImpl,
-  FieldValues,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 
 interface ErrorMessageProps {
-  error?: FieldError | Merge<FieldError, FieldErrorsImpl<FieldValues>>;
+  id: string;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ error }) => {
+const ErrorMessages: React.FC<ErrorMessageProps> = ({ id }) => {
+  const {
+    formState: { errors },
+  } = useFormContext();
+
   return (
-    <>
-      {typeof error?.message === "string" && (
-        <FormHelperText color={"red"}>{error.message}</FormHelperText>
+    <ErrorMessage
+      errors={errors}
+      name={id}
+      render={({ message, messages }) => (
+        <FormHelperText color="red.600">
+          {messages &&
+            Object.entries(messages).map(([type, message]) => (
+              <p key={type}>{message}</p>
+            ))}
+          {message}
+        </FormHelperText>
       )}
-    </>
+    />
   );
 };
 
-export default ErrorMessage;
+export default ErrorMessages;

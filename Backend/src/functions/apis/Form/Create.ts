@@ -64,6 +64,7 @@ export default new Http(handler)
             .string()
             .required()
             .oneOf([
+              "evaluated",
               "text",
               "number",
               "email",

@@ -82,8 +82,10 @@ export const schema: Schema = new Schema(
             "date",
             "file",
             "multiselect",
+            "evaluated",
           ],
         },
+        weight: { type: Number, required: false },
         predefined: {
           type: String,
           required: false,

@@ -80,10 +80,12 @@ export default new Http(handler)
               "date",
               "file",
               "multiselect",
+              "evaluated",
             ]),
           value: schema.string().nullable(),
           visible: schema.boolean().default(true),
           required: schema.boolean().required(),
+          weight: schema.number().min(0).max(10).optional(),
           options: schema
             .array()
             .of(

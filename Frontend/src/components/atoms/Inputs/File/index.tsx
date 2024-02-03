@@ -82,7 +82,7 @@ const File: React.FC<FileProps> = ({ input }) => {
           readOnly
         />
       </InputGroup>
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };

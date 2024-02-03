@@ -1,138 +1,23 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
-import {
-  FormProvider,
-  UseFieldArrayInsert,
-  useFieldArray,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
+import { useCallback, useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Card,
   CardBody,
   Center,
-  Divider,
   Flex,
   Heading,
   useToast,
 } from "@chakra-ui/react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import Text from "@components/atoms/Inputs/Text";
-import Select from "@components/atoms/Inputs/Select";
-import { createOrUpdateForm, getForm, getFormForms } from "@apis/form";
-import TextArea from "@components/atoms/Inputs/TextArea";
-import FieldArray from "@components/molecules/FieldArray";
+import { createOrUpdateForm, getForm } from "@apis/form";
 import getTemplate from "./templates";
-import {
-  FaArrowLeft,
-  FaEye,
-  FaPen,
-  FaPlus,
-  FaSave,
-  FaTrashAlt,
-} from "react-icons/fa";
-import Inputs from "@components/atoms/Inputs";
-import IForm from "@interfaces/Form";
-
-const formSchema = z
-  .object({
-    name: z.string(),
-    slug: z
-      .string()
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-        message: "Slug inválido, utilize apenas letras e números e -",
-      })
-      .min(3),
-    status: z.enum(["draft", "published"]).default("draft"),
-    initial_status: z.string().optional().nullable(),
-    type: z.enum(["created", "interaction", "available"]),
-    workflow: z.string().optional().nullable(),
-    period: z.object({
-      open: z.string().nullable(),
-      close: z.string().nullable(),
-    }),
-    description: z.string().max(255),
-    fields: z
-      .array(
-        z.object({
-          id: z.string().min(3),
-          label: z.string().min(3),
-          placeholder: z.string().optional(),
-          type: z.enum([
-            "text",
-            "number",
-            "email",
-            "password",
-            "textarea",
-            "checkbox",
-            "radio",
-            "select",
-            "multiselect",
-            "date",
-            "file",
-          ]),
-          required: z.boolean().optional().default(false),
-          value: z.string().optional().nullable(),
-          visible: z.boolean().optional().default(true),
-          system: z.boolean().optional().default(false),
-          predefined: z
-            .enum(["teachers", "students", "institutions"])
-            .nullable()
-            .default(null),
-          options: z
-            .array(
-              z.object({ label: z.string().min(3), value: z.string().min(3) }),
-            )
-            .nullable()
-            .optional(),
-        }),
-      )
-      .min(1, "É necessário ter pelo menos um campo"),
-  })
-  .refine(
-    (data) => {
-      if (data.type === "created") {
-        return !!data.workflow;
-      }
-      return true;
-    },
-    {
-      message: "É necessário selecionar um workflow",
-      path: ["workflow"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (data.type === "created") {
-        return !!data.initial_status;
-      }
-      return true;
-    },
-    {
-      message: "É necessário selecionar um status inicial",
-      path: ["initial_status"],
-    },
-  )
-  .refine(
-    (data) => {
-      const selectFields = data.fields.filter((field) =>
-        ["select", "multiselect"].includes(field.type),
-      );
-
-      return selectFields.every(
-        (field) => field?.predefined ?? field.options?.length,
-      );
-    },
-    {
-      message: "É necessário selecionar uma opção",
-      path: ["fields"],
-    },
-  );
-
-export type formFormSchema = z.infer<typeof formSchema>;
+import { FaArrowLeft, FaEye, FaPen, FaSave, FaTrashAlt } from "react-icons/fa";
+import FormEdit from "./components/Forms";
+import formSchema, { formFormSchema } from "./schema";
+import Preview from "./components/Preview";
 
 export default function Form() {
   const toast = useToast();
@@ -142,7 +27,10 @@ export default function Form() {
   const [searchParams] = useSearchParams();
   const [isPreview, setPreview] = useState<boolean>(false);
 
-  const type = searchParams.get("type");
+  const type = searchParams.get("type") as
+    | "created"
+    | "interaction"
+    | "available";
 
   const isEditing = !!params?.id;
   const id = params?.id ?? "";
@@ -194,7 +82,7 @@ export default function Form() {
     reset,
     watch,
     getValues,
-    formState: { errors, isDirty, isValid },
+    formState: { isDirty, isValid },
   } = methods;
 
   const formType = watch("type");
@@ -221,8 +109,6 @@ export default function Form() {
     }
   }, [form, reset]);
 
-  useEffect(() => {}, [errors]);
-
   if (isError) {
     return (
       <Center h="100vh" w="100%">
@@ -232,7 +118,7 @@ export default function Form() {
   }
 
   return (
-    <Flex w="100%" h="100%" direction="column">
+    <Flex w="100%" h="100%" direction="column" pb="10rem">
       <Card
         w="100%"
         display="flex"
@@ -285,7 +171,7 @@ export default function Form() {
           <Button
             colorScheme="green"
             isLoading={isPending}
-            isDisabled={!isDirty || !isValid}
+            isDisabled={!isDirty}
             onClick={onSubmit}
             size="sm"
           >
@@ -308,7 +194,10 @@ export default function Form() {
               {isPreview ? (
                 <Preview form={getValues()} />
               ) : (
-                <FormEdit {...{ isEditing, isCreated, isLoading }} />
+                <FormEdit
+                  {...{ isEditing, isCreated, isLoading }}
+                  formType={type}
+                />
               )}
             </CardBody>
           </Card>
@@ -317,216 +206,3 @@ export default function Form() {
     </Flex>
   );
 }
-
-interface PreviewProps {
-  form: Omit<IForm, "_id">;
-}
-
-const Preview: React.FC<PreviewProps> = memo(({ form }) => {
-  return (
-    <React.Fragment>
-      <Heading>{form.name}</Heading>
-      <span>{form.description}</span>
-      <Divider />
-      <Inputs fields={form.fields} />
-    </React.Fragment>
-  );
-});
-
-interface FormEditProps {
-  isEditing: boolean;
-  isCreated: boolean;
-}
-
-const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, isCreated }) => {
-  const { control } = useFormContext<formFormSchema>();
-
-  const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["forms", "forms"],
-    queryFn: getFormForms,
-    retryOnMount: false,
-    staleTime: 1000 * 60 * 60,
-  });
-
-  const { fields, insert, remove, swap } = useFieldArray({
-    control,
-    name: "fields",
-  });
-
-  return (
-    <React.Fragment>
-      <Heading size="md">Configurações</Heading>
-      <Divider />
-
-      <Text
-        input={{
-          id: "name",
-          label: "Nome",
-          placeholder: "Nome",
-          required: true,
-        }}
-      />
-
-      <Text
-        input={{
-          id: "slug",
-          label: "Digite um sluf único para o formulário",
-          placeholder: "Slug",
-          required: true,
-        }}
-      />
-
-      <Flex gap="4">
-        {isEditing && (
-          <Select
-            input={{
-              id: "status",
-              label: "Status",
-              placeholder: "Status",
-              required: true,
-              options: [
-                { label: "Rascunho", value: "draft" },
-                { label: "Publicado", value: "published" },
-              ],
-            }}
-            isLoading={isLoadingForms}
-          />
-        )}
-
-        {isCreated && (
-          <Select
-            input={{
-              id: "workflow",
-              label: "Workflow",
-              placeholder: "Workflow Acionado",
-              required: true,
-              options: formsData?.workflows ?? [],
-            }}
-            isLoading={isLoadingForms}
-          />
-        )}
-      </Flex>
-
-      <Flex gap="4">
-        <Select
-          input={{
-            id: "type",
-            label: "Tipo",
-            placeholder: "Tipo",
-            required: true,
-            options: [
-              { label: "Criação de Atividade", value: "created" },
-              { label: "Interação com Atividade", value: "interaction" },
-              { label: "Avaliação de Atividade", value: "available" },
-            ],
-            isDisabled: true,
-          }}
-        />
-
-        {isCreated && (
-          <Select
-            input={{
-              id: "initial_status",
-              label: "Status inicial da atividade",
-              placeholder: "Status inicial",
-              required: true,
-              options: formsData?.status ?? [],
-            }}
-            isLoading={isLoadingForms}
-          />
-        )}
-      </Flex>
-
-      <TextArea
-        input={{
-          id: "description",
-          label: "Descrição",
-          placeholder: "Descrição",
-          required: true,
-        }}
-      />
-
-      <Flex gap="4" mb="5">
-        <Text
-          input={{
-            id: "period.open",
-            label: "Abertura",
-            placeholder: "Abertura",
-            type: "date",
-          }}
-        />
-
-        <Text
-          input={{
-            id: "period.close",
-            label: "Fechamento",
-            placeholder: "Fechamento",
-            type: "date",
-          }}
-        />
-      </Flex>
-
-      <Heading size="md">Campos do formulário</Heading>
-      <Divider />
-
-      <ButtonAdd insert={insert} />
-
-      {fields.map((field, index) => (
-        <Flex key={field.id} direction="column" gap="4">
-          <FieldArray
-            field={field}
-            index={index}
-            remove={remove}
-            swap={swap}
-            isEnd={index === fields.length - 1}
-          />
-          <ButtonAdd insert={insert} index={index} length={fields.length} />
-        </Flex>
-      ))}
-    </React.Fragment>
-  );
-});
-
-interface ButtonAddProps {
-  insert: UseFieldArrayInsert<formFormSchema, "fields">;
-  index?: number;
-  length?: number;
-}
-
-const ButtonAdd: React.FC<ButtonAddProps> = ({
-  insert,
-  index = 0,
-  length = 0,
-}) => {
-  const handleAddField = useCallback(() => {
-    insert(
-      index + 1,
-      {
-        id: `field-${length}`,
-        label: "",
-        placeholder: "",
-        type: "text",
-        required: false,
-        system: false,
-        value: "",
-        visible: true,
-        predefined: null,
-      },
-      { shouldFocus: true },
-    );
-  }, [insert, index, length]);
-
-  return (
-    <Button
-      colorScheme="blue"
-      variant="outline"
-      size="sm"
-      onClick={handleAddField}
-      title="Adicionar campo"
-      w="fit-content"
-      margin="auto"
-    >
-      <FaPlus />
-    </Button>
-  );
-};

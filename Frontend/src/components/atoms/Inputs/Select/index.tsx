@@ -41,12 +41,6 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
         backgroundColor: "none",
         borderRadius: "0.375rem",
         boxShadow: "none",
-        "&:hover": {
-          borderColor: borderColor,
-        },
-        "&:focus": {
-          borderColor: borderColor,
-        },
         opacity: input.isDisabled ? 0.4 : 1,
       }),
       input: (provided) => ({
@@ -68,7 +62,7 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
         ...provided,
         backgroundColor: state.isSelected
           ? backgroundColorSelected
-          : backgroundColor,
+          : state.isFocused && backgroundColorHover,
         color: color,
         "&:hover": {
           backgroundColor: backgroundColorHover,
@@ -128,9 +122,10 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
       <Controller
         name={input.id}
         control={control}
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange, value, ref } }) => (
           <ReactSelect
             value={searchValue(value)}
+            ref={ref}
             onChange={(value: { value: string }[] | { value: string }) => {
               if (Array.isArray(value)) {
                 onChange(value?.map((v) => v.value));
@@ -150,7 +145,7 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
         )}
         rules={{ required: !!input.required }}
       />
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };

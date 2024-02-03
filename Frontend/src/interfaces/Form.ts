@@ -26,14 +26,13 @@ export type IField = {
     | "select"
     | "date"
     | "file"
+    | "evaluated"
     | "multiselect";
   required?: boolean;
   predefined: "teachers" | "students" | "institutions" | null;
   value?: string | null;
   visible: boolean;
-  options:
-    | { label: string; value: string }[]
-    | { label: string; options: { label: string; value: string }[] }[];
+  options?: { label: string; value: string }[] | null;
   system?: boolean;
 };
 

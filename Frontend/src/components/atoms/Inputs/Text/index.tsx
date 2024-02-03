@@ -33,7 +33,7 @@ const Text: React.FC<TextProps> = ({ input }) => {
         {...register(input.id)}
         isDisabled={input?.isDisabled}
       />
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };

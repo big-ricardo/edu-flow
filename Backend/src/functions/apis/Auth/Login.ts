@@ -7,7 +7,7 @@ interface Body {
   cpf: string;
   password: string;
 }
-const handler: HttpHandler = async (conn, req, context) => {
+export const handler: HttpHandler = async (conn, req, context) => {
   const { cpf, password } = req.body as Body;
 
   const user = await conn.model("User").findOne({

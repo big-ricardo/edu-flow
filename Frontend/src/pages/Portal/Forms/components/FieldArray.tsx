@@ -1,7 +1,7 @@
 import { Flex, Button, useColorModeValue } from "@chakra-ui/react";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
-import { formFormSchema } from "@pages/Portal/Forms/Form";
+import { formFormSchema } from "@pages/Portal/Forms/schema";
 import { memo } from "react";
 import {
   FieldArrayWithId,
@@ -12,6 +12,8 @@ import {
 import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa";
 import FieldArrayOption from "@components/atoms/FieldArrayOption";
 import Switch from "@components/atoms/Inputs/Switch";
+import Number from "@components/atoms/Inputs/Number";
+
 const fieldTypes = {
   text: "Texto",
   number: "Número",
@@ -45,7 +47,7 @@ const predefinedOptions = Object.entries(predefinedTypes).map(
 );
 
 interface FieldFormsProps {
-  field: FieldArrayWithId<formFormSchema, "fields", "id">;
+  field: FieldArrayWithId<formFormSchema, "fields"> & { system: boolean };
   index: number;
   remove: UseFieldArrayRemove;
   swap: UseFieldArraySwap;
@@ -64,6 +66,10 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
     const isSelect = ["select", "multiselect"].includes(
       watch(`fields.${index}.type`),
     );
+
+    const isAvailable = watch(`type`) === "available";
+    const isEvaluated = watch(`fields.${index}.type`) === "evaluated";
+
     const isPredefined = !!watch(`fields.${index}.predefined`);
 
     return (
@@ -126,6 +132,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
                 label: "Campo obrigatório",
                 required: false,
               }}
+              isDisabled={isEvaluated}
             />
 
             <Switch
@@ -138,14 +145,16 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
           </Flex>
         )}
 
-        <Text
-          input={{
-            id: `fields.${index}.id`,
-            label: "Digite a identificação do campo",
-            placeholder: "Identificação",
-            isDisabled: field.system,
-          }}
-        />
+        <Flex direction={["column", "row"]} gap={4}>
+          <Text
+            input={{
+              id: `fields.${index}.id`,
+              label: "Digite a identificação do campo",
+              placeholder: "Identificação",
+              isDisabled: field.system,
+            }}
+          />
+        </Flex>
 
         <Flex direction={["column", "row"]} gap={4}>
           <Text
@@ -156,15 +165,16 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               required: true,
             }}
           />
-
-          <Text
-            input={{
-              id: `fields.${index}.placeholder`,
-              label: "Digite o placeholder do campo",
-              placeholder: "Placeholder",
-              required: false,
-            }}
-          />
+          {!isEvaluated && (
+            <Text
+              input={{
+                id: `fields.${index}.placeholder`,
+                label: "Digite o placeholder do campo",
+                placeholder: "Placeholder",
+                required: false,
+              }}
+            />
+          )}
         </Flex>
 
         <Flex direction={["column", "row"]} gap={4}>
@@ -174,7 +184,11 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               label: "Tipo",
               placeholder: "Tipo",
               required: true,
-              options: fieldOptions,
+              options: isAvailable
+                ? [{ value: "evaluated", label: "Nota de Avaliação" }].concat(
+                    fieldOptions,
+                  )
+                : fieldOptions,
               isDisabled: field.system,
             }}
           />
@@ -188,6 +202,18 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
                 required: false,
                 options: predefinedOptions,
                 isDisabled: field.system,
+              }}
+            />
+          )}
+
+          {isEvaluated && (
+            <Number
+              input={{
+                id: `fields.${index}.weight`,
+                label: "Digite o peso da nota",
+                placeholder: "Peso",
+                required: true,
+                type: "number",
               }}
             />
           )}

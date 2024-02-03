@@ -2,7 +2,7 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Email, { IEmail } from "../../../models/Email";
 
-const handler: HttpHandler = async (conn, req) => {
+export const handler: HttpHandler = async (conn, req) => {
   const { slug, htmlTemplate, subject } = req.body as IEmail;
 
   const email = await new Email(conn).model().create({
@@ -10,6 +10,10 @@ const handler: HttpHandler = async (conn, req) => {
     subject,
     htmlTemplate,
   });
+
+  if (email instanceof Error) {
+    return res.badRequest(email.message);
+  }
 
   email.save();
 

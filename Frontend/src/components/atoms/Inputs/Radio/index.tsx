@@ -9,7 +9,9 @@ import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 
-type IOption = { value: string; label: string };
+type IOption =
+  | { value: string; label: string }
+  | { label: string; options: IOption[] };
 
 interface RadioProps {
   input: {
@@ -42,7 +44,7 @@ const Radio: React.FC<RadioProps> = ({ input }) => {
           <RadioGroup onChange={onChange} value={value}>
             <Stack direction="row">
               {input.options?.map((item) => (
-                <RadioChackra key={item.label} value={item.value}>
+                <RadioChackra key={item.label} value={item?.value}>
                   {item.label}
                 </RadioChackra>
               ))}
@@ -51,7 +53,7 @@ const Radio: React.FC<RadioProps> = ({ input }) => {
         )}
         rules={{ required: !!input.required }}
       />
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };

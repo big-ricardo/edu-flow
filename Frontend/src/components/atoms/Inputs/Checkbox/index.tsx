@@ -16,17 +16,10 @@ interface CheckboxProps {
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({ input }) => {
-  const {
-    formState: { errors },
-    control,
-  } = useFormContext();
+  const { control } = useFormContext();
 
   return (
-    <FormControl
-      id={input.id}
-      isInvalid={!!errors?.[input.id]}
-      isRequired={input.required}
-    >
+    <FormControl id={input.id} isRequired={input.required}>
       <Controller
         name={input.id}
         control={control}
@@ -37,7 +30,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ input }) => {
         )}
         rules={{ required: !!input.required }}
       />
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };

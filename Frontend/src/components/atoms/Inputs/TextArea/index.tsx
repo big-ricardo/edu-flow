@@ -30,7 +30,7 @@ const TextArea: React.FC<TextAreaProps> = ({ input }) => {
         placeholder={input?.placeholder}
         {...register(input.id)}
       />
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };

@@ -51,7 +51,7 @@ const Password: React.FC<TextProps> = ({ input }) => {
         zIndex={2}
       />
 
-      <ErrorMessage error={errors?.[input.id]} />
+      <ErrorMessage id={input.id} />
     </FormControl>
   );
 };
