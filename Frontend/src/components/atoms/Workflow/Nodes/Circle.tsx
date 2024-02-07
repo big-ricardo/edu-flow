@@ -55,6 +55,7 @@ const CircleNode: React.FC<CircleNodeProps> = ({ data, selected }) => {
       {data?.hasHandleLeft && (
         <Handle
           type="target"
+          id="default-target"
           position={Position.Left}
           style={{ background: "#555", left: "-10px" }}
         />
@@ -85,6 +86,7 @@ const CircleNode: React.FC<CircleNodeProps> = ({ data, selected }) => {
 
       {data?.hasHandleRight && (
         <CustomHandle
+          handleId="default-source"
           type="source"
           position={Position.Right}
           style={{ background: "#555", right: "-10px" }}

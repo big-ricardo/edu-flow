@@ -21,7 +21,6 @@ import { BiRefresh, BiEdit } from "react-icons/bi";
 import { getForms } from "@apis/form";
 import Pagination from "@components/organisms/Pagination";
 import IForm from "@interfaces/Form";
-import { BsFillEyeFill } from "react-icons/bs";
 
 const columns = [
   {
@@ -45,7 +44,7 @@ const columns = [
 const FormTypes = {
   created: "Criação",
   interaction: "Interação",
-  available: "Avaliação",
+  evaluated: "Avaliação",
 };
 
 const Action = memo((form: Pick<IForm, "_id" | "slug">) => {

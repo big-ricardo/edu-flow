@@ -17,7 +17,7 @@ import ErrorMessages from "@components/atoms/Inputs/ErrorMessage";
 
 interface FormEditProps {
   isEditing: boolean;
-  formType: "created" | "interaction" | "available";
+  formType: "created" | "interaction" | "evaluated";
 }
 
 const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, formType }) => {
@@ -105,7 +105,7 @@ const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, formType }) => {
             options: [
               { label: "Criação de Atividade", value: "created" },
               { label: "Interação com Atividade", value: "interaction" },
-              { label: "Avaliação de Atividade", value: "available" },
+              { label: "Avaliação de Atividade", value: "evaluated" },
             ],
             isDisabled: true,
           }}
@@ -197,10 +197,12 @@ const ButtonAdd: React.FC<ButtonAddProps> = ({
         required: true,
         system: false,
         value: "",
+        weight: undefined,
+        options: undefined,
         visible: true,
         predefined: null,
       },
-      { shouldFocus: true },
+      { shouldFocus: true }
     );
   }, [insert, index, length]);
 

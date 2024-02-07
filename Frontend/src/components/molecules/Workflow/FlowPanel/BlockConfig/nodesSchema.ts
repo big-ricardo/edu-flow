@@ -35,6 +35,30 @@ const schemas: NodeSchemas = {
     form_id: z.string().min(1, { message: "Selecione um formulário" }),
     visible: z.boolean().default(true),
   }),
+  [NodeTypes.Evaluated]: z
+    .object({
+      name: z.string().min(3, { message: "Nome é obrigatório" }),
+      form_id: z.string().min(3, { message: "Selecione um formulário" }),
+      visible: z.boolean().default(true),
+      isDeferred: z.boolean().default(true),
+      average: z.coerce
+        .number()
+        .min(0, { message: "Avaliação mínima é 0" })
+        .max(10, { message: "Avaliação máxima é 10" }),
+      to: z.array(z.string()).optional(),
+    })
+    .refine(
+      (data) => {
+        if (data.isDeferred === false) {
+          return !!data.to?.length;
+        }
+        return true;
+      },
+      {
+        message: "É necessário selecionar pelo menos um destinatário",
+        path: ["to"],
+      }
+    ),
 };
 
 export type SchemaTypes = keyof typeof schemas;
@@ -44,3 +68,9 @@ export type BlockFormInputs = {
 }[SchemaTypes];
 
 export default schemas;
+
+export const validateNode = (type: NodeTypes, data: BlockFormInputs) => {
+  const schema = schemas[type];
+
+  return schema.safeParse(data).success;
+};

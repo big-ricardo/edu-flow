@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form, { IForm } from "../../../models/Form";
+import Form, { FieldTypes, IForm } from "../../../models/Form";
 import moment from "moment";
 
 const handler: HttpHandler = async (conn, req) => {
@@ -32,7 +32,7 @@ export default new Http(handler)
       type: schema
         .string()
         .required()
-        .oneOf(["created", "interaction", "available"]),
+        .oneOf(["created", "interaction", "evaluated"]),
       initial_status: schema.string().when("type", ([type], schema) => {
         if (type === "created") {
           return schema.required();
@@ -60,23 +60,7 @@ export default new Http(handler)
             .string()
             .required()
             .matches(/(\{\{[a-z]+\.[a-z]+\}\})|([a-z]+(?:-[a-z]+)*)|([a-z]+)/),
-          type: schema
-            .string()
-            .required()
-            .oneOf([
-              "evaluated",
-              "text",
-              "number",
-              "email",
-              "password",
-              "textarea",
-              "checkbox",
-              "radio",
-              "select",
-              "date",
-              "file",
-              "multiselect",
-            ]),
+          type: schema.string().required().oneOf(Object.values(FieldTypes)),
           value: schema.string().nullable(),
           visible: schema.boolean().default(true),
           required: schema.boolean().required(),
@@ -86,17 +70,17 @@ export default new Http(handler)
               schema.object().shape({
                 label: schema.string().required(),
                 value: schema.string().required(),
-              }),
+              })
             )
             .when("type", ([type], schema) => {
               if (["select", "radio", "checkbox"].includes(type)) {
                 return schema.required(
-                  "options is required for select, radio and checkbox fields",
+                  "options is required for select, radio and checkbox fields"
                 );
               }
               return schema.nullable().default(null);
             }),
-        }),
+        })
       ),
     }),
   }))

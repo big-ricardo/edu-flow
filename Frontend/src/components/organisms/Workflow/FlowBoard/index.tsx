@@ -28,17 +28,32 @@ import { IStep, IWorkflow } from "@interfaces/Workflow";
 import { AxiosError } from "axios";
 
 const convertReactFlowObject = (
-  reactFlowObject: ReactFlowJsonObject,
+  reactFlowObject: ReactFlowJsonObject
 ): IWorkflow["steps"] => {
+
   return reactFlowObject.nodes.map((node) => {
-    const edge = reactFlowObject.edges.find((edge) => edge.source === node.id);
+    const edges = reactFlowObject.edges.filter(
+      (edge) => edge.source === node.id
+    );
+
+    const defaultSource = edges.find(
+      (edge) => edge.sourceHandle === "default-source"
+    )?.target;
+
+    const alternativeSource = edges.find(
+      (edge) => edge.sourceHandle === "alternative-source"
+    )?.target;
+
     return {
       id: node.id,
       position: node.position,
       data: node.data,
       type: node.type,
       deletable: node?.deletable,
-      next_step_id: edge ? edge.target : null,
+      next: {
+        ["default-source"]: defaultSource ?? null,
+        ["alternative-source"]: alternativeSource,
+      },
     } as IStep;
   });
 };
@@ -113,7 +128,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+    [setEdges]
   );
 
   const onSave = useCallback(() => {
@@ -171,7 +186,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         },
       ]);
     },
-    [reactFlowInstance, setNodes],
+    [reactFlowInstance, setNodes]
   );
 
   useEffect(() => {

@@ -10,9 +10,11 @@ import {
 
 interface WrapperNodeProps
   extends HandleProps,
-    React.HTMLAttributes<HTMLDivElement> {}
+    React.HTMLAttributes<HTMLDivElement> {
+  handleId: string;
+}
 
-const CustomHandle: React.FC<WrapperNodeProps> = (props) => {
+const CustomHandle: React.FC<WrapperNodeProps> = ({ handleId, ...props }) => {
   const id = useNodeId() ?? "";
   const edges = useStore((store) => store.edges);
   const { getNode } = useReactFlow();
@@ -23,15 +25,15 @@ const CustomHandle: React.FC<WrapperNodeProps> = (props) => {
 
     const connectedEdges = getConnectedEdges([node], edges);
 
-    return connectedEdges.filter((edge) => edge.source === node.id).length < 1;
-  }, [edges, node]);
+    return (
+      connectedEdges.filter(
+        (edge) => edge.sourceHandle === handleId && edge.source === id
+      ).length === 0
+    );
+  }, [edges, node, handleId, id]);
 
   return (
-    <Handle
-      isConnectable={isHandleConnectable}
-      style={{ background: "#555", right: "-10px" }}
-      {...props}
-    />
+    <Handle id={handleId} isConnectable={isHandleConnectable} {...props} />
   );
 };
 

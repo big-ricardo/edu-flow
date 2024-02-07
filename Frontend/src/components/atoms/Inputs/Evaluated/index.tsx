@@ -1,4 +1,4 @@
-import NumberInput from "../Number";
+import NumberInput from "../NumberInput";
 
 const Evaluated: typeof NumberInput = ({ input }) => {
   return (

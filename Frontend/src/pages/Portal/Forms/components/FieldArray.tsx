@@ -12,7 +12,7 @@ import {
 import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa";
 import FieldArrayOption from "@components/atoms/FieldArrayOption";
 import Switch from "@components/atoms/Inputs/Switch";
-import Number from "@components/atoms/Inputs/Number";
+import Number from "@components/atoms/Inputs/NumberInput";
 
 const fieldTypes = {
   text: "Texto",
@@ -67,8 +67,8 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
       watch(`fields.${index}.type`),
     );
 
-    const isAvailable = watch(`type`) === "available";
-    const isEvaluated = watch(`fields.${index}.type`) === "evaluated";
+    const isEvaluated = watch(`type`) === "evaluated";
+    const isFieldEvaluated = watch(`fields.${index}.type`) === "evaluated";
 
     const isPredefined = !!watch(`fields.${index}.predefined`);
 
@@ -132,7 +132,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
                 label: "Campo obrigatório",
                 required: false,
               }}
-              isDisabled={isEvaluated}
+              isDisabled={isFieldEvaluated}
             />
 
             <Switch
@@ -165,7 +165,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               required: true,
             }}
           />
-          {!isEvaluated && (
+          {!isFieldEvaluated && (
             <Text
               input={{
                 id: `fields.${index}.placeholder`,
@@ -184,7 +184,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               label: "Tipo",
               placeholder: "Tipo",
               required: true,
-              options: isAvailable
+              options: isEvaluated
                 ? [{ value: "evaluated", label: "Nota de Avaliação" }].concat(
                     fieldOptions,
                   )
@@ -206,7 +206,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
             />
           )}
 
-          {isEvaluated && (
+          {isFieldEvaluated && (
             <Number
               input={{
                 id: `fields.${index}.weight`,

@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form, { IForm } from "../../../models/Form";
+import Form, { FieldTypes, IForm } from "../../../models/Form";
 import moment from "moment";
 
 const handler: HttpHandler = async (conn, req) => {
@@ -42,7 +42,7 @@ export default new Http(handler)
       type: schema
         .string()
         .required()
-        .oneOf(["created", "interaction", "available"]),
+        .oneOf(["created", "interaction", "evaluated"]),
       initial_status: schema.string().when("type", ([type], schema) => {
         if (type === "created") {
           return schema.required();
@@ -68,20 +68,7 @@ export default new Http(handler)
           type: schema
             .string()
             .required()
-            .oneOf([
-              "text",
-              "number",
-              "email",
-              "password",
-              "textarea",
-              "checkbox",
-              "radio",
-              "select",
-              "date",
-              "file",
-              "multiselect",
-              "evaluated",
-            ]),
+            .oneOf(Object.values(FieldTypes)),
           value: schema.string().nullable(),
           visible: schema.boolean().default(true),
           required: schema.boolean().required(),

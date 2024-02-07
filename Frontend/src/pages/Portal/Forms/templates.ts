@@ -1,7 +1,7 @@
 import { IField } from "@interfaces/Form";
 
 type Template = {
-  type?: "created" | "interaction" | "available";
+  type?: "created" | "interaction" | "evaluated";
   fields: IField[];
 };
 
@@ -52,8 +52,8 @@ const interaction: Template = {
   fields: [],
 };
 
-const available: Template = {
-  type: "available",
+const evaluated: Template = {
+  type: "evaluated",
   fields: [],
 };
 
@@ -62,7 +62,7 @@ const templates: {
 } = {
   created,
   interaction,
-  available,
+  evaluated,
 };
 
 const keys = Object.keys(templates);

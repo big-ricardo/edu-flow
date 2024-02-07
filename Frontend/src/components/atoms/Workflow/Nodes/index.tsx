@@ -3,6 +3,7 @@ import CircleNode from "./Circle";
 import Interaction from "./Interaction";
 import SendEmail from "./SendEmail";
 import SwapWorkflow from "./SwapWorkflow";
+import Evaluated from "./Evaluated";
 
 export default {
   circle: CircleNode,
@@ -10,4 +11,5 @@ export default {
   change_status: ChangeStatus,
   swap_workflow: SwapWorkflow,
   interaction: Interaction,
+  evaluated: Evaluated,
 };

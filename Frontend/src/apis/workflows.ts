@@ -74,6 +74,7 @@ type ReqWorkflowForms = Response<{
   workflows: { label: string; value: string }[];
   forms: {
     interaction: { label: string; value: string }[];
+    evaluated: { label: string; value: string }[];
   };
 }>;
 

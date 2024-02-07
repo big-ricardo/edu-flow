@@ -3,15 +3,32 @@ import res from "../../../utils/apiResponse";
 import Workflow, { IStep } from "../../../models/Workflow";
 
 const convertBackToReactFlowObject = (nodesArray: IStep[]) => {
-  const nodes = nodesArray.map(({ next_step_id, ...node }) => node);
-  const edges = nodesArray
-    .filter((node) => node.next_step_id)
-    .map((node) => ({
-      id: `${node.id}-${node.next_step_id}`,
-      source: node.id,
-      target: node.next_step_id,
-      type: "default",
-    }));
+  const nodes = nodesArray.map(({ next, ...node }) => node);
+
+  const edges = nodesArray.reduce((acc, node) => {
+    const defaultTarget = node.next["default-source"];
+    const alternativeTarget = node.next["alternative-source"];
+    
+    if (!!defaultTarget) {
+      acc.push({
+        id: `default-source-${node.id}-${defaultTarget}`,
+        source: node.id,
+        target: defaultTarget,
+        sourceHandle: "default-source",
+      });
+    }
+
+    if (!!alternativeTarget) {
+      acc.push({
+        id: `alternative-source-${node.id}-${alternativeTarget}`,
+        source: node.id,
+        target: alternativeTarget,
+        sourceHandle: "alternative-source",
+      });
+    }
+
+    return acc;
+  }, []);
 
   return { nodes, edges };
 };

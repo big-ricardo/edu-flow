@@ -6,6 +6,7 @@ export enum NodeTypes {
   Circle = "circle",
   SwapWorkflow = "swap_workflow",
   Interaction = "interaction",
+  Evaluated = "evaluated",
 }
 
 export interface ISendEmail {
@@ -42,8 +43,11 @@ export interface IInteraction {
 export type IStep = {
   id: string;
   visible: boolean;
-  next_step_id: string | null;
   position: { x: number; y: number };
+  next: {
+    ["default-source"]: string | null;
+    ["alternative-source"]: string | null;
+  };
 } & (
   | {
       type: NodeTypes.SendEmail;
@@ -102,7 +106,6 @@ export const schema: Schema = new Schema(
           type: String,
           enum: Object.values(NodeTypes),
         },
-        next_step_id: { type: String, default: null },
         position: {
           x: { type: Number, required: true },
           y: { type: Number, required: true },
@@ -112,12 +115,21 @@ export const schema: Schema = new Schema(
           type: Object,
           required: true,
         },
+        next: {
+          ["default-source"]: {
+            type: String,
+            default: null,
+          },
+          ["alternative-source"]: {
+            type: String,
+          },
+        },
       },
     ],
   },
   {
     timestamps: true,
-  },
+  }
 ).index({ name: 1, version: 1 }, { unique: true });
 
 export default class Workflow {

@@ -41,7 +41,7 @@ type IForm = {
   name: string;
   slug: string;
   status: "draft" | "published";
-  type: "created" | "interaction" | "available";
+  type: "created" | "interaction" | "evaluated";
   period: { open?: string | null; close?: string | null };
   description: string;
   fields: IField[];
@@ -55,7 +55,7 @@ type IForm = {
       type: "interaction";
     }
   | {
-      type: "available";
+      type: "evaluated";
     }
 );
 

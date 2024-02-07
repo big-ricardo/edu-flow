@@ -30,7 +30,7 @@ export default function Form() {
   const type = searchParams.get("type") as
     | "created"
     | "interaction"
-    | "available";
+    | "evaluated";
 
   const isEditing = !!params?.id;
   const id = params?.id ?? "";
@@ -82,7 +82,7 @@ export default function Form() {
     reset,
     watch,
     getValues,
-    formState: { isDirty, isValid },
+    formState: { isDirty, isValid, errors },
   } = methods;
 
   const formType = watch("type");
@@ -108,6 +108,7 @@ export default function Form() {
       reset(form);
     }
   }, [form, reset]);
+
 
   if (isError) {
     return (

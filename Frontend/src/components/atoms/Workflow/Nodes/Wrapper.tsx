@@ -12,6 +12,8 @@ import { BsX } from "react-icons/bs";
 import { BiSliderAlt, BiInfoCircle } from "react-icons/bi";
 import useDrawer from "@hooks/useDrawer";
 import CustomHandle from "../CustomHandle";
+import { NodeTypes } from "@interfaces/Workflow";
+import { validateNode } from "@components/molecules/Workflow/FlowPanel/BlockConfig/nodesSchema";
 
 interface WrapperNodeProps extends NodeProps {
   children: React.ReactNode;
@@ -31,6 +33,10 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
   const node = getNode(id);
 
   const theme = useColorMode();
+
+  const isValid = useMemo(() => {
+    return validateNode(node?.type as NodeTypes, node?.data);
+  }, [node]);
 
   const onRemove = useCallback(() => {
     if (!node) return;
@@ -62,7 +68,7 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
       transition="border-color 0.3s ease-in-out"
       title={node?.data?.name}
     >
-      {!Object.keys(node?.data ?? {}).length && (
+      {!isValid && (
         <Box position="absolute" top={-1} right={1} textAlign="center">
           <Badge colorScheme="red">
             <BiInfoCircle />
@@ -105,18 +111,19 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
         </Flex>
       )}
       <Handle
+        id="default-target"
         type="target"
         position={Position.Left}
         style={{ background: "#555", left: "-10px" }}
       />
-      {Array.from(Array(numberOfSources).keys()).map((i) => (
+      {numberOfSources > 0 && (
         <CustomHandle
-          key={i}
+          handleId="default-source"
           type="source"
           position={Position.Right}
           style={{ background: "#555", right: "-10px" }}
         />
-      ))}
+      )}
       {children}
     </Flex>
   );

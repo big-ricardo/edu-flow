@@ -11,7 +11,7 @@ const formsZodSchema = z
       .min(3, "Slug precisa ter pelo menos 3 caracteres"),
     status: z.enum(["draft", "published"]).default("draft"),
     initial_status: z.string().optional().nullable(),
-    type: z.enum(["created", "interaction", "available"]),
+    type: z.enum(["created", "interaction", "evaluated"]),
     workflow: z.string().optional().nullable(),
     period: z.object({
       open: z.string().nullable(),
@@ -50,10 +50,7 @@ const formsZodSchema = z
             value: z.string().optional().nullable(),
             visible: z.boolean().optional().default(true),
             system: z.boolean().optional().default(false),
-            weight: z.preprocess(
-              (a) => (a ? parseInt(z.string().parse(a), 10) : undefined),
-              z.number().min(0).max(10).optional(),
-            ),
+            weight: z.coerce.number().min(1, "Peso mínimo é 1").max(10, "Peso máximo é 10").optional(),
             predefined: z
               .enum(["teachers", "students", "institutions"])
               .nullable()
@@ -67,7 +64,7 @@ const formsZodSchema = z
                   value: z
                     .string()
                     .min(3, "Valor precisa ter pelo menos 3 caracteres"),
-                }),
+                })
               )
               .nullable()
               .optional(),
@@ -77,7 +74,7 @@ const formsZodSchema = z
               return !!data.options?.length;
             }
             return true;
-          }, "É necessário adicionar pelo menos uma opção"),
+          }, "É necessário adicionar pelo menos uma opção")
       )
       .nonempty("Crie pelo menor um campo"),
   })
@@ -91,7 +88,7 @@ const formsZodSchema = z
     {
       message: "É necessário selecionar um workflow",
       path: ["workflow"],
-    },
+    }
   )
   .refine(
     (data) => {
@@ -103,11 +100,11 @@ const formsZodSchema = z
     {
       message: "É necessário selecionar um status inicial",
       path: ["initial_status"],
-    },
+    }
   )
   .refine(
     (data) => {
-      const isEvaluation = data.type === "available";
+      const isEvaluation = data.type === "evaluated";
 
       if (!isEvaluation) return true;
 
@@ -116,28 +113,28 @@ const formsZodSchema = z
     {
       message: "É necessário adicionar um campo de avaliação",
       path: ["fields"],
-    },
+    }
   )
   .refine(
     (data) => {
-      const isEvaluation = data.type === "available";
+      const isEvaluation = data.type === "evaluated";
 
       if (!isEvaluation) return true;
 
-      const availableFields = data.fields.filter(
-        (field) => field.type === "evaluated",
+      const evaluatedFields = data.fields.filter(
+        (field) => field.type === "evaluated"
       );
 
-      return availableFields.every((field) => field.weight);
+      return evaluatedFields.every((field) => field.weight);
     },
     {
       message: "É necessário adicionar um peso para cada campo de avaliação",
       path: ["fields"],
-    },
+    }
   )
   .refine(
     (data) => {
-      const isEvaluation = data.type === "available";
+      const isEvaluation = data.type === "evaluated";
 
       if (!isEvaluation) return true;
 
@@ -153,7 +150,7 @@ const formsZodSchema = z
     {
       message: "É necessário que a soma dos pesos seja igual a 10",
       path: ["fields"],
-    },
+    }
   );
 
 export default formsZodSchema;

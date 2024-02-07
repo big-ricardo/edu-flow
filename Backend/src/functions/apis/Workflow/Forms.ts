@@ -93,11 +93,11 @@ const handler: HttpHandler = async (conn) => {
     label: w.name,
   }));
 
-  const formsAvailable = (
+  const formsEvaluated = (
     await new Form(conn)
       .model()
       .find({
-        type: FormType.Available,
+        type: FormType.Evaluated,
         status: FormStatus.Published,
       })
       .select({
@@ -116,7 +116,7 @@ const handler: HttpHandler = async (conn) => {
     workflows,
     forms: {
       interaction: formsInteraction,
-      available: formsAvailable,
+      evaluated: formsEvaluated,
     },
   });
 };

@@ -48,8 +48,10 @@ export default new Http(handler)
           data: schema
             .object()
             .when("type", ([type]) => nodeValidator(type, schema)),
-          nextStepId: schema.string().optional(),
-        }),
+          next: schema.object().shape({
+            ["default-source"]: schema.string().required().nullable(),
+          }),
+        })
       ),
     }),
   }))

@@ -6,7 +6,7 @@ import Radio from "./Radio";
 import Checkbox from "./Checkbox";
 import Text from "./Text";
 import { IField } from "@interfaces/Form";
-import NumberInput from "./Number";
+import NumberInput from "./NumberInput";
 import Evaluated from "./Evaluated";
 
 interface Props {

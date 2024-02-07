@@ -6,6 +6,7 @@ export enum NodeTypes {
   Circle = "circle",
   SwapWorkflow = "swap_workflow",
   Interaction = "interaction",
+  Evaluated = "evaluated",
 }
 
 export interface ISendEmail {
@@ -39,13 +40,30 @@ export interface IInteraction {
   visible: true;
 }
 
+export type IEvaluated = {
+  name: string;
+  visible: boolean;
+  form_id: string;
+} & (
+  | {
+      isDeferred: false;
+    }
+  | {
+      isDeferred: true;
+      to: Array<string>;
+    }
+);
+
 export type IStep = {
   id: string;
   name: string;
   visible: boolean;
-  next_step_id: string | null;
   position: XYPosition;
   deletable?: boolean;
+  next: {
+    ["default-source"]: string;
+    ["alternative-source"]?: string | null;
+  };
 } & (
   | {
       type: NodeTypes.SendEmail;
@@ -66,6 +84,10 @@ export type IStep = {
   | {
       type: NodeTypes.Interaction;
       data: IInteraction;
+    }
+  | {
+      type: NodeTypes.Evaluated;
+      data: IEvaluated;
     }
 );
 

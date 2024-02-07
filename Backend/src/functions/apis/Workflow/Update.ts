@@ -25,7 +25,7 @@ const handler: HttpHandler = async (conn, req) => {
       steps,
       viewport,
     },
-    { new: true },
+    { new: true }
   );
 
   workflow.save();
@@ -55,8 +55,10 @@ export default new Http(handler)
           data: schema
             .object()
             .when("type", ([type]) => nodeValidator(type, schema)),
-          nextStepId: schema.string().optional(),
-        }),
+          next: schema.object().shape({
+            ["default-source"]: schema.string().required().nullable(),
+          }),
+        })
       ),
     }),
   }))

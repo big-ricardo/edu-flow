@@ -12,6 +12,7 @@ export enum FieldTypes {
   Date = "date",
   File = "file",
   Teachers = "teachers",
+  Evaluated = "evaluated",
 }
 
 export enum FormStatus {
@@ -22,7 +23,7 @@ export enum FormStatus {
 export enum FormType {
   Created = "created",
   Interaction = "interaction",
-  Available = "available",
+  Evaluated = "evaluated",
 }
 
 export type IField = {
@@ -49,7 +50,7 @@ export type IForm = {
 export const schema: Schema = new Schema(
   {
     name: { type: String, required: true, unique: true },
-    status: { type: String, required: true, enum: ["draft", "published"] },
+    status: { type: String, required: true, enum: Object.values(FormStatus) },
     initial_status: {
       type: Schema.Types.ObjectId,
       ref: "Status",
@@ -59,7 +60,7 @@ export const schema: Schema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: ["created", "interaction", "available"],
+      enum: Object.values(FormType),
     },
     period: { open: Date, close: Date },
     workflow: { type: Schema.Types.ObjectId, ref: "Workflow", default: null },
@@ -70,20 +71,7 @@ export const schema: Schema = new Schema(
         type: {
           type: String,
           required: true,
-          enum: [
-            "text",
-            "number",
-            "email",
-            "password",
-            "textarea",
-            "checkbox",
-            "radio",
-            "select",
-            "date",
-            "file",
-            "multiselect",
-            "evaluated",
-          ],
+          enum: Object.values(FieldTypes),
         },
         weight: { type: Number, required: false },
         predefined: {
@@ -113,7 +101,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 ).index({ slug: 1, status: 1, "period.open": 1, "period.close": 1 });
 
 export default class Form {

@@ -7,8 +7,9 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Button, Flex, Spinner } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Text from "@components/atoms/Inputs/Text";
-import nodesSchema, { BlockFormInputs } from "@utils/nodesSchema";
+import nodesSchema, { BlockFormInputs } from "./nodesSchema";
 import Switch from "@components/atoms/Inputs/Switch";
+import NumberInput from "@components/atoms/Inputs/NumberInput";
 
 interface BlockConfigProps {
   type: NodeTypes;
@@ -26,6 +27,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
     handleSubmit,
     reset,
     formState: { isDirty },
+    watch,
   } = methods;
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
@@ -184,10 +186,71 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             />
           </>
         );
+      case NodeTypes.Evaluated:
+        return (
+          <>
+            <Text
+              input={{
+                label: "Nome",
+                id: "name",
+                placeholder: "Nome do bloco",
+                required: true,
+              }}
+            />
+            <Select
+              input={{
+                label: "Formulário",
+                id: "form_id",
+                placeholder: "Selecione o formulário que será avaliado",
+                options: formsData?.forms.evaluated ?? [],
+                required: true,
+              }}
+            />
+
+            <Switch
+              input={{
+                label: "Visivel",
+                id: "visible",
+                required: true,
+              }}
+            />
+
+            <NumberInput
+              input={{
+                placeholder: "Média de Avaliação",
+
+                label: "Média de Avaliação",
+                id: "average",
+                required: true,
+              }}
+            />
+
+            <Switch
+              input={{
+                label: "Adiar seleção de destinatários",
+                id: "isDeferred",
+                required: true,
+              }}
+            />
+
+            {watch("isDeferred") === false && (
+              <Select
+                input={{
+                  label: "Destinatarios",
+                  id: "to",
+                  placeholder: "Selecione os destinatários",
+                  options: formsData?.users ?? [],
+                  required: true,
+                }}
+                isMulti
+              />
+            )}
+          </>
+        );
       default:
         return <h1>Default</h1>;
     }
-  }, [type, formsData]);
+  }, [type, formsData, watch]);
 
   return (
     <Flex direction="column" justify="space-between" h="100%">

@@ -37,6 +37,10 @@ const FlowPanel: React.FC = () => {
         <PanelItem nodeType={NodeTypes.Interaction}>
           <InteractionIcon />
         </PanelItem>
+
+        <PanelItem nodeType={NodeTypes.Evaluated}>
+          <InteractionIcon />
+        </PanelItem>
       </Flex>
     </Panel>
   );

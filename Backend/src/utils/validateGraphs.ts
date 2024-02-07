@@ -17,7 +17,19 @@ export default function validateGraph(steps: IStep[]) {
   }
 
   for (const step of steps) {
-    if (step.next_step_id && !ids.has(step.next_step_id)) {
+    if (step.next["default-target"] && !ids.has(step.next["default-target"])) {
+      const err = {
+        status: 400,
+        message: `O Step ${step.id} possui um proximo step inválido`,
+      };
+
+      throw err;
+    }
+
+    if (
+      step.next["alternative-target"] &&
+      !ids.has(step.next["alternative-target"])
+    ) {
       const err = {
         status: 400,
         message: `O Step ${step.id} possui um proximo step inválido`,
@@ -47,8 +59,8 @@ export default function validateGraph(steps: IStep[]) {
 
     visited.add(step.id);
 
-    if (step.next_step_id) {
-      const nextStep = steps.find((s) => s.id === step.next_step_id);
+    if (step.next["default-target"]) {
+      const nextStep = steps.find((s) => s.id === step.next["default-target"]);
 
       if (nextStep) {
         dfs(nextStep);
