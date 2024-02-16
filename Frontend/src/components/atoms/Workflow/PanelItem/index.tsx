@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { NodeTypes } from "@interfaces/Workflow";
+import { NodeTypes } from "@interfaces/WorkflowDraft";
 import React, { useCallback } from "react";
 
 interface PanelItemProps {

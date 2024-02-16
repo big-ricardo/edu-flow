@@ -23,7 +23,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
   }
 
   const token = await jwt.sign({
-    id: user.id,
+    id: user._id,
     name: user.name,
     matriculation: user.matriculation,
     email: user.email,

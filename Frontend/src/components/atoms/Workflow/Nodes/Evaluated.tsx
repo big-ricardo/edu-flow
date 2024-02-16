@@ -1,7 +1,7 @@
 import { Box, Flex, useColorModeValue, Text } from "@chakra-ui/react";
 import { NodeProps, Position } from "reactflow";
 import WrapperNode from "./Wrapper";
-import { HiOutlineDocumentPlus } from "react-icons/hi2";
+import { LiaNotesMedicalSolid } from "react-icons/lia";
 import CustomHandle from "../CustomHandle";
 
 interface EvaluatedProps extends NodeProps {
@@ -17,7 +17,7 @@ const Evaluated: React.FC<EvaluatedProps> = (props) => {
   return (
     <WrapperNode {...props} numberOfSources={2}>
       <Box
-        as={HiOutlineDocumentPlus}
+        as={LiaNotesMedicalSolid}
         size="30px"
         color={useColorModeValue("gray.500", "gray.300")}
       />
@@ -30,6 +30,7 @@ const Evaluated: React.FC<EvaluatedProps> = (props) => {
         position={Position.Bottom}
         handleId="alternative-source"
         style={{ background: "violet", bottom: "-10px" }}
+        title="Conexão Alternativa"
       />
     </WrapperNode>
   );
@@ -51,7 +52,7 @@ export function EvaluatedIcon() {
       transition="border-color 0.3s ease-in-out"
     >
       <Box
-        as={HiOutlineDocumentPlus}
+        as={LiaNotesMedicalSolid}
         size="50px"
         color={useColorModeValue("gray.500", "gray.300")}
       />

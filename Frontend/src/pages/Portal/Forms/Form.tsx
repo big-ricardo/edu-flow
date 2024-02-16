@@ -82,7 +82,7 @@ export default function Form() {
     reset,
     watch,
     getValues,
-    formState: { isDirty, isValid, errors },
+    formState: { isDirty, isValid },
   } = methods;
 
   const formType = watch("type");

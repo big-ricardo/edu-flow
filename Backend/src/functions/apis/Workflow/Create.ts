@@ -1,27 +1,11 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Workflow, {
-  ICircle,
-  IWorkflow,
-  NodeTypes,
-} from "../../../models/Workflow";
-import nodeValidator from "../../../utils/nodesValidator";
-import validateGraph from "../../../utils/validateGraphs";
+import Workflow, { IWorkflow } from "../../../models/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
-  const { steps, viewport } = req.body as Pick<IWorkflow, "steps" | "viewport">;
+  const data = req.body as IWorkflow;
 
-  validateGraph(steps);
-
-  const { name, visible } = steps.find((step) => step.id === "start")
-    ?.data as ICircle;
-
-  const workflow = await new Workflow(conn).model().create({
-    name,
-    visible,
-    steps,
-    viewport,
-  });
+  const workflow = await new Workflow(conn).model().create(data);
 
   workflow.save();
 
@@ -31,28 +15,8 @@ const handler: HttpHandler = async (conn, req) => {
 export default new Http(handler)
   .setSchemaValidator((schema) => ({
     body: schema.object().shape({
-      viewport: schema.object().shape({
-        x: schema.number().required(),
-        y: schema.number().required(),
-        zoom: schema.number().required(),
-      }),
-      steps: schema.array().of(
-        schema.object().shape({
-          id: schema.string().required(),
-          type: schema.mixed().oneOf(Object.values(NodeTypes)).required(),
-          position: schema.object().shape({
-            x: schema.number().required(),
-            y: schema.number().required(),
-          }),
-          deletable: schema.boolean().optional(),
-          data: schema
-            .object()
-            .when("type", ([type]) => nodeValidator(type, schema)),
-          next: schema.object().shape({
-            ["default-source"]: schema.string().required().nullable(),
-          }),
-        })
-      ),
+      name: schema.string().required().min(3).max(255),
+      active: schema.boolean().required(),
     }),
   }))
   .configure({

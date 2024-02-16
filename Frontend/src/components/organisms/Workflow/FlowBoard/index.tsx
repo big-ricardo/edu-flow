@@ -14,23 +14,24 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
   useReactFlow,
+  IsValidConnection,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import NodeTypes from "@components/atoms/Workflow/Nodes";
 import EdgeTypes from "@components/atoms/Workflow/Edges";
 import FlowPanel from "@components/molecules/Workflow/FlowPanel";
 import FlowHeader from "@components/organisms/Workflow/FlowHeader";
-import { createOrUpdateWorkflow, getWorkflow } from "@apis/workflows";
+import { createOrUpdateWorkflow } from "@apis/workflowDraft";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { Center, Spinner, useToast } from "@chakra-ui/react";
-import { IStep, IWorkflow } from "@interfaces/Workflow";
+import { IStep, IWorkflowDraft } from "@interfaces/WorkflowDraft";
 import { AxiosError } from "axios";
+import { getWorkflowDraft } from "@apis/workflowDraft";
 
 const convertReactFlowObject = (
   reactFlowObject: ReactFlowJsonObject
-): IWorkflow["steps"] => {
-
+): IWorkflowDraft["steps"] => {
   return reactFlowObject.nodes.map((node) => {
     const edges = reactFlowObject.edges.filter(
       (edge) => edge.source === node.id
@@ -74,19 +75,18 @@ const initialNodes: Node[] = [
 ];
 const initialEdges: Edge[] = [];
 
-interface FlowBoardProps {
-  isView?: boolean;
-}
+interface FlowBoardProps {}
 
-const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
+const FlowBoard: React.FC<FlowBoardProps> = memo(() => {
   const queryClient = useQueryClient();
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ id?: string; workflow_id: string }>();
   const id = params?.id ?? "";
   const isEditing = !!id;
+  const workflow_id = params.workflow_id ?? "";
 
   const { data: workflow, isLoading } = useQuery({
     queryKey: ["workflow", id],
-    queryFn: getWorkflow,
+    queryFn: getWorkflowDraft,
     enabled: isEditing,
   });
 
@@ -101,7 +101,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createOrUpdateWorkflow,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["forms"] });
       toast({
         title: `Workflow ${isEditing ? "editada" : "criada"} com sucesso`,
@@ -111,7 +111,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         variant: "left-accent",
         position: "top-right",
       });
-      navigate(`/portal/workflow/${id}/view`);
+      navigate(`/portal/workflow/${data.parent}/${data._id}`);
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
@@ -137,13 +137,14 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
       const steps = convertReactFlowObject(flow);
       const data = {
+        parent: workflow?.parent ?? workflow_id,
         steps,
         viewport: flow.viewport,
       };
 
-      mutateAsync(isEditing ? { _id: workflow?.parent ?? id, ...data } : data);
+      mutateAsync(data);
     }
-  }, [reactFlowInstance, mutateAsync, id, isEditing, workflow?.parent]);
+  }, [reactFlowInstance, mutateAsync, workflow?.parent, workflow_id]);
 
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
@@ -189,6 +190,12 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
     [reactFlowInstance, setNodes]
   );
 
+  const isValidConnection: IsValidConnection = useCallback((connection) => {
+    if (connection.source === connection.target) return false;
+
+    return true;
+  }, []);
+
   useEffect(() => {
     onRestore();
   }, [workflow, onRestore]);
@@ -216,9 +223,6 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         fitView
         nodeTypes={NodeTypes}
         edgeTypes={EdgeTypes}
-        elementsSelectable={!isView}
-        nodesConnectable={!isView}
-        nodesDraggable={!isView}
         proOptions={{
           hideAttribution: true,
         }}
@@ -233,20 +237,16 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         onDrop={onDrop}
         onInit={setReactFlowInstance}
         onDragOver={onDragOver}
+        isValidConnection={isValidConnection}
       >
         <FlowHeader
           onSave={onSave}
           isPending={isPending}
-          isView={isView}
           status={workflow?.status}
         />
         <Background color="#aaa" gap={16} size={1} />
         <MiniMap />
-        {!isView && (
-          <>
-            <FlowPanel /> <Controls />
-          </>
-        )}
+        <FlowPanel /> <Controls />
       </ReactFlow>
     </div>
   );

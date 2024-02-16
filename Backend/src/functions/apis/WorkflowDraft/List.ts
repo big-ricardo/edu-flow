@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
+import WorkflowDraft from "../../../models/WorkflowDraft";
 import res from "../../../utils/apiResponse";
-import Workflow from "../../../models/Workflow";
 
 interface Query {
   page?: number;
@@ -8,30 +8,27 @@ interface Query {
 }
 
 const handler: HttpHandler = async (conn, req, context) => {
-  const { page = 1, limit = 10 } = req.query as Query;
+  const { id } = req.params;
 
-  const workflows = await new Workflow(conn)
+  const workflows = await new WorkflowDraft(conn)
     .model()
-    .find()
-    .select({
-      _id: 1,
-      name: 1,
-      active: 1,
+    .find({
+      parent: id,
     })
-    .skip((page - 1) * limit)
-    .limit(limit);
-
-  const total = await new Workflow(conn).model().countDocuments();
-  const totalPages = Math.ceil(total / limit);
+    .populate("owner", {
+      _id: true,
+      name: true,
+    })
+    .select({
+      _id: true,
+      version: true,
+      status: true,
+      createdAt: true,
+    })
+    .sort({ createdAt: -1 });
 
   return res.success({
     workflows,
-    pagination: {
-      page: Number(page),
-      total,
-      totalPages,
-      count: workflows.length + (page - 1) * limit,
-    },
   });
 };
 
@@ -53,9 +50,9 @@ export default new Http(handler)
       .optional(),
   }))
   .configure({
-    name: "WorkflowList",
+    name: "WorkflowsList",
     options: {
       methods: ["GET"],
-      route: "workflows",
+      route: "workflow-drafts/{id}",
     },
   });

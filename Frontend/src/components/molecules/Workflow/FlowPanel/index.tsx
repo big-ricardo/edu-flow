@@ -4,9 +4,10 @@ import { SendEmailIcon } from "@components/atoms/Workflow/Nodes/SendEmail";
 import PanelItem from "@components/atoms/Workflow/PanelItem";
 import React from "react";
 import { Panel } from "reactflow";
-import { NodeTypes } from "@interfaces/Workflow";
+import { NodeTypes } from "@interfaces/WorkflowDraft";
 import { SwapWorkflowIcon } from "@components/atoms/Workflow/Nodes/SwapWorkflow";
 import { InteractionIcon } from "@components/atoms/Workflow/Nodes/Interaction";
+import { EvaluatedIcon } from "@components/atoms/Workflow/Nodes/Evaluated";
 
 const FlowPanel: React.FC = () => {
   return (
@@ -39,7 +40,7 @@ const FlowPanel: React.FC = () => {
         </PanelItem>
 
         <PanelItem nodeType={NodeTypes.Evaluated}>
-          <InteractionIcon />
+          <EvaluatedIcon />
         </PanelItem>
       </Flex>
     </Panel>

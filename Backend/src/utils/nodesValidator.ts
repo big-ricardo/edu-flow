@@ -1,4 +1,4 @@
-import { NodeTypes } from "../models/Workflow";
+import { NodeTypes } from "../models/WorkflowDraft";
 
 const nodeValidator = (type: string, schema: typeof import("yup")) => {
   if (type === NodeTypes.SendEmail) {
@@ -14,14 +14,6 @@ const nodeValidator = (type: string, schema: typeof import("yup")) => {
       name: schema.string().required(),
       status_id: schema.string().required(),
       visible: schema.boolean().required(),
-    });
-  }
-
-  if (type === NodeTypes.Circle) {
-    return schema.object().shape({
-      name: schema.string().required(),
-      visible: schema.boolean().required(),
-      active: schema.boolean(),
     });
   }
 

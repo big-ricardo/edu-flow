@@ -1,4 +1,4 @@
-import { IStep } from "../models/Workflow";
+import { IStep } from "../models/WorkflowDraft";
 
 export default function validateGraph(steps: IStep[]) {
   const ids = new Set<string>();

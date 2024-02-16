@@ -1,4 +1,4 @@
-import { NodeTypes } from "@interfaces/Workflow";
+import { NodeTypes } from "@interfaces/WorkflowDraft";
 import { z } from "zod";
 
 type NodeSchemas = {
@@ -34,6 +34,15 @@ const schemas: NodeSchemas = {
     to: z.string().min(1, { message: "Selecione pelo menos 1 destinatario" }),
     form_id: z.string().min(1, { message: "Selecione um formulário" }),
     visible: z.boolean().default(true),
+    conditional: z
+      .array(
+        z.object({
+          field: z.string().min(1, { message: "Selecione um campo" }),
+          value: z.string().min(1, { message: "Valor é obrigatório" }),
+          operator: z.enum(["==", "!=", ">", "<", ">=", "<="]),
+        })
+      )
+      .optional(),
   }),
   [NodeTypes.Evaluated]: z
     .object({
@@ -74,3 +83,50 @@ export const validateNode = (type: NodeTypes, data: BlockFormInputs) => {
 
   return schema.safeParse(data).success;
 };
+
+export const workflowSchema = z.object({
+  name: z.string().min(3, { message: "Nome é obrigatório" }),
+  description: z.string().min(3, { message: "Descrição é obrigatória" }),
+  parent: z.string().optional(),
+  viewport: z.object({
+    x: z.number(),
+    y: z.number(),
+    zoom: z.number(),
+  }),
+  status: z.enum(["published", "draft"]),
+  edges: z.array(
+    z.object({
+      id: z.string(),
+      source: z.string(),
+      target: z.string(),
+      sourceHandle: z.enum(["default-source", "alternative-source"]),
+    })
+  ),
+  nodes: z.array(
+    z.object({
+      id: z.string(),
+      type: z
+        .enum([
+          "send-email",
+          "change-status",
+          "circle",
+          "swap-workflow",
+          "interaction",
+          "evaluated",
+        ])
+        .optional(),
+      data: z.union([
+        schemas[NodeTypes.SendEmail],
+        schemas[NodeTypes.ChangeStatus],
+        schemas[NodeTypes.Circle],
+        schemas[NodeTypes.SwapWorkflow],
+        schemas[NodeTypes.Interaction],
+        schemas[NodeTypes.Evaluated],
+      ]),
+      position: z.object({ x: z.number(), y: z.number() }),
+      deletable: z.boolean().optional(),
+    })
+  ),
+});
+
+export type WorkflowFormInputs = z.infer<typeof workflowSchema>;

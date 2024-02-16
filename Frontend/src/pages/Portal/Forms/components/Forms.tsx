@@ -18,12 +18,15 @@ import ErrorMessages from "@components/atoms/Inputs/ErrorMessage";
 interface FormEditProps {
   isEditing: boolean;
   formType: "created" | "interaction" | "evaluated";
+  isCreated: boolean;
 }
 
-const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, formType }) => {
-  const { control } = useFormContext<formFormSchema>();
+const FormEdit: React.FC<FormEditProps> = memo(({ isEditing, isCreated }) => {
+  const { control,
+    formState: { errors }
+  } = useFormContext<formFormSchema>();
 
-  const isCreated = formType === "created";
+  console.log(errors);
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
     queryKey: ["forms", "forms"],

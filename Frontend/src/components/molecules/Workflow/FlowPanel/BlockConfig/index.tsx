@@ -1,21 +1,61 @@
-import { getWorkflowForms } from "@apis/workflows";
+import { getWorkflowDraftForms } from "@apis/workflowDraft";
 import { useQuery } from "@tanstack/react-query";
-import { NodeTypes } from "@interfaces/Workflow";
-import React, { useCallback } from "react";
+import { NodeTypes } from "@interfaces/WorkflowDraft";
+import React, { memo, useCallback, useMemo } from "react";
 import Select from "@components/atoms/Inputs/Select";
-import { FormProvider, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { Button, Flex, Spinner } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Text from "@components/atoms/Inputs/Text";
-import nodesSchema, { BlockFormInputs } from "./nodesSchema";
+import nodesSchema, {
+  BlockFormInputs,
+} from "../../../../../pages/Portal/WorkflowDraft/nodesSchema";
 import Switch from "@components/atoms/Inputs/Switch";
 import NumberInput from "@components/atoms/Inputs/NumberInput";
+import { getForm } from "@apis/form";
+import { FaTrash } from "react-icons/fa";
 
 interface BlockConfigProps {
   type: NodeTypes;
   data: BlockFormInputs;
   onSave: (data: BlockFormInputs) => void;
 }
+
+const conditionalOperators = [
+  {
+    label: "Igual",
+    value: "==",
+  },
+  {
+    label: "Diferente",
+    value: "!=",
+  },
+  {
+    label: "Maior",
+    value: ">",
+  },
+  {
+    label: "Menor",
+    value: "<",
+  },
+  {
+    label: "Maior ou igual",
+    value: ">=",
+  },
+  {
+    label: "Menor ou igual",
+    value: "<=",
+  },
+  {
+    label: "Contém",
+    value: "contains",
+  },
+];
 
 const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
   const methods = useForm<BlockFormInputs>({
@@ -32,7 +72,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
     queryKey: ["forms", "workflow"],
-    queryFn: getWorkflowForms,
+    queryFn: getWorkflowDraftForms,
     retryOnMount: false,
     staleTime: 1000 * 60 * 60,
   });
@@ -184,6 +224,10 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 required: true,
               }}
             />
+
+            {watch("form_id") && (
+              <ConditionalRender form_id={watch("form_id")} />
+            )}
           </>
         );
       case NodeTypes.Evaluated:
@@ -281,3 +325,136 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
 };
 
 export default BlockConfig;
+
+interface ConditionalProps {
+  form_id: string;
+}
+
+const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
+  const { data: formsData, isLoading } = useQuery({
+    queryKey: ["forms", form_id],
+    queryFn: getForm,
+    retryOnMount: false,
+  });
+
+  const { control, watch } = useFormContext();
+
+  const {
+    fields: conditionalFields,
+    append,
+    remove,
+  } = useFieldArray({
+    name: "conditional",
+    control: control,
+  });
+
+  const getFieldOptions = useMemo(() => {
+    return (
+      formsData?.fields.map((field) => ({
+        label: field.id,
+        value: field.id,
+      })) ?? []
+    );
+  }, [formsData]);
+
+  const getField = useCallback(
+    (id: string) => {
+      return formsData?.fields.find((field) => field.id === id);
+    },
+    [formsData]
+  );
+
+  const haveOptions = useCallback(
+    (id: string) => {
+      return ["select", "multiselect", "radio"].includes(
+        getField(id)?.type ?? ""
+      );
+    },
+    [getField]
+  );
+
+  return (
+    <Flex direction="column" gap={5}>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <Button
+            onClick={() => {
+              append({ field: "", value: "", operator: "==" });
+            }}
+          >
+            Adicionar Condição
+          </Button>
+          {conditionalFields.map((field, index) => (
+            <Flex key={field.id} gap={2} direction="column">
+              <Flex
+                key={field.id}
+                gap={2}
+                justify="start"
+                alignItems="center"
+                direction="row"
+              >
+                <Flex key={field.id} direction="column" flex="1">
+                  <Select
+                    input={{
+                      label: "Campo",
+                      id: `conditional[${index}].field`,
+                      placeholder: "Field Id",
+                      options: getFieldOptions,
+                      required: true,
+                    }}
+                  />
+                  <Select
+                    input={{
+                      label: "Operador",
+                      id: `conditional[${index}].operator`,
+                      placeholder: "-",
+                      options: conditionalOperators,
+                      required: true,
+                    }}
+                  />
+                  {haveOptions(watch(`conditional[${index}].field`)) ? (
+                    <Select
+                      input={{
+                        label: "Valor",
+                        id: `conditional[${index}].value`,
+                        placeholder: "Selecione",
+                        options:
+                          getField(watch(`conditional[${index}].field`))
+                            ?.options ?? [],
+                        required: true,
+                      }}
+                    />
+                  ) : (
+                    <Text
+                      input={{
+                        label: "Valor",
+                        id: `conditional[${index}].value`,
+                        placeholder: "Digite",
+                        required: true,
+                      }}
+                    />
+                  )}
+                </Flex>
+                <Button
+                  size="sm"
+                  onClick={() => remove(index)}
+                  variant="outline"
+                  colorScheme="red"
+                >
+                  <FaTrash />
+                </Button>
+              </Flex>
+              {index < conditionalFields.length - 1 && (
+                <Button size="sm" isDisabled mt={5}>
+                  And
+                </Button>
+              )}
+            </Flex>
+          ))}
+        </>
+      )}
+    </Flex>
+  );
+});

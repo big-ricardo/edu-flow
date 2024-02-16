@@ -12,8 +12,8 @@ import { BsX } from "react-icons/bs";
 import { BiSliderAlt, BiInfoCircle } from "react-icons/bi";
 import useDrawer from "@hooks/useDrawer";
 import CustomHandle from "../CustomHandle";
-import { NodeTypes } from "@interfaces/Workflow";
-import { validateNode } from "@components/molecules/Workflow/FlowPanel/BlockConfig/nodesSchema";
+import { NodeTypes } from "@interfaces/WorkflowDraft";
+import { validateNode } from "@pages/Portal/WorkflowDraft/nodesSchema";
 
 interface WrapperNodeProps extends NodeProps {
   children: React.ReactNode;
@@ -79,7 +79,7 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
       {selected && (
         <Flex
           position="absolute"
-          bottom="-35px"
+          top="-35px"
           cursor="pointer"
           bg={menuBg}
           borderRadius="5px"
@@ -122,6 +122,7 @@ const WrapperNode: React.FC<WrapperNodeProps> = ({
           type="source"
           position={Position.Right}
           style={{ background: "#555", right: "-10px" }}
+          title="Conexão Padrão"
         />
       )}
       {children}

@@ -1,4 +1,4 @@
-import { publishUnpublish } from "@apis/workflows";
+import { publishUnpublish } from "@apis/workflowDraft";
 import {
   Box,
   Button,
@@ -10,14 +10,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React from "react";
-import {
-  FaArrowLeft,
-  FaEdit,
-  FaEye,
-  FaPen,
-  FaPushed,
-  FaSave,
-} from "react-icons/fa";
+import { FaArrowLeft, FaPushed, FaSave } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { Panel } from "reactflow";
 
@@ -35,7 +28,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
   status,
 }) => {
   const navigate = useNavigate();
-  const params = useParams<{ id?: string }>();
+  const params = useParams<{ id?: string; workflow_id: string }>();
   const id = params?.id ?? "";
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -75,12 +68,8 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
   }, [mutateAsync, id, status]);
 
   const handleBack = React.useCallback(() => {
-    navigate("/portal/workflows");
-  }, [navigate]);
-
-  const handleNavigate = React.useCallback(() => {
-    navigate(`/portal/workflow/${id}/${isView ? "edit" : "view"}`);
-  }, [navigate, id, isView]);
+    navigate("/portal/workflow/" + params.workflow_id);
+  }, [navigate, params.workflow_id]);
 
   return (
     <Panel position="top-center" style={{ width: "100%", margin: 0 }}>
@@ -111,26 +100,14 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
 
         <Flex gap="2" align="center">
           <Button
-            colorScheme="blue"
-            onClick={handleNavigate}
-            variant="outline"
+            colorScheme="green"
+            mr={2}
+            onClick={onSave}
             size="sm"
-            title={isView ? "Editar" : "Visualizar"}
+            isLoading={isPending}
           >
-            {isView ? <FaPen /> : <FaEye />}
+            <FaSave /> &nbsp; Salvar Nova Versão
           </Button>
-
-          {!isView && (
-            <Button
-              colorScheme="green"
-              mr={2}
-              onClick={onSave}
-              size="sm"
-              isLoading={isPending}
-            >
-              <FaSave /> &nbsp; Salvar Alterações
-            </Button>
-          )}
 
           <Button
             colorScheme="blue"

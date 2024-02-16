@@ -3,7 +3,7 @@ import res from "../../../utils/apiResponse";
 import Email from "../../../models/Email";
 import Status from "../../../models/Status";
 import User from "../../../models/User";
-import Workflow, { IWorkflowStatus } from "../../../models/Workflow";
+import Workflow from "../../../models/Workflow";
 import Form, { FormStatus, FormType } from "../../../models/Form";
 
 const handler: HttpHandler = async (conn) => {
@@ -66,7 +66,8 @@ const handler: HttpHandler = async (conn) => {
     await new Workflow(conn)
       .model()
       .find({
-        status: IWorkflowStatus.Published,
+        active: true,
+        published: { $exists: true },
       })
       .select({
         _id: 1,
@@ -125,6 +126,6 @@ export default new Http(handler).configure({
   name: "WorkflowForms",
   options: {
     methods: ["GET"],
-    route: "workflows/forms",
+    route: "workflows-draft/forms",
   },
 });

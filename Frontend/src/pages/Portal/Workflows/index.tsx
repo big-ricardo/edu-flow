@@ -29,11 +29,11 @@ const columns = [
   },
 ];
 
-const Action = memo((workflow: Pick<IWorkflow, "name" | "status" | "_id">) => {
+const Action = memo((workflow: Pick<IWorkflow, "name" | "active" | "_id">) => {
   const navigate = useNavigate();
 
   const handleEdit = useCallback(() => {
-    navigate(`/portal/workflow/${workflow._id}/view`);
+    navigate(`/portal/workflow/${workflow._id}`);
   }, [navigate, workflow._id]);
 
   return (
@@ -81,7 +81,7 @@ const Statuses: React.FC = () => {
 
     return workflows.map((workflow) => ({
       ...workflow,
-      status: workflow.status === "draft" ? "Rascunho" : "Publicado",
+      status: workflow.active ? "Ativo" : "Inativo",
       actions: <Action {...workflow} />,
     }));
   }, [workflows]);

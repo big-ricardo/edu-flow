@@ -71,6 +71,8 @@ const formsZodSchema = z
           })
           .refine((data) => {
             if (data.type === "select" || data.type === "multiselect") {
+              if(data.predefined) return true;
+
               return !!data.options?.length;
             }
             return true;

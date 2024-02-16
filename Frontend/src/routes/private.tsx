@@ -4,6 +4,7 @@ import Portal from "@pages/Portal";
 import Dashboard from "@pages/Portal/Dashboard";
 import Workflows from "@pages/Portal/Workflows";
 import Workflow from "@pages/Portal/Workflows/Workflow";
+import WorkflowDraft from "@pages/Portal/WorkflowDraft";
 import EmailsTemplate from "@pages/Portal/EmailsTemplate";
 import EmailTemplate from "@pages/Portal/EmailsTemplate/EmailTemplate";
 import Users from "@pages/Portal/Users";
@@ -36,12 +37,16 @@ const routes: RouteType = [
         element: <Workflow />,
       },
       {
-        path: "/portal/workflow/:id/view",
-        element: <Workflow isView />,
+        path: "/portal/workflow/:id?",
+        element: <Workflow />,
       },
       {
-        path: "/portal/workflow/:id/edit",
-        element: <Workflow />,
+        path: "/portal/workflow-draft/:workflow_id/:id",
+        element: <WorkflowDraft />,
+      },
+      {
+        path: "/portal/workflow-draft/:workflow_id",
+        element: <WorkflowDraft />,
       },
       {
         path: "/portal/emails",
@@ -90,10 +95,6 @@ const routes: RouteType = [
       {
         path: "/portal/form/:id?",
         element: <Form />,
-      },
-      {
-        path: "/portal/form/:slug/preview",
-        element: <Response isPreview />,
       },
     ],
   },

@@ -1,28 +1,37 @@
 import { Box, Flex, useColorModeValue, Text } from "@chakra-ui/react";
-import { NodeProps } from "reactflow";
+import { NodeProps, Position } from "reactflow";
 import WrapperNode from "./Wrapper";
-import { HiOutlineDocumentPlus } from "react-icons/hi2";
+import { FaWpforms } from "react-icons/fa";
+import { IInteraction } from "@interfaces/Workflow";
+import CustomHandle from "../CustomHandle";
 
 interface InteractionProps extends NodeProps {
-  data: {
-    to: string;
-    subject: string;
-    template_id: string;
-    name: string;
-  };
+  data: IInteraction;
 }
 
 const Interaction: React.FC<InteractionProps> = (props) => {
   return (
-    <WrapperNode {...props} numberOfSources={1}>
+    <WrapperNode
+      {...props}
+      numberOfSources={props.data?.conditional?.length > 0 ? 2 : 1}
+    >
       <Box
-        as={HiOutlineDocumentPlus}
-        size="30px"
+        as={FaWpforms}
+        size="25px"
         color={useColorModeValue("gray.500", "gray.300")}
       />
       <Text fontSize="xs" textAlign="center" noOfLines={1}>
         {props.data?.name}
       </Text>
+
+      <CustomHandle
+        type="source"
+        position={Position.Bottom}
+        handleId="alternative-source"
+        style={{ background: "violet", bottom: "-10px", opacity: props.data?.conditional?.length > 0 ? 1 : 0 }}
+        title="Conexão Alternativa"
+        isConnectable={props.data?.conditional?.length > 0}
+      />
     </WrapperNode>
   );
 };
@@ -43,8 +52,8 @@ export function InteractionIcon() {
       transition="border-color 0.3s ease-in-out"
     >
       <Box
-        as={HiOutlineDocumentPlus}
-        size="50px"
+        as={FaWpforms}
+        size="40px"
         color={useColorModeValue("gray.500", "gray.300")}
       />
     </Flex>
