@@ -6,7 +6,6 @@ import ReactFlow, {
   Controls,
   Edge,
   MarkerType,
-  MiniMap,
   Node,
   ReactFlowInstance,
   ReactFlowJsonObject,
@@ -28,6 +27,7 @@ import { Center, Spinner, useToast } from "@chakra-ui/react";
 import { IStep, IWorkflowDraft } from "@interfaces/WorkflowDraft";
 import { AxiosError } from "axios";
 import { getWorkflowDraft } from "@apis/workflowDraft";
+import Minimap from "@components/atoms/Workflow/Minimap";
 
 const convertReactFlowObject = (
   reactFlowObject: ReactFlowJsonObject
@@ -75,9 +75,11 @@ const initialNodes: Node[] = [
 ];
 const initialEdges: Edge[] = [];
 
-interface FlowBoardProps {}
+interface FlowBoardProps {
+  isView?: boolean;
+}
 
-const FlowBoard: React.FC<FlowBoardProps> = memo(() => {
+const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
   const queryClient = useQueryClient();
   const params = useParams<{ id?: string; workflow_id: string }>();
   const id = params?.id ?? "";
@@ -190,11 +192,16 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(() => {
     [reactFlowInstance, setNodes]
   );
 
-  const isValidConnection: IsValidConnection = useCallback((connection) => {
-    if (connection.source === connection.target) return false;
+  const isValidConnection: IsValidConnection = useCallback(
+    (connection) => {
+      if (isView) return false;
 
-    return true;
-  }, []);
+      if (connection.source === connection.target) return false;
+
+      return true;
+    },
+    [isView]
+  );
 
   useEffect(() => {
     onRestore();
@@ -234,19 +241,25 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(() => {
             type: MarkerType.Arrow,
           },
         }}
+        elementsSelectable={!isView}
+        nodesConnectable={!isView}
+        nodesDraggable={!isView}
         onDrop={onDrop}
         onInit={setReactFlowInstance}
         onDragOver={onDragOver}
         isValidConnection={isValidConnection}
       >
         <FlowHeader
-          onSave={onSave}
-          isPending={isPending}
           status={workflow?.status}
+          {...{ isView, isPending, onSave }}
         />
         <Background color="#aaa" gap={16} size={1} />
-        <MiniMap />
-        <FlowPanel /> <Controls />
+        <Minimap />
+        {!isView && (
+          <>
+            <FlowPanel /> <Controls />
+          </>
+        )}
       </ReactFlow>
     </div>
   );

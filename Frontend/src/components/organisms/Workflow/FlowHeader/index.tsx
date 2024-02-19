@@ -10,7 +10,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React from "react";
-import { FaArrowLeft, FaPushed, FaSave } from "react-icons/fa";
+import { FaArrowLeft, FaPushed, FaSave, FaEye, FaPen } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { Panel } from "reactflow";
 
@@ -68,8 +68,16 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
   }, [mutateAsync, id, status]);
 
   const handleBack = React.useCallback(() => {
-    navigate("/portal/workflow/" + params.workflow_id);
+    navigate(`/portal/workflow/${params.workflow_id}`);
   }, [navigate, params.workflow_id]);
+
+  const handleNavigate = React.useCallback(() => {
+    navigate(
+      `/portal/workflow-draft/${params.workflow_id}/${id}/${
+        isView ? "edit" : "view"
+      }`
+    );
+  }, [navigate, id, isView, params.workflow_id]);
 
   return (
     <Panel position="top-center" style={{ width: "100%", margin: 0 }}>
@@ -100,27 +108,38 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
 
         <Flex gap="2" align="center">
           <Button
-            colorScheme="green"
-            mr={2}
-            onClick={onSave}
-            size="sm"
-            isLoading={isPending}
-          >
-            <FaSave /> &nbsp; Salvar Nova Versão
-          </Button>
-
-          <Button
             colorScheme="blue"
-            onClick={handlePublish}
+            onClick={handleNavigate}
             variant="outline"
             size="sm"
             title={isView ? "Editar" : "Visualizar"}
-            isDisabled={status === "published"}
-            isLoading={isPendingPublish}
           >
-            <Box as={FaPushed} transform="rotate(90deg)" /> &nbsp;
-            {status === "published" ? "Publicado" : "Publicar"}
+            {isView ? <FaPen /> : <FaEye />}
           </Button>
+          {isView ? (
+            <Button
+              colorScheme="blue"
+              onClick={handlePublish}
+              variant="outline"
+              size="sm"
+              title={isView ? "Editar" : "Visualizar"}
+              isDisabled={status === "published"}
+              isLoading={isPendingPublish}
+            >
+              <Box as={FaPushed} transform="rotate(90deg)" /> &nbsp;
+              {status === "published" ? "Publicado" : "Publicar"}
+            </Button>
+          ) : (
+            <Button
+              colorScheme="green"
+              mr={2}
+              onClick={onSave}
+              size="sm"
+              isLoading={isPending}
+            >
+              <FaSave /> &nbsp; Salvar Nova Versão
+            </Button>
+          )}
         </Flex>
       </Flex>
     </Panel>

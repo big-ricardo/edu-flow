@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,16 +13,14 @@ import {
   Flex,
   Heading,
   Spinner,
-  Tag,
   useToast,
-  Text as Typography,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import Text from "@components/atoms/Inputs/Text";
 import { createOrUpdateWorkflow, getWorkflow } from "@apis/workflows";
 import Switch from "@components/atoms/Inputs/Switch";
 import { getWorkflowDrafts } from "@apis/workflowDraft";
-import { FaEdit } from "react-icons/fa";
+import DraftItem from "@components/molecules/DraftItem";
 
 const statusSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -30,22 +28,6 @@ const statusSchema = z.object({
 });
 
 type StatusFormSchema = z.infer<typeof statusSchema>;
-
-const statusWorkflow = {
-  draft: "Rascunho",
-  published: "Publicado",
-};
-
-function convertDateTime(date: string) {
-  const d = new Date(date);
-  return Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    minute: "2-digit",
-    hour: "2-digit",
-  }).format(d);
-}
 
 export default function Workflow() {
   const toast = useToast();
@@ -59,12 +41,6 @@ export default function Workflow() {
   const { data: workflow, isLoading } = useQuery({
     queryKey: ["workflow", id],
     queryFn: getWorkflow,
-    enabled: isEditing,
-  });
-
-  const { data: workflowDrafts, isLoading: isLoadingDrafts } = useQuery({
-    queryKey: ["workflow-draft", id],
-    queryFn: getWorkflowDrafts,
     enabled: isEditing,
   });
 
@@ -119,10 +95,6 @@ export default function Workflow() {
       reset(workflow);
     }
   }, [workflow, reset]);
-
-  const handleNewDraft = useCallback(() => {
-    navigate(`/portal/workflow-draft/${id}`);
-  }, [navigate, id]);
 
   useEffect(() => {}, [errors]);
 
@@ -179,82 +151,59 @@ export default function Workflow() {
               </Button>
             </Flex>
 
-            <Flex
-              mt="8"
-              justify="center"
-              align="start"
-              direction="column"
-              gap="5"
-            >
-              {isEditing && <Heading fontSize={"x-large"}>Versões</Heading>}
-              <Divider />
-
-              {isLoadingDrafts && <Spinner />}
-
-              <Flex direction="column" gap="5" wrap="wrap" w="100%">
-                {!workflowDrafts?.workflows?.length && isEditing && (
-                  <Button
-                    colorScheme="blue"
-                    variant="outline"
-                    onClick={handleNewDraft}
-                  >
-                    Criar rascunho
-                  </Button>
-                )}
-
-                {workflowDrafts?.workflows?.map((draft) => (
-                  <Flex
-                    key={draft._id}
-                    border="1px solid"
-                    borderColor="gray.600"
-                    p="4"
-                    borderRadius="8"
-                    direction="column"
-                    gap="1"
-                  >
-                    <Flex
-                      justify="space-between"
-                      align="center"
-                      direction="row"
-                      gap="4"
-                      borderColor={
-                        draft.status === "draft" ? "blue.500" : "gray.500"
-                      }
-                      w="100%"
-                    >
-                      <Tag
-                        colorScheme={
-                          draft.status === "draft" ? "gray" : "green"
-                        }
-                      >
-                        {statusWorkflow[draft.status]}
-                      </Tag>
-                      <Typography size="sm">Versão #{draft.version}</Typography>
-                      <Typography fontSize="sm">
-                        {convertDateTime(draft.createdAt)}
-                      </Typography>
-                      <Button
-                        colorScheme="blue"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          navigate(`/portal/workflow-draft/${id}/${draft._id}`);
-                        }}
-                      >
-                        <FaEdit />
-                      </Button>
-                    </Flex>
-                    <Divider />
-                    <Typography fontSize="sm">
-                      Criado por: {draft.owner?.name ?? "Anônimo"}
-                    </Typography>
-                  </Flex>
-                ))}
-              </Flex>
-            </Flex>
+            {isEditing && <WorkflowVersions id={id} />}
           </CardBody>
         </Card>
       </FormProvider>
     </Flex>
   );
 }
+
+interface WorkflowVersionsProps {
+  id: string;
+}
+
+const WorkflowVersions: React.FC<WorkflowVersionsProps> = memo(({ id }) => {
+  const navigate = useNavigate();
+
+  const { data: workflowDrafts, isLoading: isLoadingDrafts } = useQuery({
+    queryKey: ["workflow-draft", id],
+    queryFn: getWorkflowDrafts,
+  });
+
+  const handleNewDraft = useCallback(() => {
+    navigate(`/portal/workflow-draft/${id}`);
+  }, [navigate, id]);
+
+  const handleEditDraft = useCallback(
+    (draftId: string) => {
+      navigate(`/portal/workflow-draft/${id}/${draftId}/view`);
+    },
+    [navigate, id]
+  );
+  return (
+    <Flex mt="8" justify="center" align="center" direction="column" gap="5">
+      <Heading fontSize={"x-large"}>Versões</Heading>
+      <Divider />
+
+      {isLoadingDrafts && <Spinner />}
+
+      <Flex direction="column" gap="5" wrap="wrap" w="100%">
+        {!workflowDrafts?.workflows?.length && (
+          <Button
+            colorScheme="blue"
+            variant="outline"
+            onClick={handleNewDraft}
+            isLoading={isLoadingDrafts}
+          >
+            Criar rascunho
+          </Button>
+        )}
+
+        {workflowDrafts?.workflows?.map((draft) => (
+          <DraftItem key={draft._id} draft={draft} onEdit={handleEditDraft} />
+        ))}
+      </Flex>
+    </Flex>
+  );
+});

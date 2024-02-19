@@ -1,56 +1,25 @@
 import mongoose, { Schema } from "mongoose";
 
-export enum FieldTypes {
-  Text = "text",
-  Number = "number",
-  Email = "email",
-  Password = "password",
-  Textarea = "textarea",
-  Radio = "radio",
-  Select = "select",
-  MultiSelect = "multiselect",
-  Date = "date",
-  File = "file",
-  Teachers = "teachers",
-  Evaluated = "evaluated",
-}
-
-export enum FormStatus {
-  Draft = "draft",
-  Published = "published",
-}
-
-export enum FormType {
+export enum IFormType {
   Created = "created",
   Interaction = "interaction",
   Evaluated = "evaluated",
 }
 
-export type IField = {
-  name: string;
-  type: FieldTypes;
-  required?: boolean;
-  predefined?: "teachers" | "students" | "institution";
-  visible: boolean;
-  system?: boolean;
-  options?: { label: string; value: string }[];
-};
-
 export type IForm = {
   _id: string;
   name: string;
-  status: FormStatus;
   initial_status?: string;
-  type: FormType;
+  type: IFormType;
   period?: { open: string; close: string };
+  active: boolean;
   description: string;
-  fields: IField[];
+  published: string | null;
 } & mongoose.Document;
 
 export const schema: Schema = new Schema(
   {
     name: { type: String, required: true, unique: true },
-    status: { type: String, required: true, enum: Object.values(FormStatus) },
     initial_status: {
       type: Schema.Types.ObjectId,
       ref: "Status",
@@ -60,44 +29,13 @@ export const schema: Schema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: Object.values(FormType),
+      enum: Object.values(IFormType),
     },
+    active: { type: Boolean, required: true, default: true },
     period: { open: Date, close: Date },
     workflow: { type: Schema.Types.ObjectId, ref: "Workflow", default: null },
     description: { type: String, required: false, default: "" },
-    fields: [
-      {
-        id: { type: String, required: true },
-        type: {
-          type: String,
-          required: true,
-          enum: Object.values(FieldTypes),
-        },
-        weight: { type: Number, required: false },
-        predefined: {
-          type: String,
-          required: false,
-          enum: ["teachers", "students", "institutions"],
-          default: null,
-        },
-        label: { type: String, required: false, default: "" },
-        placeholder: { type: String, required: false, default: "" },
-        value: { type: String, default: null },
-        required: { type: Boolean, required: false },
-        visible: { type: Boolean, required: false },
-        system: { type: Boolean, required: false, default: false },
-        options: {
-          type: [
-            {
-              label: { type: String, required: true },
-              value: { type: String, required: true },
-            },
-          ],
-          required: false,
-          default: null,
-        },
-      },
-    ],
+    published: { type: Schema.Types.ObjectId, ref: "FormDraft", default: null },
   },
   {
     timestamps: true,

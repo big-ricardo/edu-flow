@@ -18,6 +18,7 @@ import Status from "@pages/Portal/Statuses/Status";
 import Forms from "@pages/Portal/Forms";
 import Form from "@pages/Portal/Forms/Form";
 import Response from "@pages/Response";
+import FormDraft from "@pages/Portal/FormDrafts";
 
 const routes: RouteType = [
   {
@@ -41,7 +42,11 @@ const routes: RouteType = [
         element: <Workflow />,
       },
       {
-        path: "/portal/workflow-draft/:workflow_id/:id",
+        path: "/portal/workflow-draft/:workflow_id/:id/view",
+        element: <WorkflowDraft isView/>,
+      },
+      {
+        path: "/portal/workflow-draft/:workflow_id/:id/edit",
         element: <WorkflowDraft />,
       },
       {
@@ -95,6 +100,10 @@ const routes: RouteType = [
       {
         path: "/portal/form/:id?",
         element: <Form />,
+      },
+      {
+        path: "/portal/form-draft/:form_id/:id?",
+        element: <FormDraft />,
       },
     ],
   },

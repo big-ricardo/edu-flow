@@ -16,7 +16,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     .select({
       name: 1,
       type: 1,
-      status: 1,
+      active: 1,
       slug: 1,
     })
     .skip((page - 1) * limit)

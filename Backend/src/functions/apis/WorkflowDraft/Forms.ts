@@ -4,7 +4,7 @@ import Email from "../../../models/Email";
 import Status from "../../../models/Status";
 import User from "../../../models/User";
 import Workflow from "../../../models/Workflow";
-import Form, { FormStatus, FormType } from "../../../models/Form";
+import Form, { IFormType } from "../../../models/Form";
 
 const handler: HttpHandler = async (conn) => {
   const emails = (
@@ -82,8 +82,9 @@ const handler: HttpHandler = async (conn) => {
     await new Form(conn)
       .model()
       .find({
-        type: FormType.Interaction,
-        status: FormStatus.Published,
+        type: IFormType.Interaction,
+        active: true,
+        published: { $exists: true },
       })
       .select({
         _id: 1,
@@ -98,8 +99,9 @@ const handler: HttpHandler = async (conn) => {
     await new Form(conn)
       .model()
       .find({
-        type: FormType.Evaluated,
-        status: FormStatus.Published,
+        type: IFormType.Evaluated,
+        active: true,
+        published: { $exists: true },
       })
       .select({
         _id: 1,

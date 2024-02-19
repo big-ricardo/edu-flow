@@ -1,17 +1,15 @@
-import { Divider, Heading } from "@chakra-ui/react";
+import { Divider } from "@chakra-ui/react";
 import Inputs from "@components/atoms/Inputs";
-import IForm from "@interfaces/Form";
+import IFormDraft from "@interfaces/FormDraft";
 import React, { memo } from "react";
 
 interface PreviewProps {
-  form: Omit<IForm, "_id">;
+  form: Omit<IFormDraft, "_id">;
 }
 
 const Preview: React.FC<PreviewProps> = memo(({ form }) => {
   return (
     <React.Fragment>
-      <Heading>{form.name}</Heading>
-      <span>{form.description}</span>
       <Divider />
       <Inputs fields={form.fields} />
     </React.Fragment>

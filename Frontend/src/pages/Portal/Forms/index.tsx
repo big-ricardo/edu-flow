@@ -4,14 +4,6 @@ import {
   Flex,
   Heading,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
 } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
@@ -65,46 +57,16 @@ const Action = memo((form: Pick<IForm, "_id" | "slug">) => {
 
 const Create = memo(() => {
   const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleSelect = useCallback(
-    (formType: string) => {
-      onClose();
-      navigate(`/portal/form?type=${formType}`);
-    },
-    [navigate, onClose],
-  );
+  const handleSelect = useCallback(() => {
+    navigate(`/portal/form`);
+  }, [navigate]);
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={onOpen} size="sm">
+      <Button colorScheme="blue" mr={2} onClick={handleSelect} size="sm">
         Criar Formulário
       </Button>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Selecione o tipo de formulário</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Flex
-              justifyContent="center"
-              alignItems="start"
-              mt="4"
-              direction="row"
-              gap="4"
-              width="100%"
-            >
-              {Object.entries(FormTypes).map(([key, value]) => (
-                <Button key={key} onClick={() => handleSelect(key)}>
-                  {value}
-                </Button>
-              ))}
-            </Flex>
-          </ModalBody>
-          <ModalFooter></ModalFooter>
-        </ModalContent>
-      </Modal>
     </div>
   );
 });

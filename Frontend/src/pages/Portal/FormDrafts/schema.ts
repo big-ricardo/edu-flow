@@ -2,26 +2,8 @@ import { z } from "zod";
 
 const formsZodSchema = z
   .object({
-    name: z.string().min(3, "Nome precisa ter pelo menos 3 caracteres"),
-    slug: z
-      .string()
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-        message: "Slug inválido, utilize apenas letras e números e -",
-      })
-      .min(3, "Slug precisa ter pelo menos 3 caracteres"),
     status: z.enum(["draft", "published"]).default("draft"),
-    initial_status: z.string().optional().nullable(),
     type: z.enum(["created", "interaction", "evaluated"]),
-    workflow: z.string().optional().nullable(),
-    period: z.object({
-      open: z.string().nullable(),
-      close: z.string().nullable(),
-    }),
-    description: z
-      .string()
-      .max(255, "O tamanho máximo é 255 caracteres")
-      .min(3, "Minimo 3 letras"),
-    refine: z.string().optional().nullable(),
     fields: z
       .array(
         z
@@ -50,7 +32,11 @@ const formsZodSchema = z
             value: z.string().optional().nullable(),
             visible: z.boolean().optional().default(true),
             system: z.boolean().optional().default(false),
-            weight: z.coerce.number().min(1, "Peso mínimo é 1").max(10, "Peso máximo é 10").optional(),
+            weight: z.coerce
+              .number()
+              .min(1, "Peso mínimo é 1")
+              .max(10, "Peso máximo é 10")
+              .optional(),
             predefined: z
               .enum(["teachers", "students", "institutions"])
               .nullable()
@@ -71,7 +57,7 @@ const formsZodSchema = z
           })
           .refine((data) => {
             if (data.type === "select" || data.type === "multiselect") {
-              if(data.predefined) return true;
+              if (data.predefined) return true;
 
               return !!data.options?.length;
             }
@@ -80,30 +66,6 @@ const formsZodSchema = z
       )
       .nonempty("Crie pelo menor um campo"),
   })
-  .refine(
-    (data) => {
-      if (data.type === "created") {
-        return !!data.workflow;
-      }
-      return true;
-    },
-    {
-      message: "É necessário selecionar um workflow",
-      path: ["workflow"],
-    }
-  )
-  .refine(
-    (data) => {
-      if (data.type === "created") {
-        return !!data.initial_status;
-      }
-      return true;
-    },
-    {
-      message: "É necessário selecionar um status inicial",
-      path: ["initial_status"],
-    }
-  )
   .refine(
     (data) => {
       const isEvaluation = data.type === "evaluated";

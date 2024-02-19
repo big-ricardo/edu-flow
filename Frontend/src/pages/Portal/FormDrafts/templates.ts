@@ -1,4 +1,4 @@
-import { IField } from "@interfaces/Form";
+import { IField } from "@interfaces/FormDraft";
 
 type Template = {
   type?: "created" | "interaction" | "evaluated";
