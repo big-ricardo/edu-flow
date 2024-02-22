@@ -10,6 +10,7 @@ import React, { useRef, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { FiFile } from "react-icons/fi";
 import ErrorMessage from "../ErrorMessage";
+import InfoTooltip from "../InfoTooltip";
 
 interface FileProps {
   input: {
@@ -17,6 +18,7 @@ interface FileProps {
     label: string;
     placeholder?: string;
     required?: boolean;
+    describe?: string | null;
   };
 }
 
@@ -55,7 +57,16 @@ const File: React.FC<FileProps> = ({ input }) => {
       isInvalid={!!errors?.[input.id]}
       isRequired={input.required}
     >
-      <FormLabel>{input.label}</FormLabel>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          position: "relative",
+        }}
+      >
+        <FormLabel>{input?.label}</FormLabel>
+        <InfoTooltip describe={input?.describe} />
+      </div>
       <InputGroup
         onClick={() => {
           inputRef.current?.click();

@@ -1,4 +1,12 @@
-import { Flex, Box, Heading, useToast, Spinner } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Heading,
+  useToast,
+  Card,
+  Spinner,
+  Button,
+} from "@chakra-ui/react";
 import Text from "@components/atoms/Inputs/Text";
 import MdxEditor from "@components/organisms/EmailTemplate";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +16,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { createOrUpdateEmail, getEmail } from "@apis/email";
+import EmailTemplateHook from "@components/organisms/EmailTemplate/hook";
+import { FaArrowLeft, FaSave, FaTrashAlt } from "react-icons/fa";
 
 const emailSchema = z.object({
   slug: z
@@ -36,6 +46,8 @@ const EmailTemplate: React.FC = () => {
     queryFn: getEmail,
     enabled: isEditing,
   });
+
+  const { handleSave } = EmailTemplateHook({ data: email?.htmlTemplate ?? "" });
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createOrUpdateEmail,
@@ -72,31 +84,86 @@ const EmailTemplate: React.FC = () => {
   const {
     handleSubmit,
     formState: { errors },
+    reset,
   } = methods;
 
-  const onSave = useCallback(
-    async (htmlTemplate: string) => {
-      handleSubmit(async (data) => {
-        await mutateAsync({
-          ...data,
-          _id: isEditing ? id : undefined,
-          htmlTemplate,
-        });
-      })();
-    },
-    [handleSubmit, mutateAsync, id, isEditing],
-  );
+  const onSubmit = handleSubmit(async (data) => {
+    const htmlTemplate = handleSave();
+
+    await mutateAsync({
+      ...data,
+      htmlTemplate,
+      _id: isEditing ? id : undefined,
+    });
+  });
 
   useEffect(() => {}, [errors]);
 
+  useEffect(() => {
+    reset(email);
+  }, [email, reset]);
+
+  const handleBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
+  const handleCancel = useCallback(() => {
+    reset(email);
+  }, [reset, email]);
+
   return (
-    <Flex justify="center" align="center" w="100%">
-      <FormProvider {...methods}>
-        <Box w="100%" h="100%" p="4">
-          <Heading size="md" mb="5">
+    <Flex justify="center" align="center" w="100%" direction="column">
+      <Card
+        w="100%"
+        display="flex"
+        direction="row"
+        borderRadius={0}
+        justifyContent="space-between"
+        alignItems="center"
+        p="2"
+        position="sticky"
+        top="0"
+        zIndex="sticky"
+      >
+        <Flex direction="row" gap="3" alignItems="center">
+          <Heading size="md" fontWeight="bold">
             {isEditing ? "Editar" : "Criar"} Email
           </Heading>
+          <Button
+            colorScheme="blue"
+            onClick={handleBack}
+            variant="ghost"
+            size="sm"
+            title="Voltar"
+          >
+            <FaArrowLeft />
+          </Button>
+        </Flex>
 
+        <Flex gap="2" align="center">
+          <Button
+            colorScheme="red"
+            onClick={handleCancel}
+            variant="outline"
+            size="sm"
+            title="Descartar Alterações"
+          >
+            <FaTrashAlt />
+          </Button>
+
+          <Button
+            colorScheme="green"
+            onClick={onSubmit}
+            size="sm"
+            isLoading={isPending}
+          >
+            <FaSave /> &nbsp; Salvar Alterações
+          </Button>
+        </Flex>
+      </Card>
+
+      <FormProvider {...methods}>
+        <Box w="100%" h="100%" p="4">
           <Text
             input={{
               id: "slug",
@@ -113,17 +180,7 @@ const EmailTemplate: React.FC = () => {
             }}
           />
 
-          <Box mt="4">
-            {isLoading ? (
-              <Spinner />
-            ) : (
-              <MdxEditor
-                onSave={onSave}
-                data={email?.htmlTemplate}
-                isPending={isPending}
-              />
-            )}
-          </Box>
+          <Box mt="4">{isLoading ? <Spinner /> : <MdxEditor />}</Box>
         </Box>
       </FormProvider>
     </Flex>

@@ -77,6 +77,11 @@ const ButtonAdd: React.FC<ButtonAddProps> = ({
         options: undefined,
         visible: true,
         predefined: null,
+        validation: {
+          min: undefined,
+          max: undefined,
+          pattern: undefined,
+        },
       },
       { shouldFocus: true }
     );

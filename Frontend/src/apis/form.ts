@@ -2,6 +2,7 @@ import IPagination from "@interfaces/Pagination";
 import Response from "@interfaces/Response";
 import IForm from "@interfaces/Form";
 import api from "@services/api";
+import IFormDraft from "@interfaces/FormDraft";
 
 type Form = IForm;
 type ReqForms = Response<
@@ -10,6 +11,7 @@ type ReqForms = Response<
   } & IPagination
 >;
 type ReqForm = Response<Form>;
+type ReqFormWithFields = Response<Form & { published: IFormDraft }>;
 
 export const getForms = async ({
   queryKey: [, page = "1", limit = "10"],
@@ -39,6 +41,28 @@ export const getForm = async ({ queryKey: [, id] }: { queryKey: string[] }) => {
   };
 };
 
+export const getFormWithFields = async ({
+  queryKey: [, id],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqFormWithFields>(`/form/${id}`, {
+    params: { fields: true },
+  });
+
+  return {
+    ...res.data.data,
+    period: {
+      open: res.data.data.period?.open
+        ? res.data.data.period.open.split("T")[0]
+        : null,
+      close: res.data.data.period?.close
+        ? res.data.data.period.close.split("T")[0]
+        : null,
+    },
+  };
+};
+
 export const createForm = async (data: Omit<Form, "_id">) => {
   const res = await api.post<ReqForm>("/form", data);
 
@@ -52,7 +76,7 @@ export const updateForm = async (data: Form) => {
 };
 
 export const createOrUpdateForm = async (
-  data: Omit<Form, "_id"> & { _id?: string },
+  data: Omit<Form, "_id"> & { _id?: string }
 ) => {
   if (data?._id) {
     return updateForm(data as Form);
@@ -66,7 +90,7 @@ export const getFormBySlug = async ({
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<ReqForm>(`/form/slug/${slug}`);
+  const res = await api.get<ReqFormWithFields>(`/form/slug/${slug}`);
 
   return {
     ...res.data.data,

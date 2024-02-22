@@ -35,14 +35,16 @@ export const getFormDraft = async ({
 };
 
 export const createFormDraft = async (
-  data: Pick<IFormDraft, "fields" | "status" | "parent">
+  data: Pick<IFormDraft, "fields" | "parent">
 ) => {
   const res = await api.post<ReqWorkflow>(`/form-draft/${data.parent}`, data);
 
   return res.data.data;
 };
 
-export const publishFormDraft = async (data: Pick<IFormDraft, "_id" | "status">) => {
+export const publishFormDraft = async (
+  data: Pick<IFormDraft, "_id" | "status">
+) => {
   const res = await api.patch<ReqWorkflow>(`/form-draft/${data._id}`, data);
 
   return res.data.data;

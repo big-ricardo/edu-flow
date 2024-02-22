@@ -28,6 +28,7 @@ import { IStep, IWorkflowDraft } from "@interfaces/WorkflowDraft";
 import { AxiosError } from "axios";
 import { getWorkflowDraft } from "@apis/workflowDraft";
 import Minimap from "@components/atoms/Workflow/Minimap";
+import { workflowSchema } from "@pages/Portal/WorkflowDraft/nodesSchema";
 
 const convertReactFlowObject = (
   reactFlowObject: ReactFlowJsonObject
@@ -113,7 +114,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         variant: "left-accent",
         position: "top-right",
       });
-      navigate(`/portal/workflow/${data.parent}/${data._id}`);
+      navigate(`/portal/workflow-draft/${data.parent}/${data._id}/view`);
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
@@ -137,7 +138,23 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
     if (reactFlowInstance) {
       const flow = reactFlowInstance.toObject();
 
+      const formState = workflowSchema.safeParse(flow);
+
+      if (!formState.success) {
+        toast({
+          title: "Erro ao salvar workflow",
+          description: "O fluxo está inválido",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          variant: "left-accent",
+          position: "top-right",
+        });
+        return;
+      }
+
       const steps = convertReactFlowObject(flow);
+
       const data = {
         parent: workflow?.parent ?? workflow_id,
         steps,
@@ -146,7 +163,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
       mutateAsync(data);
     }
-  }, [reactFlowInstance, mutateAsync, workflow?.parent, workflow_id]);
+  }, [reactFlowInstance, mutateAsync, workflow?.parent, workflow_id, toast]);
 
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {

@@ -2,6 +2,7 @@ import { FormControl, FormLabel, Input } from "@chakra-ui/react";
 import React from "react";
 import ErrorMessage from "../ErrorMessage";
 import { useFormContext } from "react-hook-form";
+import InfoTooltip from "../InfoTooltip";
 
 interface TextProps {
   input: {
@@ -11,6 +12,7 @@ interface TextProps {
     required?: boolean;
     type?: string;
     isDisabled?: boolean;
+    describe?: string | null;
   };
 }
 
@@ -26,7 +28,17 @@ const Text: React.FC<TextProps> = ({ input }) => {
       isInvalid={!!errors?.[input.id]}
       isRequired={input.required}
     >
-      <FormLabel>{input?.label}</FormLabel>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          position: "relative",
+        }}
+      >
+        <FormLabel>{input?.label}</FormLabel>
+        <InfoTooltip describe={input?.describe} />
+      </div>
+
       <Input
         type={input?.type ?? "text"}
         placeholder={input?.placeholder}

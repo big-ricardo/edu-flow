@@ -8,6 +8,7 @@ import {
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
+import InfoTooltip from "../InfoTooltip";
 
 type IOption =
   | { value: string; label: string }
@@ -21,6 +22,7 @@ interface RadioProps {
     type: string;
     required?: boolean;
     options: IOption[];
+    describe?: string | null;
   };
 }
 
@@ -36,7 +38,16 @@ const Radio: React.FC<RadioProps> = ({ input }) => {
       isInvalid={!!errors?.[input.id]}
       isRequired={input.required}
     >
-      <FormLabel>{input.label}</FormLabel>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          position: "relative",
+        }}
+      >
+        <FormLabel>{input?.label}</FormLabel>
+        <InfoTooltip describe={input?.describe} />
+      </div>
       <Controller
         name={input.id}
         control={control}

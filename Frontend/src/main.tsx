@@ -7,7 +7,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthContext from "./contexts/AuthContext";
 import "./styles/global.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -18,5 +25,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </AuthContext>
       </QueryClientProvider>
     </ChakraProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );

@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import {
   Button,
   Stack,
@@ -16,6 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { getFormBySlug } from "@apis/form";
 import Inputs from "@components/atoms/Inputs";
+import { zodResolver } from "@hookform/resolvers/zod";
+import convertToZodSchema from "@utils/convertToZodSchema";
 
 interface ResponseProps {
   isPreview?: boolean;
@@ -40,7 +42,11 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
     queryFn: getFormBySlug,
   });
 
-  const { handleSubmit } = useForm({});
+  const methods = useForm({
+    resolver: zodResolver(convertToZodSchema(form?.published?.fields ?? [])),
+  });
+
+  const { handleSubmit } = methods;
 
   const { mutateAsync, isPending: isSubmitting } = useMutation({
     mutationFn: async (data: FieldValues) => console.log(data),
@@ -125,23 +131,24 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
             <Text>{form?.description}</Text>
             <Divider my={4} />
           </Box>
+          <FormProvider {...methods}>
+            <form onSubmit={onSubmit}>
+              <Flex direction="column" align="center" justify="center" gap="3">
+                <Inputs fields={form?.published?.fields ?? []} />
 
-          <form onSubmit={onSubmit}>
-            <Flex direction="column" align="center" justify="center" gap="3">
-              <Inputs fields={form?.fields ?? []} />
-
-              <Stack direction="row" justifyContent="flex-end" mt={4}>
-                <Button
-                  type="submit"
-                  colorScheme="blue"
-                  isLoading={isSubmitting}
-                  isDisabled={isPreview}
-                >
-                  Enviar
-                </Button>
-              </Stack>
-            </Flex>
-          </form>
+                <Stack direction="row" justifyContent="flex-end" mt={4}>
+                  <Button
+                    type="submit"
+                    colorScheme="blue"
+                    isLoading={isSubmitting}
+                    isDisabled={isPreview}
+                  >
+                    Enviar
+                  </Button>
+                </Stack>
+              </Flex>
+            </form>
+          </FormProvider>
         </Box>
       </Center>
     </Box>

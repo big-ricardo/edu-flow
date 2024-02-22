@@ -10,6 +10,7 @@ import {
 import React from "react";
 import ErrorMessage from "../ErrorMessage";
 import { Controller, useFormContext } from "react-hook-form";
+import InfoTooltip from "../InfoTooltip";
 
 interface TextProps {
   input: {
@@ -19,6 +20,7 @@ interface TextProps {
     required?: boolean;
     type?: string;
     isDisabled?: boolean;
+    describe?: string | null;
   };
   max?: number;
   min?: number;
@@ -36,7 +38,10 @@ const NumberInput: React.FC<TextProps> = ({ input, max, min }) => {
       isInvalid={!!errors?.[input.id]}
       isRequired={input.required}
     >
-      <FormLabel>{input?.label}</FormLabel>
+      <div style={{ display: "flex", justifyContent: "start", position: "relative" }}>
+        <FormLabel>{input?.label}</FormLabel>
+        <InfoTooltip describe={input?.describe} />
+      </div>
 
       <Controller
         name={input.id}

@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from "react";
 import ErrorMessage from "../ErrorMessage";
 import { Controller, useFormContext } from "react-hook-form";
 import ReactSelect, { StylesConfig } from "react-select";
+import InfoTooltip from "../InfoTooltip";
 
 interface SelectProps {
   input: {
@@ -102,13 +103,13 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
 
       if (Array.isArray(value)) {
         return allOptions.filter(
-          (option) => option?.value && value.includes(option.value),
+          (option) => option?.value && value.includes(option.value)
         );
       } else {
         return allOptions.find((option) => option?.value === value) ?? null;
       }
     },
-    [input.options],
+    [input.options]
   );
 
   return (
@@ -118,7 +119,16 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
       isRequired={input.required}
       isDisabled={input?.isDisabled}
     >
-      <FormLabel>{input.label}</FormLabel>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          position: "relative",
+        }}
+      >
+        <FormLabel>{input?.label}</FormLabel>
+        <InfoTooltip describe={input?.describe} />
+      </div>
       <Controller
         name={input.id}
         control={control}

@@ -2,7 +2,6 @@ import { z } from "zod";
 
 const formsZodSchema = z
   .object({
-    status: z.enum(["draft", "published"]).default("draft"),
     type: z.enum(["created", "interaction", "evaluated"]),
     fields: z
       .array(
@@ -41,6 +40,11 @@ const formsZodSchema = z
               .enum(["teachers", "students", "institutions"])
               .nullable()
               .default(null),
+            describe: z
+              .string()
+              .max(100, "Descrição precisa ter no máximo 100 caracteres")
+              .nullable()
+              .optional(),
             options: z
               .array(
                 z.object({
@@ -53,6 +57,13 @@ const formsZodSchema = z
                 })
               )
               .nullable()
+              .optional(),
+            validation: z
+              .object({
+                min: z.coerce.number().optional(),
+                max: z.coerce.number().optional(),
+                pattern: z.coerce.string().optional(),
+              })
               .optional(),
           })
           .refine((data) => {

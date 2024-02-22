@@ -129,14 +129,12 @@ export default function FormDraft() {
     handleSubmit,
     reset,
     getValues,
-    formState: { isDirty, isValid, errors },
+    formState: { isDirty, isValid },
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     await mutateAsync({ ...data, parent: params.form_id ?? "" });
   });
-
-  console.log("formDraft", errors);
 
   const handleCancel = useCallback(() => {
     reset(formDraft);
@@ -155,7 +153,7 @@ export default function FormDraft() {
       _id: id,
       status: formDraft?.status === "draft" ? "published" : "draft",
     });
-  }, [mutateAsync, id, formDraft?.status]);
+  }, [mutateAsyncPublish, id, formDraft?.status]);
 
   useEffect(() => {
     if (formDraft) {
@@ -163,14 +161,10 @@ export default function FormDraft() {
     }
   }, [formDraft, reset]);
 
-  if (!formType) {
-    navigate(-1);
-  }
-
-  if (isError) {
+  if (isError || !formType) {
     return (
       <Center h="100vh" w="100%">
-        <Heading>Erro ao carregar formulário</Heading>
+        <Heading>Erro ao carregar dados do formulário</Heading>
       </Center>
     );
   }
@@ -251,27 +245,27 @@ export default function FormDraft() {
       </Card>
 
       <Flex w="100%" my="6" mx="auto" px="6" justify="center">
-        <FormProvider {...methods}>
-          <Card
-            as="form"
-            onSubmit={onSubmit}
-            borderRadius={8}
-            h="fit-content"
-            w="100%"
-            maxW="1000px"
-          >
-            <CardBody display="flex" flexDirection="column" gap="4">
-              {isPreview ? (
-                <Preview formDraft={getValues()} />
-              ) : (
+        <Card
+          as="form"
+          onSubmit={onSubmit}
+          borderRadius={8}
+          h="fit-content"
+          w="100%"
+          maxW="1000px"
+        >
+          <CardBody display="flex" flexDirection="column" gap="4">
+            {isPreview ? (
+              <Preview form={getValues()} />
+            ) : (
+              <FormProvider {...methods}>
                 <FormEdit
                   {...{ isEditing, isCreated, isLoading }}
                   formType={formType ?? "created"}
                 />
-              )}
-            </CardBody>
-          </Card>
-        </FormProvider>
+              </FormProvider>
+            )}
+          </CardBody>
+        </Card>
       </Flex>
     </Flex>
   );

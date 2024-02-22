@@ -85,15 +85,6 @@ export const validateNode = (type: NodeTypes, data: BlockFormInputs) => {
 };
 
 export const workflowSchema = z.object({
-  name: z.string().min(3, { message: "Nome é obrigatório" }),
-  description: z.string().min(3, { message: "Descrição é obrigatória" }),
-  parent: z.string().optional(),
-  viewport: z.object({
-    x: z.number(),
-    y: z.number(),
-    zoom: z.number(),
-  }),
-  status: z.enum(["published", "draft"]),
   edges: z.array(
     z.object({
       id: z.string(),
@@ -107,10 +98,10 @@ export const workflowSchema = z.object({
       id: z.string(),
       type: z
         .enum([
-          "send-email",
-          "change-status",
+          "send_email",
+          "change_status",
           "circle",
-          "swap-workflow",
+          "swap_workflow",
           "interaction",
           "evaluated",
         ])

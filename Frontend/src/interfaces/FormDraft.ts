@@ -32,8 +32,14 @@ export type IField = {
   predefined: "teachers" | "students" | "institutions" | null;
   value?: string | null;
   visible: boolean;
+  describe?: string | null;
   options?: { label: string; value: string }[] | null;
   system?: boolean;
+  validation?: {
+    min?: number;
+    max?: number;
+    pattern?: string;
+  };
 };
 
 export type IFormStatus = "draft" | "published";

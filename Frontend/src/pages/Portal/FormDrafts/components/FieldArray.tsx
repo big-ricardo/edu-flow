@@ -1,7 +1,7 @@
 import { Flex, Button, useColorModeValue } from "@chakra-ui/react";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
-import { formFormSchema } from "@pages/Portal/Forms/schema";
+import { formFormSchema } from "../schema";
 import { memo } from "react";
 import {
   FieldArrayWithId,
@@ -13,6 +13,7 @@ import { FaArrowDown, FaArrowUp, FaTrash } from "react-icons/fa";
 import FieldArrayOption from "@components/atoms/FieldArrayOption";
 import Switch from "@components/atoms/Inputs/Switch";
 import Number from "@components/atoms/Inputs/NumberInput";
+import TextArea from "@components/atoms/Inputs/TextArea";
 
 const fieldTypes = {
   text: "Texto",
@@ -43,7 +44,7 @@ const predefinedOptions = Object.entries(predefinedTypes).map(
   ([value, label]) => ({
     value,
     label,
-  }),
+  })
 );
 
 interface FieldFormsProps {
@@ -60,15 +61,13 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
 
     const { watch } = useFormContext<formFormSchema>();
 
-    const haveOptions = ["select", "multiselect", "radio", "checkbox"].includes(
-      watch(`fields.${index}.type`),
-    );
-    const isSelect = ["select", "multiselect"].includes(
-      watch(`fields.${index}.type`),
-    );
-
     const isEvaluated = watch(`type`) === "evaluated";
-    const isFieldEvaluated = watch(`fields.${index}.type`) === "evaluated";
+    const fieldType = watch(`fields.${index}.type`);
+    const isFieldEvaluated = fieldType === "evaluated";
+    const haveOptions = ["select", "multiselect", "radio", "checkbox"].includes(
+      fieldType
+    );
+    const isSelect = ["select", "multiselect"].includes(fieldType);
 
     const isPredefined = !!watch(`fields.${index}.predefined`);
 
@@ -177,6 +176,15 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
           )}
         </Flex>
 
+        <TextArea
+          input={{
+            id: `fields.${index}.describe`,
+            label: "Descrição",
+            placeholder: "Adicione uma descrição para ajudar o usuário",
+            required: false,
+          }}
+        />
+
         <Flex direction={["column", "row"]} gap={4}>
           <Select
             input={{
@@ -186,12 +194,47 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               required: true,
               options: isEvaluated
                 ? [{ value: "evaluated", label: "Nota de Avaliação" }].concat(
-                    fieldOptions,
+                    fieldOptions
                   )
                 : fieldOptions,
               isDisabled: field.system,
             }}
           />
+
+          {fieldType === "number" && (
+            <>
+              <Number
+                input={{
+                  id: `fields.${index}.validation.min`,
+                  label: "Valor mínimo",
+                  placeholder: "Valor mínimo",
+                  required: false,
+                  type: "number",
+                }}
+              />
+
+              <Number
+                input={{
+                  id: `fields.${index}.validation.max`,
+                  label: "Valor máximo",
+                  placeholder: "Valor máximo",
+                  required: false,
+                  type: "number",
+                }}
+              />
+            </>
+          )}
+
+          {fieldType === "text" && (
+            <Text
+              input={{
+                id: `fields.${index}.validation.pattern`,
+                label: "Padrão de validação",
+                placeholder: "Padrão de validação Regex",
+                required: false,
+              }}
+            />
+          )}
 
           {isSelect && (
             <Select
@@ -222,7 +265,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
         {haveOptions && !isPredefined && <FieldArrayOption index={index} />}
       </Flex>
     );
-  },
+  }
 );
 
 export default FieldArray;

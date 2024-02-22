@@ -17,7 +17,7 @@ import nodesSchema, {
 } from "../../../../../pages/Portal/WorkflowDraft/nodesSchema";
 import Switch from "@components/atoms/Inputs/Switch";
 import NumberInput from "@components/atoms/Inputs/NumberInput";
-import { getForm } from "@apis/form";
+import { getFormWithFields } from "@apis/form";
 import { FaTrash } from "react-icons/fa";
 
 interface BlockConfigProps {
@@ -333,8 +333,11 @@ interface ConditionalProps {
 const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
   const { data: formsData, isLoading } = useQuery({
     queryKey: ["forms", form_id],
-    queryFn: getForm,
+    queryFn: getFormWithFields,
     retryOnMount: false,
+    select(data) {
+      return data?.published;
+    },
   });
 
   const { control, watch } = useFormContext();
