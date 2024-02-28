@@ -7,7 +7,7 @@ const handler: HttpHandler = async (conn, req) => {
 
   const forms = await new FormDraft(conn)
     .model()
-    .find()
+    .find({ parent: id })
     .populate("owner", {
       name: 1,
       _id: 1,

@@ -1,9 +1,16 @@
 import React from "react";
-
-// import { Container } from './styles';
+import MyActivities from "./components/MyActivities";
+import { Box } from "@chakra-ui/react";
+import ApprovedActivities from "./components/ApproveActivities";
 
 const Dashboard: React.FC = () => {
-  return <div />;
+  return (
+    <Box p={8} width="100%">
+      <h1>Dashboard</h1>
+      <MyActivities />
+      <ApprovedActivities />
+    </Box>
+  );
 };
 
 export default Dashboard;

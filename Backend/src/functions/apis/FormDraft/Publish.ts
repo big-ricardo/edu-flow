@@ -12,14 +12,14 @@ const handler: HttpHandler = async (conn, req) => {
     {
       status,
     },
-    { new: true }
+    { new: true },
   );
 
   await new FormDraft(conn).model().updateMany(
     { parent: formDraft.parent, _id: { $ne: formDraft._id } },
     {
       status: "draft",
-    }
+    },
   );
 
   const form = await new Form(conn).model().findByIdAndUpdate(
@@ -27,7 +27,7 @@ const handler: HttpHandler = async (conn, req) => {
     {
       published: formDraft._id,
     },
-    { new: true }
+    { new: true },
   );
 
   formDraft.save();

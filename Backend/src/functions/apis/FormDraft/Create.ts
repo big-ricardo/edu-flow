@@ -1,10 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import FormDraft, {
-  FieldTypes,
-  IFormDraft,
-  IFormStatus,
-} from "../../../models/FormDraft";
+import FormDraft, { FieldTypes, IFormDraft } from "../../../models/FormDraft";
 import Form from "../../../models/Form";
 
 const handler: HttpHandler = async (conn, req) => {
@@ -39,7 +35,6 @@ export default new Http(handler)
       id: schema.string().required(),
     }),
     body: schema.object().shape({
-      status: schema.string().required().oneOf(Object.values(IFormStatus)),
       fields: schema.array().of(
         schema.object().shape({
           id: schema
@@ -50,23 +45,29 @@ export default new Http(handler)
           value: schema.string().nullable(),
           visible: schema.boolean().default(true),
           required: schema.boolean().required(),
+          describe: schema.string().nullable().optional(),
           options: schema
             .array()
             .of(
               schema.object().shape({
                 label: schema.string().required(),
                 value: schema.string().required(),
-              })
+              }),
             )
             .when("type", ([type], schema) => {
               if (["select", "radio", "checkbox"].includes(type)) {
                 return schema.required(
-                  "options is required for select, radio and checkbox fields"
+                  "options is required for select, radio and checkbox fields",
                 );
               }
               return schema.nullable().default(null);
             }),
-        })
+          validation: schema.object().shape({
+            min: schema.number().nullable().optional(),
+            max: schema.number().nullable().optional(),
+            pattern: schema.string().nullable().optional(),
+          }),
+        }),
       ),
     }),
   }))

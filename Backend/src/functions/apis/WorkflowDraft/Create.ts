@@ -69,7 +69,7 @@ export default new Http(handler)
           next: schema.object().shape({
             ["default-source"]: schema.string().required().nullable(),
           }),
-        })
+        }),
       ),
     }),
   }))

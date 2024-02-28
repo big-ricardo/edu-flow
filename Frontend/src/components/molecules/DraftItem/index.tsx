@@ -1,5 +1,6 @@
 import { Button, Divider, Flex, Tag, Text } from "@chakra-ui/react";
-import React, { memo, useCallback } from "react";
+import { convertDateTime } from "@utils/date";
+import React, { memo, useCallback, useMemo } from "react";
 import { FaEdit } from "react-icons/fa";
 
 type DraftItemProps = {
@@ -20,21 +21,15 @@ const statusWorkflow = {
   published: "Publicado",
 };
 
-function convertDateTime(date: string) {
-  const d = new Date(date);
-  return Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    minute: "2-digit",
-    hour: "2-digit",
-  }).format(d);
-}
-
 const DraftItem: React.FC<DraftItemProps> = memo(({ draft, onEdit }) => {
   const handleEdit = useCallback(() => {
     onEdit(draft._id);
   }, [draft._id, onEdit]);
+
+  const createdAt = useMemo(
+    () => convertDateTime(draft.createdAt),
+    [draft.createdAt],
+  );
 
   return (
     <Flex
@@ -58,7 +53,7 @@ const DraftItem: React.FC<DraftItemProps> = memo(({ draft, onEdit }) => {
           {statusWorkflow[draft.status]}
         </Tag>
         <Text size="sm">Versão #{draft.version}</Text>
-        <Text fontSize="sm">{convertDateTime(draft.createdAt)}</Text>
+        <Text fontSize="sm">{createdAt}</Text>
         <Button
           colorScheme="blue"
           variant="outline"

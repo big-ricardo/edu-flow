@@ -12,12 +12,16 @@ export type IWorkflow = {
 export const schema: Schema = new Schema(
   {
     name: { type: String, required: true },
-    published: { type: Schema.Types.ObjectId, ref: "WorkflowDraft", default: null },
+    published: {
+      type: Schema.Types.ObjectId,
+      ref: "WorkflowDraft",
+      default: null,
+    },
     active: { type: Boolean, default: false },
   },
   {
     timestamps: true,
-  }
+  },
 ).index({ name: 1, version: 1 }, { unique: true });
 
 export default class Workflow {

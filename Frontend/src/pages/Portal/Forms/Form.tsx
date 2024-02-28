@@ -57,7 +57,7 @@ const statusSchema = z
     {
       message: "É necessário selecionar um workflow",
       path: ["workflow"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -69,7 +69,7 @@ const statusSchema = z
     {
       message: "É necessário selecionar um status inicial",
       path: ["initial_status"],
-    }
+    },
   );
 
 type StatusFormSchema = z.infer<typeof statusSchema>;
@@ -323,7 +323,7 @@ const FormVersions: React.FC<FormVersionsProps> = memo(({ id, formType }) => {
         state: { formType },
       });
     },
-    [navigate, id, formType]
+    [navigate, id, formType],
   );
   return (
     <Flex mt="8" justify="center" align="center" direction="column" gap="5">

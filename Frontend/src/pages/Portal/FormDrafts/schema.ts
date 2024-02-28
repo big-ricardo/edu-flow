@@ -54,7 +54,7 @@ const formsZodSchema = z
                   value: z
                     .string()
                     .min(3, "Valor precisa ter pelo menos 3 caracteres"),
-                })
+                }),
               )
               .nullable()
               .optional(),
@@ -73,7 +73,7 @@ const formsZodSchema = z
               return !!data.options?.length;
             }
             return true;
-          }, "É necessário adicionar pelo menos uma opção")
+          }, "É necessário adicionar pelo menos uma opção"),
       )
       .nonempty("Crie pelo menor um campo"),
   })
@@ -88,7 +88,7 @@ const formsZodSchema = z
     {
       message: "É necessário adicionar um campo de avaliação",
       path: ["fields"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -97,7 +97,7 @@ const formsZodSchema = z
       if (!isEvaluation) return true;
 
       const evaluatedFields = data.fields.filter(
-        (field) => field.type === "evaluated"
+        (field) => field.type === "evaluated",
       );
 
       return evaluatedFields.every((field) => field.weight);
@@ -105,7 +105,7 @@ const formsZodSchema = z
     {
       message: "É necessário adicionar um peso para cada campo de avaliação",
       path: ["fields"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -125,7 +125,7 @@ const formsZodSchema = z
     {
       message: "É necessário que a soma dos pesos seja igual a 10",
       path: ["fields"],
-    }
+    },
   );
 
 export default formsZodSchema;

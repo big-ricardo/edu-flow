@@ -31,19 +31,19 @@ import Minimap from "@components/atoms/Workflow/Minimap";
 import { workflowSchema } from "@pages/Portal/WorkflowDraft/nodesSchema";
 
 const convertReactFlowObject = (
-  reactFlowObject: ReactFlowJsonObject
+  reactFlowObject: ReactFlowJsonObject,
 ): IWorkflowDraft["steps"] => {
   return reactFlowObject.nodes.map((node) => {
     const edges = reactFlowObject.edges.filter(
-      (edge) => edge.source === node.id
+      (edge) => edge.source === node.id,
     );
 
     const defaultSource = edges.find(
-      (edge) => edge.sourceHandle === "default-source"
+      (edge) => edge.sourceHandle === "default-source",
     )?.target;
 
     const alternativeSource = edges.find(
-      (edge) => edge.sourceHandle === "alternative-source"
+      (edge) => edge.sourceHandle === "alternative-source",
     )?.target;
 
     return {
@@ -131,7 +131,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    [setEdges],
   );
 
   const onSave = useCallback(() => {
@@ -206,7 +206,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         },
       ]);
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowInstance, setNodes],
   );
 
   const isValidConnection: IsValidConnection = useCallback(
@@ -217,7 +217,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
       return true;
     },
-    [isView]
+    [isView],
   );
 
   useEffect(() => {

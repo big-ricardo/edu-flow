@@ -40,7 +40,7 @@ const schemas: NodeSchemas = {
           field: z.string().min(1, { message: "Selecione um campo" }),
           value: z.string().min(1, { message: "Valor é obrigatório" }),
           operator: z.enum(["==", "!=", ">", "<", ">=", "<="]),
-        })
+        }),
       )
       .optional(),
   }),
@@ -66,7 +66,7 @@ const schemas: NodeSchemas = {
       {
         message: "É necessário selecionar pelo menos um destinatário",
         path: ["to"],
-      }
+      },
     ),
 };
 
@@ -91,7 +91,7 @@ export const workflowSchema = z.object({
       source: z.string(),
       target: z.string(),
       sourceHandle: z.enum(["default-source", "alternative-source"]),
-    })
+    }),
   ),
   nodes: z.array(
     z.object({
@@ -116,7 +116,7 @@ export const workflowSchema = z.object({
       ]),
       position: z.object({ x: z.number(), y: z.number() }),
       deletable: z.boolean().optional(),
-    })
+    }),
   ),
 });
 

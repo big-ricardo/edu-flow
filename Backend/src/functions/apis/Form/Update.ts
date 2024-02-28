@@ -18,7 +18,7 @@ const handler: HttpHandler = async (conn, req) => {
     },
     {
       new: true,
-    }
+    },
   );
 
   form.save();

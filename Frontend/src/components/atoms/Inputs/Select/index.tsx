@@ -103,13 +103,13 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
 
       if (Array.isArray(value)) {
         return allOptions.filter(
-          (option) => option?.value && value.includes(option.value)
+          (option) => option?.value && value.includes(option.value),
         );
       } else {
         return allOptions.find((option) => option?.value === value) ?? null;
       }
     },
-    [input.options]
+    [input.options],
   );
 
   return (

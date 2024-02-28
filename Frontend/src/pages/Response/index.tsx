@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { FieldValues, FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import {
   Button,
   Stack,
@@ -18,6 +18,7 @@ import { getFormBySlug } from "@apis/form";
 import Inputs from "@components/atoms/Inputs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import convertToZodSchema from "@utils/convertToZodSchema";
+import { responseForm } from "@apis/response";
 
 interface ResponseProps {
   isPreview?: boolean;
@@ -49,7 +50,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
   const { handleSubmit } = methods;
 
   const { mutateAsync, isPending: isSubmitting } = useMutation({
-    mutationFn: async (data: FieldValues) => console.log(data),
+    mutationFn: responseForm,
     onSuccess: () => {
       toast({
         title: `Formulário respondido com sucesso`,
@@ -75,7 +76,14 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await mutateAsync(data);
+      if (!form) return;
+      await mutateAsync({
+        form,
+        data: {
+          ...data,
+          activity_id,
+        } as Record<string, string | { file: string }>,
+      });
     } catch (error) {
       console.log("Form validation failed:", error);
     }

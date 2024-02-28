@@ -27,7 +27,7 @@ const CustomHandle: React.FC<WrapperNodeProps> = ({ handleId, ...props }) => {
 
     return (
       connectedEdges.filter(
-        (edge) => edge.sourceHandle === handleId && edge.source === id
+        (edge) => edge.sourceHandle === handleId && edge.source === id,
       ).length === 0
     );
   }, [edges, node, handleId, id]);

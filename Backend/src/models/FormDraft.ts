@@ -28,6 +28,8 @@ export type IField = {
   visible: boolean;
   system?: boolean;
   options?: { label: string; value: string }[];
+  validation?: { min?: number; max?: number; pattern?: string };
+  describe?: string;
 };
 
 export type IFormDraft = {
@@ -43,7 +45,11 @@ export type IFormDraft = {
 
 export const schema: Schema = new Schema(
   {
-    status: { type: String, required: true, enum: Object.values(IFormStatus) },
+    status: {
+      type: String,
+      enum: Object.values(IFormStatus),
+      default: IFormStatus.Draft,
+    },
     parent: { type: Schema.Types.ObjectId, ref: "Form", required: true },
     owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
     version: { type: Number, required: true, default: 1 },
@@ -68,6 +74,7 @@ export const schema: Schema = new Schema(
         required: { type: Boolean, required: false },
         visible: { type: Boolean, required: false },
         system: { type: Boolean, required: false, default: false },
+        describe: { type: String, required: false, default: null },
         options: {
           type: [
             {
@@ -78,12 +85,17 @@ export const schema: Schema = new Schema(
           required: false,
           default: null,
         },
+        validation: {
+          min: { type: Number, required: false },
+          max: { type: Number, required: false },
+          pattern: { type: String, required: false },
+        },
       },
     ],
   },
   {
     timestamps: true,
-  }
+  },
 ).index({ parent: 1, status: 1 });
 
 export default class FormDraft {

@@ -12,14 +12,14 @@ const handler: HttpHandler = async (conn, req) => {
     {
       status,
     },
-    { new: true }
+    { new: true },
   );
 
   await new WorkflowDraft(conn).model().updateMany(
     { parent: workflowDraft.parent, _id: { $ne: workflowDraft._id } },
     {
       status: "draft",
-    }
+    },
   );
 
   const workflow = await new Workflow(conn).model().findByIdAndUpdate(
@@ -27,7 +27,7 @@ const handler: HttpHandler = async (conn, req) => {
     {
       published: workflowDraft._id,
     },
-    { new: true }
+    { new: true },
   );
 
   workflowDraft.save();

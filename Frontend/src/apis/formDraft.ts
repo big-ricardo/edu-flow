@@ -35,7 +35,7 @@ export const getFormDraft = async ({
 };
 
 export const createFormDraft = async (
-  data: Pick<IFormDraft, "fields" | "parent">
+  data: Pick<IFormDraft, "fields" | "parent">,
 ) => {
   const res = await api.post<ReqWorkflow>(`/form-draft/${data.parent}`, data);
 
@@ -43,7 +43,7 @@ export const createFormDraft = async (
 };
 
 export const publishFormDraft = async (
-  data: Pick<IFormDraft, "_id" | "status">
+  data: Pick<IFormDraft, "_id" | "status">,
 ) => {
   const res = await api.patch<ReqWorkflow>(`/form-draft/${data._id}`, data);
 
@@ -51,7 +51,7 @@ export const publishFormDraft = async (
 };
 
 export const createOrUpdateFormDraft = async (
-  data: Pick<IFormDraft, "fields" | "status" | "parent" | "_id">
+  data: Pick<IFormDraft, "fields" | "status" | "parent" | "_id">,
 ) => {
   return createFormDraft(data);
 };

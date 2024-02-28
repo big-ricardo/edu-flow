@@ -17,20 +17,25 @@ const handler: HttpHandler = async (conn) => {
     value: email._id,
   }));
 
-  const users = (
-    await new User(conn)
-      .model()
-      .find({
+  const users = await new User(conn).model().aggregate([
+    {
+      $match: {
         active: true,
-      })
-      .select({
-        _id: 1,
-        name: 1,
-      })
-  ).map((user) => ({
-    label: user.name,
-    value: user._id,
-  }));
+      },
+    },
+    {
+      $group: {
+        _id: "$role",
+        label: { $first: "$role" },
+        options: {
+          $push: {
+            value: "$_id",
+            label: "$name",
+          },
+        },
+      },
+    },
+  ]);
 
   const userOptions = [
     {
@@ -46,10 +51,7 @@ const handler: HttpHandler = async (conn) => {
         },
       ],
     },
-    {
-      label: "Usuarios",
-      options: users,
-    },
+    ...users,
   ];
 
   const statuses = (
@@ -84,7 +86,7 @@ const handler: HttpHandler = async (conn) => {
       .find({
         type: IFormType.Interaction,
         active: true,
-        published: { $exists: true },
+        published: { $exists: true, $ne: null },
       })
       .select({
         _id: 1,

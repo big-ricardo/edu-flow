@@ -75,7 +75,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
     navigate(
       `/portal/workflow-draft/${params.workflow_id}/${id}/${
         isView ? "edit" : "view"
-      }`
+      }`,
     );
   }, [navigate, id, isView, params.workflow_id]);
 

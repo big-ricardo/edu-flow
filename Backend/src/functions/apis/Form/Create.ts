@@ -56,7 +56,7 @@ export default new Http(handler)
         return schema.nullable().default(null);
       }),
       description: schema.string().optional().nullable().default(""),
-      published: schema.string().optional().nullable().default(null)
+      published: schema.string().optional().nullable().default(null),
     }),
   }))
   .configure({

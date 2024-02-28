@@ -364,16 +364,16 @@ const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
     (id: string) => {
       return formsData?.fields.find((field) => field.id === id);
     },
-    [formsData]
+    [formsData],
   );
 
   const haveOptions = useCallback(
     (id: string) => {
       return ["select", "multiselect", "radio"].includes(
-        getField(id)?.type ?? ""
+        getField(id)?.type ?? "",
       );
     },
-    [getField]
+    [getField],
   );
 
   return (

@@ -30,13 +30,13 @@
       "@config/*": ["config/*"],
       "@constants/*": ["constants/*"],
       "@contexts/*": ["contexts/*"],
-      "@apis/*": ["apis/*"],
-    },
+      "@apis/*": ["apis/*"]
+    }
   },
   "include": ["src"],
   "references": [
     {
-      "path": "./tsconfig.node.json",
-    },
-  ],
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

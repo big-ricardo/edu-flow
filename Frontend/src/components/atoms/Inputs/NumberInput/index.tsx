@@ -38,7 +38,13 @@ const NumberInput: React.FC<TextProps> = ({ input, max, min }) => {
       isInvalid={!!errors?.[input.id]}
       isRequired={input.required}
     >
-      <div style={{ display: "flex", justifyContent: "start", position: "relative" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          position: "relative",
+        }}
+      >
         <FormLabel>{input?.label}</FormLabel>
         <InfoTooltip describe={input?.describe} />
       </div>

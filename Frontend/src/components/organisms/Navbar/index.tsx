@@ -52,7 +52,7 @@ const CustomCard = React.forwardRef<HTMLSpanElement, TagProps>(
         <TagLabel>{children}</TagLabel>
       </Tag>
     </Box>
-  )
+  ),
 );
 
 function Sidebar() {
@@ -115,7 +115,7 @@ const NavLink = React.memo(
         </Tooltip>
       </ChakraLink>
     </ListItem>
-  )
+  ),
 );
 
 export default Sidebar;

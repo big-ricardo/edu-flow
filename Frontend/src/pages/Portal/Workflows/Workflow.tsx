@@ -179,7 +179,7 @@ const WorkflowVersions: React.FC<WorkflowVersionsProps> = memo(({ id }) => {
     (draftId: string) => {
       navigate(`/portal/workflow-draft/${id}/${draftId}/view`);
     },
-    [navigate, id]
+    [navigate, id],
   );
   return (
     <Flex mt="8" justify="center" align="center" direction="column" gap="5">

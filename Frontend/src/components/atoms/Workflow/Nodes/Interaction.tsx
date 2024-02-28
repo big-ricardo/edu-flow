@@ -28,7 +28,11 @@ const Interaction: React.FC<InteractionProps> = (props) => {
         type="source"
         position={Position.Bottom}
         handleId="alternative-source"
-        style={{ background: "violet", bottom: "-10px", opacity: props.data?.conditional?.length > 0 ? 1 : 0 }}
+        style={{
+          background: "violet",
+          bottom: "-10px",
+          opacity: props.data?.conditional?.length > 0 ? 1 : 0,
+        }}
         title="Conexão Alternativa"
         isConnectable={props.data?.conditional?.length > 0}
       />

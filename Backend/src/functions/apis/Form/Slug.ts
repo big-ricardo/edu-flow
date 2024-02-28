@@ -1,10 +1,10 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form from "../../../models/Form";
+import Form, { IForm } from "../../../models/Form";
 import moment from "moment";
 import User from "../../../models/User";
 import Institute from "../../../models/Institute";
-import FormDraft from "../../../models/FormDraft";
+import FormDraft, { IFormDraft } from "../../../models/FormDraft";
 
 const predefinedValues = {
   teachers: null,
@@ -14,14 +14,14 @@ const predefinedValues = {
 
 const getPredefinedValues = async (
   conn: Parameters<HttpHandler>[0],
-  value: "teachers" | "students" | "institution"
+  value: "teachers" | "students" | "institution",
 ) => {
   if (value === "institution") {
     predefinedValues[value] = (await new Institute(conn).model().find()).map(
       (user) => ({
         label: user.name,
         value: user._id,
-      })
+      }),
     );
     return;
   }
@@ -39,36 +39,37 @@ const getPredefinedValues = async (
 const handler: HttpHandler = async (conn, req) => {
   const { slug } = req.params as { slug: string };
 
-  const form = await new Form(conn).model().findOne({
-    slug,
-    active: true,
-    published: { $exists: true },
-    $and: [
-      {
-        $or: [
-          {
-            "period.open": {
-              $exists: false,
+  const form = (await new Form(conn)
+    .model()
+    .findOne({
+      slug,
+      active: true,
+      published: { $exists: true },
+      $and: [
+        {
+          $or: [
+            {
+              "period.open": {
+                $exists: false,
+              },
             },
-          },
-          {
-            "period.open": {
-              $lte: moment.utc().toDate(),
+            {
+              "period.open": {
+                $lte: moment.utc().toDate(),
+              },
             },
-          },
-        ],
-      },
-      {
-        "period.close": {
-          $gte: moment.utc().toDate(),
+          ],
         },
-      },
-    ],
-  });
+        {
+          "period.close": {
+            $gte: moment.utc().toDate(),
+          },
+        },
+      ],
+    })
+    .populate("published")) as IForm & { published: IFormDraft };
 
-  const formDraft = await new FormDraft(conn).model().findById(form?.published);
-
-  for (const field of formDraft.fields) {
+  for (const field of form?.published?.fields ?? []) {
     if (field?.predefined) {
       if (!predefinedValues?.[field.predefined]?.length) {
         await getPredefinedValues(conn, field?.predefined);
@@ -82,10 +83,7 @@ const handler: HttpHandler = async (conn, req) => {
     return res.notFound("Form not found");
   }
 
-  return res.success({
-    ...form,
-    fields: formDraft.fields,
-  });
+  return res.success(form);
 };
 
 export default new Http(handler)

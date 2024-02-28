@@ -83,7 +83,7 @@ const ButtonAdd: React.FC<ButtonAddProps> = ({
           pattern: undefined,
         },
       },
-      { shouldFocus: true }
+      { shouldFocus: true },
     );
   }, [insert, index, length]);
 
