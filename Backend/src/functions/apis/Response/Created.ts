@@ -82,6 +82,8 @@ const handler: HttpHandler = async (conn, req) => {
     form_draft: formDraft._id,
     data: {
       ...rest,
+      name,
+      description,
     },
   });
 

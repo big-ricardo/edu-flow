@@ -1,21 +1,8 @@
 import Response from "@interfaces/Response";
-import IActivity from "@interfaces/Activitiy";
+import IActivity, { IActivityDetails } from "@interfaces/Activitiy";
 import api from "@services/api";
 
-type Activity = Omit<IActivity, "form" | "status" | "workflows" | "users"> & {
-  users: {
-    _id: string;
-    name: string;
-    matriculation: string;
-    email: string;
-  }[];
-  status: {
-    _id: string;
-    name: string;
-  };
-};
-
-type ReqActivity = Response<Activity>;
+type ReqActivity = Response<IActivity>;
 
 export const getActivities = async ({
   queryKey: [, page = "1", limit = "10"],
@@ -34,7 +21,17 @@ export const getActivity = async ({
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<Response<Activity>>(`/activity/${id}`);
+  const res = await api.get<Response<IActivityDetails>>(`/activity/${id}`);
+
+  return res.data.data;
+};
+
+type ReqFormForms = Response<{
+  teachers: { label: string; value: string }[];
+  students: { label: string; value: string }[];
+}>;
+export const getActivityForms = async () => {
+  const res = await api.get<ReqFormForms>("/activity/forms");
 
   return res.data.data;
 };

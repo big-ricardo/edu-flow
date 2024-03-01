@@ -66,7 +66,7 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
   const navigate = useNavigate();
 
   const handleView = useCallback(() => {
-    navigate(`/portal/activity/${activity._id}`);
+    navigate(`/portal/activity-process/${activity._id}`);
   }, [navigate, activity._id]);
 
   return (

@@ -1,13 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 
-export type IActivity = {
+export type IAnswer = {
   _id: string;
-
+  user: string;
+  activity: string;
+  submitted: boolean;
+  form_draft: string;
+  data: {
+    [key: string]: string;
+  }
   createdAt: string;
   updatedAt: string;
 } & mongoose.Document;
 
-export const schema: Schema = new Schema(
+export const schema: Schema<IAnswer> = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     activity: { type: Schema.Types.ObjectId, ref: "Activity", required: true },
@@ -32,6 +38,6 @@ export default class Answer {
   }
 
   model() {
-    return this.conn.model<IActivity>("Answer", schema);
+    return this.conn.model<IAnswer>("Answer", schema);
   }
 }

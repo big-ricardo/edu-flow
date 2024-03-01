@@ -1,7 +1,7 @@
 import React from "react";
 import MyActivities from "./components/MyActivities";
 import { Box } from "@chakra-ui/react";
-import ApprovedActivities from "./components/ApproveActivities";
+import ApprovedActivities from "./components/ActivitiesProcess";
 
 const Dashboard: React.FC = () => {
   return (

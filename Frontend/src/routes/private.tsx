@@ -20,6 +20,7 @@ import Form from "@pages/Portal/Forms/Form";
 import Response from "@pages/Response";
 import FormDraft from "@pages/Portal/FormDrafts";
 import Activity from "@pages/Portal/Activity";
+import ActivityProcess from "@pages/Portal/ActivityProcess";
 
 const routes: RouteType = [
   {
@@ -109,6 +110,10 @@ const routes: RouteType = [
       {
         path: "/portal/activity/:id",
         element: <Activity />,
+      },
+      {
+        path: "/portal/activity-process/:id",
+        element: <ActivityProcess />,
       },
     ],
   },

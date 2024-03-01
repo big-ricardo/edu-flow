@@ -30,7 +30,7 @@ function App() {
             <Route key={route.path} path={route.path} element={route.element}>
               {route.children?.map((child) => (
                 <Route
-                  key={child.path}
+                  key={`${route.path}-${child.path}`}
                   path={child.path}
                   element={child.element}
                   index={child.index}

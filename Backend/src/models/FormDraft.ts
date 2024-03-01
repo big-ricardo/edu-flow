@@ -21,7 +21,7 @@ export enum IFormStatus {
 }
 
 export type IField = {
-  name: string;
+  id: string;
   type: FieldTypes;
   required?: boolean;
   predefined?: "teachers" | "students" | "institution";
