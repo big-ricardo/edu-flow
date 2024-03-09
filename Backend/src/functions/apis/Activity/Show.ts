@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity from "../../../models/Activity";
+import Activity, { IActivityAccepted } from "../../../models/Activity";
 import Answer from "../../../models/Answer";
 import FormDraft, { FieldTypes, IField } from "../../../models/FormDraft";
 import User from "../../../models/User";
@@ -27,7 +27,6 @@ const getUser = async (conn, id: string) => {
     matriculation: 1,
     email: 1,
   });
-
   if (!user) {
     return null;
   }
@@ -44,14 +43,14 @@ const formatExtraFields = async (
   fields: IField[],
   answer: {
     [key: string]: string;
-  }
+  },
 ) => {
   const extraFields = [];
 
   for (const field of fields) {
     const value = answer[field.id];
 
-    if (field.predefined === FieldTypes.Teachers) {
+    if (field.predefined === FieldTypes.Teachers && value) {
       const user = await getUser(conn, value);
       extraFields.push({
         ...field,
@@ -73,19 +72,33 @@ const formatExtraFields = async (
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const activity = await new Activity(conn)
-    .model()
-    .findById(id)
-    .populate("users", {
-      _id: 1,
-      name: 1,
-      matriculation: 1,
-      email: 1,
-    })
-    .populate("status", {
-      _id: 1,
-      name: 1,
-    });
+  const activity = (
+    await new Activity(conn)
+      .model()
+      .findById(id)
+      .populate("users", {
+        _id: 1,
+        name: 1,
+        matriculation: 1,
+        email: 1,
+      })
+      .populate("masterminds.user", {
+        _id: 1,
+        name: 1,
+        matriculation: 1,
+        email: 1,
+      })
+      .populate("sub_masterminds.user", {
+        _id: 1,
+        name: 1,
+        matriculation: 1,
+        email: 1,
+      })
+      .populate("status", {
+        _id: 1,
+        name: 1,
+      })
+  ).toObject();
 
   if (!activity) {
     return res.notFound("Activity not found");
@@ -104,11 +117,34 @@ const handler: HttpHandler = async (conn, req) => {
   const extraFields = await formatExtraFields(
     conn,
     formDraft.fields,
-    answer.data
+    answer.data,
   );
 
+  if (!activity.masterminds?.length) {
+    const masterminds = await Promise.all(
+      extraFields.map(async (field) => {
+        if (field.id === "{{activity_mastermind}}") {
+          return getUser(conn, field.value);
+        }
+
+        return null;
+      }),
+    );
+
+    activity.masterminds = masterminds.reduce((acc, mastermind) => {
+      if (mastermind) {
+        acc.push({
+          accepted: IActivityAccepted.pending,
+          user: mastermind,
+        });
+      }
+
+      return acc;
+    }, []);
+  }
+
   return res.success({
-    ...activity.toObject(),
+    ...activity,
     extra_fields: {
       ...answer.toObject(),
       form_draft: {

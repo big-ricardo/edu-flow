@@ -15,31 +15,41 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
-import { getActivity, getActivityForms } from "@apis/activity";
-import { createOrUpdateStatus } from "@apis/status";
+import {
+  committedActivity,
+  getActivity,
+  getActivityForms,
+} from "@apis/activity";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 
-const statusSchema = z.object({
+const activitySchema = z.object({
+  _id: z.string(),
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
-  type: z.enum(["done", "progress", "canceled"]),
+  description: z
+    .string()
+    .min(3, { message: "Descrição deve ter no mínimo 3 caracteres" }),
+  users: z
+    .array(z.string())
+    .nonempty({ message: "Selecione pelo menos um aluno" }),
+  masterminds: z
+    .array(z.string())
+    .nonempty({ message: "Selecione pelo menos um orientador" }),
+  sub_masterminds: z.array(z.string()),
 });
 
-type StatusFormSchema = z.infer<typeof statusSchema>;
+type ActivityFormSchema = z.infer<typeof activitySchema>;
 
 export default function ActivityProcess() {
   const toast = useToast();
   const navigate = useNavigate();
-  const params = useParams<{ id?: string }>();
   const queryClient = useQueryClient();
-
-  const isEditing = !!params?.id;
-  const id = params?.id ?? "";
+  const params = useParams<{ id: string }>();
+  const id = params.id ?? "";
 
   const { data: activity, isLoading } = useQuery({
     queryKey: ["activity", id],
     queryFn: getActivity,
-    enabled: isEditing,
   });
 
   const { data: formData, isLoading: isLoadingForms } = useQuery({
@@ -48,25 +58,23 @@ export default function ActivityProcess() {
   });
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: createOrUpdateStatus,
+    mutationFn: committedActivity,
     onSuccess: () => {
       toast({
-        title: `ActivityProcess ${
-          isEditing ? "editada" : "criada"
-        } com sucesso`,
+        title: "Atividade salvada com sucesso",
         status: "success",
         duration: 3000,
         isClosable: true,
         variant: "left-accent",
         position: "top-right",
       });
-      queryClient.invalidateQueries({ queryKey: ["statuses"] });
-      queryClient.invalidateQueries({ queryKey: ["forms"] });
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
+      queryClient.invalidateQueries({ queryKey: ["activity", id] });
       navigate(-1);
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} status`,
+        title: `Erro ao salvar atividade`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -76,9 +84,8 @@ export default function ActivityProcess() {
     },
   });
 
-  const methods = useForm<StatusFormSchema>({
-    resolver: zodResolver(statusSchema),
-    defaultValues: activity ?? {},
+  const methods = useForm<ActivityFormSchema>({
+    resolver: zodResolver(activitySchema),
   });
 
   const {
@@ -88,7 +95,13 @@ export default function ActivityProcess() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    await mutateAsync(isEditing ? { ...data, _id: id } : data);
+    const response = confirm(
+      "Deseja confirmar a atividade? Essa ação não poderá ser desfeita",
+    );
+
+    if (response) {
+      await mutateAsync(data);
+    }
   });
 
   const handleCancel = useCallback(() => {
@@ -97,7 +110,16 @@ export default function ActivityProcess() {
 
   useEffect(() => {
     if (activity) {
-      reset(activity);
+      reset({
+        ...activity,
+        users: activity.users.map((user) => user._id),
+        masterminds: activity.masterminds.map(
+          (mastermind) => mastermind.user._id,
+        ),
+        sub_masterminds: activity.sub_masterminds.map(
+          (subMastermind) => subMastermind.user._id,
+        ),
+      });
     }
   }, [activity, reset]);
 
@@ -126,6 +148,8 @@ export default function ActivityProcess() {
           h="fit-content"
           w="100%"
           maxW="600px"
+          position="sticky"
+          top="5"
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
@@ -164,7 +188,7 @@ export default function ActivityProcess() {
             />
             <Select
               input={{
-                id: "sub-masterminds",
+                id: "sub_masterminds",
                 label: "Co-Orientadores",
                 placeholder: "Selecione os co-orientadores",
                 required: false,
@@ -201,7 +225,7 @@ export default function ActivityProcess() {
                 isLoading={isPending || isLoading}
                 type="submit"
               >
-                {isEditing ? "Editar" : "Criar"}
+                Confirmar Atividade
               </Button>
             </Flex>
           </CardBody>

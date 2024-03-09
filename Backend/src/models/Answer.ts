@@ -8,7 +8,7 @@ export type IAnswer = {
   form_draft: string;
   data: {
     [key: string]: string;
-  }
+  };
   createdAt: string;
   updatedAt: string;
 } & mongoose.Document;
@@ -27,7 +27,7 @@ export const schema: Schema<IAnswer> = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 ).index({ user: 1, activity: 1, form_draft: 1 }, { unique: true });
 
 export default class Answer {

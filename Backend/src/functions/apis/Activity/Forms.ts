@@ -9,7 +9,7 @@ const handler: HttpHandler = async (conn) => {
       .find({
         role: {
           $ne: "teacher",
-        }
+        },
       })
       .select({
         _id: 1,

@@ -35,3 +35,26 @@ export const getActivityForms = async () => {
 
   return res.data.data;
 };
+
+export const committedActivity = async (
+  data: Pick<
+    IActivity,
+    "_id" | "name" | "description" | "users" | "masterminds" | "sub_masterminds"
+  >,
+) => {
+  const res = await api.put<ReqActivity>(
+    `/activity-committed/${data._id}`,
+    data,
+  );
+
+  return res.data.data;
+};
+
+export const acceptActivity = async (data: {
+  _id: string;
+  accepted: "accepted" | "rejected";
+}) => {
+  const res = await api.put<ReqActivity>(`/activity-accept/${data._id}`, data);
+
+  return res.data.data;
+};

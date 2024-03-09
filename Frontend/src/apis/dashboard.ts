@@ -42,3 +42,18 @@ export const getApprovedActivities = async ({
 
   return res.data.data;
 };
+
+export const getMyActivitiesPendingAcceptance = async ({
+  queryKey: [, page = "1", limit = "10"],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqMyActivities>(
+    "/dashboard/my-pending-activities",
+    {
+      params: { page, limit },
+    },
+  );
+
+  return res.data.data;
+};

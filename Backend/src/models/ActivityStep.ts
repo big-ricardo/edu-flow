@@ -50,7 +50,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 ).index({ name: 1, version: 1 }, { unique: true });
 
 export default class Activity {

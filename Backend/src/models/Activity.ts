@@ -3,12 +3,19 @@ import mongoose, { Schema } from "mongoose";
 export enum IActivityState {
   finished = "finished",
   processing = "processing",
+  committed = "committed",
   created = "created",
 }
 
 export enum IActivityStatus {
   active = "active",
   inactive = "inactive",
+}
+
+export enum IActivityAccepted {
+  accepted = "accepted",
+  rejected = "rejected",
+  pending = "pending",
 }
 
 export type IActivity = {
@@ -19,7 +26,11 @@ export type IActivity = {
   users: mongoose.Types.ObjectId[];
   form: mongoose.Types.ObjectId;
   masterminds: {
-    accepted: boolean;
+    accepted: IActivityAccepted;
+    user: mongoose.Types.ObjectId;
+  }[];
+  sub_masterminds: {
+    accepted: IActivityAccepted;
     user: mongoose.Types.ObjectId;
   }[];
   status: mongoose.Types.ObjectId;
@@ -48,7 +59,21 @@ export const schema: Schema = new Schema<IActivity>(
     users: [{ type: Schema.Types.ObjectId, ref: "User" }, { required: true }],
     masterminds: [
       {
-        accepted: { type: Boolean, default: false },
+        accepted: {
+          type: String,
+          enum: Object.values(IActivityAccepted),
+          default: IActivityAccepted.pending,
+        },
+        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      },
+    ],
+    sub_masterminds: [
+      {
+        accepted: {
+          type: String,
+          enum: Object.values(IActivityAccepted),
+          default: IActivityAccepted.pending,
+        },
         user: { type: Schema.Types.ObjectId, ref: "User", required: true },
       },
     ],
@@ -63,11 +88,11 @@ export const schema: Schema = new Schema<IActivity>(
   },
   {
     timestamps: true,
-  }
+  },
 )
   .pre<IActivity>("save", function (next) {
     if (!this.isNew) {
-      next();
+      return next();
     }
     const year = new Date().getFullYear();
     this.protocol = `${year}${Math.floor(Math.random() * 100000)}`;

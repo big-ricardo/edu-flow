@@ -21,6 +21,7 @@ import Response from "@pages/Response";
 import FormDraft from "@pages/Portal/FormDrafts";
 import Activity from "@pages/Portal/Activity";
 import ActivityProcess from "@pages/Portal/ActivityProcess";
+import ActivityAccept from "@pages/Portal/ActivityAccept";
 
 const routes: RouteType = [
   {
@@ -114,6 +115,10 @@ const routes: RouteType = [
       {
         path: "/portal/activity-process/:id",
         element: <ActivityProcess />,
+      },
+      {
+        path: "/portal/activity-accept/:id",
+        element: <ActivityAccept />,
       },
     ],
   },

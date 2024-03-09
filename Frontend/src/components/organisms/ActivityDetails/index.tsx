@@ -1,17 +1,12 @@
-import {
-  Badge,
-  Box,
-  Card,
-  CardProps,
-  Divider,
-  Flex,
-  Heading,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import React, { memo } from "react";
+import { Card, CardProps, Divider, Flex, Text, VStack } from "@chakra-ui/react";
 import { IActivityDetails } from "@interfaces/Activitiy";
 import { convertDateTime } from "@utils/date";
-import React, { memo } from "react";
+import ActivityHeader from "./sections/ActivityHeader";
+import UserDetails from "./sections/UserDetails";
+import ExtraFields from "./sections/ExtraFields";
+import Accordion from "@components/atoms/Accordion";
+import RenderFieldValue from "@components/atoms/RenderFieldValue";
 
 interface ActivityDetailsProps extends CardProps {
   activity?: IActivityDetails;
@@ -29,131 +24,59 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
         boxShadow={"lg"}
         {...rest}
       >
-        <Flex
-          wrap={"wrap"}
-          gap={5}
-          mb={4}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-        >
-          <Flex wrap={"wrap"} gap={2} alignItems={"center"}>
-            <Heading as="h1" fontSize="2xl">
-              {activity?.name}
-            </Heading>
-            <Text fontSize="xl">#{activity?.protocol}</Text>
-          </Flex>
-          <Badge colorScheme="green" p={2} borderRadius="sm">
-            {activity?.status.name}
-          </Badge>
-        </Flex>
+        <ActivityHeader
+          id={activity._id}
+          name={activity.name}
+          protocol={activity.protocol}
+          status={activity.status.name}
+        />
         <VStack mb={4} align="start">
-          <LabelText
-            label={"Descrição"}
-            value={activity?.description}
-          />
-          <LabelText
+          <RenderFieldValue label={"Descrição"} value={activity.description} />
+          <RenderFieldValue
             label={"Data de Criação"}
-            value={convertDateTime(activity?.createdAt)}
+            value={convertDateTime(activity.createdAt)}
           />
-          <Divider mb={2} />
+          <Divider />
           <Text fontWeight={"bold"} fontSize="md">
             Alunos
           </Text>
           <Flex flexWrap="wrap" gap={4}>
-            {activity?.users.map((user) => (
-              <UserInfo key={user._id} user={user} />
+            {activity.users.map((user) => (
+              <UserDetails key={user._id} user={user} />
             ))}
           </Flex>
           <Divider />
-        </VStack>
-        <VStack align="start" mb={4}>
-          <Heading fontWeight={"bold"} fontSize="xl" mb={2}>
+          <Text fontWeight={"bold"} fontSize="md">
             Orientadores
-          </Heading>
-        </VStack>
-        <Divider mb={4} />
-        <VStack align="start" mb={4}>
-          <Heading fontWeight={"bold"} fontSize="xl" mb={2}>
-            Campos Extras
-          </Heading>
-          <Flex flexWrap="wrap" gap={4} direction={"column"}>
-            {activity?.extra_fields.form_draft.fields.map((field) => (
-              <LabelText
-                key={field.id}
-                label={field.label}
-                value={field.value}
-              />
+          </Text>
+          <Flex flexWrap="wrap">
+            {activity.masterminds.map((mastermind) => (
+              <UserDetails key={mastermind.user._id} {...mastermind} />
             ))}
           </Flex>
+          <Text fontWeight={"bold"} fontSize="md">
+            Co-Orientadores
+          </Text>
+          <Flex flexWrap="wrap">
+            {activity.sub_masterminds.map((mastermind) => (
+              <UserDetails key={mastermind.user._id} {...mastermind} />
+            ))}
+            {activity.sub_masterminds.length === 0 && (
+              <Text>Nenhum co-orientador</Text>
+            )}
+          </Flex>
         </VStack>
+        <Accordion.Container defaultIndex={[]} allowToggle allowMultiple>
+          <Accordion.Item>
+            <Accordion.Button>Formulário de Inscrição</Accordion.Button>
+            <Accordion.Panel>
+              <ExtraFields fields={activity.extra_fields.form_draft.fields} />
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion.Container>
       </Card>
     );
-  }
+  },
 );
 
 export default ActivityDetails;
-
-const LabelText = memo(
-  ({
-    label,
-    value,
-  }: {
-    label: string;
-    value?: string | { name: string; email: string; matriculation: string };
-  }) => {
-    if (!label) return null;
-
-    if (typeof value === "string" && value) {
-      return (
-        <Flex direction={"column"}>
-          <Text fontSize="sm" mr={2}>
-            {label}:
-          </Text>
-          <Text fontSize="sm" fontWeight={"bold"}>
-            {value}
-          </Text>
-        </Flex>
-      );
-    }
-
-    if (typeof value === "object") {
-      return (
-        <Flex direction={"column"}>
-          <Text fontSize="sm" mr={2} mb={2}>
-            {label}:
-          </Text>
-          <UserInfo user={value} />
-        </Flex>
-      );
-    }
-
-    return (
-      <Flex direction={"column"}>
-        <Text fontSize="sm" mr={2}>
-          {label}:
-        </Text>
-        <Text fontSize="sm" fontWeight={"bold"}>
-          Não informado
-        </Text>
-      </Flex>
-    );
-  }
-);
-
-const UserInfo = memo(
-  ({
-    user,
-  }: {
-    user?: { name: string; email: string; matriculation: string };
-  }) => {
-    if (!user) return null;
-
-    return (
-      <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} mb={4}>
-        <LabelText label={"Nome"} value={user.name ?? ""} />
-        <LabelText label={"Email"} value={user.email ?? ""} />
-        <LabelText label={"Matrícula"} value={user.matriculation ?? ""} />
-      </Box>
-    );
-  }
-);

@@ -2,6 +2,7 @@ import React from "react";
 import MyActivities from "./components/MyActivities";
 import { Box } from "@chakra-ui/react";
 import ApprovedActivities from "./components/ActivitiesProcess";
+import ActivitiesAccept from "./components/ActivitiesAccept";
 
 const Dashboard: React.FC = () => {
   return (
@@ -9,6 +10,7 @@ const Dashboard: React.FC = () => {
       <h1>Dashboard</h1>
       <MyActivities />
       <ApprovedActivities />
+      <ActivitiesAccept />
     </Box>
   );
 };
