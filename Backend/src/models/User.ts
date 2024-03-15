@@ -1,5 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
+export enum IUserRoles {
+  admin = "admin",
+  student = "student",
+  teacher = "teacher",
+}
+
 type BaseUser = {
   _id: string;
   name: string;
@@ -7,7 +13,8 @@ type BaseUser = {
   cpf: string;
   password: string;
   matriculation: string;
-  institute: string;
+  roles: IUserRoles[];
+  institute: Schema.Types.ObjectId;
   active: boolean;
   university_degree?: string;
 };
@@ -17,7 +24,7 @@ type Teacher = BaseUser & { role: "teacher"; university_degree: string };
 
 export type IUser = AdminOrStudent | Teacher;
 
-export const schema: Schema = new Schema(
+export const schema: Schema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -25,11 +32,13 @@ export const schema: Schema = new Schema(
     password: { type: String, required: true },
     active: { type: Boolean, default: true },
     matriculation: { type: String, required: true, unique: true },
-    role: {
-      type: String,
-      required: true,
-      enum: ["admin", "student", "teacher"],
-    },
+    roles: [
+      {
+        type: String,
+        required: true,
+        enum: Object.values(IUserRoles),
+      },
+    ],
     institute: {
       type: Schema.Types.ObjectId,
       ref: "Institute",
@@ -43,7 +52,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 )
   .index({ cpf: 1 })
   .pre("save", function (next) {

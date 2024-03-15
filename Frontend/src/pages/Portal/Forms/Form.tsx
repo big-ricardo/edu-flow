@@ -57,7 +57,7 @@ const statusSchema = z
     {
       message: "É necessário selecionar um workflow",
       path: ["workflow"],
-    },
+    }
   )
   .refine(
     (data) => {
@@ -69,7 +69,7 @@ const statusSchema = z
     {
       message: "É necessário selecionar um status inicial",
       path: ["initial_status"],
-    },
+    }
   );
 
 type StatusFormSchema = z.infer<typeof statusSchema>;
@@ -100,7 +100,7 @@ export default function Workflow() {
     mutationFn: createOrUpdateForm,
     onSuccess: (data) => {
       toast({
-        title: `Workflow ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: `Formulário ${isEditing ? "editada" : "criada"} com sucesso`,
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -113,7 +113,7 @@ export default function Workflow() {
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} workflow`,
+        title: `Erro ao ${isEditing ? "editar" : "criar"} formulário`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -167,7 +167,7 @@ export default function Workflow() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {isEditing ? "Editar" : "Criar"} Workflow
+              {isEditing ? "Editar" : "Criar"} Formulário
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
@@ -323,7 +323,7 @@ const FormVersions: React.FC<FormVersionsProps> = memo(({ id, formType }) => {
         state: { formType },
       });
     },
-    [navigate, id, formType],
+    [navigate, id, formType]
   );
   return (
     <Flex mt="8" justify="center" align="center" direction="column" gap="5">

@@ -14,7 +14,7 @@ import IActivity from "@interfaces/Activitiy";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
 import React, { memo, useCallback } from "react";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaPen } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const MyActivities: React.FC = () => {
@@ -52,13 +52,17 @@ export default MyActivities;
 interface ActivityItemProps {
   activity: Pick<
     IActivity,
-    "_id" | "name" | "description" | "createdAt" | "protocol"
+    "_id" | "name" | "description" | "createdAt" | "protocol" | "state"
   > & {
     users: {
       _id: string;
       name: string;
       matriculation: string;
     }[];
+    form: {
+      name: string;
+      slug: string;
+    };
   };
 }
 
@@ -68,6 +72,10 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
   const handleView = useCallback(() => {
     navigate(`/portal/activity/${activity._id}`);
   }, [navigate, activity._id]);
+
+  const handleEdit = useCallback(() => {
+    navigate(`/response/${activity.form.slug}/${activity._id}`);
+  }, [navigate, activity._id, activity.form.slug]);
 
   return (
     <Card
@@ -90,9 +98,14 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
             {activity.name}
           </Heading>
 
-          <Button size="sm" onClick={handleView}>
-            <FaEye />
-          </Button>
+          <Flex gap="2">
+            <Button size="sm" onClick={handleView}>
+              <FaEye />
+            </Button>
+            <Button size="sm" onClick={handleEdit}>
+              <FaPen />
+            </Button>
+          </Flex>
         </Flex>
         <Text fontSize="sm" noOfLines={2}>
           {activity.description}

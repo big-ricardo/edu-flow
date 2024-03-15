@@ -2,13 +2,13 @@ import { getMyActivitiesPendingAcceptance } from "@apis/dashboard";
 import {
   Box,
   Button,
-  Card,
   Flex,
   Grid,
   Heading,
   Spinner,
   Stack,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import IActivity from "@interfaces/Activitiy";
 import { useQuery } from "@tanstack/react-query";
@@ -70,7 +70,7 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
   }, [navigate, activity._id]);
 
   return (
-    <Card
+    <Box
       boxShadow="md"
       borderWidth="1px"
       borderRadius="md"
@@ -78,6 +78,7 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
       borderColor={"gray"}
       w={"100%"}
       h={"100%"}
+      bgColor={useColorModeValue("white", "gray.700")}
     >
       <Stack
         spacing={2}
@@ -119,6 +120,6 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
           </Stack>
         </Box>
       </Stack>
-    </Card>
+    </Box>
   );
 });

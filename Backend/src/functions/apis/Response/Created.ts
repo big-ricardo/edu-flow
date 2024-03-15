@@ -1,25 +1,28 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity from "../../../models/Activity";
+import Activity, { IActivityAccepted } from "../../../models/Activity";
 import Form from "../../../models/Form";
 import Answer from "../../../models/Answer";
 import FormDraft from "../../../models/FormDraft";
 import moment from "moment";
 
-interface DtoCreated {
+type DtoCreated = {
   "{{activity_name}}": string; // "name"
   "{{activity_description}}": string; // "description"
+  "{{activity_mastermind}}": string[] | string; // "masterminds"
+} & {
   [key: string]:
     | string
     | {
         file: string;
       };
-}
+};
 
 const handler: HttpHandler = async (conn, req) => {
   const {
     "{{activity_name}}": name,
     "{{activity_description}}": description,
+    "{{activity_mastermind}}": masterminds,
     ...rest
   } = req.body as DtoCreated;
 
@@ -68,12 +71,20 @@ const handler: HttpHandler = async (conn, req) => {
     return res.notFound("Form draft not found");
   }
 
+  const mastermindsMapped = Array.isArray(masterminds)
+    ? masterminds
+    : [masterminds];
+
   const activity = await new Activity(conn).model().create({
     name,
     description,
     form: form._id,
     status: form.initial_status,
     users: [req.user.id],
+    masterminds: mastermindsMapped?.map((mastermind) => ({
+      user: mastermind,
+      accepted: IActivityAccepted.pending,
+    })),
   });
 
   await new Answer(conn).model().create({
@@ -82,8 +93,6 @@ const handler: HttpHandler = async (conn, req) => {
     form_draft: formDraft._id,
     data: {
       ...rest,
-      name,
-      description,
     },
   });
 

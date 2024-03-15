@@ -14,68 +14,99 @@ const predefinedValues = {
 
 const getPredefinedValues = async (
   conn: Parameters<HttpHandler>[0],
-  value: "teachers" | "students" | "institution",
+  value: "teachers" | "students" | "institution"
 ) => {
+  if (predefinedValues[value]) {
+    return predefinedValues[value];
+  }
+
   if (value === "institution") {
     predefinedValues[value] = (await new Institute(conn).model().find()).map(
       (user) => ({
         label: user.name,
         value: user._id,
-      }),
+      })
     );
-    return;
+    return predefinedValues[value];
   }
 
-  const users = await new User(conn).model().find({
-    role: value === "teachers" ? "teacher" : "student",
-  });
+  predefinedValues[value] = await new User(conn).model().aggregate([
+    {
+      $match: {
+        active: true,
+        roles: {
+          $in: value === "teachers" ? ["teacher"] : ["student"],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "institutes",
+        localField: "institute",
+        foreignField: "_id",
+        as: "institute",
+      },
+    },
+    {
+      $unwind: "$institute",
+    },
+    {
+      $group: {
+        _id: "$institute._id",
+        label: { $first: "$institute.acronym" },
+        options: {
+          $push: {
+            value: "$_id",
+            label: {
+              $concat: ["$name", "-", "$matriculation"],
+            },
+          },
+        },
+      },
+    },
+  ]);
 
-  predefinedValues[value] = users.map((user) => ({
-    label: user.name,
-    value: user._id,
-  }));
+  return predefinedValues[value];
 };
 
 const handler: HttpHandler = async (conn, req) => {
   const { slug } = req.params as { slug: string };
 
-  const form = (await new Form(conn)
-    .model()
-    .findOne({
-      slug,
-      active: true,
-      published: { $exists: true },
-      $and: [
-        {
-          $or: [
-            {
-              "period.open": {
-                $exists: false,
+  const form = (
+    await new Form(conn)
+      .model()
+      .findOne({
+        slug,
+        active: true,
+        published: { $exists: true },
+        $and: [
+          {
+            $or: [
+              {
+                "period.open": {
+                  $exists: false,
+                },
               },
-            },
-            {
-              "period.open": {
-                $lte: moment.utc().toDate(),
+              {
+                "period.open": {
+                  $lte: moment.utc().toDate(),
+                },
               },
-            },
-          ],
-        },
-        {
-          "period.close": {
-            $gte: moment.utc().toDate(),
+            ],
           },
-        },
-      ],
-    })
-    .populate("published")) as IForm & { published: IFormDraft };
+          {
+            "period.close": {
+              $gte: moment.utc().toDate(),
+            },
+          },
+        ],
+      })
+      .populate("published")
+  ).toObject() as IForm & { published: IFormDraft };
 
   for (const field of form?.published?.fields ?? []) {
     if (field?.predefined) {
-      if (!predefinedValues?.[field.predefined]?.length) {
-        await getPredefinedValues(conn, field?.predefined);
-      }
-
-      field.options = predefinedValues[field.predefined];
+      field.options = await getPredefinedValues(conn, field?.predefined);
     }
   }
 

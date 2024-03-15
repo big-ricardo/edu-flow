@@ -11,7 +11,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     password,
     email,
     matriculation,
-    role,
+    roles,
     institute,
     university_degree = null,
   } = req.body as IUser;
@@ -34,7 +34,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     email,
     matriculation,
     university_degree,
-    role,
+    roles: [...new Set(roles)],
     institute,
   });
 
@@ -65,7 +65,7 @@ export default new Http(handler)
         .when("role", ([role], schema) =>
           role === "teacher"
             ? schema.required()
-            : schema.notRequired().nullable(),
+            : schema.notRequired().nullable()
         ),
     }),
   }))

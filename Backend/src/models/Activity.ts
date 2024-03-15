@@ -29,10 +29,7 @@ export type IActivity = {
     accepted: IActivityAccepted;
     user: mongoose.Types.ObjectId;
   }[];
-  sub_masterminds: {
-    accepted: IActivityAccepted;
-    user: mongoose.Types.ObjectId;
-  }[];
+  sub_masterminds: mongoose.Types.ObjectId[];
   status: mongoose.Types.ObjectId;
   workflows: {
     _id: mongoose.Types.ObjectId;
@@ -68,14 +65,7 @@ export const schema: Schema = new Schema<IActivity>(
       },
     ],
     sub_masterminds: [
-      {
-        accepted: {
-          type: String,
-          enum: Object.values(IActivityAccepted),
-          default: IActivityAccepted.pending,
-        },
-        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-      },
+      { type: Schema.Types.ObjectId, ref: "User", default: [] },
     ],
     status: { type: Schema.Types.ObjectId, ref: "Status", required: true },
     workflows: [
@@ -88,7 +78,7 @@ export const schema: Schema = new Schema<IActivity>(
   },
   {
     timestamps: true,
-  },
+  }
 )
   .pre<IActivity>("save", function (next) {
     if (!this.isNew) {

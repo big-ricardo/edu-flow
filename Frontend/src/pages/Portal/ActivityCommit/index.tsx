@@ -32,15 +32,12 @@ const activitySchema = z.object({
   users: z
     .array(z.string())
     .nonempty({ message: "Selecione pelo menos um aluno" }),
-  masterminds: z
-    .array(z.string())
-    .nonempty({ message: "Selecione pelo menos um orientador" }),
   sub_masterminds: z.array(z.string()),
 });
 
 type ActivityFormSchema = z.infer<typeof activitySchema>;
 
-export default function ActivityProcess() {
+export default function ActivityCommit() {
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -96,7 +93,7 @@ export default function ActivityProcess() {
 
   const onSubmit = handleSubmit(async (data) => {
     const response = confirm(
-      "Deseja confirmar a atividade? Essa ação não poderá ser desfeita",
+      "Deseja confirmar a atividade? Essa ação não poderá ser desfeita"
     );
 
     if (response) {
@@ -113,11 +110,8 @@ export default function ActivityProcess() {
       reset({
         ...activity,
         users: activity.users.map((user) => user._id),
-        masterminds: activity.masterminds.map(
-          (mastermind) => mastermind.user._id,
-        ),
         sub_masterminds: activity.sub_masterminds.map(
-          (subMastermind) => subMastermind.user._id,
+          (subMastermind) => subMastermind._id
         ),
       });
     }
@@ -175,17 +169,6 @@ export default function ActivityProcess() {
               }}
             />
 
-            <Select
-              input={{
-                id: "masterminds",
-                label: "Orientadores",
-                placeholder: "Selecione os orientadores",
-                required: true,
-                options: formData?.teachers ?? [],
-              }}
-              isLoading={isLoadingForms}
-              isMulti
-            />
             <Select
               input={{
                 id: "sub_masterminds",

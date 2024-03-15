@@ -27,7 +27,7 @@ export type IField = {
   predefined?: "teachers" | "students" | "institution";
   visible: boolean;
   system?: boolean;
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string }[] | { label: string; options: { label: string; value: string }[] }[];
   validation?: { min?: number; max?: number; pattern?: string };
   describe?: string;
 };

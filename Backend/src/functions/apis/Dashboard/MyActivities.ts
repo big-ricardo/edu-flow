@@ -24,6 +24,10 @@ export const handler: HttpHandler = async (conn, req, context) => {
       name: 1,
       matriculation: 1,
     })
+    .populate("form", {
+      name: 1,
+      slug: 1,
+    })
     .skip((page - 1) * limit)
     .limit(limit);
 

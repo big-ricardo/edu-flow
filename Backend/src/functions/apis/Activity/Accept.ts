@@ -1,14 +1,9 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, { IActivityAccepted } from "../../../models/Activity";
-
-interface IActivityUpdate {
-  name: string;
-  description: string;
-  users: string[];
-  masterminds: string[];
-  sub_masterminds: string[];
-}
+import Activity, {
+  IActivityAccepted,
+  IActivityState,
+} from "../../../models/Activity";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
@@ -25,14 +20,16 @@ const handler: HttpHandler = async (conn, req) => {
     return mastermind;
   });
 
-  activity.sub_masterminds = activity.sub_masterminds.map((sub_mastermind) => {
-    if (sub_mastermind.user.toString() === req.user.id) {
-      sub_mastermind.accepted = accepted;
-    }
-    return sub_mastermind;
-  });
-
   const activityUpdated = await activity.save();
+
+  const allTheMastermindsAccepted = activity.masterminds.every(
+    (mastermind) => mastermind.accepted === IActivityAccepted.accepted
+  );
+
+  if (allTheMastermindsAccepted) {
+    activityUpdated.state = IActivityState.committed;
+    await activityUpdated.save();
+  }
 
   return res.success(activityUpdated);
 };

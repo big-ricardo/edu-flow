@@ -27,7 +27,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
     name: user.name,
     matriculation: user.matriculation,
     email: user.email,
-    role: user.role,
+    roles: user.roles,
   });
 
   return res.success({

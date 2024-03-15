@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import * as bcrypt from "bcrypt";
-import User, { IUser } from "../../../models/User";
+import User, { IUser, IUserRoles } from "../../../models/User";
 import Institute from "../../../models/Institute";
 
 const handler: HttpHandler = async (conn, req, context) => {
@@ -12,7 +12,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     password,
     email,
     matriculation,
-    role,
+    roles,
     institute,
     university_degree = null,
   } = req.body as IUser;
@@ -47,14 +47,13 @@ const handler: HttpHandler = async (conn, req, context) => {
       password: hashedPassword,
       email: email ?? existingUser.email,
       matriculation: matriculation ?? existingUser.matriculation,
-      role: role ?? existingUser.role,
+      roles: [...new Set(roles)],
       institute: institute ?? existingUser?.institute,
-      university_degree:
-        role === "teacher"
-          ? university_degree ?? existingUser.university_degree
-          : null,
+      university_degree: roles.includes(IUserRoles.teacher)
+        ? university_degree ?? existingUser.university_degree
+        : null,
     },
-    { new: true },
+    { new: true }
   );
 
   return res.success({
@@ -91,7 +90,7 @@ export default new Http(handler)
         .when("role", ([role], schema) =>
           role === "teacher"
             ? schema.required()
-            : schema.notRequired().nullable(),
+            : schema.notRequired().nullable()
         ),
     }),
     params: schema.object().shape({

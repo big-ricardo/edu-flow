@@ -36,7 +36,7 @@ const AvatarMenu: React.FC = () => {
   const [auth, setAuth] = useAuth();
 
   const userName = auth?.name;
-  const role = auth?.role;
+  const roles = auth?.roles ?? [];
   const matriculation = auth?.matriculation;
   const email = auth?.email;
 
@@ -73,7 +73,7 @@ const AvatarMenu: React.FC = () => {
                 Perfil:
               </Text>
               <Text mb={2} fontSize="sm" fontWeight="bold">
-                {rolesMap(role ?? "")}
+                {roles?.map((role) => rolesMap(role)).join(", ")}
               </Text>
             </Flex>
             <Flex flexDir="row" alignItems="center" gap={1}>

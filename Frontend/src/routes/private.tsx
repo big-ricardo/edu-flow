@@ -20,7 +20,7 @@ import Form from "@pages/Portal/Forms/Form";
 import Response from "@pages/Response";
 import FormDraft from "@pages/Portal/FormDrafts";
 import Activity from "@pages/Portal/Activity";
-import ActivityProcess from "@pages/Portal/ActivityProcess";
+import ActivityProcess from "@pages/Portal/ActivityCommit";
 import ActivityAccept from "@pages/Portal/ActivityAccept";
 
 const routes: RouteType = [
@@ -124,6 +124,10 @@ const routes: RouteType = [
   },
   {
     path: "/response/:slug",
+    element: <Response />,
+  },
+  {
+    path: "/response/:slug/:answer",
     element: <Response />,
   },
 ];

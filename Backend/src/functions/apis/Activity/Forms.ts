@@ -1,5 +1,5 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
-import User from "../../../models/User";
+import User, { IUserRoles } from "../../../models/User";
 import res from "../../../utils/apiResponse";
 
 const handler: HttpHandler = async (conn) => {
@@ -7,8 +7,8 @@ const handler: HttpHandler = async (conn) => {
     await new User(conn)
       .model()
       .find({
-        role: {
-          $ne: "teacher",
+        roles: {
+          $ne: IUserRoles.teacher,
         },
       })
       .select({
@@ -25,7 +25,9 @@ const handler: HttpHandler = async (conn) => {
     await new User(conn)
       .model()
       .find({
-        role: "teacher",
+        roles: {
+          $in: IUserRoles.teacher,
+        },
       })
       .select({
         _id: 1,

@@ -16,7 +16,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
   const activities = await new Activity(conn)
     .model()
     .find({
-      state: IActivityState.committed,
+      state: IActivityState.created,
       $or: [
         {
           masterminds: {

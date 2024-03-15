@@ -39,12 +39,12 @@ export const getActivityForms = async () => {
 export const committedActivity = async (
   data: Pick<
     IActivity,
-    "_id" | "name" | "description" | "users" | "masterminds" | "sub_masterminds"
-  >,
+    "_id" | "name" | "description" | "users" | "sub_masterminds"
+  >
 ) => {
   const res = await api.put<ReqActivity>(
     `/activity-committed/${data._id}`,
-    data,
+    data
   );
 
   return res.data.data;

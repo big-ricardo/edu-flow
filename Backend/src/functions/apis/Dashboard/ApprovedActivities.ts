@@ -13,7 +13,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
   const activities = await new Activity(conn)
     .model()
     .find({
-      state: IActivityState.created,
+      state: IActivityState.committed,
     })
     .populate("users", {
       _id: 1,

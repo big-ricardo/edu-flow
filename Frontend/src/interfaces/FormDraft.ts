@@ -33,7 +33,7 @@ export type IField = {
   value?: string | null;
   visible: boolean;
   describe?: string | null;
-  options?: { label: string; value: string }[] | null;
+  options?: { label: string; value: string }[] | { label: string; options: { label: string; value: string }[] }[] | null;
   system?: boolean;
   validation?: {
     min?: number;

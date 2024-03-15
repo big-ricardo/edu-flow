@@ -16,7 +16,7 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
+  undefined
 );
 
 interface AuthProviderProps {
@@ -34,13 +34,13 @@ function AuthProvider({ children }: Readonly<AuthProviderProps>) {
       return;
     }
 
-    const decodedToken = jwtDecode(token);
+    const decodedToken = jwtDecode<JwtData>(token);
 
     localStorage.setItem("token", token);
 
     api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
-    setToken(decodedToken as JwtData);
+    setToken(decodedToken);
   }, []);
 
   useLayoutEffect(() => {
@@ -52,7 +52,7 @@ function AuthProvider({ children }: Readonly<AuthProviderProps>) {
 
   const providerValue = useMemo(
     () => ({ token, setToken: setTokenValue }),
-    [token, setTokenValue],
+    [token, setTokenValue]
   );
 
   return (

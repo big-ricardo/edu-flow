@@ -18,6 +18,7 @@ import Switch from "@components/atoms/Inputs/Switch";
 import Select from "@components/atoms/Inputs/Select";
 import { createOrUpdateUser, getUser, getUserForms } from "@apis/users";
 import Password from "@components/atoms/Inputs/Password";
+import { IUserRoles } from "@interfaces/User";
 
 const Schema = z
   .object({
@@ -28,7 +29,7 @@ const Schema = z
       .string()
       .min(3, { message: "Matrícula deve ter no mínimo 3 caracteres" }),
     email: z.string().email({ message: "Email inválido" }),
-    role: z.enum(["admin", "student", "teacher"]),
+    roles: z.array(z.nativeEnum(IUserRoles)),
     cpf: z
       .string()
       .min(11, { message: "CPF deve ter no mínimo 11 caracteres" }),
@@ -40,19 +41,19 @@ const Schema = z
   })
   .refine(
     (data) =>
-      data.role !== "teacher" ||
-      (data.role === "teacher" && data.university_degree),
+      !data.roles.includes(IUserRoles.teacher) ||
+      (data.roles.includes(IUserRoles.teacher) && data.university_degree),
     {
       message: "Titulação é obrigatória para professores",
       path: ["university_degree"],
-    },
+    }
   )
   .refine(
     (data) => !data.password || (data.password && data.password.length >= 6),
     {
       message: "Senha precisa ter no mínimo 6 caracteres",
       path: ["password"],
-    },
+    }
   )
   .refine((data) => data.password === data.confirmPassword, {
     message: "Senhas não coincidem",
@@ -122,7 +123,7 @@ export default function User() {
     formState: { errors },
   } = methods;
 
-  const isTeacher = watch("role") === "teacher";
+  const isTeacher = watch("roles")?.includes(IUserRoles.teacher);
 
   const onSubmit = handleSubmit(async (data) => {
     await mutateAsync(isEditing ? { ...data, _id: id } : data);
@@ -179,13 +180,14 @@ export default function User() {
               />
               <Select
                 input={{
-                  id: "role",
+                  id: "roles",
                   label: "Perfil",
                   placeholder: "Perfil",
                   required: true,
                   options: formsData?.roles ?? [],
                 }}
                 isLoading={isLoadingForms}
+                isMulti
               />
               <Select
                 input={{

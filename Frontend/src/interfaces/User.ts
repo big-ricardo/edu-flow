@@ -1,3 +1,9 @@
+export enum IUserRoles {
+  admin = "admin",
+  student = "student",
+  teacher = "teacher",
+}
+
 type BaseUser = {
   _id: string;
   name: string;
@@ -7,6 +13,7 @@ type BaseUser = {
   matriculation: string;
   institute: string;
   active: boolean;
+  roles: IUserRoles[];
 };
 
 type AdminOrStudent = BaseUser & { role: "admin" | "student" };

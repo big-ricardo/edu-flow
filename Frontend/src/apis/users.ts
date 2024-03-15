@@ -13,7 +13,7 @@ type User = Pick<
   | "password"
   | "matriculation"
   | "institute"
-  | "role"
+  | "roles"
   | "active"
 >;
 type ReqUsers = Response<

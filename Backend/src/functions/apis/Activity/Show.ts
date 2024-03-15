@@ -43,7 +43,7 @@ const formatExtraFields = async (
   fields: IField[],
   answer: {
     [key: string]: string;
-  },
+  }
 ) => {
   const extraFields = [];
 
@@ -117,7 +117,7 @@ const handler: HttpHandler = async (conn, req) => {
   const extraFields = await formatExtraFields(
     conn,
     formDraft.fields,
-    answer.data,
+    answer.data
   );
 
   if (!activity.masterminds?.length) {
@@ -128,7 +128,7 @@ const handler: HttpHandler = async (conn, req) => {
         }
 
         return null;
-      }),
+      })
     );
 
     activity.masterminds = masterminds.reduce((acc, mastermind) => {
@@ -137,6 +137,26 @@ const handler: HttpHandler = async (conn, req) => {
           accepted: IActivityAccepted.pending,
           user: mastermind,
         });
+      }
+
+      return acc;
+    }, []);
+  }
+
+  if (!activity.sub_masterminds?.length) {
+    const subMasterminds = await Promise.all(
+      extraFields.map(async (field) => {
+        if (field.id === "{{activity_submastermind}}") {
+          return getUser(conn, field.value);
+        }
+
+        return null;
+      })
+    );
+
+    activity.sub_masterminds = subMasterminds.reduce((acc, subMastermind) => {
+      if (subMastermind) {
+        acc.push(subMastermind);
       }
 
       return acc;

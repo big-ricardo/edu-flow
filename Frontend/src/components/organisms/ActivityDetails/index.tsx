@@ -59,7 +59,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
           </Text>
           <Flex flexWrap="wrap">
             {activity.sub_masterminds.map((mastermind) => (
-              <UserDetails key={mastermind.user._id} {...mastermind} />
+              <UserDetails key={mastermind._id} user={mastermind} />
             ))}
             {activity.sub_masterminds.length === 0 && (
               <Text>Nenhum co-orientador</Text>

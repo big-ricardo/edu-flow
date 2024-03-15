@@ -8,15 +8,25 @@ export enum IActivityState {
   created = "created",
 }
 
+export enum IActivityAccepted {
+  accepted = "accepted",
+  rejected = "rejected",
+  pending = "pending",
+}
+
 export default interface IActivity {
   _id: string;
   name: string;
   description: string;
   state: IActivityState;
+  form: string;
   status: string;
   protocol: string;
   users: string[];
-  masterminds: string[];
+  masterminds: {
+    accepted: IActivityAccepted;
+    user: string;
+  }[];
   sub_masterminds: string[];
   createdAt: string;
 }
@@ -32,13 +42,10 @@ export interface IActivityDetails
   };
   users: Pick<IUser, "_id" | "name" | "email" | "matriculation">[];
   masterminds: {
-    accepted: boolean;
+    accepted: "accepted" | "rejected" | "pending";
     user: Pick<IUser, "_id" | "name" | "email" | "matriculation">;
   }[];
-  sub_masterminds: {
-    accepted: boolean;
-    user: Pick<IUser, "_id" | "name" | "email" | "matriculation">;
-  }[];
+  sub_masterminds: Pick<IUser, "_id" | "name" | "email" | "matriculation">[];
   extra_fields: Omit<IAnswer, "user" | "form_draft"> & {
     form_draft: Pick<IFormDraft, "_id"> & {
       fields: (Omit<IField, "value"> &

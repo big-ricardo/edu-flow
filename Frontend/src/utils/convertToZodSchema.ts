@@ -55,7 +55,11 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
         if (field.options) {
           fieldSchema = z.enum([
             "",
-            ...field.options.map((option) => option.value),
+            ...field.options.flatMap((option) =>
+              "options" in option
+                ? option.options.map((o) => o.value)
+                : option.value
+            ),
           ]);
         } else {
           fieldSchema = z.string(); // Fallback to string if options are not provided
@@ -72,12 +76,12 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
           .any()
           .refine(
             (files) => !files.length || files?.[0]?.size <= MAX_FILE_SIZE,
-            `Max file size is 5MB.`,
+            `Max file size is 5MB.`
           )
           .refine(
             (files) =>
               !files.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-            ".jpg, .jpeg, .png and .webp .pdf files are accepted.",
+            ".jpg, .jpeg, .png and .webp .pdf files are accepted."
           )
           .transform(async (files: FileList) => {
             if (!files.length) {
@@ -104,7 +108,7 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
             (value) => !value || value >= (field?.validation?.min ?? 0),
             {
               message: `O valor deve ser maior ou igual a ${field.validation.min}`,
-            },
+            }
           );
         }
         if (field.validation.max !== undefined) {
@@ -112,7 +116,7 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
             (value) => !value || value <= (field?.validation?.max ?? 0),
             {
               message: `O valor deve ser menor ou igual a ${field.validation.max}`,
-            },
+            }
           );
         }
       }
@@ -121,7 +125,7 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
           (value) => new RegExp(field?.validation?.pattern ?? "").test(value),
           {
             message: `O valor não corresponde ao padrão esperado ${field.validation.pattern}`,
-          },
+          }
         );
       }
     }

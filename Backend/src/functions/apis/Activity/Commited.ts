@@ -39,7 +39,7 @@ const handler: HttpHandler = async (conn, req) => {
       });
 
       return userExists;
-    }),
+    })
   );
 
   if (teacher.includes(false)) {
@@ -58,7 +58,7 @@ const handler: HttpHandler = async (conn, req) => {
       });
 
       return userExists;
-    }),
+    })
   );
 
   if (subMastermind.includes(false)) {
@@ -81,13 +81,10 @@ const handler: HttpHandler = async (conn, req) => {
         accepted: false,
         user: mastermind,
       })),
-      sub_masterminds: sub_masterminds.map((subMastermind) => ({
-        accepted: false,
-        user: subMastermind,
-      })),
-      state: IActivityState.committed,
+      sub_masterminds: sub_masterminds,
+      state: IActivityState.processing,
     },
-    { new: true },
+    { new: true }
   );
 
   return res.success(activityUpdated);
