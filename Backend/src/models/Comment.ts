@@ -1,37 +1,31 @@
-import mongoose, { Schema } from "mongoose";
+import { Entity, Column, ObjectIdColumn, ObjectId, ManyToOne, ManyToMany, JoinTable } from "typeorm";
+import { Activity } from "./Activity";
+import { User } from "./User";
 
-export type IComment = {
-  _id: string;
-  activity: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
-  content: string;
-  viewed: mongoose.Types.ObjectId[];
-  isEdited: boolean;
-  createdAt: string;
-  updatedAt: string;
-} & mongoose.Document;
+@Entity()
+export class Comment {
+    @ObjectIdColumn()
+    id: ObjectId;
 
-export const schema: Schema = new Schema<IComment>(
-  {
-    activity: { type: Schema.Types.ObjectId, ref: "Activity", required: true },
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    content: { type: String, required: true },
-    viewed: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
-    isEdited: { type: Boolean, default: false },
-  },
-  {
-    timestamps: true,
-  },
-);
+    @ManyToOne(type => Activity, activity => activity.comments)
+    activity: Activity;
 
-export default class Comment {
-  conn: mongoose.Connection;
+    @ManyToOne(type => User, user => user.comments)
+    user: User;
 
-  constructor(conn: mongoose.Connection) {
-    this.conn = conn;
-  }
+    @Column()
+    content: string;
 
-  model() {
-    return this.conn.model<IComment>("Comment", schema);
-  }
+    @ManyToMany(type => User)
+    @JoinTable()
+    viewed: User[];
+
+    @Column({ default: false })
+    isEdited: boolean;
+
+    @Column({ default: () => "CURRENT_TIMESTAMP" })
+    createdAt: Date;
+
+    @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+    updatedAt: Date;
 }

@@ -1,4 +1,19 @@
-import mongoose, { Schema } from "mongoose";
+import {
+  Entity,
+  Column,
+  ObjectIdColumn,
+  ObjectId,
+  ManyToOne,
+  OneToMany,
+  ManyToMany,
+} from "typeorm";
+import { Institute } from "./Institute";
+import { WorkflowDraft } from "./WorkflowDraft";
+import { Comment } from "./Comment";
+import { FormDraft } from "./FormDraft";
+import { Answer } from "./Answer";
+import { ActivityGuiding } from "./ActivityGuiding";
+import { Activity } from "./Activity";
 
 export enum IUserRoles {
   admin = "admin",
@@ -6,70 +21,62 @@ export enum IUserRoles {
   teacher = "teacher",
 }
 
-type BaseUser = {
-  _id: string;
+@Entity()
+export class User {
+  @ObjectIdColumn()
+  id: ObjectId;
+
+  @Column()
   name: string;
+
+  @Column({ unique: true })
   email: string;
+
+  @Column({ unique: true })
   cpf: string;
+
+  @Column()
   password: string;
-  matriculation: string;
-  roles: IUserRoles[];
-  institute: Schema.Types.ObjectId;
+
+  @Column({ default: true })
   active: boolean;
-  university_degree?: string;
-};
 
-type AdminOrStudent = BaseUser & { role: "admin" | "student" };
-type Teacher = BaseUser & { role: "teacher"; university_degree: string };
+  @Column()
+  matriculation: string;
 
-export type IUser = AdminOrStudent | Teacher;
+  @Column("simple-array")
+  roles: IUserRoles[];
 
-export const schema: Schema = new Schema<IUser>(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    cpf: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    active: { type: Boolean, default: true },
-    matriculation: { type: String, required: true, unique: true },
-    roles: [
-      {
-        type: String,
-        required: true,
-        enum: Object.values(IUserRoles),
-      },
-    ],
-    institute: {
-      type: Schema.Types.ObjectId,
-      ref: "Institute",
-      required: true,
-    },
-    university_degree: {
-      type: String,
-      required: () => (this as IUser).role === "teacher",
-      enum: ["mastermind", "doctor"],
-    },
-  },
-  {
-    timestamps: true,
-  }
-)
-  .index({ cpf: 1 })
-  .pre("save", function (next) {
-    if (this.role !== "teacher") {
-      this.university_degree = null;
-    }
-    next();
-  });
+  @ManyToOne((type) => Institute, (institute) => institute.users)
+  institute: Institute;
 
-export default class User {
-  conn: mongoose.Connection;
+  @Column({ nullable: true })
+  university_degree: string | null;
 
-  constructor(conn: mongoose.Connection) {
-    this.conn = conn;
-  }
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
 
-  model() {
-    return this.conn.model<IUser>("User", schema);
-  }
+  @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
+
+  @ManyToOne((type) => WorkflowDraft, (workflow) => workflow.owner)
+  workflows: WorkflowDraft[];
+
+  @OneToMany((type) => Comment, (comment) => comment.user)
+  comments: Comment[];
+
+  @OneToMany((type) => WorkflowDraft, (workflow) => workflow.owner)
+  formDrafts: FormDraft[];
+
+  @OneToMany((type) => Answer, (answer) => answer.user)
+  answers: Answer[];
+
+  @ManyToMany((type) => Activity, (activity) => activity.users)
+  activities: Activity[];
+
+  @OneToMany(
+    (type) => ActivityGuiding,
+    (activityGuiding) => activityGuiding.user
+  )
+  guiding: ActivityGuiding[];
 }

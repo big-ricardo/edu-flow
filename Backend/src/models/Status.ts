@@ -1,39 +1,27 @@
-import mongoose, { Schema } from "mongoose";
+import { Entity, Column, ObjectIdColumn, ObjectId, ManyToOne } from "typeorm";
+import { Activity } from "./Activity";
 
-export enum StatusType {
-  PROGRESS = "progress",
-  DONE = "done",
-  CANCELED = "canceled",
-}
+@Entity()
+export class Status {
+  @ObjectIdColumn()
+  id: ObjectId;
 
-export interface IStatus extends mongoose.Document {
-  _id: string;
+  @Column({ unique: true })
   name: string;
-  type: StatusType;
-}
 
-export const schema: Schema = new Schema(
-  {
-    name: { type: String, required: true, unique: true },
-    type: {
-      type: String,
-      required: true,
-      enum: ["progress", "done", "canceled"],
-    },
-  },
-  {
-    timestamps: true,
-  },
-);
+  @Column({
+    type: "enum",
+    enum: ["progress", "done", "canceled"],
+    default: "progress", // Defina o valor padrão conforme necessário
+  })
+  type: string;
 
-export default class Status {
-  conn: mongoose.Connection;
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
 
-  constructor(conn: mongoose.Connection) {
-    this.conn = conn;
-  }
+  @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
 
-  model() {
-    return this.conn.model<IStatus>("Status", schema);
-  }
+  @ManyToOne(type => Activity, activity => activity.status)
+  activities: Activity[];
 }

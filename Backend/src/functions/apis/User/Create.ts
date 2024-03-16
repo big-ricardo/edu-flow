@@ -1,8 +1,20 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import * as bcrypt from "bcrypt";
-import User, { IUser } from "../../../models/User";
-import Institute from "../../../models/Institute";
+import { IUserRoles, User } from "../../../models/User";
+import { Institute } from "../../../models/Institute";
+import { ObjectId } from "typeorm";
+
+interface TRequestBody {
+  name: string;
+  cpf: string;
+  password: string;
+  email: string;
+  matriculation: string;
+  roles: IUserRoles[];
+  university_degree?: "mastermind" | "doctor";
+  institute: ObjectId;
+}
 
 const handler: HttpHandler = async (conn, req, context) => {
   const {
@@ -14,36 +26,31 @@ const handler: HttpHandler = async (conn, req, context) => {
     roles,
     institute,
     university_degree = null,
-  } = req.body as IUser;
-
-  const hasInstitute = await new Institute(conn).model().exists({
-    _id: institute,
-    active: true,
-  });
-
-  if (!hasInstitute) {
-    return res.badRequest("Institute not found");
-  }
+  } = req.body as TRequestBody;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user: IUser = await new User(conn).model().create({
-    name,
-    cpf,
-    password: hashedPassword,
-    email,
-    matriculation,
-    university_degree,
-    roles: [...new Set(roles)],
-    institute,
+  const user = new User();
+
+  user.name = name;
+  user.cpf = cpf;
+  user.password = hashedPassword;
+  user.email = email;
+  user.matriculation = matriculation;
+  user.roles = roles;
+  user.institute = await conn.getRepository(Institute).findOne({
+    where: { id: institute },
   });
+  user.university_degree = university_degree;
+
+  await conn.getRepository(User).save(user);
 
   return res.created({
     name: user.name,
     email: user.email,
     cpf: user.cpf,
     matriculation: user.matriculation,
-    role: user.role,
+    roles: user.roles,
   });
 };
 

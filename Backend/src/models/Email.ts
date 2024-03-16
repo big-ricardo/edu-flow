@@ -1,32 +1,27 @@
-import mongoose, { Schema } from "mongoose";
+import { Entity, Column, ObjectIdColumn, ObjectId } from "typeorm";
 
-export interface IEmail extends mongoose.Document {
-  _id: string;
-  slug: string;
-  subject: string;
-  jsonTemplate: JSON;
-  htmlTemplate: string;
-}
+@Entity()
+export class Email {
+    @ObjectIdColumn()
+    id: ObjectId;
 
-export const schema: Schema = new Schema(
-  {
-    slug: { type: String, required: true, unique: true },
-    subject: { type: String, required: true },
-    htmlTemplate: { type: String, required: true },
-  },
-  {
-    timestamps: true,
-  },
-);
+    @Column({ unique: true })
+    slug: string;
 
-export default class Email {
-  conn: mongoose.Connection;
+    @Column()
+    subject: string;
 
-  constructor(conn: mongoose.Connection) {
-    this.conn = conn;
-  }
+    @Column()
+    htmlTemplate: string;
 
-  model() {
-    return this.conn.model<IEmail>("Email", schema);
-  }
+    @Column({ type: "json", nullable: true })
+    jsonTemplate: object | null;
+
+    @Column({ default: () => "CURRENT_TIMESTAMP" })
+    createdAt: Date;
+
+    @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+    updatedAt: Date;
+
+    // You may add other methods or hooks here as needed
 }

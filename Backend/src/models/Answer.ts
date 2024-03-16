@@ -1,43 +1,39 @@
-import mongoose, { Schema } from "mongoose";
+import {
+  Entity,
+  Column,
+  ObjectIdColumn,
+  ObjectId,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
+import { User } from "./User";
+import { Activity } from "./Activity";
+import { FormDraft } from "./FormDraft";
+import { AnswerField } from "./AnswerField";
 
-export type IAnswer = {
-  _id: string;
-  user: string;
-  activity: string;
+@Entity()
+export class Answer {
+  @ObjectIdColumn()
+  id: ObjectId;
+
+  @ManyToOne((type) => User, (user) => user.answers)
+  user: User;
+
+  @ManyToOne((type) => Activity, (activity) => activity.answers)
+  activity: Activity;
+
+  @Column({ default: false })
   submitted: boolean;
-  form_draft: string;
-  data: {
-    [key: string]: string;
-  };
-  createdAt: string;
-  updatedAt: string;
-} & mongoose.Document;
 
-export const schema: Schema<IAnswer> = new Schema(
-  {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    activity: { type: Schema.Types.ObjectId, ref: "Activity", required: true },
-    submitted: { type: Boolean, default: false },
-    form_draft: {
-      type: Schema.Types.ObjectId,
-      ref: "FormDraft",
-      required: true,
-    },
-    data: { type: Object, required: true },
-  },
-  {
-    timestamps: true,
-  },
-).index({ user: 1, activity: 1, form_draft: 1 }, { unique: true });
+  @ManyToOne((type) => FormDraft, (formDraft) => formDraft.answers)
+  formDraft: FormDraft;
 
-export default class Answer {
-  conn: mongoose.Connection;
+  @OneToMany((type) => AnswerField, (answerField) => answerField.answer)
+  fields: AnswerField[];
 
-  constructor(conn: mongoose.Connection) {
-    this.conn = conn;
-  }
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
 
-  model() {
-    return this.conn.model<IAnswer>("Answer", schema);
-  }
+  @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
 }

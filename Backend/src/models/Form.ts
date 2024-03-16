@@ -1,55 +1,52 @@
-import mongoose, { Schema } from "mongoose";
+import { Entity, Column, ObjectIdColumn, ObjectId, ManyToOne, OneToMany } from "typeorm";
+import { Status } from "./Status";
+import { Workflow } from "./Workflow";
+import { FormDraft } from "./FormDraft";
+import { Activity } from "./Activity";
 
-export enum IFormType {
-  Created = "created",
-  Interaction = "interaction",
-  Evaluated = "evaluated",
-}
+@Entity()
+export class Form {
+    @ObjectIdColumn()
+    id: ObjectId;
 
-export type IForm = {
-  _id: string;
-  name: string;
-  initial_status?: string;
-  type: IFormType;
-  period?: { open: string; close: string };
-  active: boolean;
-  description: string;
-  published: string | null;
-} & mongoose.Document;
+    @Column({ unique: true })
+    name: string;
 
-export const schema: Schema = new Schema(
-  {
-    name: { type: String, required: true, unique: true },
-    initial_status: {
-      type: Schema.Types.ObjectId,
-      ref: "Status",
-      default: null,
-    },
-    slug: { type: String, required: true, unique: true },
-    type: {
-      type: String,
-      required: true,
-      enum: Object.values(IFormType),
-    },
-    active: { type: Boolean, required: true, default: true },
-    period: { open: Date, close: Date },
-    workflow: { type: Schema.Types.ObjectId, ref: "Workflow", default: null },
-    description: { type: String, required: false, default: "" },
-    published: { type: Schema.Types.ObjectId, ref: "FormDraft", default: null },
-  },
-  {
-    timestamps: true,
-  },
-).index({ slug: 1, status: 1, "period.open": 1, "period.close": 1 });
+    @ManyToOne(type => Status, { nullable: true })
+    initial_status: Status | null;
 
-export default class Form {
-  conn: mongoose.Connection;
+    @Column()
+    slug: string;
 
-  constructor(conn: mongoose.Connection) {
-    this.conn = conn;
-  }
+    @Column()
+    type: string;
 
-  model() {
-    return this.conn.model<IForm>("Form", schema);
-  }
+    @Column({ default: true })
+    active: boolean;
+
+    @Column({ type: "json", nullable: true })
+    period: { open: Date; close: Date } | null;
+
+    @ManyToOne(type => Workflow, { nullable: true })
+    workflow: Workflow | null;
+
+    @Column({ default: "" })
+    description: string;
+
+    @Column({ nullable: true })
+    published: string | null;
+
+    @Column({ default: () => "CURRENT_TIMESTAMP" })
+    createdAt: Date;
+
+    @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+    updatedAt: Date;
+
+    @OneToMany(type => FormDraft, formDraft => formDraft.parent)
+    drafts: FormDraft[];
+
+    @ManyToOne(type => Activity, activity => activity.form)
+    activities: Activity[];
+
+    // You may add other methods or hooks here as needed
 }

@@ -1,46 +1,37 @@
-import mongoose, { Connection, Schema } from "mongoose";
-import { IUniversity } from "./University";
+import {
+  Entity,
+  Column,
+  ObjectIdColumn,
+  ObjectId,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
+import { University } from "./University";
+import { User } from "./User";
 
-export interface IInstitute extends mongoose.Document {
-  _id: string;
+@Entity()
+export class Institute {
+  @ObjectIdColumn()
+  id: ObjectId;
+
+  @Column()
   name: string;
+
+  @Column({ unique: true })
   acronym: string;
+
+  @Column({ default: true })
   active: boolean;
+
+  @ManyToOne((type) => University, (university) => university.institutes)
+  university: University;
+
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
+
+  @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
+
+  @OneToMany((type) => User, (user) => user.institute)
+  users: User[];
 }
-
-export interface IInstituteWithUniversity extends IInstitute {
-  university: IUniversity;
-}
-
-export const schema: Schema = new Schema(
-  {
-    name: { type: String, required: true },
-    acronym: { type: String, required: true, unique: true },
-    active: { type: Boolean, default: true },
-    university: {
-      type: Schema.Types.ObjectId,
-      ref: "University",
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  },
-);
-
-class Institute {
-  conn: Connection;
-
-  constructor(conn: Connection) {
-    this.conn = conn;
-  }
-
-  model() {
-    return this.conn.model<IInstitute | IInstituteWithUniversity>(
-      "Institute",
-      schema,
-    );
-  }
-}
-
-export default Institute;

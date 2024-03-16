@@ -1,103 +1,91 @@
-import mongoose, { Schema } from "mongoose";
+import {
+  Entity,
+  Column,
+  ObjectIdColumn,
+  ObjectId,
+  ManyToOne,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
+import { Form } from "./Form";
+import { User } from "./User";
+import { Status } from "./Status";
+import { Comment } from "./Comment";
+import { Answer } from "./Answer";
+import { ActivityGuiding } from "./ActivityGuiding";
+import { ActivityWorkflow } from "./ActivityWorkflow";
 
-export enum IActivityState {
+export enum ActivityState {
   finished = "finished",
   processing = "processing",
   committed = "committed",
   created = "created",
 }
 
-export enum IActivityStatus {
-  active = "active",
-  inactive = "inactive",
-}
-
-export enum IActivityAccepted {
+export enum ActivityAccepted {
   accepted = "accepted",
   rejected = "rejected",
   pending = "pending",
 }
 
-export type IActivity = {
-  _id: string;
+@Entity()
+export class Activity {
+  @ObjectIdColumn()
+  _id: ObjectId;
+
+  @Column()
   name: string;
+
+  @ManyToOne((type) => Form, (form) => form.activities)
+  form: Form;
+
+  @Column()
   protocol: string;
-  state: IActivityState;
-  users: mongoose.Types.ObjectId[];
-  form: mongoose.Types.ObjectId;
-  masterminds: {
-    accepted: IActivityAccepted;
-    user: mongoose.Types.ObjectId;
-  }[];
-  sub_masterminds: mongoose.Types.ObjectId[];
-  status: mongoose.Types.ObjectId;
-  workflows: {
-    _id: mongoose.Types.ObjectId;
-    workflow_draft: mongoose.Types.ObjectId;
-    finished: boolean;
-  }[];
+
+  @Column()
   description: string;
-  createdAt: string;
-  updatedAt: string;
-} & mongoose.Document;
 
-export const schema: Schema = new Schema<IActivity>(
-  {
-    name: { type: String, required: true },
-    form: { type: Schema.Types.ObjectId, ref: "Form", required: true },
-    protocol: { type: String, required: false, unique: true },
-    description: { type: String, required: true },
-    state: {
-      type: String,
-      required: true,
-      enum: Object.values(IActivityState),
-      default: IActivityState.created,
-    },
-    users: [{ type: Schema.Types.ObjectId, ref: "User" }, { required: true }],
-    masterminds: [
-      {
-        accepted: {
-          type: String,
-          enum: Object.values(IActivityAccepted),
-          default: IActivityAccepted.pending,
-        },
-        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-      },
-    ],
-    sub_masterminds: [
-      { type: Schema.Types.ObjectId, ref: "User", default: [] },
-    ],
-    status: { type: Schema.Types.ObjectId, ref: "Status", required: true },
-    workflows: [
-      {
-        _id: { type: Schema.Types.ObjectId, auto: true },
-        workflow_draft: { type: Schema.Types.ObjectId, ref: "WorkflowDraft" },
-        finished: { type: Boolean, default: false },
-      },
-    ],
-  },
-  {
-    timestamps: true,
-  }
-)
-  .pre<IActivity>("save", function (next) {
-    if (!this.isNew) {
-      return next();
-    }
-    const year = new Date().getFullYear();
-    this.protocol = `${year}${Math.floor(Math.random() * 100000)}`;
-    next();
-  })
-  .index({ name: 1, state: 1 }, { unique: true });
+  @Column()
+  state: ActivityState;
 
-export default class Activity {
-  conn: mongoose.Connection;
+  @ManyToMany((type) => User, (user) => user.activities)
+  @JoinTable()
+  users: string[];
 
-  constructor(conn: mongoose.Connection) {
-    this.conn = conn;
-  }
+  @OneToMany(
+    (type) => ActivityGuiding,
+    (activityGuiding) => activityGuiding.activity
+  )
+  guiding: ActivityGuiding[];
 
-  model() {
-    return this.conn.model<IActivity>("Activity", schema);
-  }
+  @Column("simple-array", { nullable: true })
+  sub_masterminds: string[];
+
+  @ManyToOne((type) => Status, (status) => status.activities)
+  status: Status;
+
+  @OneToMany((type) => Comment, (comment) => comment.activity)
+  comments: Comment[];
+
+  @OneToMany(
+    (type) => ActivityWorkflow,
+    (activityWorkflow) => activityWorkflow.activity
+  )
+  workflows: ActivityWorkflow[];
+
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
+
+  @Column({ default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
+
+  @OneToMany((type) => Answer, (answer) => answer.activity)
+  answers: Answer[];
+
+  @OneToMany(
+    (type) => ActivityWorkflow,
+    (activityWorkflow) => activityWorkflow.activity
+  )
+  activityWorkflows: ActivityWorkflow[];
 }

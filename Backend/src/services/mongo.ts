@@ -1,4 +1,5 @@
-import mongoose, { Connection } from "mongoose";
+import "reflect-metadata";
+import { DataSource } from "typeorm";
 import models from "../models";
 
 const {
@@ -12,25 +13,31 @@ if (!MONGO_HOST || !MONGO_USER || !MONGO_PASS) {
   throw new Error("Missing MONGO_* environment variables");
 }
 
-const conn_string = `mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}:${MONGO_PORT}`;
-
-export function connect(db: string): Connection {
-  const uri = `${conn_string}/${db}?authSource=admin&readPreference=primary&ssl=false&directConnection=true`;
-  const conn = mongoose.createConnection(uri);
-  conn.useDb(db);
-
-  Object.keys(models).forEach((key) => {
-    conn.model(key, models[key]);
+export async function connect(db: string) {
+  const dataSource = new DataSource({
+    type: "mongodb",
+    host: MONGO_HOST,
+    port: parseInt(MONGO_PORT, 10),
+    username: MONGO_USER,
+    password: MONGO_PASS,
+    database: "typeorm",
+    entities: Object.values(models),
+    synchronize: true,
+    logging: true,
   });
-  return conn;
+
+  return dataSource.initialize().catch((err) => {
+    console.error("Failed to connect to MongoDB:", err);
+    throw err;
+  });
 }
 
-export async function disconnect(conn: Connection): Promise<void> {
+export async function disconnect(conn: DataSource): Promise<void> {
   if (!conn) {
     return;
   }
 
-  await conn.close();
+  await conn.destroy();
 }
 
 export default {

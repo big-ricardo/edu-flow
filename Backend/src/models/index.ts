@@ -11,7 +11,8 @@ fs.readdirSync(__dirname)
   .forEach((file) => {
     console.log(`Loading model file ${file}`);
     const model = require(path.join(__dirname, file));
-    models[file.split(".")[0]] = model.schema;
+    const entityName = file.split(".")[0];
+    models[entityName] = model[entityName];
   });
 
 export default models;
