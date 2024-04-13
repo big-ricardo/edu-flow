@@ -9,7 +9,7 @@ const created: Template = {
   type: "created",
   fields: [
     {
-      id: "{{activity_name}}",
+      id: "name",
       type: "text",
       required: true,
       visible: true,
@@ -18,7 +18,7 @@ const created: Template = {
       predefined: null,
     },
     {
-      id: "{{activity_description}}",
+      id: "description",
       type: "textarea",
       required: true,
       visible: true,
@@ -27,7 +27,7 @@ const created: Template = {
       predefined: null,
     },
     {
-      id: "{{activity_mastermind}}",
+      id: "masterminds",
       type: "multiselect",
       required: true,
       visible: true,
@@ -36,7 +36,7 @@ const created: Template = {
       label: "Orientador",
     },
     {
-      id: "{{activity_submastermind}}",
+      id: "submastermind",
       type: "multiselect",
       required: false,
       visible: true,

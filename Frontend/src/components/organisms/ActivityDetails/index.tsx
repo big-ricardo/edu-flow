@@ -29,6 +29,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
           name={activity.name}
           protocol={activity.protocol}
           status={activity.status.name}
+          state={activity.state}
         />
         <VStack mb={4} align="start">
           <RenderFieldValue label={"Descrição"} value={activity.description} />
@@ -61,22 +62,22 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
             {activity.sub_masterminds.map((mastermind) => (
               <UserDetails key={mastermind._id} user={mastermind} />
             ))}
-            {activity.sub_masterminds.length === 0 && (
+            {!activity.sub_masterminds.length && (
               <Text>Nenhum co-orientador</Text>
             )}
           </Flex>
         </VStack>
         <Accordion.Container defaultIndex={[]} allowToggle allowMultiple>
           <Accordion.Item>
-            <Accordion.Button>Formulário de Inscrição</Accordion.Button>
+            <Accordion.Button>Informações Extra</Accordion.Button>
             <Accordion.Panel>
-              <ExtraFields fields={activity.extra_fields.form_draft.fields} />
+              <ExtraFields fields={activity.form_draft.fields} />
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion.Container>
       </Card>
     );
-  },
+  }
 );
 
 export default ActivityDetails;

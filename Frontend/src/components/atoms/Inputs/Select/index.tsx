@@ -15,6 +15,7 @@ interface SelectProps {
     options:
       | { value: string; label: string }[]
       | { label: string; options: { value: string; label: string }[] }[];
+    describe?: string;
   };
   isMulti?: boolean;
   isLoading?: boolean;
@@ -103,13 +104,13 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
 
       if (Array.isArray(value)) {
         return allOptions.filter(
-          (option) => option?.value && value.includes(option.value),
+          (option) => option?.value && value.includes(option.value)
         );
       } else {
         return allOptions.find((option) => option?.value === value) ?? null;
       }
     },
-    [input.options],
+    [input.options]
   );
 
   return (
@@ -137,6 +138,11 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
             value={searchValue(value)}
             ref={ref}
             onChange={(value: { value: string }[] | { value: string }) => {
+              if (!value) {
+                onChange(null);
+                return;
+              }
+
               if (Array.isArray(value)) {
                 onChange(value?.map((v) => v.value));
               } else {

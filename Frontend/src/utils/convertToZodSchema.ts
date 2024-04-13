@@ -92,10 +92,19 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
             return {
               name: files[0].name,
               size: files[0].size,
-              type: files[0].type,
-              file: base64,
+              mimeType: files[0].type,
+              base64,
             };
           });
+        break;
+      case "teacher":
+        fieldSchema = z.array(
+          z.object({
+            _id: z.string().optional(),
+            name: z.string(),
+            email: z.string().email(),
+          })
+        );
         break;
       default:
         fieldSchema = z.string(); // Fallback to string for unknown types

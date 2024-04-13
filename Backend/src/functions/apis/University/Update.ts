@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import University from "../../../models/University";
+import Institute from "../../../models/Institute";
 
 interface DtoUniversity {
   name?: string;
@@ -16,12 +17,19 @@ const handler: HttpHandler = async (conn, req) => {
   const updatedUniversity = await university.findByIdAndUpdate(
     id,
     { name, acronym, active },
-    { new: true },
+    { new: true }
   );
 
   if (!updatedUniversity) {
     return res.notFound("University not found");
   }
+
+  await new Institute(conn)
+    .model()
+    .updateMany(
+      { "university._id": id },
+      { "university.name": name, "university.acronym": acronym }
+    );
 
   return res.success(updatedUniversity);
 };

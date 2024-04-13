@@ -10,7 +10,8 @@ import * as yup from "yup";
 import res from "../utils/apiResponse";
 import jwt from "../services/jwt";
 import mongo from "../services/mongo";
-import { Connection } from "mongoose";
+import { Connection, ObjectId } from "mongoose";
+import { IInstitute } from "../models/Institute";
 
 const hasBody = ["POST", "PUT", "PATCH"];
 
@@ -31,17 +32,18 @@ interface User {
   matriculation: string;
   email: string;
   role: "student" | "admin" | "teacher" | "coordinator";
+  institute: IInstitute;
 }
 
 export type HttpHandler = (
   conn: Connection,
   request: THttpRequest,
-  context: InvocationContext,
+  context: InvocationContext
 ) => Promise<HttpResponseInit>;
 
 type AzureFunctionHandler = (
   request: HttpRequest,
-  context: InvocationContext,
+  context: InvocationContext
 ) => Promise<HttpResponseInit>;
 
 type callbackSchema = (schema: typeof yup) => {
@@ -105,7 +107,7 @@ export default class Http {
           headers,
           user,
         },
-        context,
+        context
       );
     } catch (error) {
       context.error(error);

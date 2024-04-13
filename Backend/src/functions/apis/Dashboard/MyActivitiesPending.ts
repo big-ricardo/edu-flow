@@ -17,29 +17,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
     .model()
     .find({
       state: IActivityState.created,
-      $or: [
-        {
-          masterminds: {
-            $elemMatch: {
-              user: req.user.id,
-              accepted: IActivityAccepted.pending,
-            },
-          },
-        },
-        {
-          sub_masterminds: {
-            $elemMatch: {
-              user: req.user.id,
-              accepted: IActivityAccepted.pending,
-            },
-          },
-        },
-      ],
-    })
-    .populate("users", {
-      _id: 1,
-      name: 1,
-      matriculation: 1,
+      "masterminds.user._id": req.user.id,
     })
     .skip((page - 1) * limit)
     .limit(limit);

@@ -93,7 +93,7 @@ describe("Login", () => {
 
     const result = await handler(conn as any, req as any, context as any);
 
-    const body = JSON.parse(result.body.toString());
+    const body = JSON.parse(result?.body.toString());
 
     expect(body.data.token).toEqual("token");
   });

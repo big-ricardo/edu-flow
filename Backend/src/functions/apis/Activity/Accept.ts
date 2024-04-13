@@ -14,13 +14,22 @@ const handler: HttpHandler = async (conn, req) => {
   if (!activity) return res.notFound("Atividade não encontrada");
 
   activity.masterminds = activity.masterminds.map((mastermind) => {
-    if (mastermind.user.toString() === req.user.id) {
+    if (mastermind.user._id.toString() === req.user.id) {
       mastermind.accepted = accepted;
     }
     return mastermind;
   });
 
   const activityUpdated = await activity.save();
+
+  const someMastermindRejected = activity.masterminds.some(
+    (mastermind) => mastermind.accepted === IActivityAccepted.rejected
+  );
+
+  if (someMastermindRejected) {
+    activityUpdated.state = IActivityState.finished;
+    await activityUpdated.save();
+  }
 
   const allTheMastermindsAccepted = activity.masterminds.every(
     (mastermind) => mastermind.accepted === IActivityAccepted.accepted

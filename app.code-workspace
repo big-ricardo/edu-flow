@@ -6,6 +6,10 @@
     {
       "path": "Frontend",
     },
+ {
+      "path": "IaC",
+    },
+
   ],
   "settings": {},
 }

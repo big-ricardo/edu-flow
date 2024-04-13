@@ -6,7 +6,7 @@ import IForm from "@interfaces/Form";
 
 type Activity = Pick<
   IActivity,
-  "_id" | "name" | "description" | "createdAt" | "protocol" | "state"
+  "_id" | "name" | "description" | "createdAt" | "protocol" | "state" | "custom_fields"
 > & {
   users: {
     _id: string;

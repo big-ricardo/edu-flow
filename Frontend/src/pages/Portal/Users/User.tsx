@@ -135,7 +135,10 @@ export default function User() {
 
   useEffect(() => {
     if (institute) {
-      reset(institute);
+      reset({
+        ...institute,
+        institute: institute.institute._id,
+      });
     }
   }, [institute, reset]);
 

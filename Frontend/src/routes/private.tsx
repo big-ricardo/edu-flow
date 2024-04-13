@@ -127,7 +127,7 @@ const routes: RouteType = [
     element: <Response />,
   },
   {
-    path: "/response/:slug/:answer",
+    path: "/response/:slug/:activity_id",
     element: <Response />,
   },
 ];

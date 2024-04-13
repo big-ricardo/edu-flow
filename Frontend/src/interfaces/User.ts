@@ -1,3 +1,5 @@
+import IInstitute from "./Institute";
+
 export enum IUserRoles {
   admin = "admin",
   student = "student",
@@ -11,7 +13,7 @@ type BaseUser = {
   cpf: string;
   password: string;
   matriculation: string;
-  institute: string;
+  institute: IInstitute;
   active: boolean;
   roles: IUserRoles[];
 };

@@ -1,3 +1,6 @@
+import { FileUploaded } from "./Answer";
+import IUser from "./User";
+
 export enum FieldTypes {
   text = "text",
   number = "number",
@@ -25,15 +28,25 @@ export type IField = {
     | "radio"
     | "select"
     | "date"
-    | "file"
     | "evaluated"
-    | "multiselect";
+    | "multiselect"
+    | "file"
+    | "teacher";
   required?: boolean;
   predefined: "teachers" | "students" | "institutions" | null;
-  value?: string | null;
+  multi?: boolean;
+  created?: boolean;
+  value:
+    | string
+    | null
+    | FileUploaded
+    | Pick<IUser, "_id" | "name" | "matriculation" | "email">;
   visible: boolean;
   describe?: string | null;
-  options?: { label: string; value: string }[] | { label: string; options: { label: string; value: string }[] }[] | null;
+  options?:
+    | { label: string; value: string }[]
+    | { label: string; options: { label: string; value: string }[] }[]
+    | null;
   system?: boolean;
   validation?: {
     min?: number;

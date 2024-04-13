@@ -2,20 +2,42 @@
 import React from "react";
 import { Flex, Heading, Text, Badge, Divider } from "@chakra-ui/react";
 import Comments from "./Comments";
+import { IActivityState } from "@interfaces/Activitiy";
 
 interface ActivityHeaderProps {
   id: string;
   name: string;
   protocol: string;
   status: string;
+  state: IActivityState;
 }
+
+const ActiveStateMap = {
+  [IActivityState.processing]: "Em andamento",
+  [IActivityState.created]: "Fase de criação",
+  [IActivityState.finished]: "Finalizado",
+};
 
 const ActivityHeader: React.FC<ActivityHeaderProps> = ({
   id,
   name,
   protocol,
   status,
+  state,
 }) => {
+  const badgeColor = (() => {
+    switch (state) {
+      case IActivityState.processing:
+        return "blue";
+      case IActivityState.created:
+        return "gray";
+      case IActivityState.finished:
+        return "green";
+      default:
+        return "gray";
+    }
+  })();
+
   return (
     <Flex
       wrap={"wrap"}
@@ -31,7 +53,12 @@ const ActivityHeader: React.FC<ActivityHeaderProps> = ({
         <Text fontSize="xl">#{protocol}</Text>
       </Flex>
       <Flex gap={2} alignItems={"center"}>
-        <Badge colorScheme="green" p={2} borderRadius="sm">
+        <Badge
+          p={2}
+          borderRadius="sm"
+          colorScheme={badgeColor}
+          title={ActiveStateMap[state]}
+        >
           {status}
         </Badge>
         <Comments id={id} />

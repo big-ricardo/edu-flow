@@ -10,7 +10,8 @@
     "prestart": "npm run clean && npm run build",
     "start": "func start",
     "dev": "npm-run-all --parallel start watch",
-    "test": "jest"
+    "test": "jest",
+    "test:wacth": "jest --watch"
   },
   "dependencies": {
     "@azure/functions": "^4.0.0-alpha.9",
@@ -21,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mongoose": "^8.0.3",
+    "nodemailer": "^6.9.13",
     "yup": "^1.2.0"
   },
   "devDependencies": {

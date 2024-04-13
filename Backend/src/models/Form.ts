@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 
 export enum IFormType {
   Created = "created",
@@ -9,15 +9,18 @@ export enum IFormType {
 export type IForm = {
   _id: string;
   name: string;
-  initial_status?: string;
+  slug: string;
+  initial_status: ObjectId | null;
   type: IFormType;
   period?: { open: string; close: string };
   active: boolean;
   description: string;
-  published: string | null;
+  published: ObjectId | null;
+  institute: ObjectId | null;
+  workflow: ObjectId | null;
 } & mongoose.Document;
 
-export const schema: Schema = new Schema(
+export const schema = new Schema<IForm>(
   {
     name: { type: String, required: true, unique: true },
     initial_status: {
@@ -36,6 +39,7 @@ export const schema: Schema = new Schema(
     workflow: { type: Schema.Types.ObjectId, ref: "Workflow", default: null },
     description: { type: String, required: false, default: "" },
     published: { type: Schema.Types.ObjectId, ref: "FormDraft", default: null },
+    institute: { type: Schema.Types.ObjectId, ref: "Institute", default: null },
   },
   {
     timestamps: true,

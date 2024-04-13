@@ -108,6 +108,7 @@ export const getFormBySlug = async ({
 type ReqFormForms = Response<{
   status: { label: string; value: string }[];
   workflows: { label: string; value: string }[];
+  institutes: { label: string; value: string }[];
 }>;
 export const getFormForms = async () => {
   const res = await api.get<ReqFormForms>("/form/forms");

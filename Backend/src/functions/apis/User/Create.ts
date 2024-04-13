@@ -43,7 +43,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     email: user.email,
     cpf: user.cpf,
     matriculation: user.matriculation,
-    role: user.role,
+    roles: user.roles,
   });
 };
 
@@ -58,7 +58,9 @@ export default new Http(handler)
       password: schema.string().required().min(6).max(255),
       email: schema.string().required().email(),
       matriculation: schema.string().required().min(3).max(255),
-      role: schema.mixed().oneOf(["admin", "student", "teacher"]).required(),
+      roles: schema
+        .array(schema.mixed().oneOf(["admin", "student", "teacher"]))
+        .required(),
       university_degree: schema
         .mixed()
         .oneOf(["mastermind", "doctor"])

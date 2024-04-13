@@ -24,15 +24,16 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.notFound("User not found");
   }
 
-  if (institute) {
-    const hasInstitute = await new Institute(conn).model().exists({
-      _id: institute,
-      active: true,
-    });
+  const hasInstitute = institute
+    ? (
+        await new Institute(conn).model().findOne({
+          _id: institute,
+        })
+      ).toObject()
+    : existingUser.institute;
 
-    if (!hasInstitute) {
-      return res.badRequest("Institute not found");
-    }
+  if (!hasInstitute) {
+    return res.badRequest("Institute not found");
   }
 
   const hashedPassword = password
@@ -48,7 +49,7 @@ const handler: HttpHandler = async (conn, req, context) => {
       email: email ?? existingUser.email,
       matriculation: matriculation ?? existingUser.matriculation,
       roles: [...new Set(roles)],
-      institute: institute ?? existingUser?.institute,
+      institute: hasInstitute ?? existingUser?.institute,
       university_degree: roles.includes(IUserRoles.teacher)
         ? university_degree ?? existingUser.university_degree
         : null,
@@ -81,7 +82,9 @@ export default new Http(handler)
           test: (value) => !value || value.length >= 6,
         }),
       matriculation: schema.string().optional(),
-      role: schema.string().optional().oneOf(["admin", "student", "teacher"]),
+      roles: schema
+        .array(schema.mixed().oneOf(["admin", "student", "teacher"]))
+        .required(),
       institute: schema.string().optional(),
       university_degree: schema
         .string()

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 
 export enum NodeTypes {
   ChangeStatus = "change_status",
@@ -40,7 +40,19 @@ export interface IInteraction {
   visible: true;
 }
 
+export interface IEvaluated {
+  name: string;
+  visible: false;
+  form_id: string;
+  isDeferred: boolean;
+  average: number;
+  to: string[];
+  notUseGrade: boolean;
+  weight: number;
+}
+
 export type IStep = {
+  _id: ObjectId;
   id: string;
   visible: boolean;
   position: { x: number; y: number };
@@ -80,15 +92,16 @@ export type IWorkflowDraft = {
   _id: string;
   name: string;
   status: "draft" | "published";
-  owner: string;
+  owner: Schema.Types.ObjectId;
   steps: IStep[];
-  parent: string | null;
+  parent: Schema.Types.ObjectId | null;
   viewport: { x: number; y: number; zoom: number };
   createdAt: string;
   updatedAt: string;
+  version: number;
 } & mongoose.Document;
 
-export const schema: Schema = new Schema(
+export const schemaBase = new Schema<IWorkflowDraft>(
   {
     version: { type: Number, default: 1, auto: true },
     status: { type: String, default: "draft", enum: ["draft", "published"] },
@@ -130,8 +143,12 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  },
-).index({ name: 1, version: 1 }, { unique: true });
+  }
+);
+
+export const schema = schemaBase.clone();
+
+schema.index({ name: 1, version: 1 }, { unique: true });
 
 export default class WorkflowDraft {
   conn: mongoose.Connection;

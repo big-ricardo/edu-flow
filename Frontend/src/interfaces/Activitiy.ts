@@ -1,4 +1,3 @@
-import { IAnswer } from "./Answer";
 import IFormDraft, { IField } from "./FormDraft";
 import IUser from "./User";
 
@@ -29,6 +28,7 @@ export default interface IActivity {
   }[];
   sub_masterminds: string[];
   createdAt: string;
+  custom_fields: string;
 }
 
 export interface IActivityDetails
@@ -46,24 +46,7 @@ export interface IActivityDetails
     user: Pick<IUser, "_id" | "name" | "email" | "matriculation">;
   }[];
   sub_masterminds: Pick<IUser, "_id" | "name" | "email" | "matriculation">[];
-  extra_fields: Omit<IAnswer, "user" | "form_draft"> & {
-    form_draft: Pick<IFormDraft, "_id"> & {
-      fields: (Omit<IField, "value"> &
-        (
-          | {
-              predefined: null;
-              value: string;
-            }
-          | {
-              predefined: "student";
-              value: {
-                _id: string;
-                name: string;
-                matriculation: string;
-                email: string;
-              };
-            }
-        ))[];
-    };
+  form_draft: Pick<IFormDraft, "_id"> & {
+    fields: IField[];
   };
 }

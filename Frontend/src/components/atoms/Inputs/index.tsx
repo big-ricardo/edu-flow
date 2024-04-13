@@ -8,6 +8,7 @@ import Text from "./Text";
 import { IField } from "@interfaces/Form";
 import NumberInput from "./NumberInput";
 import Evaluated from "./Evaluated";
+import InputUser from "./InputUser";
 
 interface Props {
   fields: IField[];
@@ -23,6 +24,7 @@ const fieldComponents: {
   checkbox: typeof Checkbox;
   default: typeof Text;
   evaluated: typeof NumberInput;
+  teacher: typeof InputUser;
 } = {
   select: Select,
   multiselect: Select,
@@ -33,6 +35,7 @@ const fieldComponents: {
   default: Text,
   number: NumberInput,
   evaluated: Evaluated,
+  teacher: InputUser,
 };
 
 const Inputs: React.FC<Props> = memo(({ fields }) => {

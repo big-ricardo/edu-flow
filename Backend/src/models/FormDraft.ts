@@ -1,4 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
+import { IUser } from "./User";
+import { FileUploaded } from "../services/upload";
 
 export enum FieldTypes {
   Text = "text",
@@ -11,8 +13,8 @@ export enum FieldTypes {
   MultiSelect = "multiselect",
   Date = "date",
   File = "file",
-  Teachers = "teachers",
   Evaluated = "evaluated",
+  Teacher = "teacher",
 }
 
 export enum IFormStatus {
@@ -20,14 +22,28 @@ export enum IFormStatus {
   Published = "published",
 }
 
+type UserMap = Pick<IUser, "_id" | "name" | "matriculation" | "email">;
+export type IValue =
+  | string
+  | number
+  | boolean
+  | Array<string>
+  | UserMap
+  | UserMap[]
+  | FileUploaded;
+
 export type IField = {
   id: string;
   type: FieldTypes;
   required?: boolean;
-  predefined?: "teachers" | "students" | "institution";
   visible: boolean;
   system?: boolean;
-  options?: { label: string; value: string }[] | { label: string; options: { label: string; value: string }[] }[];
+  multi?: boolean;
+  created?: string;
+  value: any;
+  options?:
+    | { label: string; value: string }[]
+    | { label: string; options: { label: string; value: string }[] }[];
   validation?: { min?: number; max?: number; pattern?: string };
   describe?: string;
 };
@@ -35,15 +51,15 @@ export type IField = {
 export type IFormDraft = {
   _id: string;
   status: IFormStatus;
-  parent: string;
-  owner: string;
+  parent: ObjectId;
+  owner: ObjectId;
   fields: IField[];
   version: number;
   createdAt: string;
   updatedAt: string;
 } & mongoose.Document;
 
-export const schema: Schema = new Schema(
+export const schema: Schema = new Schema<IFormDraft>(
   {
     status: {
       type: String,
@@ -62,19 +78,13 @@ export const schema: Schema = new Schema(
           enum: Object.values(FieldTypes),
         },
         weight: { type: Number, required: false },
-        predefined: {
-          type: String,
-          required: false,
-          enum: ["teachers", "students", "institutions"],
-          default: null,
-        },
         label: { type: String, required: false, default: "" },
         placeholder: { type: String, required: false, default: "" },
-        value: { type: String, default: null },
         required: { type: Boolean, required: false },
         visible: { type: Boolean, required: false },
         system: { type: Boolean, required: false, default: false },
         describe: { type: String, required: false, default: null },
+        value: { type: Object, required: false, default: null },
         options: {
           type: [
             {
@@ -95,7 +105,7 @@ export const schema: Schema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 ).index({ parent: 1, status: 1 });
 
 export default class FormDraft {

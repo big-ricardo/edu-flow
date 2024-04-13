@@ -46,6 +46,7 @@ const statusSchema = z
       .string()
       .max(255, "O tamanho máximo é 255 caracteres")
       .min(3, "Minimo 3 letras"),
+    institute: z.string().optional().nullable(),
   })
   .refine(
     (data) => {
@@ -177,6 +178,7 @@ export default function Workflow() {
                 label: "Nome",
                 placeholder: "Nome",
                 required: true,
+                describe: "Coloque um nome para o formulário",
               }}
             />
 
@@ -194,6 +196,7 @@ export default function Workflow() {
                 label: "Digite um slug único para o formulário",
                 placeholder: "Slug",
                 required: true,
+                describe: "Slug é utilizado para acessar o formulário",
               }}
             />
             <Flex gap="4">
@@ -220,6 +223,7 @@ export default function Workflow() {
                     placeholder: "Status inicial",
                     required: true,
                     options: formsData?.status ?? [],
+                    describe: "Esse status será o primeiro status da atividade",
                   }}
                   isLoading={isLoadingForms}
                 />
@@ -228,16 +232,31 @@ export default function Workflow() {
 
             <Flex gap="4">
               {isCreated && (
-                <Select
-                  input={{
-                    id: "workflow",
-                    label: "Workflow",
-                    placeholder: "Workflow Acionado",
-                    required: true,
-                    options: formsData?.workflows ?? [],
-                  }}
-                  isLoading={isLoadingForms}
-                />
+                <>
+                  <Select
+                    input={{
+                      id: "workflow",
+                      label: "Workflow",
+                      placeholder: "Workflow Acionado",
+                      required: true,
+                      options: formsData?.workflows ?? [],
+                      describe:
+                        "Esse workflow será acionado quando a atividade for criada e aceita",
+                    }}
+                    isLoading={isLoadingForms}
+                  />
+                  <Select
+                    input={{
+                      id: "institute",
+                      label: "Instituto",
+                      placeholder: "Instituto",
+                      options: formsData?.institutes ?? [],
+                      describe:
+                        "Seleciona o instituto que deve aparecer o formulário, deixe em branco para todos",
+                    }}
+                    isLoading={isLoadingForms}
+                  />
+                </>
               )}
             </Flex>
 
@@ -247,6 +266,8 @@ export default function Workflow() {
                 label: "Descrição",
                 placeholder: "Descrição",
                 required: true,
+                describe:
+                  "Coloque uma descrição para o formulário e sua finalidade",
               }}
             />
 
@@ -257,6 +278,7 @@ export default function Workflow() {
                   label: "Abertura",
                   placeholder: "Abertura",
                   type: "date",
+                  describe: "Data de abertura do formulário",
                 }}
               />
 
@@ -266,6 +288,7 @@ export default function Workflow() {
                   label: "Fechamento",
                   placeholder: "Fechamento",
                   type: "date",
+                  describe: "Data de fechamento do formulário",
                 }}
               />
             </Flex>

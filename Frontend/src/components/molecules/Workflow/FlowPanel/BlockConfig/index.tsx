@@ -289,6 +289,25 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 isMulti
               />
             )}
+
+            <Switch
+              input={{
+                label: "Não utilizar nota no calculo da nota final",
+                id: "notUseGrade",
+                required: true,
+              }}
+            />
+
+            {watch("notUseGrade") === false && (
+              <NumberInput
+                input={{
+                  label: "Peso da Avaliação",
+                  id: "weight",
+                  placeholder: "Digite o peso da avaliação de 0 a 100",
+                  required: true,
+                }}
+              />
+            )}
           </>
         );
       default:
@@ -302,7 +321,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
         <Spinner />
       ) : (
         <FormProvider {...methods}>
-          <Flex justify="start" gap={5} direction="column">
+          <Flex justify="start" gap={5} direction="column" mb={5}>
             <RenderInputs />
           </Flex>
         </FormProvider>
@@ -364,16 +383,16 @@ const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
     (id: string) => {
       return formsData?.fields.find((field) => field.id === id);
     },
-    [formsData],
+    [formsData]
   );
 
   const haveOptions = useCallback(
     (id: string) => {
       return ["select", "multiselect", "radio"].includes(
-        getField(id)?.type ?? "",
+        getField(id)?.type ?? ""
       );
     },
-    [getField],
+    [getField]
   );
 
   return (

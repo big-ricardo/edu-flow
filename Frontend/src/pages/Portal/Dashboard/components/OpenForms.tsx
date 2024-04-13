@@ -34,7 +34,7 @@ const OpenForms: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Heading>Minhas Atividades</Heading>
+      <Heading>Formulários Abertos</Heading>
 
       {isLoading && <Spinner />}
 

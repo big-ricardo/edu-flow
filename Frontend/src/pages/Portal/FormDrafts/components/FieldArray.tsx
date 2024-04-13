@@ -27,25 +27,13 @@ const fieldTypes = {
   multiselect: "Multi Combobox",
   date: "Data",
   file: "Arquivo",
+  teacher: "Professores",
 };
 
 const fieldOptions = Object.entries(fieldTypes).map(([value, label]) => ({
   value,
   label,
 }));
-
-const predefinedTypes = {
-  teachers: "Professores",
-  students: "Estudantes",
-  institutions: "Instituições",
-};
-
-const predefinedOptions = Object.entries(predefinedTypes).map(
-  ([value, label]) => ({
-    value,
-    label,
-  }),
-);
 
 interface FieldFormsProps {
   field: FieldArrayWithId<formFormSchema, "fields"> & { system: boolean };
@@ -65,11 +53,9 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
     const fieldType = watch(`fields.${index}.type`);
     const isFieldEvaluated = fieldType === "evaluated";
     const haveOptions = ["select", "multiselect", "radio", "checkbox"].includes(
-      fieldType,
+      fieldType
     );
-    const isSelect = ["select", "multiselect"].includes(fieldType);
-
-    const isPredefined = !!watch(`fields.${index}.predefined`);
+    const isUser = ["teacher"].includes(fieldType);
 
     return (
       <Flex
@@ -194,12 +180,32 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
               required: true,
               options: isEvaluated
                 ? [{ value: "evaluated", label: "Nota de Avaliação" }].concat(
-                    fieldOptions,
+                    fieldOptions
                   )
                 : fieldOptions,
               isDisabled: field.system,
             }}
           />
+
+          {isUser && (
+            <>
+              <Switch
+                input={{
+                  id: `fields.${index}.multi`,
+                  label: "Multi seleção",
+                  required: false,
+                }}
+              />
+
+              <Switch
+                input={{
+                  id: `fields.${index}.created`,
+                  label: "Criar novos usuários",
+                  required: false,
+                }}
+              />
+            </>
+          )}
 
           {fieldType === "number" && (
             <>
@@ -236,19 +242,6 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
             />
           )}
 
-          {isSelect && (
-            <Select
-              input={{
-                id: `fields.${index}.predefined`,
-                label: "Selecione caso deseja um tipo pré-definido de opções",
-                placeholder: "Tipo pré-definido",
-                required: false,
-                options: predefinedOptions,
-                isDisabled: field.system,
-              }}
-            />
-          )}
-
           {isFieldEvaluated && (
             <Number
               input={{
@@ -262,10 +255,10 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
           )}
         </Flex>
 
-        {haveOptions && !isPredefined && <FieldArrayOption index={index} />}
+        {haveOptions && <FieldArrayOption index={index} />}
       </Flex>
     );
-  },
+  }
 );
 
 export default FieldArray;

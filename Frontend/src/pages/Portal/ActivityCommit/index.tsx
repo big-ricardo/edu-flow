@@ -22,6 +22,7 @@ import {
 } from "@apis/activity";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import ActivityDetails from "@components/organisms/ActivityDetails";
+import InputUser from "@components/atoms/Inputs/InputUser";
 
 const activitySchema = z.object({
   _id: z.string(),
@@ -32,7 +33,15 @@ const activitySchema = z.object({
   users: z
     .array(z.string())
     .nonempty({ message: "Selecione pelo menos um aluno" }),
-  sub_masterminds: z.array(z.string()),
+  sub_masterminds: z.array(
+    z.object({
+      _id: z.string().optional(),
+      name: z
+        .string()
+        .min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
+      email: z.string().email(),
+    })
+  ),
 });
 
 type ActivityFormSchema = z.infer<typeof activitySchema>;
@@ -111,7 +120,7 @@ export default function ActivityCommit() {
         ...activity,
         users: activity.users.map((user) => user._id),
         sub_masterminds: activity.sub_masterminds.map(
-          (subMastermind) => subMastermind._id
+          (subMastermind) => subMastermind
         ),
       });
     }
@@ -169,16 +178,12 @@ export default function ActivityCommit() {
               }}
             />
 
-            <Select
+            <InputUser
               input={{
                 id: "sub_masterminds",
                 label: "Co-Orientadores",
-                placeholder: "Selecione os co-orientadores",
-                required: false,
-                options: formData?.teachers ?? [],
               }}
-              isLoading={isLoadingForms}
-              isMulti
+              teachers={formData?.teachers ?? []}
             />
 
             <Select

@@ -21,23 +21,19 @@ const handler: HttpHandler = async (conn) => {
     label: `${s.name} - ${s.matriculation}`,
   }));
 
-  const teachers = (
-    await new User(conn)
-      .model()
-      .find({
-        roles: {
-          $in: IUserRoles.teacher,
-        },
-      })
-      .select({
-        _id: 1,
-        name: 1,
-        matriculation: 1,
-      })
-  ).map((t) => ({
-    value: t._id,
-    label: `${t.name} - ${t.matriculation}`,
-  }));
+  const teachers = await new User(conn)
+    .model()
+    .find({
+      roles: {
+        $in: IUserRoles.teacher,
+      },
+    })
+    .select({
+      _id: 1,
+      name: 1,
+      email: 1,
+      matriculation: 1,
+    });
 
   return res.success({
     students,

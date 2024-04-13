@@ -1,15 +1,19 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, { IActivityAccepted } from "../../../models/Activity";
-import Answer from "../../../models/Answer";
+import Activity, {
+  IActivity,
+  IActivityAccepted,
+} from "../../../models/Activity";
+import Answer, { IAnswer } from "../../../models/Answer";
 import FormDraft, { FieldTypes, IField } from "../../../models/FormDraft";
 import User from "../../../models/User";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
+import { updateSas } from "../../../services/upload";
 
 const usersCache = new Map<
   string,
   {
-    _id: string;
+    _id: ObjectId;
     name: string;
     matriculation: string;
     email: string;
@@ -41,16 +45,23 @@ const getUser = async (conn, id: string) => {
 const formatExtraFields = async (
   conn: mongoose.Connection,
   fields: IField[],
-  answer: {
-    [key: string]: string;
-  }
+  answer: IAnswer["data"]
 ) => {
   const extraFields = [];
 
   for (const field of fields) {
     const value = answer[field.id];
 
-    if (field.predefined === FieldTypes.Teachers && value) {
+    if (typeof value === "object" && "mimeType" in value) {
+      extraFields.push({
+        ...field,
+        value: await updateSas(value),
+      });
+
+      continue;
+    }
+
+    if (field.type === FieldTypes.Teacher && value) {
       const user = await getUser(conn, value);
       extraFields.push({
         ...field,
@@ -72,107 +83,13 @@ const formatExtraFields = async (
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const activity = (
-    await new Activity(conn)
-      .model()
-      .findById(id)
-      .populate("users", {
-        _id: 1,
-        name: 1,
-        matriculation: 1,
-        email: 1,
-      })
-      .populate("masterminds.user", {
-        _id: 1,
-        name: 1,
-        matriculation: 1,
-        email: 1,
-      })
-      .populate("sub_masterminds.user", {
-        _id: 1,
-        name: 1,
-        matriculation: 1,
-        email: 1,
-      })
-      .populate("status", {
-        _id: 1,
-        name: 1,
-      })
-  ).toObject();
+  const activity = await new Activity(conn).model().findById(id);
 
   if (!activity) {
     return res.notFound("Activity not found");
   }
 
-  const [answer] = await new Answer(conn)
-    .model()
-    .find({ activity: id })
-    .limit(1)
-    .sort({ createdAt: 1 });
-
-  const formDraft = (
-    await new FormDraft(conn).model().findById(answer.form_draft).exec()
-  ).toObject();
-
-  const extraFields = await formatExtraFields(
-    conn,
-    formDraft.fields,
-    answer.data
-  );
-
-  if (!activity.masterminds?.length) {
-    const masterminds = await Promise.all(
-      extraFields.map(async (field) => {
-        if (field.id === "{{activity_mastermind}}") {
-          return getUser(conn, field.value);
-        }
-
-        return null;
-      })
-    );
-
-    activity.masterminds = masterminds.reduce((acc, mastermind) => {
-      if (mastermind) {
-        acc.push({
-          accepted: IActivityAccepted.pending,
-          user: mastermind,
-        });
-      }
-
-      return acc;
-    }, []);
-  }
-
-  if (!activity.sub_masterminds?.length) {
-    const subMasterminds = await Promise.all(
-      extraFields.map(async (field) => {
-        if (field.id === "{{activity_submastermind}}") {
-          return getUser(conn, field.value);
-        }
-
-        return null;
-      })
-    );
-
-    activity.sub_masterminds = subMasterminds.reduce((acc, subMastermind) => {
-      if (subMastermind) {
-        acc.push(subMastermind);
-      }
-
-      return acc;
-    }, []);
-  }
-
-  return res.success({
-    ...activity,
-    extra_fields: {
-      ...answer.toObject(),
-      form_draft: {
-        _id: formDraft._id,
-        fields: extraFields,
-      },
-    },
-  });
+  return res.success(activity);
 };
 
 export default new Http(handler)

@@ -1,6 +1,7 @@
 import Response from "@interfaces/Response";
 import IActivity, { IActivityDetails } from "@interfaces/Activitiy";
 import api from "@services/api";
+import IUser from "@interfaces/User";
 
 type ReqActivity = Response<IActivity>;
 
@@ -27,7 +28,7 @@ export const getActivity = async ({
 };
 
 type ReqFormForms = Response<{
-  teachers: { label: string; value: string }[];
+  teachers: Pick<IUser, "_id" | "name" | "email" | "matriculation">[];
   students: { label: string; value: string }[];
 }>;
 export const getActivityForms = async () => {

@@ -10,14 +10,6 @@ const handler: HttpHandler = async (conn) => {
       },
     },
     {
-      $lookup: {
-        from: "universities",
-        localField: "university",
-        foreignField: "_id",
-        as: "university",
-      },
-    },
-    {
       $unwind: "$university",
     },
     {

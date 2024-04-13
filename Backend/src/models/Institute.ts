@@ -1,14 +1,11 @@
 import mongoose, { Connection, Schema } from "mongoose";
-import { IUniversity } from "./University";
+import { IUniversity, schema as universitySchema } from "./University";
 
 export interface IInstitute extends mongoose.Document {
   _id: string;
   name: string;
   acronym: string;
   active: boolean;
-}
-
-export interface IInstituteWithUniversity extends IInstitute {
   university: IUniversity;
 }
 
@@ -17,15 +14,11 @@ export const schema: Schema = new Schema(
     name: { type: String, required: true },
     acronym: { type: String, required: true, unique: true },
     active: { type: Boolean, default: true },
-    university: {
-      type: Schema.Types.ObjectId,
-      ref: "University",
-      required: true,
-    },
+    university: { type: Object, required: true },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 class Institute {
@@ -36,10 +29,7 @@ class Institute {
   }
 
   model() {
-    return this.conn.model<IInstitute | IInstituteWithUniversity>(
-      "Institute",
-      schema,
-    );
+    return this.conn.model<IInstitute>("Institute", schema);
   }
 }
 

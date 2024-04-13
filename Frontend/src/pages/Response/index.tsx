@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
@@ -19,13 +19,15 @@ import Inputs from "@components/atoms/Inputs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import convertToZodSchema from "@utils/convertToZodSchema";
 import { responseForm } from "@apis/response";
+import { getActivity } from "@apis/activity";
+import { FieldTypes } from "@interfaces/FormDraft";
 
 interface ResponseProps {
   isPreview?: boolean;
 }
 
 const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
-  const params = useParams<{ slug: string }>();
+  const params = useParams<{ slug: string; activity_id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
@@ -43,11 +45,48 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
     queryFn: getFormBySlug,
   });
 
-  const methods = useForm({
-    resolver: zodResolver(convertToZodSchema(form?.published?.fields ?? [])),
+  const {
+    data: answer,
+    isLoading: isLoadingAnswer,
+    isError: isErrorAnswer,
+  } = useQuery({
+    queryKey: ["activity", params.activity_id ?? "", "edit"],
+    queryFn: getActivity,
+    enabled: !!params.activity_id,
+    select: (data) => {
+      return data.form_draft.fields.reduce((acc, field) => {
+        if (!field.value) return;
+        acc[field.id] = field.value;
+
+        if (field.type === FieldTypes.file) {
+          acc[field.id] = field.value?.name;
+        }
+
+        if (field.predefined === FieldTypes.teachers) {
+          acc[field.id] = Array.isArray(field.value)
+            ? field.value.map((el) => el._id)
+            : field?.value._id;
+        }
+
+        return acc;
+      }, {});
+    },
   });
 
-  const { handleSubmit } = methods;
+  const methods = useForm({
+    resolver: zodResolver(convertToZodSchema(form?.published?.fields ?? [])),
+    defaultValues: answer,
+  });
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = methods;
+
+  useEffect(() => {
+    reset(answer);
+  }, [answer, reset]);
 
   const { mutateAsync, isPending: isSubmitting } = useMutation({
     mutationFn: responseForm,
@@ -79,17 +118,16 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
       if (!form) return;
       await mutateAsync({
         form,
-        data: {
-          ...data,
-          activity_id,
-        } as Record<string, string | { file: string }>,
+        edit_id: params.activity_id,
+        activity_id,
+        data,
       });
     } catch (error) {
       console.log("Form validation failed:", error);
     }
   });
 
-  if (isLoading) {
+  if (isLoading || isLoadingAnswer) {
     return (
       <Center h="100vh">
         <Spinner size="xl" />
@@ -97,7 +135,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
     );
   }
 
-  if (isError) {
+  if (isError || isErrorAnswer) {
     return (
       <Center h="100vh" flexDirection="column">
         <Text>Formulário não encontrado ou não está mais disponível</Text>
@@ -149,7 +187,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
                     type="submit"
                     colorScheme="blue"
                     isLoading={isSubmitting}
-                    isDisabled={isPreview}
+                    isDisabled={isPreview || !isDirty}
                   >
                     Enviar
                   </Button>

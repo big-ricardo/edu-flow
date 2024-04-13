@@ -13,7 +13,7 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({ describe }) => {
     <Box
       as={FaInfo}
       color="white"
-      bg="blue.500"
+      bg="blue.800"
       borderRadius="50%"
       p="0.2rem"
       title={describe}

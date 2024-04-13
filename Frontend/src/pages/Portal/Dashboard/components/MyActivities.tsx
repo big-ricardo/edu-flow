@@ -2,15 +2,15 @@ import { getMyActivities } from "@apis/dashboard";
 import {
   Box,
   Button,
-  Card,
   Flex,
   Grid,
   Heading,
   Spinner,
   Stack,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import IActivity from "@interfaces/Activitiy";
+import IActivity, { IActivityState } from "@interfaces/Activitiy";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
 import React, { memo, useCallback } from "react";
@@ -52,7 +52,13 @@ export default MyActivities;
 interface ActivityItemProps {
   activity: Pick<
     IActivity,
-    "_id" | "name" | "description" | "createdAt" | "protocol" | "state"
+    | "_id"
+    | "name"
+    | "description"
+    | "createdAt"
+    | "protocol"
+    | "state"
+    | "custom_fields"
   > & {
     users: {
       _id: string;
@@ -75,10 +81,10 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
 
   const handleEdit = useCallback(() => {
     navigate(`/response/${activity.form.slug}/${activity._id}`);
-  }, [navigate, activity._id, activity.form.slug]);
+  }, [navigate, activity.form.slug, activity._id]);
 
   return (
-    <Card
+    <Box
       boxShadow="md"
       borderWidth="1px"
       borderRadius="md"
@@ -86,6 +92,7 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
       borderColor={"gray"}
       w={"100%"}
       h={"100%"}
+      bgColor={useColorModeValue("white", "gray.700")}
     >
       <Stack
         spacing={2}
@@ -102,7 +109,11 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
             <Button size="sm" onClick={handleView}>
               <FaEye />
             </Button>
-            <Button size="sm" onClick={handleEdit}>
+            <Button
+              size="sm"
+              onClick={handleEdit}
+              isDisabled={activity.state === IActivityState.processing}
+            >
               <FaPen />
             </Button>
           </Flex>
@@ -132,6 +143,6 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
           </Stack>
         </Box>
       </Stack>
-    </Card>
+    </Box>
   );
 });

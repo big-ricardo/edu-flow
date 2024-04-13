@@ -25,8 +25,8 @@ const handler: HttpHandler = async (conn, req) => {
   const institute = new Institute(conn).model();
   const updatedUniversity = await institute.findByIdAndUpdate(
     id,
-    { name, acronym, active, university },
-    { new: true },
+    { name, acronym, active, university: haveUniversity.toObject() },
+    { new: true }
   );
 
   if (!updatedUniversity) {

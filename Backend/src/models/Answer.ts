@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { FileUploaded } from "../services/upload";
 
 export type IAnswer = {
   _id: string;
@@ -7,7 +8,9 @@ export type IAnswer = {
   submitted: boolean;
   form_draft: string;
   data: {
-    [key: string]: string;
+    [key: string]:
+      | string
+      | FileUploaded
   };
   createdAt: string;
   updatedAt: string;
@@ -27,7 +30,7 @@ export const schema: Schema<IAnswer> = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 ).index({ user: 1, activity: 1, form_draft: 1 }, { unique: true });
 
 export default class Answer {

@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Activity from "../../../models/Activity";
+import User from "../../../models/User";
 
 interface Query {
   page?: number;
@@ -10,13 +11,13 @@ interface Query {
 export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
+  const user = await new User(conn).model().findById(req.user.id);
+
   const activities = await new Activity(conn)
     .model()
     .find({
-      users: {
-        $elemMatch: {
-          $eq: req.user.id,
-        },
+      _id: {
+        $in: user.activities,
       },
     })
     .populate("users", {

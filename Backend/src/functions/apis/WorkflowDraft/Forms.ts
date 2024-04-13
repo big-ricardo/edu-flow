@@ -43,11 +43,11 @@ const handler: HttpHandler = async (conn) => {
       options: [
         {
           label: "Aluno/s",
-          value: "{{student}}",
+          value: "${{activity.users}}",
         },
         {
           label: "Orientadores",
-          value: "{{masterminds}}",
+          value: "${{activity.masterminds}}",
         },
       ],
     },

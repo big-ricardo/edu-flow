@@ -1,4 +1,5 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
+import { IInstitute, schema as instituteSchema } from "./Institute";
 
 export enum IUserRoles {
   admin = "admin",
@@ -7,14 +8,15 @@ export enum IUserRoles {
 }
 
 type BaseUser = {
-  _id: string;
+  _id: ObjectId;
   name: string;
   email: string;
   cpf: string;
   password: string;
   matriculation: string;
+  activities: ObjectId[];
   roles: IUserRoles[];
-  institute: Schema.Types.ObjectId;
+  institute: IInstitute;
   active: boolean;
   university_degree?: string;
 };
@@ -32,6 +34,7 @@ export const schema: Schema = new Schema<IUser>(
     password: { type: String, required: true },
     active: { type: Boolean, default: true },
     matriculation: { type: String, required: true, unique: true },
+    activities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
     roles: [
       {
         type: String,
@@ -40,8 +43,7 @@ export const schema: Schema = new Schema<IUser>(
       },
     ],
     institute: {
-      type: Schema.Types.ObjectId,
-      ref: "Institute",
+      type: Object,
       required: true,
     },
     university_degree: {
@@ -53,14 +55,12 @@ export const schema: Schema = new Schema<IUser>(
   {
     timestamps: true,
   }
-)
-  .index({ cpf: 1 })
-  .pre("save", function (next) {
-    if (this.role !== "teacher") {
-      this.university_degree = null;
-    }
-    next();
-  });
+).pre("save", function (next) {
+  if (this.role !== "teacher") {
+    this.university_degree = null;
+  }
+  next();
+});
 
 export default class User {
   conn: mongoose.Connection;

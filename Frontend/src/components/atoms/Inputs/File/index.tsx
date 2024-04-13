@@ -26,6 +26,7 @@ const File: React.FC<FileProps> = ({ input }) => {
   const {
     register,
     formState: { errors },
+    getValues,
   } = useFormContext();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -88,7 +89,10 @@ const File: React.FC<FileProps> = ({ input }) => {
           type="text"
           cursor="pointer"
           placeholder={
-            haveFile ? inputRef.current?.files?.[0].name : input.placeholder
+            haveFile
+              ? inputRef.current?.files?.[0].name
+              : getValues(input.id)?.name?.split("@")?.pop() ??
+                input.placeholder
           }
           readOnly
         />
