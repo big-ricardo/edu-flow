@@ -40,6 +40,18 @@ const activitySchema = z.object({
         .string()
         .min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
       email: z.string().email(),
+      matriculation: z.string().optional(),
+      isExternal: z.boolean().optional(),
+      institute: z.object({
+        _id: z.string().optional(),
+        name: z.string(),
+        acronym: z.string(),
+        university: z.object({
+          _id: z.string().optional(),
+          name: z.string(),
+          acronym: z.string(),
+        }),
+      }),
     })
   ),
 });
@@ -182,8 +194,8 @@ export default function ActivityCommit() {
               input={{
                 id: "sub_masterminds",
                 label: "Co-Orientadores",
+                created: true,
               }}
-              teachers={formData?.teachers ?? []}
             />
 
             <Select

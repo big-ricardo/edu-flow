@@ -10,7 +10,7 @@ type BaseUser = {
   _id: string;
   name: string;
   email: string;
-  cpf: string;
+  isExternal: boolean;
   password: string;
   matriculation: string;
   institute: IInstitute;

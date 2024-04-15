@@ -13,6 +13,7 @@ const RenderFieldValue = memo(
     value?:
       | string
       | { name: string; email: string; matriculation: string }
+      | { name: string; email: string; matriculation: string }[]
       | FileUploaded;
   }) => {
     if (!label || !value) return null;
@@ -40,6 +41,17 @@ const RenderFieldValue = memo(
             <FileItem file={value} />
           </Flex>
         );
+      }
+
+      if (Array.isArray(value)) {
+        return value.map((el) => (
+          <Flex direction={"column"}>
+            <Text fontSize="sm" mr={2} mb={2}>
+              {label}:
+            </Text>
+            <UserDetails user={el} />
+          </Flex>
+        ));
       }
 
       return (

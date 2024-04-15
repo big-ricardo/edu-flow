@@ -11,7 +11,6 @@ type BaseUser = {
   _id: ObjectId;
   name: string;
   email: string;
-  cpf: string;
   password: string;
   matriculation: string;
   activities: ObjectId[];
@@ -19,6 +18,7 @@ type BaseUser = {
   institute: IInstitute;
   active: boolean;
   university_degree?: string;
+  isExternal: boolean;
 };
 
 type AdminOrStudent = BaseUser & { role: "admin" | "student" };
@@ -30,16 +30,17 @@ export const schema: Schema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    cpf: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     active: { type: Boolean, default: true },
     matriculation: { type: String, required: true, unique: true },
     activities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
+    isExternal: { type: Boolean, default: false, index: true },
     roles: [
       {
         type: String,
         required: true,
         enum: Object.values(IUserRoles),
+        index: true,
       },
     ],
     institute: {
@@ -48,7 +49,7 @@ export const schema: Schema = new Schema<IUser>(
     },
     university_degree: {
       type: String,
-      required: () => (this as IUser).role === "teacher",
+      required: () => (this as IUser).roles?.includes(IUserRoles.teacher),
       enum: ["mastermind", "doctor"],
     },
   },

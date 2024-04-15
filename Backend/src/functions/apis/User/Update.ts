@@ -6,16 +6,7 @@ import Institute from "../../../models/Institute";
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { id } = req.params;
-  const {
-    name,
-    cpf,
-    password,
-    email,
-    matriculation,
-    roles,
-    institute,
-    university_degree = null,
-  } = req.body as IUser;
+  const data = req.body as IUser;
 
   const user = new User(conn).model();
   const existingUser = await user.findById(id);
@@ -24,10 +15,10 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.notFound("User not found");
   }
 
-  const hasInstitute = institute
+  const hasInstitute = data.institute
     ? (
         await new Institute(conn).model().findOne({
-          _id: institute,
+          _id: data.institute,
         })
       ).toObject()
     : existingUser.institute;
@@ -36,23 +27,17 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.badRequest("Institute not found");
   }
 
-  const hashedPassword = password
-    ? await bcrypt.hash(password, 10)
+  const hashedPassword = data.password
+    ? await bcrypt.hash(data.password, 10)
     : existingUser.password;
 
   const updatedUser = await user.findByIdAndUpdate(
     id,
     {
-      name: name ?? existingUser.name,
-      cpf: cpf ?? existingUser.cpf,
-      password: hashedPassword,
-      email: email ?? existingUser.email,
-      matriculation: matriculation ?? existingUser.matriculation,
-      roles: [...new Set(roles)],
-      institute: hasInstitute ?? existingUser?.institute,
-      university_degree: roles.includes(IUserRoles.teacher)
-        ? university_degree ?? existingUser.university_degree
-        : null,
+      ...existingUser.toObject(),
+      ...data,
+      password: data.password ? hashedPassword : existingUser.password,
+      institute: data.institute ? hasInstitute : existingUser.institute,
     },
     { new: true }
   );
@@ -60,7 +45,6 @@ const handler: HttpHandler = async (conn, req, context) => {
   return res.success({
     name: updatedUser.name,
     email: updatedUser.email,
-    cpf: updatedUser.cpf,
     matriculation: updatedUser.matriculation,
     role: updatedUser.role,
     university_degree: updatedUser.university_degree,
@@ -72,7 +56,6 @@ export default new Http(handler)
     body: schema.object().shape({
       name: schema.string().optional().min(3).max(255),
       email: schema.string().optional().email(),
-      cpf: schema.string().optional(),
       password: schema
         .string()
         .optional()
@@ -86,6 +69,7 @@ export default new Http(handler)
         .array(schema.mixed().oneOf(["admin", "student", "teacher"]))
         .required(),
       institute: schema.string().optional(),
+      isExternal: schema.boolean().optional(),
       university_degree: schema
         .string()
         .optional()

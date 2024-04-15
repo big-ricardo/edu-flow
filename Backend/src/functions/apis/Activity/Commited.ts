@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Activity, { IActivityState } from "../../../models/Activity";
-import User from "../../../models/User";
+import User, { IUser, IUserRoles } from "../../../models/User";
 import mongoose from "mongoose";
 import WorkflowDraft from "../../../models/WorkflowDraft";
 import Form, { IForm } from "../../../models/Form";
@@ -11,12 +11,8 @@ interface IActivityUpdate {
   name: string;
   description: string;
   users: string[];
-  masterminds: string[];
-  sub_masterminds: {
-    _id?: string;
-    name: string;
-    email: string;
-  }[];
+  masterminds: Omit<IUser, "password">[];
+  sub_masterminds: Omit<IUser, "password">[];
 }
 
 const handler: HttpHandler = async (conn, req) => {
@@ -36,22 +32,37 @@ const handler: HttpHandler = async (conn, req) => {
 
   const subMastermind = await Promise.all(
     sub_masterminds.map(async (sub) => {
-      if (sub._id) {
-        return (
-          await user.findById(sub._id).select({ password: 0, activities: 0 })
-        ).toObject();
-      }
+      if (sub.isExternal) {
+        const subMastermindData = await user.findOne({
+          email: sub.email,
+        });
+        if (!subMastermindData) {
+          //TODO: Adjust titulacao
+          const newUser = await new User(conn).model().create({
+            ...sub,
+            roles: [IUserRoles.teacher],
+            university_degree: "mastermind",
+            password: "password",
+            isExternal: true,
+          });
 
-      return {
-        ...sub,
-        _id: new mongoose.Types.ObjectId(),
-      };
+          return newUser.toObject();
+        }
+
+        return subMastermindData.toObject();
+      }
+      return sub;
     })
   );
+
+  console.log(">>>>> Arr", subMastermind);
 
   if (subMastermind.includes(null)) {
     return res.error(400, {}, "Invalid sub mastermind id");
   }
+
+  activityData.sub_masterminds = subMastermind;
+  activityData.save();
 
   const userData = await user.find({ _id: { $in: users } });
 

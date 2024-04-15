@@ -81,8 +81,10 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
   const {
     handleSubmit,
     reset,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = methods;
+
+  console.log(errors);
 
   useEffect(() => {
     reset(answer);

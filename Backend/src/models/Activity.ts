@@ -40,7 +40,13 @@ export type IComment = {
 
 export type IUserChild = Pick<
   IUser,
-  "_id" | "name" | "email" | "matriculation" | "university_degree" | "institute"
+  | "_id"
+  | "name"
+  | "email"
+  | "matriculation"
+  | "university_degree"
+  | "institute"
+  | "isExternal"
 >;
 
 export enum IActivityStepStatus {
@@ -104,7 +110,11 @@ export type IActivity = {
 } & mongoose.Document;
 
 const userSchema = new Schema<IUserChild>({
-  _id: { type: Schema.Types.ObjectId, required: true },
+  isExternal: { type: Boolean, required: false },
+  _id: {
+    type: Schema.Types.ObjectId,
+    required: () => !(this as IUserChild).isExternal,
+  },
   name: { type: String, required: true },
   email: { type: String, required: true },
   matriculation: { type: String, required: true },
@@ -154,7 +164,7 @@ export const schema: Schema = new Schema<IActivity>(
         user: userSchema,
       },
     ],
-    sub_masterminds: [{ type: Object, required: false, default: [] }],
+    sub_masterminds: [{ type: userSchema, required: false, default: [] }],
     status: { type: statusSchema, required: true },
     workflows: [
       {

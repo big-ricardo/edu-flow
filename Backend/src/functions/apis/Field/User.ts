@@ -3,11 +3,13 @@ import res from "../../../utils/apiResponse";
 import User, { IUserRoles } from "../../../models/User";
 
 const handler: HttpHandler = async (conn, req, context) => {
-  const { role } = req.params;
+  const { role } = req.params as { role: IUserRoles };
 
   const users = await new User(conn)
     .model()
     .find({
+      active: true,
+      isExternal: false,
       roles: {
         $elemMatch: {
           $eq: role,

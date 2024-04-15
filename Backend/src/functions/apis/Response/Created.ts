@@ -5,8 +5,10 @@ import Form from "../../../models/Form";
 import FormDraft, { FieldTypes, IValue } from "../../../models/FormDraft";
 import moment from "moment";
 import uploadFileToBlob, { FileUploaded } from "../../../services/upload";
-import User from "../../../models/User";
+import User, { IUserRoles } from "../../../models/User";
 import Status from "../../../models/Status";
+import { ObjectId } from "mongoose";
+import { Types } from "mongoose";
 
 interface File {
   name: string;
@@ -14,12 +16,18 @@ interface File {
   base64: string;
 }
 
+interface IUser {
+  _id?: ObjectId;
+  name: string;
+  email: string;
+}
+
 type DtoCreated = {
   name: string; // "name"
   description: string; // "description"
-  masterminds: string[] | string; // "masterminds"
+  masterminds: Pick<IUser, "_id" | "name" | "email">;
 } & {
-  [key: string]: File | string | Array<string>;
+  [key: string]: File | string | Array<string> | IUser | Array<IUser>;
 };
 
 const handler: HttpHandler = async (conn, req) => {
@@ -91,7 +99,7 @@ const handler: HttpHandler = async (conn, req) => {
 
   for (const field of formDraft.fields) {
     let value = rest[field.id];
-    let mapped: IValue | IValue[] = null;
+    let mapped: IValue = null;
 
     if (!value || (Array.isArray(value) && !value.length)) {
       field.value = value;
@@ -117,38 +125,37 @@ const handler: HttpHandler = async (conn, req) => {
       mapped = "file";
     }
 
-    if (field.type === FieldTypes.Teacher) {
-      if (!field?.multi) {
-        const teachers = await new User(conn).model().findById(value).select({
-          _id: 1,
-          name: 1,
-          email: 1,
-          matriculation: 1,
-          university_degree: 1,
-          institute: 1,
+    if (field.type === FieldTypes.Teacher && Array.isArray(value)) {
+      const teachers = await new User(conn)
+        .model()
+        .find({
+          _id: {
+            $in: value.map((val) => val?._id).filter((val) => val),
+          },
+        })
+        .select({
+          password: 0,
         });
 
-        mapped = teachers.toObject();
-      } else {
-        const teachers = await new User(conn)
-          .model()
-          .find({
-            _id: {
-              $in: value,
-            },
-          })
-          .select({
-            _id: 1,
-            name: 1,
-            email: 1,
-            matriculation: 1,
-            university_degree: 1,
-            institute: 1,
-          });
+      mapped = value.map((val) => {
+        if (typeof val === "string") {
+          return teachers.find((teacher) => String(teacher._id) === val);
+        }
 
-        mapped = teachers.map((teacher) => teacher.toObject());
-      }
+        if (typeof val === "object") {
+          if (val?._id) {
+            return teachers.find((teacher) => String(teacher._id) === val._id);
+          }
+
+          return {
+            ...val,
+            isExternal: true,
+            _id: new Types.ObjectId(),
+          };
+        }
+      });
     }
+
     field.value = mapped || value;
   }
 

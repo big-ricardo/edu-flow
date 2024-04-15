@@ -9,12 +9,12 @@ type User = Pick<
   | "_id"
   | "name"
   | "email"
-  | "cpf"
   | "password"
   | "matriculation"
   | "institute"
   | "roles"
   | "active"
+  | "isExternal"
 >;
 type ReqUsers = Response<
   {

@@ -5,19 +5,10 @@ import User, { IUser } from "../../../models/User";
 import Institute from "../../../models/Institute";
 
 const handler: HttpHandler = async (conn, req, context) => {
-  const {
-    name,
-    cpf,
-    password,
-    email,
-    matriculation,
-    roles,
-    institute,
-    university_degree = null,
-  } = req.body as IUser;
+  const data = req.body as IUser;
 
-  const hasInstitute = await new Institute(conn).model().exists({
-    _id: institute,
+  const hasInstitute = await new Institute(conn).model().findOne({
+    _id: data.institute,
     active: true,
   });
 
@@ -25,23 +16,17 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.badRequest("Institute not found");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(data.password, 10);
 
   const user: IUser = await new User(conn).model().create({
-    name,
-    cpf,
+    ...data,
     password: hashedPassword,
-    email,
-    matriculation,
-    university_degree,
-    roles: [...new Set(roles)],
-    institute,
+    institute: hasInstitute,
   });
 
   return res.created({
     name: user.name,
     email: user.email,
-    cpf: user.cpf,
     matriculation: user.matriculation,
     roles: user.roles,
   });
@@ -51,12 +36,9 @@ export default new Http(handler)
   .setSchemaValidator((schema) => ({
     body: schema.object().shape({
       name: schema.string().required().min(3).max(255),
-      cpf: schema
-        .string()
-        .required()
-        .matches(/^\d{11}$/),
       password: schema.string().required().min(6).max(255),
       email: schema.string().required().email(),
+      isExternal: schema.boolean().default(false),
       matriculation: schema.string().required().min(3).max(255),
       roles: schema
         .array(schema.mixed().oneOf(["admin", "student", "teacher"]))

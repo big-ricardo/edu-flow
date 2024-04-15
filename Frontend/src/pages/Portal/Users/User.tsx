@@ -30,9 +30,7 @@ const Schema = z
       .min(3, { message: "Matrícula deve ter no mínimo 3 caracteres" }),
     email: z.string().email({ message: "Email inválido" }),
     roles: z.array(z.nativeEnum(IUserRoles)),
-    cpf: z
-      .string()
-      .min(11, { message: "CPF deve ter no mínimo 11 caracteres" }),
+    isExternal: z.boolean().optional(),
     institute: z.string(),
     active: z.boolean(),
     password: z.string().optional(),
@@ -213,14 +211,7 @@ export default function User() {
                 }}
               />
 
-              <Text
-                input={{
-                  id: "cpf",
-                  label: "CPF",
-                  placeholder: "CPF",
-                  required: true,
-                }}
-              />
+              <Switch input={{ id: "isExternal", label: "Externo" }} />
 
               {isTeacher && (
                 <Select

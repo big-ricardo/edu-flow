@@ -14,21 +14,40 @@ import {
   ModalCloseButton,
   useDisclosure,
   Text,
-  Input,
+  Divider,
+  Heading,
 } from "@chakra-ui/react";
+import InputText from "@components/atoms/Inputs/Text";
 import InfoTooltip from "@components/atoms/Inputs/InfoTooltip";
 import Select from "@components/atoms/Inputs/Select";
 import { ErrorMessage } from "@hookform/error-message";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { IUserRoles } from "@interfaces/User";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import { z } from "zod";
 
 const UserSchema = z.object({
-  name: z.string(),
+  _id: z.string().optional(),
+  name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
   email: z.string().email(),
+  matriculation: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
+  isExternal: z.boolean().default(true),
+  institute: z.object({
+    name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
+    acronym: z.string(),
+    university: z.object({
+      name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
+      acronym: z.string(),
+    }),
+  }),
 });
 
 type IUserForm = z.infer<typeof UserSchema>;
@@ -46,25 +65,26 @@ const UserModal: React.FC<UserModalProps> = ({
   onSubmit,
   initialData,
 }) => {
-  const [name, setName] = useState(initialData?.name ?? "");
-  const [email, setEmail] = useState(initialData?.email ?? "");
+  const methods = useForm<IUserForm>({
+    resolver: zodResolver(UserSchema),
+  });
 
-  const handleSubmit = () => {
-    const data = UserSchema.safeParse({ name, email });
+  const { handleSubmit: handleSubmitForm, reset } = methods;
 
-    if (!data.success) {
-      alert("Dados inválidos");
-      return;
-    }
-
-    onSubmit(data.data);
+  const handleSubmit = handleSubmitForm((data) => {
+    onSubmit(data);
+    reset();
     onClose();
-  };
+  });
+
+  const handleClose = useCallback(() => {
+    reset();
+    onClose();
+  }, [reset, onClose]);
 
   useEffect(() => {
-    setName(initialData?.name ?? "");
-    setEmail(initialData?.email ?? "");
-  }, [initialData]);
+    reset(initialData);
+  }, [initialData, reset]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -75,28 +95,35 @@ const UserModal: React.FC<UserModalProps> = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl>
-            <FormLabel>Nome</FormLabel>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nome do professor"
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Email</FormLabel>
-            <Input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email do professor"
-            />
-          </FormControl>
+          <FormProvider {...methods}>
+            <Flex direction="column" gap="4">
+              <InputText input={{ id: "name", label: "Nome" }} />
+              <InputText input={{ id: "email", label: "Email" }} />
+              <InputText input={{ id: "matriculation", label: "Matrícula" }} />
+              <Divider />
+              <Heading as={"h5"} fontSize={"lg"}>
+                Instituto
+              </Heading>
+              <InputText input={{ id: "institute.name", label: "Nome" }} />
+              <InputText input={{ id: "institute.acronym", label: "Sigla" }} />
+              <Divider />
+              <Heading as={"h5"} fontSize={"lg"}>
+                Universidade
+              </Heading>
+              <InputText
+                input={{ id: "institute.university.name", label: "Nome" }}
+              />
+              <InputText
+                input={{ id: "institute.university.acronym", label: "Silga" }}
+              />
+            </Flex>
+          </FormProvider>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" onClick={handleSubmit}>
+          <Button colorScheme="blue" onClick={handleSubmit} mr={3}>
             Salvar
           </Button>
-          <Button colorScheme="gray" mr={3} onClick={onClose}>
+          <Button colorScheme="gray" mr={3} onClick={handleClose}>
             Cancelar
           </Button>
         </ModalFooter>
@@ -145,15 +172,20 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
     onOpen();
   };
 
+  const closeEditModal = () => {
+    setEditableUser(null);
+    onClose();
+  };
+
   const handleUserSubmit = useCallback(
-    ({ name, email }: IUserForm) => {
+    (data: IUserForm) => {
       if (editableUser) {
         update(
           fields.findIndex((field) => field.email === editableUser?.email),
-          { name, email }
+          data
         );
       } else {
-        append({ name, email });
+        append(data);
       }
       setEditableUser(null);
     },
@@ -177,7 +209,7 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
   const appendExistingUser = useCallback(() => {
     const teacher = teachers?.find((t) => t._id === selectedTeacherId);
     if (teacher) {
-      append({ name: teacher.name, email: teacher.email, _id: teacher._id });
+      append(teacher);
       setValue(`${input.id}-select-user`, "");
     }
   }, [teachers, selectedTeacherId, append, setValue, input.id]);
@@ -214,6 +246,9 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
             onClick={() => openEditModal(null)}
             colorScheme="blue"
             size="sm"
+            isDisabled={
+              fields.length >= 10 || (!input.multi && !!fields.length)
+            }
           >
             Adicionar Novo Professor
           </Button>
@@ -222,7 +257,7 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
       <ErrorMessage errors={errors} name={input.id} as="p" />
       <UserModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={closeEditModal}
         onSubmit={handleUserSubmit}
         initialData={editableUser}
       />
@@ -242,16 +277,12 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
 
 const ItemUser: React.FC<{
   index: number;
-  field: {
-    name: string;
-    email: string;
-    _id?: string;
-  };
+  field: IUserForm;
   remove: (index: number) => void;
   edit: () => void;
 }> = ({ index, field, remove, edit }) => {
   const bg = useColorModeValue("gray.300", "gray.600");
-  const isNewUser = !field._id;
+  const isNewUser = field.isExternal;
 
   return (
     <Flex
@@ -264,12 +295,20 @@ const ItemUser: React.FC<{
       borderColor={bg}
       mt="4"
     >
-      <Text fontWeight="bold" fontSize="lg" flex="1" mr="4">
-        {field.name}
-      </Text>
-      <Text flex="1" mr="4">
-        {field.email}
-      </Text>
+      <Flex direction="row" flex="1" justify="space-between" align="center">
+        <div>
+          <Text fontWeight="bold" noOfLines={1}>
+            {field.name}
+          </Text>
+          <Text noOfLines={1}>{field.email}</Text>
+          <Text>{field?.matriculation}</Text>
+        </div>
+        <div>
+          <Text>
+            {field.institute.university?.acronym} - {field.institute?.acronym}{" "}
+          </Text>
+        </div>
+      </Flex>
       <div>
         {isNewUser && (
           <Button
