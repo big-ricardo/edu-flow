@@ -2,6 +2,7 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Activity, {
   IActivityAccepted,
+  IActivityState,
   IActivityStepStatus,
 } from "../../../models/Activity";
 import Form from "../../../models/Form";
@@ -39,44 +40,15 @@ const handler: HttpHandler = async (conn, req) => {
   const rest = req.body as DtoCreated;
   const { name, description, masterminds } = rest;
 
-  const form = await new Form(conn)
+  const activity = await new Activity(conn)
     .model()
-    .findOne({
-      _id: req.params.form_id,
-      active: true,
-      published: { $exists: true },
-      $and: [
-        {
-          $or: [
-            {
-              "period.open": {
-                $exists: false,
-              },
-            },
-            {
-              "period.open": {
-                $lte: moment.utc().toDate(),
-              },
-            },
-          ],
-        },
-        {
-          "period.close": {
-            $gte: moment.utc().toDate(),
-          },
-        },
-      ],
-    })
-    .select({
-      initial_status: 1,
-      published: 1,
-    });
+    .findById(req.params.activity_id);
 
-  if (!form) {
+  if (!activity) {
     return res.notFound("Form not found");
   }
 
-  const formDraft = await new FormDraft(conn).model().findById(form.published);
+  const formDraft = activity.form_draft;
 
   if (!formDraft) {
     return res.notFound("Form draft not found");
@@ -148,7 +120,7 @@ const handler: HttpHandler = async (conn, req) => {
         }
 
         if (typeof val === "object") {
-          if (val?._id) {
+          if (!val?.isExternal) {
             return teachers.find((teacher) => String(teacher._id) === val._id);
           }
 
@@ -164,35 +136,16 @@ const handler: HttpHandler = async (conn, req) => {
     field.value = mapped || value;
   }
 
-  const status = await new Status(conn).model().findById(form.initial_status);
+  activity.name = name;
+  activity.description = description;
+  activity.masterminds = mastermindsExists?.map((mastermind) => ({
+    user: mastermind.toObject(),
+    accepted: IActivityAccepted.pending,
+  }));
+  activity.state = IActivityState.created;
+  activity.form_draft = formDraft;
 
-  const user = await new User(conn).model().findById(req.user.id).select({
-    _id: 1,
-    name: 1,
-    email: 1,
-    matriculation: 1,
-    university_degree: 1,
-    institute: 1,
-  });
-
-  const activity = await new Activity(conn).model().create({
-    name,
-    description,
-    form: form._id,
-    status: status.toObject(),
-    users: [user.toObject()],
-    masterminds: mastermindsExists?.map((mastermind) => ({
-      user: mastermind.toObject(),
-      accepted: IActivityAccepted.pending,
-    })),
-    form_draft: formDraft.toObject(),
-  });
-
-  await new User(conn).model().findByIdAndUpdate(req.user.id, {
-    $push: {
-      activities: activity._id,
-    },
-  });
+  activity.save();
 
   return res.created(activity);
 };
@@ -200,7 +153,7 @@ const handler: HttpHandler = async (conn, req) => {
 export default new Http(handler)
   .setSchemaValidator((schema) => ({
     params: schema.object().shape({
-      form_id: schema.string().required(),
+      activity_id: schema.string().required(),
     }),
     body: schema.object().shape({
       name: schema.string().required().min(3).max(255),
@@ -208,9 +161,9 @@ export default new Http(handler)
     }),
   }))
   .configure({
-    name: "ResponseCreated",
+    name: "EditResponse",
     options: {
       methods: ["POST"],
-      route: "response/{form_id}/created",
+      route: "response/{activity_id}/edit",
     },
   });

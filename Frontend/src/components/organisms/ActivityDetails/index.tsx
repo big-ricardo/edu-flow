@@ -1,15 +1,16 @@
 import React, { memo } from "react";
 import { Card, CardProps, Divider, Flex, Text, VStack } from "@chakra-ui/react";
-import { IActivityDetails } from "@interfaces/Activitiy";
+import IActivity from "@interfaces/Activitiy";
 import { convertDateTime } from "@utils/date";
 import ActivityHeader from "./sections/ActivityHeader";
 import UserDetails from "./sections/UserDetails";
 import ExtraFields from "./sections/ExtraFields";
 import Accordion from "@components/atoms/Accordion";
 import RenderFieldValue from "@components/atoms/RenderFieldValue";
+import Timeline from "./sections/Timeline";
 
 interface ActivityDetailsProps extends CardProps {
-  activity?: IActivityDetails;
+  activity?: IActivity;
 }
 
 const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
@@ -75,6 +76,13 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion.Container>
+
+        <VStack mt={4} align="start">
+          <Text fontWeight={"bold"} fontSize="md" mb={2}>
+            Fluxo de Atividades
+          </Text>
+          <Timeline workflows={activity.workflows} />
+        </VStack>
       </Card>
     );
   }

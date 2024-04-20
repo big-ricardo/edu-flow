@@ -15,6 +15,7 @@ const handler: HttpHandler = async (conn, req) => {
             name: req.user.name,
             email: req.user.email,
             matriculation: req.user.matriculation,
+            institute: req.user.institute,
           },
           content: data.content,
         },
@@ -25,14 +26,9 @@ const handler: HttpHandler = async (conn, req) => {
 
   comment.save();
 
-  return res.created({
-    ...comment.toObject(),
-    user: {
-      _id: req.user.id,
-      name: req.user.name,
-      email: req.user.email,
-    },
-  });
+  const newComment = comment.comments[comment.comments.length - 1];
+
+  return res.created(newComment);
 };
 
 export default new Http(handler)

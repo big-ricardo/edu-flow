@@ -7,9 +7,14 @@ import { Connection, ObjectId } from "mongoose";
 import mongo from "../services/mongo";
 import * as yup from "yup";
 import Activity, { IActivityStepStatus } from "../models/Activity";
+import sbusOutputs from "../utils/sbusOutputs";
+import { NodeTypes } from "../models/WorkflowDraft";
+
+const IS_IDLE_BLOCK = [NodeTypes.Interaction, NodeTypes.Evaluated];
 
 export interface GenericMessage {
   activity_id: string;
+  activity_workflow_id: string;
   activity_step_id: string;
 }
 
@@ -30,8 +35,13 @@ export type QueueWrapperHandler<TMessage extends GenericMessage> = (
 export default class QueueWrapper<TMessage> {
   private handler: QueueWrapperHandler<TMessage & GenericMessage>;
   private schemaValidator = yup.object().shape({
-    message: yup.object().shape({ activity_step_id: yup.string().required() }),
+    message: yup.object().shape({
+      activity_step_id: yup.string().required(),
+      activity_id: yup.string().required(),
+      activity_workflow_id: yup.string().required(),
+    }),
   });
+  private name: NodeTypes;
 
   constructor(handler: typeof QueueWrapper.prototype.handler) {
     this.handler = handler;
@@ -61,12 +71,20 @@ export default class QueueWrapper<TMessage> {
         .model()
         .findById(message.activity_id)
         .then((activity) => {
-          const activityWorkflow = activity.workflows.find(
-            (workflow) => !workflow.finished
+          const activityWorkflowIndex = activity.workflows.findIndex(
+            (workflow) =>
+              workflow._id.toString() === message.activity_workflow_id
           );
-          activityWorkflow.steps.find(
+          const activityStepIndex = activity.workflows[
+            activityWorkflowIndex
+          ].steps.findIndex(
             (step) => step._id.toString() === message.activity_step_id
-          ).status = IActivityStepStatus.inProgress;
+          );
+
+          activity.workflows[activityWorkflowIndex].steps[
+            activityStepIndex
+          ].status = IActivityStepStatus.inProgress;
+
           return activity.save();
         });
 
@@ -90,12 +108,22 @@ export default class QueueWrapper<TMessage> {
         .model()
         .findById(message.activity_id)
         .then((activity) => {
-          const activityWorkflow = activity.workflows.find(
-            (workflow) => !workflow.finished
+          const activityWorkflowIndex = activity.workflows.findIndex(
+            (workflow) =>
+              workflow._id.toString() === message.activity_workflow_id
           );
-          activityWorkflow.steps.find(
+          const activityStepIndex = activity.workflows[
+            activityWorkflowIndex
+          ].steps.findIndex(
             (step) => step._id.toString() === message.activity_step_id
-          ).status = IActivityStepStatus.finished;
+          );
+
+          activity.workflows[activityWorkflowIndex].steps[
+            activityStepIndex
+          ].status = IS_IDLE_BLOCK.includes(this.name)
+            ? IActivityStepStatus.idle
+            : IActivityStepStatus.finished;
+
           return activity.save();
         });
 
@@ -103,18 +131,46 @@ export default class QueueWrapper<TMessage> {
     } catch (error) {
       if (conn) {
         await new Activity(conn)
-          .model()
-          .findById(message.activity_id)
-          .then((activity) => {
-            const activityWorkflow = activity.workflows.find(
-              (workflow) => !workflow.finished
-            );
-            activityWorkflow.steps.find(
-              (step) => step._id.toString() === message.activity_step_id
-            ).status = IActivityStepStatus.error;
-            return activity.save();
-          });
+        .model()
+        .findById(message.activity_id)
+        .then((activity) => {
+          const activityWorkflowIndex = activity.workflows.findIndex(
+            (workflow) =>
+              workflow._id.toString() === message.activity_workflow_id
+          );
+          const activityStepIndex = activity.workflows[
+            activityWorkflowIndex
+          ].steps.findIndex(
+            (step) => step._id.toString() === message.activity_step_id
+          );
+
+          activity.workflows[activityWorkflowIndex].steps[
+            activityStepIndex
+          ].status = IActivityStepStatus.error;
+
+          return activity.save();
+        });
       }
+      await new Activity(conn)
+        .model()
+        .findById(message.activity_id)
+        .then((activity) => {
+          const activityWorkflowIndex = activity.workflows.findIndex(
+            (workflow) =>
+              workflow._id.toString() === message.activity_workflow_id
+          );
+          const activityStepIndex = activity.workflows[
+            activityWorkflowIndex
+          ].steps.findIndex(
+            (step) => step._id.toString() === message.activity_step_id
+          );
+
+          activity.workflows[activityWorkflowIndex].steps[
+            activityStepIndex
+          ].status = IActivityStepStatus.error;
+
+          return activity.save();
+        });
 
       return Promise.reject(error);
     }
@@ -122,15 +178,21 @@ export default class QueueWrapper<TMessage> {
 
   public configure = (configs: {
     name: string;
-    options: Omit<ServiceBusQueueFunctionOptions, "connection" | "handler">;
+    options: Omit<
+      ServiceBusQueueFunctionOptions,
+      "connection" | "handler" | "extraOutputs" | "queueName"
+    > & {
+      queueName: NodeTypes;
+    };
   }): this => {
     const { name, options } = configs;
-    // app.serviceBusQueue(name, {
-    //   ...options,
-    //   connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
-    //   handler: this.run,
-    //   extraOutputs: sbusOutputs,
-    // });
+    this.name = options.queueName;
+    app.serviceBusQueue(name, {
+      ...options,
+      connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
+      handler: this.run,
+      extraOutputs: sbusOutputs,
+    });
     return this;
   };
 }

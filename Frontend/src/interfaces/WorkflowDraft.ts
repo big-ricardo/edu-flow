@@ -60,6 +60,7 @@ export type IEvaluated = {
 );
 
 export type IStep = {
+  _id: string;
   id: string;
   name: string;
   visible: boolean;

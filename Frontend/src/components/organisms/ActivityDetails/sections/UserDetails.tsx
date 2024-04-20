@@ -17,12 +17,13 @@ const UserDetails: React.FC<UserDetailsProps> = ({ user, accepted }) => {
       mb={4}
       opacity={accepted === "pending" ? 0.5 : 1}
       borderColor={accepted === "rejected" ? "red.500" : undefined}
+      w="fit-content"
     >
-      <Text fontSize="sm" fontWeight={"bold"}>
+      <Text fontSize="sm" fontWeight={"bold "} noOfLines={1}>
         {user.name}
       </Text>
-      <Text fontSize="sm">{user.email}</Text>
-      <Text fontSize="sm">{user.matriculation}</Text>
+      <Text fontSize="sm" noOfLines={1}>{user.email}</Text>
+      <Text fontSize="sm" noOfLines={1}>{user.matriculation}</Text>
 
       {accepted === "rejected" && (
         <Text color="red.500" fontSize={"sm"}>

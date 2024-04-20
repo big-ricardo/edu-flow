@@ -5,7 +5,7 @@ import Form from "../../../models/Form";
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const form = await new Form(conn).model().findById(id);
+  const form = await new Form(conn).model().findById(id).populate("published");
 
   if (!form) {
     return res.notFound("Form not found");

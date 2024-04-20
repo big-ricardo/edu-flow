@@ -79,6 +79,8 @@ export const schema: Schema = new Schema<IFormDraft>(
         },
         weight: { type: Number, required: false },
         label: { type: String, required: false, default: "" },
+        multi: { type: Boolean, required: false },
+        created: { type: Boolean, required: false },
         placeholder: { type: String, required: false, default: "" },
         required: { type: Boolean, required: false },
         visible: { type: Boolean, required: false },

@@ -1,5 +1,6 @@
 import { InvocationContext, output } from "@azure/functions";
 import { Connection } from "mongoose";
+import { GenericMessage } from "../middlewares/queue";
 
 export const extraOutputsSwapWorkflow = output.serviceBusQueue({
   queueName: "swap_workflow",
@@ -42,20 +43,18 @@ type SendToQueue = ({
   context,
   queueName,
   message,
-  conn,
 }: {
   context: InvocationContext;
   queueName: string;
-  message: any;
-  conn: Connection;
+  message: Object & GenericMessage
 }) => void;
 
 export const sendToQueue: SendToQueue = ({
   context,
   queueName,
   message,
-  conn,
 }) => {
+  console.log("sendToQueue", queueName, message);
   context.extraOutputs.set(extraOutputs[queueName], message);
 
   context.info(`Sent to queue ${queueName}`);

@@ -20,10 +20,10 @@ const replaceSmartValues = async <T extends string | string[]>({
 
   if (Array.isArray(replaceValues)) {
     return replaceValues.map((replaceValue) => {
-      return replaceVariables(activity, replaceValue);
+      return replaceVariables({ activity }, replaceValue);
     }) as T;
   } else {
-    return replaceVariables(activity, replaceValues) as T;
+    return replaceVariables({ activity }, replaceValues) as T;
   }
 };
 
@@ -65,9 +65,7 @@ export function replaceVariables(data, template: string): string {
 
   return template.replace(regex, (match, key) => {
     const levels = key.split(".");
-    // Inicia a resolução dos valores a partir do nível 0.
     const resolvedValue = resolveValue(data, levels);
-    // Se o valor não for definido, retorna "-" como fallback.
     return resolvedValue !== undefined ? resolvedValue : "-";
   });
 }

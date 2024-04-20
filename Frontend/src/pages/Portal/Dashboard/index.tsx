@@ -4,6 +4,7 @@ import { Box } from "@chakra-ui/react";
 import ApprovedActivities from "./components/ActivitiesProcess";
 import ActivitiesAccept from "./components/ActivitiesAccept";
 import OpenForms from "./components/OpenForms";
+import PendingInteractions from "./components/MyPendingInteractions";
 
 const Dashboard: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const Dashboard: React.FC = () => {
       <MyActivities />
       <ApprovedActivities />
       <ActivitiesAccept />
+      <PendingInteractions />
     </Box>
   );
 };

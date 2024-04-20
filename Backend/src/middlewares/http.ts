@@ -33,6 +33,7 @@ interface User {
   email: string;
   role: "student" | "admin" | "teacher" | "coordinator";
   institute: IInstitute;
+  slug: string;
 }
 
 export type HttpHandler = (
@@ -95,7 +96,7 @@ export default class Http {
           throw err;
         });
 
-      this.conn = await mongo.connect("db");
+      this.conn = mongo.connect("db");
 
       return await this.handler(
         this.conn,
@@ -122,7 +123,7 @@ export default class Http {
 
       return res.internalServerError();
     } finally {
-      // await mongo.disconnect(this.conn);
+      //await mongo.disconnect(this.conn);
     }
   };
 

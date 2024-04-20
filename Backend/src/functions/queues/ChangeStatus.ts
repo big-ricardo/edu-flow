@@ -3,13 +3,8 @@ import QueueWrapper, {
   QueueWrapperHandler,
 } from "../../middlewares/queue";
 import Activity from "../../models/Activity";
-import Email from "../../models/Email";
-import WorkflowDraft, {
-  ISendEmail,
-  NodeTypes,
-} from "../../models/WorkflowDraft";
-import { sendEmail } from "../../services/email";
-import replaceSmartValues from "../../utils/replaceSmartValues";
+import Status from "../../models/Status";
+import { IChangeStatus, NodeTypes } from "../../models/WorkflowDraft";
 import sendNextQueue from "../../utils/sendNextQueue";
 
 interface TMessage extends GenericMessage {}
@@ -41,6 +36,8 @@ const handler: QueueWrapperHandler<TMessage> = async (
       workflow_draft: { steps },
     } = activityWorkflow;
 
+    context.log("activityWorkflow", activityWorkflow);
+
     const activityStep = activityWorkflow.steps.find(
       (step) => step._id.toString() === activity_step_id
     );
@@ -57,51 +54,29 @@ const handler: QueueWrapperHandler<TMessage> = async (
       throw new Error("Step not found");
     }
 
-    const { data } = step as { data: ISendEmail };
+    const { data } = step as { data: IChangeStatus };
 
     if (!data) {
       throw new Error("Data not found");
     }
 
-    const { to, email_id } = data;
+    const { status_id } = data;
 
-    const email = await new Email(conn).model().findById(email_id);
+    const status = await new Status(conn).model().findById(status_id);
 
-    if (!email) {
-      throw new Error("Email not found");
+    if (!status) {
+      throw new Error("Status not found");
     }
 
-    const { subject, htmlTemplate } = email;
-
-    context.log("Email data", JSON.stringify({ to, subject }));
-
-    const subjectReplaced = await replaceSmartValues({
-      conn,
-      activity_id,
-      replaceValues: subject,
-    });
-
-    const toReplaced = (
-      await replaceSmartValues({
-        conn,
-        activity_id,
-        replaceValues: to,
-      })
-    ).flatMap((el) => el.split(", "));
-
-    const htmlTemplateReplaced = await replaceSmartValues({
-      conn,
-      activity_id,
-      replaceValues: htmlTemplate,
-    });
-
-    await sendEmail(toReplaced, subjectReplaced, htmlTemplateReplaced);
+    activity.status = status;
 
     await sendNextQueue({
       conn,
       activity,
       context,
     });
+
+    await activity.save();
   } catch (err) {
     console.error(err);
     throw err;
@@ -109,8 +84,8 @@ const handler: QueueWrapperHandler<TMessage> = async (
 };
 
 export default new QueueWrapper<TMessage>(handler).configure({
-  name: "WorkSendEmail",
+  name: "WorkChangeStatus",
   options: {
-    queueName: NodeTypes.SendEmail,
+    queueName: NodeTypes.ChangeStatus,
   },
 });

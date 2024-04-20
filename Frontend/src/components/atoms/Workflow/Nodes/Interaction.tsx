@@ -2,7 +2,7 @@ import { Box, Flex, useColorModeValue, Text } from "@chakra-ui/react";
 import { NodeProps, Position } from "reactflow";
 import WrapperNode from "./Wrapper";
 import { FaWpforms } from "react-icons/fa";
-import { IInteraction } from "@interfaces/Workflow";
+import { IInteraction } from "@interfaces/WorkflowDraft";
 import CustomHandle from "../CustomHandle";
 
 interface InteractionProps extends NodeProps {

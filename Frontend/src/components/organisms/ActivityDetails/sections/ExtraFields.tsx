@@ -2,9 +2,10 @@
 import React from "react";
 import { Flex } from "@chakra-ui/react";
 import RenderFieldValue from "@components/atoms/RenderFieldValue";
+import { IField } from "@interfaces/FormDraft";
 
 interface ExtraFieldsProps {
-  fields: { id: string; label: string; value: string }[];
+  fields: IField[];
 }
 
 const ExtraFields: React.FC<ExtraFieldsProps> = ({ fields }) => {
@@ -14,7 +15,7 @@ const ExtraFields: React.FC<ExtraFieldsProps> = ({ fields }) => {
         <RenderFieldValue
           key={field.id}
           label={field.label}
-          value={field.value}
+          value={field.value ?? "Não informado"}
         />
       ))}
     </Flex>

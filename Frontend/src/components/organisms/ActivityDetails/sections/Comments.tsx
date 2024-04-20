@@ -29,6 +29,7 @@ import TextArea from "@components/atoms/Inputs/TextArea";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { convertDateTime } from "@utils/date";
+import { getActivity } from "@apis/activity";
 
 interface CommentsProps {
   id: string;
@@ -38,16 +39,17 @@ const Comments: React.FC<CommentsProps> = ({ id }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [data] = useAuth();
   const { data: comments, isLoading } = useQuery({
-    queryKey: ["comments", id],
-    queryFn: getComments,
+    queryKey: ["activity", id],
+    queryFn: getActivity,
+    select: (data) => data.comments,
   });
 
   const Length = useMemo(() => {
-    if (!comments?.comments?.length || !data) {
+    if (!comments?.length || !data) {
       return false;
     }
 
-    return comments?.comments?.length;
+    return comments?.length;
   }, [comments, data]);
 
   return (
@@ -83,7 +85,7 @@ const Comments: React.FC<CommentsProps> = ({ id }) => {
             <Card w="full" h="full">
               <CardBody>
                 <Flex direction="column" gap={2} h="full" overflowY="auto">
-                  {comments?.comments?.map((comment) => (
+                  {comments?.map((comment) => (
                     <CommentItem key={comment._id} comment={comment} />
                   ))}
                 </Flex>
@@ -122,13 +124,13 @@ const CommentForm: React.FC<{ id: string }> = ({ id }) => {
     onSuccess: (data) => {
       reset();
       queryClient.setQueryData(
-        ["comments", id],
-        (oldData: Awaited<ReturnType<typeof getComments>>) => {
+        ["activity", id],
+        (oldData: Awaited<ReturnType<typeof getActivity>>) => {
           return {
             ...oldData,
             comments: [...oldData.comments, data],
           };
-        },
+        }
       );
     },
   });

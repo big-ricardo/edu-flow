@@ -20,26 +20,28 @@ const handler: HttpHandler = async (conn, req) => {
           {
             $or: [
               {
-                "period.open": {
-                  $exists: false,
-                },
+                "period.open": null,
               },
               {
-                "period.open": {
-                  $lte: moment.utc().toDate(),
-                },
+                $and: [
+                  {
+                    "period.open": {
+                      $lte: moment.utc().toDate(),
+                    },
+                  },
+                  {
+                    "period.close": {
+                      $gte: moment.utc().toDate(),
+                    },
+                  },
+                ],
               },
             ],
-          },
-          {
-            "period.close": {
-              $gte: moment.utc().toDate(),
-            },
           },
         ],
       })
       .populate("published")
-  ).toObject() as IForm & { published: IFormDraft };
+  )?.toObject() as IForm & { published: IFormDraft };
 
   if (!form) {
     return res.notFound("Form not found");

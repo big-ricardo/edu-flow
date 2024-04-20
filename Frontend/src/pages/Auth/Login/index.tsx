@@ -22,6 +22,11 @@ import Password from "@components/atoms/Inputs/Password";
 import { login } from "@apis/auth";
 
 const schema = z.object({
+  acronym: z
+    .string()
+    .min(2, "A sigla deve ter no mínimo 2 caracteres")
+    .trim()
+    .transform((v) => v.toLowerCase().replace(/ /g, "")),
   cpf: z
     .string()
     .length(11, "O CPF deve ter 11 dígitos")
@@ -100,6 +105,14 @@ const Login: React.FC = () => {
         <Card p="10" w={{ base: "100%", md: "450px" }} boxShadow="lg">
           <CardBody>
             <form onSubmit={onSubmit}>
+              <InputText
+                input={{
+                  id: "acronym",
+                  label: "Sigla",
+                  placeholder: "Sigla",
+                }}
+              />
+
               <InputText
                 input={{
                   id: "cpf",

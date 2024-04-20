@@ -1,14 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema, Types } from "mongoose";
 import { IUser } from "./User";
 import { IStatus } from "./Status";
-import { schema as schemaForm } from "./Form";
 import { IFormDraft, schema as schemaFormDraft } from "./FormDraft";
-import {
-  IStep,
-  IWorkflowDraft,
-  schemaBase as schemaWorkflowDraft,
-} from "./WorkflowDraft";
-import { schema as instituteSchema } from "./Institute";
+import { IStep, IWorkflowDraft } from "./WorkflowDraft";
 
 export enum IActivityState {
   finished = "finished",
@@ -58,17 +52,22 @@ export enum IActivityStepStatus {
 }
 
 export type IActivityStep = {
-  _id: string;
-  step: IStep;
+  _id: ObjectId;
+  step: ObjectId;
   status: IActivityStepStatus;
   data: object;
-  answers: IFormDraft[];
-  createdAt: string;
-  updatedAt: string;
+  interactions: IFormDraft[];
+};
+
+export type ActivityWorkflow = {
+  _id: ObjectId;
+  workflow_draft: IWorkflowDraft;
+  steps: mongoose.Types.DocumentArray<IActivityStep>;
+  finished: boolean;
 };
 
 export type IActivity = {
-  _id: string;
+  _id: ObjectId;
   name: string;
   protocol: string;
   state: IActivityState;
@@ -98,23 +97,19 @@ export type IActivity = {
   >[];
   status: IStatus;
   comments: IComment[];
-  workflows: {
-    _id: mongoose.Types.ObjectId;
-    workflow_draft: IWorkflowDraft;
-    steps: IActivityStep[];
-    finished: boolean;
-  }[];
+  workflows: mongoose.Types.DocumentArray<ActivityWorkflow>;
   description: string;
   createdAt: string;
   updatedAt: string;
 } & mongoose.Document;
 
 const userSchema = new Schema<IUserChild>({
-  isExternal: { type: Boolean, required: false },
   _id: {
     type: Schema.Types.ObjectId,
     required: () => !(this as IUserChild).isExternal,
+    index: true,
   },
+  isExternal: { type: Boolean, required: false },
   name: { type: String, required: true },
   email: { type: String, required: true },
   matriculation: { type: String, required: true },
@@ -122,13 +117,18 @@ const userSchema = new Schema<IUserChild>({
   institute: { type: Object, required: true },
 });
 
-const commentSchema = new Schema<IComment>({
-  _id: { type: Schema.Types.ObjectId, auto: true },
-  user: userSchema,
-  content: { type: String, required: true },
-  viewed: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  isEdited: { type: Boolean, default: false },
-});
+const commentSchema = new Schema<IComment>(
+  {
+    _id: { type: Schema.Types.ObjectId, auto: true },
+    user: { type: Object, required: true },
+    content: { type: String, required: true },
+    viewed: [{ type: Schema.Types.ObjectId }],
+    isEdited: { type: Boolean, default: false },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const statusSchema = new Schema<IStatus>({
   name: { type: String, required: true },
@@ -137,6 +137,29 @@ const statusSchema = new Schema<IStatus>({
     required: true,
     enum: ["progress", "done", "canceled"],
   },
+});
+
+export const ActivityStepSchema = new Schema<IActivityStep>({
+  _id: { type: Schema.Types.ObjectId, auto: true },
+  step: { type: Schema.Types.ObjectId, required: true },
+  status: {
+    type: String,
+    required: true,
+    enum: Object.values(IActivityStepStatus),
+    default: IActivityStepStatus.idle,
+  },
+  data: { type: Object, required: false, default: {} },
+  interactions: [{ type: Object, required: false, default: [] }],
+});
+
+export const ActivityWorkflowSchema = new Schema<ActivityWorkflow>({
+  _id: { type: Schema.Types.ObjectId, auto: true },
+  workflow_draft: {
+    type: Object,
+    required: true,
+  },
+  steps: [{ type: ActivityStepSchema, required: false, default: [] }],
+  finished: { type: Boolean, default: false },
 });
 
 export const schema: Schema = new Schema<IActivity>(
@@ -168,43 +191,24 @@ export const schema: Schema = new Schema<IActivity>(
     status: { type: statusSchema, required: true },
     workflows: [
       {
-        _id: { type: Schema.Types.ObjectId, auto: true },
-        workflow_draft: {
-          type: Object,
-          required: true,
-        },
-        steps: [
-          {
-            _id: { type: Schema.Types.ObjectId, auto: true },
-            step: { type: Schema.Types.ObjectId, required: true },
-            status: {
-              type: String,
-              required: true,
-              enum: Object.values(IActivityStepStatus),
-              default: IActivityStepStatus.idle,
-            },
-            data: { type: Object, required: false, default: {} },
-            answers: [{ type: schemaFormDraft, required: false, default: [] }],
-          },
-        ],
-        finished: { type: Boolean, default: false },
+        type: ActivityWorkflowSchema,
+        required: false,
+        default: [],
       },
     ],
   },
   {
     timestamps: true,
   }
-)
-  .pre<IActivity>("save", function (next) {
-    if (!this.isNew) {
-      return next();
-    }
-    const year = new Date().getFullYear();
-    const timestamp = new Date().getTime().toString().slice(-5);
-    this.protocol = `${year}${timestamp}`;
-    next();
-  })
-  .index({ name: 1, state: 1 }, { unique: true });
+).pre<IActivity>("save", function (next) {
+  if (!this.isNew) {
+    return next();
+  }
+  const year = new Date().getFullYear();
+  const timestamp = new Date().getTime().toString().slice(-5);
+  this.protocol = `${year}${timestamp}`;
+  next();
+});
 
 export default class Activity {
   conn: mongoose.Connection;

@@ -372,7 +372,7 @@ const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
 
   const getFieldOptions = useMemo(() => {
     return (
-      formsData?.fields.map((field) => ({
+      formsData?.fields?.map((field) => ({
         label: field.id,
         value: field.id,
       })) ?? []
@@ -381,7 +381,7 @@ const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
 
   const getField = useCallback(
     (id: string) => {
-      return formsData?.fields.find((field) => field.id === id);
+      return formsData?.fields?.find((field) => field.id === id);
     },
     [formsData]
   );

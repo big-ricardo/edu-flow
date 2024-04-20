@@ -12,19 +12,13 @@ type ReqInstitute = Response<Institute[]>;
 
 export const responseForm = async ({
   form,
-  edit_id,
   activity_id,
   data,
 }: {
   form: IForm;
-  edit_id?: string;
   activity_id?: string;
   data: Record<string, string | { file: string }>;
 }) => {
-  if (edit_id) {
-    return updateAnswer({ form, activity_id: edit_id, data });
-  }
-
   return createAnswer({ form, data, activity_id });
 };
 
@@ -45,17 +39,15 @@ const createAnswer = async ({
   return res.data.data;
 };
 
-const updateAnswer = async ({
-  form,
+export const updateResponseForm = async ({
   activity_id,
   data,
 }: {
-  form: IForm;
   activity_id: string;
   data: Record<string, string | { file: string }>;
 }) => {
   const res = await api.post<ReqInstitute>(
-    `/edit/${activity_id}/${form.type}`,
+    `/response/${activity_id}/edit`,
     data
   );
 

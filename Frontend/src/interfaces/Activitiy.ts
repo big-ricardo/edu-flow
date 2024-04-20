@@ -1,10 +1,20 @@
-import IFormDraft, { IField } from "./FormDraft";
+import IComment from "./Comments";
+import IForm from "./Form";
+import IFormDraft from "./FormDraft";
+import IStatus from "./Status";
 import IUser from "./User";
+import IWorkflowDraft from "./WorkflowDraft";
 
 export enum IActivityState {
   finished = "finished",
   processing = "processing",
+  committed = "committed",
   created = "created",
+}
+
+export enum IActivityStatus {
+  active = "active",
+  inactive = "inactive",
 }
 
 export enum IActivityAccepted {
@@ -13,40 +23,50 @@ export enum IActivityAccepted {
   pending = "pending",
 }
 
-export default interface IActivity {
-  _id: string;
-  name: string;
-  description: string;
-  state: IActivityState;
-  form: string;
-  status: string;
-  protocol: string;
-  users: string[];
-  masterminds: {
-    accepted: IActivityAccepted;
-    user: string;
-  }[];
-  sub_masterminds: string[];
-  createdAt: string;
-  custom_fields: string;
+export type IUserChild = Omit<IUser, "password">
+
+export enum IActivityStepStatus {
+  idle = "idle",
+  inQueue = "in_queue",
+  inProgress = "in_progress",
+  finished = "finished",
+  error = "error",
 }
 
-export interface IActivityDetails
-  extends Omit<
-    IActivity,
-    "users" | "status" | "masterminds" | "sub_masterminds"
-  > {
-  status: {
-    _id: string;
-    name: string;
-  };
-  users: Pick<IUser, "_id" | "name" | "email" | "matriculation">[];
+export type IActivityStep = {
+  _id: string;
+  step: string;
+  status: IActivityStepStatus;
+  data: object;
+  interactions: IFormDraft[];
+};
+
+export type ActivityWorkflow = {
+  _id: string;
+  workflow_draft: IWorkflowDraft;
+  steps: Array<IActivityStep>;
+  finished: boolean;
+};
+
+export type IActivity = {
+  _id: string;
+  name: string;
+  protocol: string;
+  state: IActivityState;
+  users: IUserChild[];
+  form: IForm;
+  form_draft: IFormDraft;
   masterminds: {
-    accepted: "accepted" | "rejected" | "pending";
-    user: Pick<IUser, "_id" | "name" | "email" | "matriculation">;
+    accepted: IActivityAccepted;
+    user: IUserChild;
   }[];
-  sub_masterminds: Pick<IUser, "_id" | "name" | "email" | "matriculation">[];
-  form_draft: Pick<IFormDraft, "_id"> & {
-    fields: IField[];
-  };
+  sub_masterminds: IUserChild[];
+  status: IStatus;
+  comments: IComment[];
+  workflows:ActivityWorkflow[];
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export default IActivity;

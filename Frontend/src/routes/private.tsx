@@ -22,6 +22,7 @@ import FormDraft from "@pages/Portal/FormDrafts";
 import Activity from "@pages/Portal/Activity";
 import ActivityProcess from "@pages/Portal/ActivityCommit";
 import ActivityAccept from "@pages/Portal/ActivityAccept";
+import EditResponse from "@pages/Edit";
 
 const routes: RouteType = [
   {
@@ -127,8 +128,8 @@ const routes: RouteType = [
     element: <Response />,
   },
   {
-    path: "/response/:slug/:activity_id",
-    element: <Response />,
+    path: "/response/:id/edit",
+    element: <EditResponse />,
   },
 ];
 

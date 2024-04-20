@@ -1,11 +1,15 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, { IActivityState } from "../../../models/Activity";
+import Activity, {
+  IActivityState,
+  IActivityStepStatus,
+} from "../../../models/Activity";
 import User, { IUser, IUserRoles } from "../../../models/User";
-import mongoose from "mongoose";
 import WorkflowDraft from "../../../models/WorkflowDraft";
 import Form, { IForm } from "../../../models/Form";
 import { IWorkflow } from "../../../models/Workflow";
+import sendNextQueue from "../../../utils/sendNextQueue";
+import sbusOutputs from "../../../utils/sbusOutputs";
 
 interface IActivityUpdate {
   name: string;
@@ -15,7 +19,7 @@ interface IActivityUpdate {
   sub_masterminds: Omit<IUser, "password">[];
 }
 
-const handler: HttpHandler = async (conn, req) => {
+const handler: HttpHandler = async (conn, req, context) => {
   const { id } = req.params as { id: string };
 
   const activity = new Activity(conn).model();
@@ -36,8 +40,8 @@ const handler: HttpHandler = async (conn, req) => {
         const subMastermindData = await user.findOne({
           email: sub.email,
         });
+        console.log(">>>>> subMastermindData", subMastermindData);
         if (!subMastermindData) {
-          //TODO: Adjust titulacao
           const newUser = await new User(conn).model().create({
             ...sub,
             roles: [IUserRoles.teacher],
@@ -55,8 +59,6 @@ const handler: HttpHandler = async (conn, req) => {
     })
   );
 
-  console.log(">>>>> Arr", subMastermind);
-
   if (subMastermind.includes(null)) {
     return res.error(400, {}, "Invalid sub mastermind id");
   }
@@ -70,17 +72,11 @@ const handler: HttpHandler = async (conn, req) => {
     return res.error(400, {}, "Invalid user id");
   }
 
-  const activityUpdated = await activity.findByIdAndUpdate(
-    id,
-    {
-      name,
-      description,
-      users: userData.map((user) => user.toObject()),
-      sub_masterminds: subMastermind,
-      state: IActivityState.processing,
-    },
-    { new: true }
-  );
+  activityData.name = name;
+  activityData.description = description;
+  activityData.users = userData.map((user) => user.toObject());
+  activityData.sub_masterminds = subMastermind;
+  activityData.state = IActivityState.processing;
 
   const form = (await new Form(conn)
     .model()
@@ -99,25 +95,30 @@ const handler: HttpHandler = async (conn, req) => {
     return res.error(400, {}, "Invalid workflow");
   }
 
-  const activityWorkflow = await activity.findByIdAndUpdate(
-    id,
-    {
-      $push: {
-        workflows: {
-          workflow_draft: workflowDraft,
-          steps: {
-            step: firstStep,
-            status: "idle",
-          },
-        },
+  activityData.workflows.push({
+    workflow_draft: workflowDraft,
+    steps: [
+      {
+        step: firstStep._id,
+        status: IActivityStepStatus.inProgress,
       },
-    },
-    { new: true }
-  );
+    ],
+  });
 
-  await activityWorkflow.save();
+  await sendNextQueue({
+    conn,
+    context,
+    activity: activityData,
+  }).catch((error) => {
+    console.error("Error sending to queue", error);
+    throw new Error(error);
+  });
 
-  return res.success(activityUpdated);
+  activityData.workflows[0].steps[0].status = IActivityStepStatus.finished;
+
+  await activityData.save();
+
+  return res.success(activityData.toObject());
 };
 
 export default new Http(handler)
@@ -145,5 +146,6 @@ export default new Http(handler)
     options: {
       methods: ["PUT"],
       route: "activity-committed/{id}",
+      extraOutputs: sbusOutputs,
     },
   });

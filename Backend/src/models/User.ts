@@ -1,5 +1,5 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
-import { IInstitute, schema as instituteSchema } from "./Institute";
+import { IInstitute } from "./Institute";
 
 export enum IUserRoles {
   admin = "admin",
@@ -19,6 +19,11 @@ type BaseUser = {
   active: boolean;
   university_degree?: string;
   isExternal: boolean;
+  activity_pending: {
+    _id: ObjectId;
+    activity: ObjectId;
+    form: ObjectId;
+  }[];
 };
 
 type AdminOrStudent = BaseUser & { role: "admin" | "student" };
@@ -29,10 +34,10 @@ export type IUser = AdminOrStudent | Teacher;
 export const schema: Schema = new Schema<IUser>(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: true },
     active: { type: Boolean, default: true },
-    matriculation: { type: String, required: true, unique: true },
+    matriculation: { type: String, required: true, unique: true, index: true },
     activities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
     isExternal: { type: Boolean, default: false, index: true },
     roles: [
@@ -52,12 +57,19 @@ export const schema: Schema = new Schema<IUser>(
       required: () => (this as IUser).roles?.includes(IUserRoles.teacher),
       enum: ["mastermind", "doctor"],
     },
+    activity_pending: [
+      {
+        _id: { type: Schema.Types.ObjectId, auto: true },
+        activity: { type: Schema.Types.ObjectId, ref: "Activity" },
+        form: { type: Schema.Types.ObjectId, ref: "Form" },
+      },
+    ],
   },
   {
     timestamps: true,
   }
 ).pre("save", function (next) {
-  if (this.role !== "teacher") {
+  if (!this.roles.includes(IUserRoles.teacher)) {
     this.university_degree = null;
   }
   next();

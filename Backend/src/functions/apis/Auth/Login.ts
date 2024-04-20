@@ -6,9 +6,10 @@ import jwt from "../../../services/jwt";
 interface Body {
   cpf: string;
   password: string;
+  acronym: string[];
 }
 export const handler: HttpHandler = async (conn, req, context) => {
-  const { cpf, password } = req.body as Body;
+  const { cpf, password, acronym } = req.body as Body;
 
   const user = await conn.model("User").findOne({
     cpf,
@@ -29,6 +30,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
     email: user.email,
     roles: user.roles,
     institute: user.institute,
+    slug: acronym,
   });
 
   return res.success({

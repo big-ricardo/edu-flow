@@ -1,4 +1,4 @@
-import { getMyActivities } from "@apis/dashboard";
+import { getMyActivitiesPendingInteractions } from "@apis/dashboard";
 import {
   Box,
   Button,
@@ -10,24 +10,25 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import IActivity, { IActivityState } from "@interfaces/Activitiy";
+import IActivity from "@interfaces/Activitiy";
+import IForm from "@interfaces/Form";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
 import React, { memo, useCallback } from "react";
-import { FaEye, FaPen } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const MyActivities: React.FC = () => {
+const PendingInteractions: React.FC = () => {
   const { data, isLoading } = useQuery({
-    queryKey: ["my-activities"],
-    queryFn: getMyActivities,
+    queryKey: ["my-pending-interactions"],
+    queryFn: getMyActivitiesPendingInteractions,
   });
 
-  if (data && data.activities.length === 0) return null;
+  if (data && data.length === 0) return null;
 
   return (
     <Box p={4}>
-      <Heading>Minhas Atividades</Heading>
+      <Heading>Interações Pendentes</Heading>
 
       {isLoading && <Spinner />}
 
@@ -38,8 +39,8 @@ const MyActivities: React.FC = () => {
           width="100%"
           templateColumns="repeat(auto-fill, minmax(350px, 1fr))"
         >
-          {data.activities.map((activity) => (
-            <ActivityItem key={activity._id} activity={activity} />
+          {data.map((data) => (
+            <ActivityItem key={data.activity._id} {...data} />
           ))}
         </Grid>
       )}
@@ -47,41 +48,26 @@ const MyActivities: React.FC = () => {
   );
 };
 
-export default MyActivities;
+export default PendingInteractions;
 
 interface ActivityItemProps {
   activity: Pick<
     IActivity,
-    | "_id"
-    | "name"
-    | "description"
-    | "createdAt"
-    | "protocol"
-    | "state"
-    | "custom_fields"
-  > & {
-    users: {
-      _id: string;
-      name: string;
-      matriculation: string;
-    }[];
-    form: {
-      name: string;
-      slug: string;
-    };
-  };
+    "_id" | "name" | "description" | "protocol" | "users"
+  >;
+  form: Pick<IForm, "_id" | "name" | "description" | "slug" | "period">;
 }
 
-const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
+const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity, form }) => {
   const navigate = useNavigate();
 
-  const handleView = useCallback(() => {
-    navigate(`/portal/activity/${activity._id}`);
-  }, [navigate, activity._id]);
-
-  const handleEdit = useCallback(() => {
-    navigate(`/response/${activity._id}/edit`);
-  }, [navigate, activity._id]);
+  const handleResponse = useCallback(() => {
+    navigate(`/response/${form.slug}`, {
+      state: {
+        activity_id: activity._id,
+      },
+    });
+  }, [navigate, activity._id, form.slug]);
 
   return (
     <Box
@@ -105,27 +91,22 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
             {activity.name}
           </Heading>
 
-          <Flex gap="2">
-            <Button size="sm" onClick={handleView}>
-              <FaEye />
-            </Button>
-            <Button
-              size="sm"
-              onClick={handleEdit}
-              isDisabled={activity.state === IActivityState.processing}
-            >
-              <FaPen />
-            </Button>
-          </Flex>
+          <Button size="sm" onClick={handleResponse}>
+            <FaPen />
+          </Button>
         </Flex>
         <Text fontSize="sm" noOfLines={2}>
           {activity.description}
         </Text>
         <Text>
-          Criação: <strong>{convertDateTime(activity.createdAt)}</strong>
+          Interação: <strong>{form.name}</strong>
         </Text>
         <Text>
           Protocolo: #<strong>{activity.protocol}</strong>
+        </Text>
+        <Text>
+          Fechamento:{" "}
+          <strong>{convertDateTime(form.period?.close || "")}</strong>
         </Text>
         <Box>
           <Text fontWeight="bold">Usuários Envolvidos:</Text>
