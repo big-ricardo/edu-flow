@@ -1,5 +1,5 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
-import User, { IUserRoles } from "../../../models/User";
+import User, { IUserRoles } from "../../../models/client/User";
 import res from "../../../utils/apiResponse";
 
 const handler: HttpHandler = async (conn) => {

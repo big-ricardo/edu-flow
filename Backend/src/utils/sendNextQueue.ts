@@ -1,12 +1,12 @@
 import { Connection, ObjectId } from "mongoose";
-import { NodeTypes } from "../models/WorkflowDraft";
+import { NodeTypes } from "../models/client/WorkflowDraft";
 import { sendToQueue } from "./sbusOutputs";
 import { InvocationContext } from "@azure/functions";
 import {
   IActivity,
   IActivityState,
   IActivityStepStatus,
-} from "../models/Activity";
+} from "../models/client/Activity";
 
 export default async function sendNextQueue({
   conn,
@@ -58,6 +58,7 @@ export default async function sendNextQueue({
           activity_id: activity._id.toString(),
           activity_workflow_id: activityWorkflow._id.toString(),
           activity_step_id: newNextStep._id.toString(),
+          client: conn.name,
         },
         queueName: nextStep.type,
       });

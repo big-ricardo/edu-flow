@@ -19,11 +19,6 @@ type BaseUser = {
   active: boolean;
   university_degree?: string;
   isExternal: boolean;
-  activity_pending: {
-    _id: ObjectId;
-    activity: ObjectId;
-    form: ObjectId;
-  }[];
 };
 
 type AdminOrStudent = BaseUser & { role: "admin" | "student" };
@@ -57,13 +52,6 @@ export const schema: Schema = new Schema<IUser>(
       required: () => (this as IUser).roles?.includes(IUserRoles.teacher),
       enum: ["mastermind", "doctor"],
     },
-    activity_pending: [
-      {
-        _id: { type: Schema.Types.ObjectId, auto: true },
-        activity: { type: Schema.Types.ObjectId, ref: "Activity" },
-        form: { type: Schema.Types.ObjectId, ref: "Form" },
-      },
-    ],
   },
   {
     timestamps: true,

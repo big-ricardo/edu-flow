@@ -1,5 +1,5 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
-import WorkflowDraft from "../../../models/WorkflowDraft";
+import WorkflowDraft from "../../../models/client/WorkflowDraft";
 import res from "../../../utils/apiResponse";
 
 interface Query {

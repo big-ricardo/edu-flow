@@ -1,8 +1,8 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Status, { StatusType } from "../../../models/Status";
-import Workflow from "../../../models/Workflow";
-import Institute from "../../../models/Institute";
+import Status, { StatusType } from "../../../models/client/Status";
+import Workflow from "../../../models/client/Workflow";
+import Institute from "../../../models/client/Institute";
 
 const handler: HttpHandler = async (conn) => {
   const status = (

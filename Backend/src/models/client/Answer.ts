@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { FileUploaded } from "../services/upload";
+import { FileUploaded } from "../../services/upload";
 
 export type IAnswer = {
   _id: string;

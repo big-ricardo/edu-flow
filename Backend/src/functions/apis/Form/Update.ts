@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form, { IForm } from "../../../models/Form";
+import Form, { IForm } from "../../../models/client/Form";
 import moment from "moment";
 
 const handler: HttpHandler = async (conn, req) => {

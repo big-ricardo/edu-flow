@@ -6,9 +6,9 @@ import {
 import { Connection, ObjectId } from "mongoose";
 import mongo from "../services/mongo";
 import * as yup from "yup";
-import Activity, { IActivityStepStatus } from "../models/Activity";
+import Activity, { IActivityStepStatus } from "../models/client/Activity";
 import sbusOutputs from "../utils/sbusOutputs";
-import { NodeTypes } from "../models/WorkflowDraft";
+import { NodeTypes } from "../models/client/WorkflowDraft";
 
 const IS_IDLE_BLOCK = [NodeTypes.Interaction, NodeTypes.Evaluated];
 
@@ -16,6 +16,7 @@ export interface GenericMessage {
   activity_id: string;
   activity_workflow_id: string;
   activity_step_id: string;
+  client: string;
 }
 
 type AzureFunctionHandler<TMessage extends GenericMessage> = (
@@ -66,7 +67,7 @@ export default class QueueWrapper<TMessage> {
     let conn: Connection;
 
     try {
-      conn = mongo.connect("db");
+      conn = mongo.connect(message.client);
       await new Activity(conn)
         .model()
         .findById(message.activity_id)

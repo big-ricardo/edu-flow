@@ -1,10 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, {
-  IActivityAccepted,
-  IActivityState,
-} from "../../../models/Activity";
-import User from "../../../models/User";
+import Activity, { IActivityStepStatus } from "../../../models/client/Activity";
+import User from "../../../models/client/User";
 
 interface Query {
   page?: number;
@@ -14,29 +11,47 @@ interface Query {
 export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const pendingActivities = await new User(conn)
+  const pendingActivities = await new Activity(conn)
     .model()
-    .findById(req.user.id)
-    .select({
-      activity_pending: 1,
+    .find({
+      "interactions.answers.user._id": req.user.id,
+      "interactions.answers.status": IActivityStepStatus.idle,
     })
-    .populate("activity_pending.activity", {
+    .select({
+      _id: 1,
       name: 1,
       description: 1,
       protocol: 1,
-      users: {
-        name: 1,
-        matriculation: 1,
-      },
-    })
-    .populate("activity_pending.form", {
-      name: 1,
-      description: 1,
-      slug: 1,
-      period: 1,
+      users: 1,
+      "interactions.form": 1,
+      "interactions.answers": 1,
     });
 
-  return res.success(pendingActivities.activity_pending);
+  const myPendingActivities = pendingActivities
+    .map((activity) => {
+      const interaction = activity.interactions.find((interaction) =>
+        interaction.answers.some(
+          (answer) => answer.user._id.toString() === req.user.id
+        )
+      );
+
+      if (!interaction) {
+        return null;
+      }
+
+      const myAnswer = interaction.answers.find(
+        (answer) => answer.user._id.toString() === req.user.id
+      );
+
+      return {
+        ...activity.toObject(),
+        form: interaction.form,
+        status: myAnswer.status,
+      };
+    })
+    .filter((activity) => activity !== null);
+
+  return res.success(myPendingActivities);
 };
 
 export default new Http(handler)

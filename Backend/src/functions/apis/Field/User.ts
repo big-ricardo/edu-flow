@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import User, { IUserRoles } from "../../../models/User";
+import User, { IUserRoles } from "../../../models/client/User";
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { role } = req.params as { role: IUserRoles };

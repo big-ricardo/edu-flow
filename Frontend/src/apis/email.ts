@@ -3,7 +3,7 @@ import Response from "@interfaces/Response";
 import IEmail from "@interfaces/Email";
 import api from "@services/api";
 
-type Email = Pick<IEmail, "_id" | "slug" | "subject" | "htmlTemplate">;
+type Email = Pick<IEmail, "_id" | "slug" | "subject" | "htmlTemplate" | "cssTemplate">;
 type ReqEmails = Response<{ emails: Email[] } & IPagination>;
 type ReqEmail = Response<Email>;
 

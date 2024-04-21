@@ -2,12 +2,12 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity from "../../models/Activity";
-import Email from "../../models/Email";
+import Activity from "../../models/client/Activity";
+import Email from "../../models/client/Email";
 import WorkflowDraft, {
   ISendEmail,
   NodeTypes,
-} from "../../models/WorkflowDraft";
+} from "../../models/client/WorkflowDraft";
 import { sendEmail } from "../../services/email";
 import replaceSmartValues from "../../utils/replaceSmartValues";
 import sendNextQueue from "../../utils/sendNextQueue";
@@ -71,9 +71,7 @@ const handler: QueueWrapperHandler<TMessage> = async (
       throw new Error("Email not found");
     }
 
-    const { subject, htmlTemplate } = email;
-
-    context.log("Email data", JSON.stringify({ to, subject }));
+    const { subject, htmlTemplate, cssTemplate } = email;
 
     const subjectReplaced = await replaceSmartValues({
       conn,
@@ -95,7 +93,7 @@ const handler: QueueWrapperHandler<TMessage> = async (
       replaceValues: htmlTemplate,
     });
 
-    await sendEmail(toReplaced, subjectReplaced, htmlTemplateReplaced);
+    await sendEmail(toReplaced, subjectReplaced, htmlTemplateReplaced, cssTemplate);
 
     await sendNextQueue({
       conn,

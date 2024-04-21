@@ -8,10 +8,11 @@ import pluginExport from "grapesjs-plugin-export";
 import pluginJsTable from "grapesjs-table";
 
 interface EmailTemplateHookProps {
-  data: string;
+  html?: string;
+  css?: string;
 }
 
-export default function EmailTemplateHook({ data }: EmailTemplateHookProps) {
+export default function EmailTemplateHook({ html, css }: EmailTemplateHookProps) {
   const [editor, setEditor] = React.useState<Editor | null>(null);
 
   useEffect(() => {
@@ -30,25 +31,29 @@ export default function EmailTemplateHook({ data }: EmailTemplateHookProps) {
     });
 
     grapesJsEditor.on("load", () => {
-      if (data) {
+      if (html) {
         grapesJsEditor.DomComponents.clear();
-        grapesJsEditor.addComponents(data, {});
-      } else {
-        grapesJsEditor.DomComponents.clear();
+        grapesJsEditor.addComponents(html, {});
+      } 
+
+      if (css) {
+        grapesJsEditor.CssComposer.clear();
+        grapesJsEditor.addStyle(css);
       }
     });
 
     setEditor(grapesJsEditor);
-  }, [data, setEditor]);
+  }, [html, css]);
 
   const handleSave = useCallback(() => {
     if (editor) {
       const html = editor.getHtml();
+      const css = editor.getCss();
 
-      return html;
+      return { html, css };
     }
 
-    return "";
+    return { html: "", css: "" };
   }, [editor]);
 
   return { handleSave };

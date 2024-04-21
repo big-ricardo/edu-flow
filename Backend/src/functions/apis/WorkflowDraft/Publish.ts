@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import WorkflowDraft, { IWorkflowDraft } from "../../../models/WorkflowDraft";
-import Workflow from "../../../models/Workflow";
+import WorkflowDraft, { IWorkflowDraft } from "../../../models/client/WorkflowDraft";
+import Workflow from "../../../models/client/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const { status } = req.body as Pick<IWorkflowDraft, "status">;

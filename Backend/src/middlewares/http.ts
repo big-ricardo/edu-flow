@@ -11,7 +11,7 @@ import res from "../utils/apiResponse";
 import jwt from "../services/jwt";
 import mongo from "../services/mongo";
 import { Connection, ObjectId } from "mongoose";
-import { IInstitute } from "../models/Institute";
+import { IInstitute } from "../models/client/Institute";
 
 const hasBody = ["POST", "PUT", "PATCH"];
 
@@ -96,7 +96,9 @@ export default class Http {
           throw err;
         });
 
-      this.conn = mongo.connect("db");
+      if (user?.slug) {
+        this.conn = mongo.connect(user.slug);
+      }
 
       return await this.handler(
         this.conn,

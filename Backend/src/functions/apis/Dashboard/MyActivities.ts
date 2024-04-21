@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity from "../../../models/Activity";
-import User from "../../../models/User";
+import Activity from "../../../models/client/Activity";
+import User from "../../../models/client/User";
 
 interface Query {
   page?: number;

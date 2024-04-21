@@ -1,14 +1,15 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Email, { IEmail } from "../../../models/Email";
+import Email, { IEmail } from "../../../models/client/Email";
 
 export const handler: HttpHandler = async (conn, req) => {
-  const { slug, htmlTemplate, subject } = req.body as IEmail;
+  const { slug, htmlTemplate, subject, cssTemplate } = req.body as IEmail;
 
   const email = await new Email(conn).model().create({
     slug,
     subject,
     htmlTemplate,
+    cssTemplate,
   });
 
   if (email instanceof Error) {

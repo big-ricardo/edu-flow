@@ -1,10 +1,10 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form, { IForm } from "../../../models/Form";
+import Form, { IForm } from "../../../models/client/Form";
 import moment from "moment";
-import User from "../../../models/User";
-import Institute from "../../../models/Institute";
-import FormDraft, { IFormDraft } from "../../../models/FormDraft";
+import User from "../../../models/client/User";
+import Institute from "../../../models/client/Institute";
+import FormDraft, { IFormDraft } from "../../../models/client/FormDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const { slug } = req.params as { slug: string };

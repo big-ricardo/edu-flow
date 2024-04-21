@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Workflow, { IWorkflow } from "../../../models/Workflow";
+import Workflow, { IWorkflow } from "../../../models/client/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const data = req.body as IWorkflow;

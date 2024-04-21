@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import WorkflowDraft, { IStep } from "../../../models/WorkflowDraft";
+import WorkflowDraft, { IStep } from "../../../models/client/WorkflowDraft";
 
 const convertBackToReactFlowObject = (nodesArray: IStep[]) => {
   const nodes = nodesArray.map(({ next, ...node }) => node);

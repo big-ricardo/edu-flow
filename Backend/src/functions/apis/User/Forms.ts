@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Institute from "../../../models/Institute";
+import Institute from "../../../models/client/Institute";
 
 const handler: HttpHandler = async (conn) => {
   const institutes = await new Institute(conn).model().aggregate([

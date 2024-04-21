@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Email from "../../../models/Email";
+import Email from "../../../models/client/Email";
 
 interface Query {
   page?: number;

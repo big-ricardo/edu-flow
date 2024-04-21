@@ -1,4 +1,4 @@
-import { NodeTypes } from "../models/WorkflowDraft";
+import { NodeTypes } from "../models/client/WorkflowDraft";
 
 const nodeValidator = (type: string, schema: typeof import("yup")) => {
   if (type === NodeTypes.SendEmail) {

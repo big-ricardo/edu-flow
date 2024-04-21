@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity from "../../../models/Activity";
+import Activity from "../../../models/client/Activity";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };

@@ -47,7 +47,10 @@ const EmailTemplate: React.FC = () => {
     enabled: isEditing,
   });
 
-  const { handleSave } = EmailTemplateHook({ data: email?.htmlTemplate ?? "" });
+  const { handleSave } = EmailTemplateHook({
+    html: email?.htmlTemplate,
+    css: email?.cssTemplate,
+  });
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createOrUpdateEmail,
@@ -92,7 +95,8 @@ const EmailTemplate: React.FC = () => {
 
     await mutateAsync({
       ...data,
-      htmlTemplate,
+      htmlTemplate: htmlTemplate.html,
+      cssTemplate: htmlTemplate.css.toString(),
       _id: isEditing ? id : undefined,
     });
   });

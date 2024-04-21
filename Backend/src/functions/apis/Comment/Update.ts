@@ -1,5 +1,5 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
-import Activity, { IComment } from "../../../models/Activity";
+import Activity, { IComment } from "../../../models/client/Activity";
 import res from "../../../utils/apiResponse";
 
 const handler: HttpHandler = async (conn, req) => {

@@ -1,16 +1,16 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Email, { IEmail } from "../../../models/Email";
+import Email, { IEmail } from "../../../models/client/Email";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;
-  const { slug, htmlTemplate, subject } = req.body as IEmail;
+  const { slug, htmlTemplate, subject, cssTemplate } = req.body as IEmail;
 
   const status = new Email(conn).model();
   const updateEmail = await status.findByIdAndUpdate(
     id,
-    { slug, htmlTemplate, subject },
-    { new: true },
+    { slug, htmlTemplate, subject, cssTemplate },
+    { new: true }
   );
 
   if (!updateEmail) {

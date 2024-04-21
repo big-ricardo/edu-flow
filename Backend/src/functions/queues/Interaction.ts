@@ -2,9 +2,10 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity from "../../models/Activity";
-import User from "../../models/User";
-import { IInteraction, NodeTypes } from "../../models/WorkflowDraft";
+import Activity from "../../models/client/Activity";
+import Form from "../../models/client/Form";
+import User from "../../models/client/User";
+import { IInteraction, NodeTypes } from "../../models/client/WorkflowDraft";
 import sendNextQueue from "../../utils/sendNextQueue";
 
 interface TMessage extends GenericMessage {}
@@ -74,21 +75,30 @@ const handler: QueueWrapperHandler<TMessage> = async (
       }
     }
 
-    console.log("destination", destination);
-
-    await new User(conn).model().updateMany(
-      {
+    const users = await new User(conn)
+      .model()
+      .find({
         _id: { $in: destination },
-      },
-      {
-        $push: {
-          activity_pending: {
-            activity: activity_id,
-            form: form_id,
-          },
-        },
-      }
-    );
+      })
+      .select({
+        password: 0,
+      });
+
+    const form = await new Form(conn).model().findById(form_id);
+
+    activity.interactions.push({
+      activity_workflow_id,
+      activity_step_id,
+      form: form.toObject(),
+      answers: users.map((u) => ({
+        status: "idle",
+        user: u,
+        data: null,
+      })),
+      finished: false,
+    });
+
+    await activity.save();
   } catch (err) {
     console.error(err);
     throw err;

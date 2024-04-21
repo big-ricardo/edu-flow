@@ -1,8 +1,8 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import * as bcrypt from "bcrypt";
-import User, { IUser, IUserRoles } from "../../../models/User";
-import Institute from "../../../models/Institute";
+import User, { IUser, IUserRoles } from "../../../models/client/User";
+import Institute from "../../../models/client/Institute";
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { id } = req.params;

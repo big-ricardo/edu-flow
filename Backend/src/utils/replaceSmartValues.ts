@@ -1,5 +1,5 @@
 import { Connection, Types } from "mongoose";
-import Activity from "../models/Activity";
+import Activity from "../models/client/Activity";
 
 const replaceSmartValues = async <T extends string | string[]>({
   conn,

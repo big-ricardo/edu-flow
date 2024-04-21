@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Status from "../../../models/Status";
+import Status from "../../../models/client/Status";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };

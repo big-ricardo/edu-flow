@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import University from "../../../models/University";
+import University from "../../../models/client/University";
 
 interface Query {
   page?: number;

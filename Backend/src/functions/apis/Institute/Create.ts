@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Institute from "../../../models/Institute";
-import University from "../../../models/University";
+import Institute from "../../../models/client/Institute";
+import University from "../../../models/client/University";
 
 interface DtoInstitute {
   name: string;

@@ -11,4 +11,10 @@ export default interface JwtData {
   email: string;
   roles: IUserRoles[];
   role: IUserRoles;
+  slug: string;
+  client: {
+    _id: string;
+    acronym: string;
+    name: string;
+  };
 }

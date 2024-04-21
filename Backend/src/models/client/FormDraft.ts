@@ -1,6 +1,6 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
 import { IUser } from "./User";
-import { FileUploaded } from "../services/upload";
+import { FileUploaded } from "../../services/upload";
 
 export enum FieldTypes {
   Text = "text",

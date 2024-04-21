@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import FormDraft, { FieldTypes, IFormDraft } from "../../../models/FormDraft";
-import Form from "../../../models/Form";
+import FormDraft, { FieldTypes, IFormDraft } from "../../../models/client/FormDraft";
+import Form from "../../../models/client/Form";
 
 const handler: HttpHandler = async (conn, req) => {
   const formData = req.body as IFormDraft;

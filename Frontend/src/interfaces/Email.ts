@@ -3,4 +3,5 @@ export default interface IEmail {
   slug: string;
   subject: string;
   htmlTemplate: string;
+  cssTemplate: string;
 }

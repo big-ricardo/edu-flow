@@ -3,11 +3,11 @@ import res from "../../../utils/apiResponse";
 import Activity, {
   IActivityState,
   IActivityStepStatus,
-} from "../../../models/Activity";
-import User, { IUser, IUserRoles } from "../../../models/User";
-import WorkflowDraft from "../../../models/WorkflowDraft";
-import Form, { IForm } from "../../../models/Form";
-import { IWorkflow } from "../../../models/Workflow";
+} from "../../../models/client/Activity";
+import User, { IUser, IUserRoles } from "../../../models/client/User";
+import WorkflowDraft from "../../../models/client/WorkflowDraft";
+import Form, { IForm } from "../../../models/client/Form";
+import { IWorkflow } from "../../../models/client/Workflow";
 import sendNextQueue from "../../../utils/sendNextQueue";
 import sbusOutputs from "../../../utils/sbusOutputs";
 

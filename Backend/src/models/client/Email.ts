@@ -4,8 +4,8 @@ export interface IEmail extends mongoose.Document {
   _id: string;
   slug: string;
   subject: string;
-  jsonTemplate: JSON;
   htmlTemplate: string;
+  cssTemplate: string;
 }
 
 export const schema: Schema = new Schema(
@@ -13,10 +13,11 @@ export const schema: Schema = new Schema(
     slug: { type: String, required: true, unique: true },
     subject: { type: String, required: true },
     htmlTemplate: { type: String, required: true },
+    cssTemplate: { type: String, required: true },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export default class Email {

@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, { IActivityState } from "../../../models/Activity";
+import Activity, { IActivityState } from "../../../models/client/Activity";
 
 interface Query {
   page?: number;

@@ -10,8 +10,6 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import IActivity from "@interfaces/Activitiy";
-import IForm from "@interfaces/Form";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
 import React, { memo, useCallback } from "react";
@@ -40,7 +38,7 @@ const PendingInteractions: React.FC = () => {
           templateColumns="repeat(auto-fill, minmax(350px, 1fr))"
         >
           {data.map((data) => (
-            <ActivityItem key={data.activity._id} {...data} />
+            <ActivityItem key={data._id} {...data} />
           ))}
         </Grid>
       )}
@@ -50,80 +48,78 @@ const PendingInteractions: React.FC = () => {
 
 export default PendingInteractions;
 
-interface ActivityItemProps {
-  activity: Pick<
-    IActivity,
-    "_id" | "name" | "description" | "protocol" | "users"
-  >;
-  form: Pick<IForm, "_id" | "name" | "description" | "slug" | "period">;
-}
+type ActivityItemProps = Awaited<
+  ReturnType<typeof getMyActivitiesPendingInteractions>
+>[number];
 
-const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity, form }) => {
-  const navigate = useNavigate();
+const ActivityItem: React.FC<ActivityItemProps> = memo(
+  ({ form, status, ...activity }) => {
+    const navigate = useNavigate();
 
-  const handleResponse = useCallback(() => {
-    navigate(`/response/${form.slug}`, {
-      state: {
-        activity_id: activity._id,
-      },
-    });
-  }, [navigate, activity._id, form.slug]);
+    const handleResponse = useCallback(() => {
+      navigate(`/response/${form.slug}`, {
+        state: {
+          activity_id: activity._id,
+        },
+      });
+    }, [navigate, activity._id, form.slug]);
 
-  return (
-    <Box
-      boxShadow="md"
-      borderWidth="1px"
-      borderRadius="md"
-      p={4}
-      borderColor={"gray"}
-      w={"100%"}
-      h={"100%"}
-      bgColor={useColorModeValue("white", "gray.700")}
-    >
-      <Stack
-        spacing={2}
-        display={"flex"}
-        justifyContent={"space-between"}
-        h="100%"
+    return (
+      <Box
+        boxShadow="md"
+        borderWidth="1px"
+        borderRadius="md"
+        p={4}
+        borderColor={"gray"}
+        w={"100%"}
+        h={"100%"}
+        bgColor={useColorModeValue("white", "gray.700")}
       >
-        <Flex justifyContent="space-between" alignItems="center">
-          <Heading as="h2" size="md">
-            {activity.name}
-          </Heading>
+        <Stack
+          spacing={2}
+          display={"flex"}
+          justifyContent={"space-between"}
+          h="100%"
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Heading as="h2" size="md">
+              {activity.name}
+            </Heading>
 
-          <Button size="sm" onClick={handleResponse}>
-            <FaPen />
-          </Button>
-        </Flex>
-        <Text fontSize="sm" noOfLines={2}>
-          {activity.description}
-        </Text>
-        <Text>
-          Interação: <strong>{form.name}</strong>
-        </Text>
-        <Text>
-          Protocolo: #<strong>{activity.protocol}</strong>
-        </Text>
-        <Text>
-          Fechamento:{" "}
-          <strong>{convertDateTime(form.period?.close || "")}</strong>
-        </Text>
-        <Box>
-          <Text fontWeight="bold">Usuários Envolvidos:</Text>
-          <Stack spacing={2} maxH={100} overflowY="auto" mt={2}>
-            {activity.users.map((user) => (
-              <Box key={user._id} p={2} borderWidth="1px" borderRadius="md">
-                <Text noOfLines={1}>
-                  Nome: <strong>{user.name}</strong>
-                </Text>
-                <Text>
-                  Matrícula: #<strong>{user.matriculation}</strong>
-                </Text>
-              </Box>
-            ))}
-          </Stack>
-        </Box>
-      </Stack>
-    </Box>
-  );
-});
+            <Button size="sm" onClick={handleResponse}>
+              <FaPen />
+            </Button>
+          </Flex>
+          <Text fontSize="sm" noOfLines={2}>
+            {activity.description}
+          </Text>
+          <Text>
+            Form: <strong>{form.name}</strong>
+          </Text>
+          <Text>
+            Protocolo: #<strong>{activity.protocol}</strong>
+          </Text>
+          <Text>
+            Fechamento:{" "}
+            <strong>{convertDateTime(form.period?.close || "")}</strong>
+          </Text>
+          <Box>
+            <Text fontWeight="bold">Usuários Envolvidos:</Text>
+            <Stack spacing={2} maxH={100} overflowY="auto" mt={2}>
+              {activity.users.map((user) => (
+                <Box key={user._id} p={2} borderWidth="1px" borderRadius="md">
+                  <Text noOfLines={1}>
+                    Nome: <strong>{user.name}</strong>
+                  </Text>
+                  <Text>
+                    Matrícula: #<strong>{user.matriculation}</strong>
+                  </Text>
+                </Box>
+              ))}
+            </Stack>
+          </Box>
+        </Stack>
+      </Box>
+    );
+  }
+);

@@ -2,9 +2,9 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity from "../../models/Activity";
-import Status from "../../models/Status";
-import { IChangeStatus, NodeTypes } from "../../models/WorkflowDraft";
+import Activity from "../../models/client/Activity";
+import Status from "../../models/client/Status";
+import { IChangeStatus, NodeTypes } from "../../models/client/WorkflowDraft";
 import sendNextQueue from "../../utils/sendNextQueue";
 
 interface TMessage extends GenericMessage {}

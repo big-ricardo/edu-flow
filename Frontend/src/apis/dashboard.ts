@@ -82,15 +82,10 @@ export const getMyActivitiesPendingAcceptance = async ({
 };
 
 type ReqMyActivitiesPendingInteractions = Response<
-  {
-    activity: Pick<IActivity, "_id" | "name" | "description" | "protocol" | "users">;
+  (Pick<IActivity, "_id" | "name" | "description" | "protocol" | "users"> & {
     form: Pick<IForm, "_id" | "name" | "description" | "slug" | "period">;
-    users: {
-      _id: string;
-      name: string;
-      matriculation: string;
-    }[];
-  }[]
+    status: "idle" | "pending" | "approved" | "rejected";
+  })[]
 >;
 
 export const getMyActivitiesPendingInteractions = async ({

@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import FormDraft from "../../../models/FormDraft";
+import FormDraft from "../../../models/client/FormDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;

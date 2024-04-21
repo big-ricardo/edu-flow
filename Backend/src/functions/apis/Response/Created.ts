@@ -3,16 +3,16 @@ import res from "../../../utils/apiResponse";
 import Activity, {
   IActivityAccepted,
   IActivityStepStatus,
-} from "../../../models/Activity";
-import Form from "../../../models/Form";
-import FormDraft, { FieldTypes, IValue } from "../../../models/FormDraft";
+} from "../../../models/client/Activity";
+import Form from "../../../models/client/Form";
+import FormDraft, { FieldTypes, IValue } from "../../../models/client/FormDraft";
 import moment from "moment";
 import uploadFileToBlob, { FileUploaded } from "../../../services/upload";
-import User, { IUserRoles } from "../../../models/User";
-import Status from "../../../models/Status";
+import User, { IUserRoles } from "../../../models/client/User";
+import Status from "../../../models/client/Status";
 import { ObjectId } from "mongoose";
 import { Types } from "mongoose";
-import { NodeTypes } from "../../../models/WorkflowDraft";
+import { NodeTypes } from "../../../models/client/WorkflowDraft";
 import { setHeapSnapshotNearHeapLimit } from "v8";
 
 interface File {

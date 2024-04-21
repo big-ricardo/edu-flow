@@ -3,7 +3,7 @@ import res from "../../../utils/apiResponse";
 import Activity, {
   IActivityAccepted,
   IActivityState,
-} from "../../../models/Activity";
+} from "../../../models/client/Activity";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };

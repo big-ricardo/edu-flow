@@ -3,10 +3,10 @@ import res from "../../../utils/apiResponse";
 import WorkflowDraft, {
   IWorkflowDraft,
   NodeTypes,
-} from "../../../models/WorkflowDraft";
+} from "../../../models/client/WorkflowDraft";
 import nodeValidator from "../../../utils/nodesValidator";
 import validateGraph from "../../../utils/validateGraphs";
-import Workflow from "../../../models/Workflow";
+import Workflow from "../../../models/client/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const { steps, viewport } = req.body as Pick<
