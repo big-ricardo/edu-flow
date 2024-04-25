@@ -38,6 +38,13 @@ export interface IInteraction {
   form_id: string;
   to: string;
   visible: true;
+  conditional: [
+    {
+      field: string;
+      value: string;
+      operator: "eq" | "ne" | "gt" | "lt" | "gte" | "lte" | "in";
+    }
+  ];
 }
 
 export interface IEvaluated {

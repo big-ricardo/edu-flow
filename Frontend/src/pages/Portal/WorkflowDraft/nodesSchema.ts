@@ -39,7 +39,7 @@ const schemas: NodeSchemas = {
         z.object({
           field: z.string().min(1, { message: "Selecione um campo" }),
           value: z.string().min(1, { message: "Valor é obrigatório" }),
-          operator: z.enum(["==", "!=", ">", "<", ">=", "<="]),
+          operator: z.enum(["eq", "ne", "gt", "lt", "gte", "lte", "in"]),
         })
       )
       .optional(),

@@ -11,6 +11,7 @@ import {
   Hide,
   Text,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import useAuth from "@hooks/useAuth";
@@ -105,38 +106,40 @@ const Login: React.FC = () => {
         <Card p="10" w={{ base: "100%", md: "450px" }} boxShadow="lg">
           <CardBody>
             <form onSubmit={onSubmit}>
-              <InputText
-                input={{
-                  id: "acronym",
-                  label: "Sigla",
-                  placeholder: "Sigla",
-                }}
-              />
+              <Flex direction="column" gap="4">
+                <InputText
+                  input={{
+                    id: "acronym",
+                    label: "Domínio",
+                    placeholder: "insira o domínio",
+                  }}
+                />
 
-              <InputText
-                input={{
-                  id: "cpf",
-                  label: "CPF",
-                  placeholder: "CPF",
-                }}
-              />
+                <InputText
+                  input={{
+                    id: "cpf",
+                    label: "CPF",
+                    placeholder: "Insira o CPF",
+                  }}
+                />
 
-              <Password
-                input={{
-                  id: "password",
-                  label: "Senha",
-                  placeholder: "Senha",
-                }}
-              />
+                <Password
+                  input={{
+                    id: "password",
+                    label: "Senha",
+                    placeholder: "Insira a senha",
+                  }}
+                />
 
-              <Button
-                mt={4}
-                colorScheme="teal"
-                type="submit"
-                isLoading={isPending}
-              >
-                Entrar
-              </Button>
+                <Button
+                  mt={4}
+                  colorScheme="blue"
+                  type="submit"
+                  isLoading={isPending}
+                >
+                  Entrar
+                </Button>
+              </Flex>
             </form>
           </CardBody>
         </Card>

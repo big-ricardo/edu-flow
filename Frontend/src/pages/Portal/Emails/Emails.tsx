@@ -28,7 +28,7 @@ const emailSchema = z.object({
   subject: z
     .string()
     .min(3, { message: "Titulo deve ter no mínimo 3 caracteres" })
-    .max(50, { message: "Titulo deve ter no máximo 50 caracteres" }),
+    .max(100, { message: "Titulo deve ter no máximo 50 caracteres" }),
 });
 
 type EmailFormSchema = z.infer<typeof emailSchema>;

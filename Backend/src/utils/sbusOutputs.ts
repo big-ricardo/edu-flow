@@ -27,12 +27,18 @@ const extraOutputsChangeStatus = output.serviceBusQueue({
   connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
 });
 
+export const extraOutputsInteractionProcess = output.serviceBusQueue({
+  queueName: "interaction_process",
+  connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
+});
+
 const extraOutputs = {
   swap_workflow: extraOutputsSwapWorkflow,
   send_email: extraOutputsSendEmail,
   interaction: extraOutputsInteraction,
   evaluated: extraOutputsEvaluated,
   change_status: extraOutputsChangeStatus,
+  interaction_process: extraOutputsInteractionProcess,
 };
 
 const sbusOutputs = Object.values(extraOutputs);

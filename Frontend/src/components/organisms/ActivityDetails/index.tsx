@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { Card, CardProps, Divider, Flex, Text, VStack } from "@chakra-ui/react";
 import IActivity from "@interfaces/Activitiy";
 import { convertDateTime } from "@utils/date";
@@ -8,6 +8,7 @@ import ExtraFields from "./sections/ExtraFields";
 import Accordion from "@components/atoms/Accordion";
 import RenderFieldValue from "@components/atoms/RenderFieldValue";
 import Timeline from "./sections/Timeline";
+import useActivity from "@hooks/useActivity";
 
 interface ActivityDetailsProps extends CardProps {
   activity?: IActivity;
@@ -15,6 +16,16 @@ interface ActivityDetailsProps extends CardProps {
 
 const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
   ({ activity, ...rest }) => {
+    const { alterActivity, removeActivity } = useActivity();
+
+    useEffect(() => {
+      alterActivity(activity ?? null);
+
+      return () => {
+        removeActivity();
+      };
+    }, [activity, alterActivity, removeActivity]);
+
     if (!activity) return null;
 
     return (
@@ -68,21 +79,21 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
             )}
           </Flex>
         </VStack>
-        <Accordion.Container defaultIndex={[]} allowToggle allowMultiple>
+        <Accordion.Container defaultIndex={[0,1]} allowToggle allowMultiple>
           <Accordion.Item>
             <Accordion.Button>Informações Extra</Accordion.Button>
             <Accordion.Panel>
               <ExtraFields fields={activity.form_draft.fields} />
             </Accordion.Panel>
           </Accordion.Item>
-        </Accordion.Container>
 
-        <VStack mt={4} align="start">
-          <Text fontWeight={"bold"} fontSize="md" mb={2}>
-            Fluxo de Atividades
-          </Text>
-          <Timeline workflows={activity.workflows} />
-        </VStack>
+          <Accordion.Item>
+            <Accordion.Button>Linha do Tempo</Accordion.Button>
+            <Accordion.Panel>
+              <Timeline />
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion.Container>
       </Card>
     );
   }

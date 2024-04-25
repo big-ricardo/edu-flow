@@ -27,7 +27,9 @@ export default async function sendNextQueue({
     const activityWorkflow = activity.workflows[activityWorkflowIndex];
 
     const actualActivityStep = activityWorkflow.steps.find(
-      (step) => step.status === IActivityStepStatus.inProgress
+      (step) =>
+        step.status === IActivityStepStatus.inProgress ||
+        step.status === IActivityStepStatus.idle
     );
 
     if (!actualActivityStep) {

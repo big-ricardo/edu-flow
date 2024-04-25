@@ -29,27 +29,27 @@ interface BlockConfigProps {
 const conditionalOperators = [
   {
     label: "Igual",
-    value: "==",
+    value: "eq",
   },
   {
     label: "Diferente",
-    value: "!=",
+    value: "ne",
   },
   {
     label: "Maior",
-    value: ">",
+    value: "gt",
   },
   {
     label: "Menor",
-    value: "<",
+    value: "lt",
   },
   {
     label: "Maior ou igual",
-    value: ">=",
+    value: "gte",
   },
   {
     label: "Menor ou igual",
-    value: "<=",
+    value: "lte",
   },
   {
     label: "Contém",

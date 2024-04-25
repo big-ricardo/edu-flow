@@ -57,7 +57,7 @@ export const MilestoneItem: React.FC<MilestoneItemProps> = ({
       case IActivityStepStatus.inProgress:
         return "Em Progresso";
       case IActivityStepStatus.inQueue:
-        return "Na Fila para processamento";
+        return "Em fila para processamento";
       case IActivityStepStatus.idle:
         return "Pendente";
       default:
@@ -93,7 +93,7 @@ export const MilestoneItem: React.FC<MilestoneItemProps> = ({
   );
 };
 
-export const MilestoneEnd: React.FC<MilestoneItemProps> = ({ ...props }) => {
+export const MilestoneEnd: React.FC = ({ ...props }) => {
   return (
     <Flex {...props}>
       <Flex

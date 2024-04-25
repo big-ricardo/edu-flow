@@ -42,7 +42,7 @@ export default class QueueWrapper<TMessage> {
       activity_workflow_id: yup.string().required(),
     }),
   });
-  private name: NodeTypes;
+  private name: NodeTypes | "interaction_process" | "evaluation_process";
 
   constructor(handler: typeof QueueWrapper.prototype.handler) {
     this.handler = handler;
@@ -121,7 +121,7 @@ export default class QueueWrapper<TMessage> {
 
           activity.workflows[activityWorkflowIndex].steps[
             activityStepIndex
-          ].status = IS_IDLE_BLOCK.includes(this.name)
+          ].status = IS_IDLE_BLOCK.includes(this.name as NodeTypes)
             ? IActivityStepStatus.idle
             : IActivityStepStatus.finished;
 
@@ -132,25 +132,25 @@ export default class QueueWrapper<TMessage> {
     } catch (error) {
       if (conn) {
         await new Activity(conn)
-        .model()
-        .findById(message.activity_id)
-        .then((activity) => {
-          const activityWorkflowIndex = activity.workflows.findIndex(
-            (workflow) =>
-              workflow._id.toString() === message.activity_workflow_id
-          );
-          const activityStepIndex = activity.workflows[
-            activityWorkflowIndex
-          ].steps.findIndex(
-            (step) => step._id.toString() === message.activity_step_id
-          );
+          .model()
+          .findById(message.activity_id)
+          .then((activity) => {
+            const activityWorkflowIndex = activity.workflows.findIndex(
+              (workflow) =>
+                workflow._id.toString() === message.activity_workflow_id
+            );
+            const activityStepIndex = activity.workflows[
+              activityWorkflowIndex
+            ].steps.findIndex(
+              (step) => step._id.toString() === message.activity_step_id
+            );
 
-          activity.workflows[activityWorkflowIndex].steps[
-            activityStepIndex
-          ].status = IActivityStepStatus.error;
+            activity.workflows[activityWorkflowIndex].steps[
+              activityStepIndex
+            ].status = IActivityStepStatus.error;
 
-          return activity.save();
-        });
+            return activity.save();
+          });
       }
       await new Activity(conn)
         .model()
@@ -183,7 +183,7 @@ export default class QueueWrapper<TMessage> {
       ServiceBusQueueFunctionOptions,
       "connection" | "handler" | "extraOutputs" | "queueName"
     > & {
-      queueName: NodeTypes;
+      queueName: NodeTypes | "interaction_process" | "evaluation_process";
     };
   }): this => {
     const { name, options } = configs;

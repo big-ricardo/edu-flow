@@ -16,14 +16,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
   const activities = await new Activity(conn)
     .model()
     .find({
-      _id: {
-        $in: user.activities,
-      },
-    })
-    .populate("users", {
-      _id: 1,
-      name: 1,
-      matriculation: 1,
+      "users._id": user._id,
     })
     .populate("form", {
       name: 1,

@@ -21,7 +21,7 @@ const rolesMap = (role: string) => {
   switch (role) {
     case "student":
       return "Aluno";
-    case "professor":
+    case "teacher":
       return "Professor";
     case "admin":
       return "Administrador";

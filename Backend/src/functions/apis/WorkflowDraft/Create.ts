@@ -18,7 +18,7 @@ const handler: HttpHandler = async (conn, req) => {
 
   validateGraph(steps);
 
-  const existsWorkflow = await new Workflow(conn).model().exists({ _id: id });
+  const existsWorkflow = await new Workflow(conn).model().findById(id);
 
   if (!existsWorkflow) {
     return res.notFound("Workflow not found");
@@ -28,13 +28,19 @@ const handler: HttpHandler = async (conn, req) => {
     parent: id,
   });
 
-  console.log("user", JSON.stringify(req.user));
-
   const workflowDraft = await new WorkflowDraft(conn).model().create({
     version: newVersion + 1,
     owner: req.user.id,
     parent: id,
-    steps,
+    steps: steps.map((step) => {
+      if (step.type === NodeTypes.Circle) {
+        return {
+          ...step,
+          name: existsWorkflow.name,
+        };
+      }
+      return step;
+    }),
     viewport,
   });
 
@@ -69,7 +75,7 @@ export default new Http(handler)
           next: schema.object().shape({
             ["default-source"]: schema.string().required().nullable(),
           }),
-        }),
+        })
       ),
     }),
   }))

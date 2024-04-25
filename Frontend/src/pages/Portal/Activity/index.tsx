@@ -1,6 +1,7 @@
 import { getActivity } from "@apis/activity";
 import { Center, Spinner } from "@chakra-ui/react";
 import ActivityDetails from "@components/organisms/ActivityDetails";
+import ActivityProvider from "@contexts/ActivityContext";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useParams } from "react-router-dom";
@@ -18,7 +19,9 @@ const Activity: React.FC = () => {
 
   return (
     <Center width="100%" p={4}>
-      <ActivityDetails activity={activity} />
+      <ActivityProvider>
+        <ActivityDetails activity={activity} />
+      </ActivityProvider>
     </Center>
   );
 };

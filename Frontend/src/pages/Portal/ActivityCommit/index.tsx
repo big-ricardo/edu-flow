@@ -23,6 +23,7 @@ import {
 import TextArea from "@components/atoms/Inputs/TextArea";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 import InputUser from "@components/atoms/Inputs/InputUser";
+import ActivityProvider from "@contexts/ActivityContext";
 
 const activitySchema = z.object({
   _id: z.string(),
@@ -150,11 +151,13 @@ export default function ActivityCommit() {
       direction="row"
       gap={9}
     >
-      <ActivityDetails
-        activity={activity}
-        minWidth={"50%"}
-        overflowY={"auto"}
-      />
+      <ActivityProvider>
+        <ActivityDetails
+          activity={activity}
+          minWidth={"50%"}
+          overflowY={"auto"}
+        />
+      </ActivityProvider>
       <FormProvider {...methods}>
         <Card
           as="form"

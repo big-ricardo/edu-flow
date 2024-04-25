@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { acceptActivity, getActivity } from "@apis/activity";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import ActivityProvider from "@contexts/ActivityContext";
 
 const activitySchema = z.object({
   accepted: z.enum(["accepted", "rejected"]),
@@ -162,7 +163,9 @@ export default function ActivityAccept() {
           </FormProvider>
         </CardBody>
       </Card>
-      <ActivityDetails activity={activity} />
+      <ActivityProvider>
+        <ActivityDetails activity={activity} />
+      </ActivityProvider>
     </Flex>
   );
 }

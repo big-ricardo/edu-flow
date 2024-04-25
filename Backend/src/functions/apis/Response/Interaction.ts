@@ -17,6 +17,11 @@ import { ObjectId } from "mongoose";
 import { Types } from "mongoose";
 import { NodeTypes } from "../../../models/client/WorkflowDraft";
 import { setHeapSnapshotNearHeapLimit } from "v8";
+import sendNextQueue from "../../../utils/sendNextQueue";
+import {
+  extraOutputsInteractionProcess,
+  sendToQueue,
+} from "../../../utils/sbusOutputs";
 
 interface File {
   name: string;
@@ -30,17 +35,12 @@ interface IUser {
   email: string;
 }
 
-type DtoCreated = {
-  name: string; // "name"
-  description: string; // "description"
-  masterminds: Pick<IUser, "_id" | "name" | "email">;
-} & {
+type DtoCreated = {} & {
   [key: string]: File | string | Array<string> | IUser | Array<IUser>;
 };
 
-const handler: HttpHandler = async (conn, req) => {
+const handler: HttpHandler = async (conn, req, context) => {
   const rest = req.body as DtoCreated;
-  const { name, description, masterminds } = rest;
 
   const form = await new Form(conn)
     .model()
@@ -48,6 +48,7 @@ const handler: HttpHandler = async (conn, req) => {
       _id: req.params.form_id,
       active: true,
       published: { $exists: true },
+
       $and: [
         {
           $or: [
@@ -87,25 +88,13 @@ const handler: HttpHandler = async (conn, req) => {
     return res.notFound("Form draft not found");
   }
 
-  const mastermindsMapped = Array.isArray(masterminds)
-    ? masterminds
-    : [masterminds];
-
-  const mastermindsExists = await new User(conn)
+  const activity = await new Activity(conn)
     .model()
-    .find({
-      _id: {
-        $in: mastermindsMapped,
-      },
-    })
-    .select({
-      _id: 1,
-      name: 1,
-      email: 1,
-      matriculation: 1,
-      university_degree: 1,
-      institute: 1,
-    });
+    .findById(req.params.activity_id);
+
+  if (!activity) {
+    return res.notFound("Activity not found");
+  }
 
   for (const field of formDraft.fields) {
     let value = rest[field.id];
@@ -169,35 +158,47 @@ const handler: HttpHandler = async (conn, req) => {
     field.value = mapped || value;
   }
 
-  const status = await new Status(conn).model().findById(form.initial_status);
+  const activeInteraction = activity.interactions.findIndex(
+    (interaction) => !interaction.finished
+  );
 
-  const user = await new User(conn).model().findById(req.user.id).select({
-    _id: 1,
-    name: 1,
-    email: 1,
-    matriculation: 1,
-    university_degree: 1,
-    institute: 1,
-  });
+  if (activeInteraction === -1) {
+    return res.badRequest("No active interaction");
+  }
 
-  const activity = await new Activity(conn).model().create({
-    name,
-    description,
-    form: form._id,
-    status: status.toObject(),
-    users: [user.toObject()],
-    masterminds: mastermindsExists?.map((mastermind) => ({
-      user: mastermind.toObject(),
-      accepted: IActivityAccepted.pending,
-    })),
-    form_draft: formDraft.toObject(),
-  });
+  const interaction = activity.interactions[activeInteraction];
 
-  await new User(conn).model().findByIdAndUpdate(req.user.id, {
-    $push: {
-      activities: activity._id,
-    },
-  });
+  const myAnswer = interaction.answers.findIndex(
+    (answer) => String(answer.user._id) === String(req.user.id)
+  );
+
+  if (myAnswer === -1) {
+    return res.badRequest("You already answered this interaction");
+  }
+
+  interaction.answers[myAnswer].data = formDraft.toObject();
+  interaction.answers[myAnswer].status = IActivityStepStatus.finished;
+
+  const isAllAnswered = interaction.answers.every(
+    (answer) => answer.status === IActivityStepStatus.finished
+  );
+
+  if (isAllAnswered) {
+    interaction.finished = true;
+
+    sendToQueue({
+      context,
+      message: {
+        activity_id: activity._id.toString(),
+        activity_workflow_id: interaction.activity_workflow_id.toString(),
+        activity_step_id: interaction.activity_step_id.toString(),
+        client: conn.name,
+      },
+      queueName: "interaction_process",
+    });
+  }
+
+  activity.save();
 
   return res.created(activity);
 };
@@ -206,16 +207,15 @@ export default new Http(handler)
   .setSchemaValidator((schema) => ({
     params: schema.object().shape({
       form_id: schema.string().required(),
+      activity_id: schema.string().required(),
     }),
-    body: schema.object().shape({
-      name: schema.string().required().min(3).max(255),
-      description: schema.string().required().min(3).max(255),
-    }),
+    body: schema.object().shape({}),
   }))
   .configure({
-    name: "ResponseCreated",
+    name: "ResponseInteraction",
     options: {
       methods: ["POST"],
-      route: "response/{form_id}/created",
+      route: "response/{form_id}/interaction/{activity_id}",
+      extraOutputs: [extraOutputsInteractionProcess],
     },
   });

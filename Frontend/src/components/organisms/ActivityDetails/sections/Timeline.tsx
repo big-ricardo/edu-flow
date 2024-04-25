@@ -1,33 +1,72 @@
 import {
   Box,
-  Card,
+  Button,
   Divider,
   Flex,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
   Text,
-  useColorMode,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { MilestoneEnd, MilestoneItem } from "@components/molecules/TimeLine";
 import IActivity, { IActivityStep } from "@interfaces/Activitiy";
 import { IStep, NodeTypes } from "@interfaces/WorkflowDraft";
-import React, { useCallback, useMemo } from "react";
-import { GoMilestone, GoTag } from "react-icons/go";
+import React, { useCallback, useMemo, useState } from "react";
+import { GoMilestone, GoTag, GoWorkflow } from "react-icons/go";
 import { LiaNotesMedicalSolid } from "react-icons/lia";
 import { FaWpforms } from "react-icons/fa";
 import { BiMailSend } from "react-icons/bi";
-import { GoWorkflow } from "react-icons/go";
+import useActivity from "@hooks/useActivity";
+import IFormDraft, { IField } from "@interfaces/FormDraft";
+import ExtraFields from "./ExtraFields";
+import { BsArrowsFullscreen } from "react-icons/bs";
 
-interface MilestoneItemProps {
-  workflows: IActivity["workflows"];
-}
+const statusMap = {
+  idle: "Aguardando Resposta",
+  finished: "Resposta Enviada",
+  error: "Erro",
+  in_progress: "Em Progresso",
+  in_queue: "Em Fila",
+};
 
-const Timeline: React.FC<MilestoneItemProps> = ({ workflows }) => {
+interface MilestoneItemProps {}
+
+const Timeline: React.FC<MilestoneItemProps> = () => {
+  const { activity } = useActivity();
+  const [modalData, setModalData] = useState<IField[] | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const workflows = activity?.workflows;
+
+  const handleOpenModal = useCallback(
+    (data: IField[]) => {
+      setModalData(data);
+      onOpen();
+    },
+    [onOpen]
+  );
+
   return (
     <Box>
       {workflows?.map((workflow) => (
-        <TimelineWorkflowItem key={workflow._id} workflow={workflow} />
+        <TimelineWorkflowItem
+          key={workflow._id}
+          {...{ workflow, handleOpenModal }}
+        />
       ))}
       <MilestoneEnd />
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent p="5" minW="400">
+          <ModalCloseButton />
+
+          <ExtraFields fields={modalData || []} />
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
@@ -36,8 +75,10 @@ export default Timeline;
 
 const TimelineWorkflowItem = ({
   workflow,
+  handleOpenModal,
 }: {
   workflow: IActivity["workflows"][0];
+  handleOpenModal: (data: IField[]) => void;
 }) => {
   const getStep = useCallback(
     (stepId: string) => {
@@ -53,6 +94,7 @@ const TimelineWorkflowItem = ({
           key={step._id}
           data={step}
           step={getStep(step.step)}
+          handleOpenModal={handleOpenModal}
         />
       ))}
     </div>
@@ -62,10 +104,15 @@ const TimelineWorkflowItem = ({
 const TimelineStepItem = ({
   data,
   step,
+  handleOpenModal,
 }: {
   step: IStep | undefined;
   data: IActivityStep;
+  handleOpenModal: (data: IField[]) => void;
 }) => {
+  const { activity } = useActivity();
+  const interactions = activity?.interactions;
+
   const Icon = useMemo(() => {
     switch (step?.type) {
       case NodeTypes.Interaction:
@@ -85,7 +132,30 @@ const TimelineStepItem = ({
     }
   }, [step?.type]);
 
-  const bg = useColorModeValue("gray.200", "gray.800");
+  const interaction = useMemo(() => {
+    if (step?.type === NodeTypes.Interaction) {
+      return interactions?.find(
+        (interaction) => interaction.activity_step_id === data._id
+      );
+    }
+
+    return null;
+  }, [data._id, step?.type, interactions]);
+
+  const bg = useColorModeValue("gray.50", "gray.800");
+  const border = useColorModeValue("black", "gray.100");
+
+  const handleOpenModalItem = useCallback(
+    (data: IFormDraft | null) => {
+      const fields = data?.fields;
+      if (!fields?.length) {
+        return;
+      }
+
+      handleOpenModal(fields);
+    },
+    [handleOpenModal]
+  );
 
   if (!step) return null;
 
@@ -99,15 +169,35 @@ const TimelineStepItem = ({
         alignItems="start"
         direction="column"
         bg={bg}
+        borderColor={border}
       >
         <Flex direction="row" alignItems="center" gap={2}>
           <Icon size={20} />
           <Text fontSize="md">{step.data?.name}</Text>
         </Flex>
         <Divider my={2} />
-        <Text fontSize="sm" color="gray.500">
-          "ojdposakdop iojkdpoask"
-        </Text>
+        {interaction && (
+          <Box>
+            {interaction.answers.map((answer) => (
+              <Box key={answer._id}>
+                <Text fontWeight="bold">{answer.user.name}</Text>
+                <Text fontSize={"sm"}>{answer.user.email}</Text>
+
+                {!!answer?.data && (
+                  <Button
+                    size="sm"
+                    mt="1"
+                    onClick={() => handleOpenModalItem(answer.data)}
+                    variant={"outline"}
+                    leftIcon={<BsArrowsFullscreen />}
+                  >
+                    {statusMap[answer.status]}
+                  </Button>
+                )}
+              </Box>
+            ))}
+          </Box>
+        )}
       </Flex>
     </MilestoneItem>
   );

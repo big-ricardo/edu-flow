@@ -23,7 +23,21 @@ export enum IActivityAccepted {
   pending = "pending",
 }
 
-export type IUserChild = Omit<IUser, "password">
+export type IUserChild = Omit<IUser, "password">;
+
+export type IActivityInteractions = {
+  _id: string;
+  activity_workflow_id: string;
+  activity_step_id: string;
+  form: IForm;
+  answers: Array<{
+    _id: string;
+    status: IActivityStepStatus;
+    user: Omit<IUser, "password">;
+    data: IFormDraft | null;
+  }>;
+  finished: boolean;
+};
 
 export enum IActivityStepStatus {
   idle = "idle",
@@ -63,10 +77,11 @@ export type IActivity = {
   sub_masterminds: IUserChild[];
   status: IStatus;
   comments: IComment[];
-  workflows:ActivityWorkflow[];
+  interactions: IActivityInteractions[];
+  workflows: ActivityWorkflow[];
   description: string;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 export default IActivity;
