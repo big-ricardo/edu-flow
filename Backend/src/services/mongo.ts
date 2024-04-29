@@ -17,19 +17,39 @@ if (!MONGO_HOST || !MONGO_USER || !MONGO_PASS) {
 const CON_STRING = `mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}:${MONGO_PORT}`;
 const PARAMS =
   "authSource=admin&readPreference=primary&ssl=false&directConnection=true";
+const mongoOptions: mongoose.ConnectOptions = {
+  autoIndex: true,
+  connectTimeoutMS: 10000,
+  socketTimeoutMS: 1000,
+};
+
+const connectionMap = new Map<string, Connection>();
+
+const handleConnect = (db: string) =>
+  mongoose.createConnection(`${CON_STRING}/${db}?${PARAMS}`, mongoOptions);
 
 export function connect(db: string): Connection {
-  const uri = `${CON_STRING}/${db}?${PARAMS}`;
-  const conn = mongoose.createConnection(uri);
-  conn.useDb(db);
-  conn.once("open", () => {
+  if (connectionMap.has(db)) {
+    return connectionMap.get(db);
+  }
+
+  const conn = handleConnect(db);
+  const newConn = conn.useDb(db, { useCache: true });
+  newConn.once("open", () => {
     console.log(`Connected to ${db} database`);
+  });
+  newConn.once("close", () => {
+    connectionMap.delete(db);
+    console.log(`Disconnected to ${db} database`);
   });
 
   Object.keys(clientModels).forEach((key) => {
-    conn.model(key, clientModels[key]);
+    newConn.model(key, clientModels[key]);
   });
-  return conn;
+
+  connectionMap.set(db, newConn);
+
+  return newConn;
 }
 
 export async function disconnect(conn: Connection): Promise<void> {
@@ -41,18 +61,17 @@ export async function disconnect(conn: Connection): Promise<void> {
 }
 
 export async function connectAdmin(): Promise<Connection> {
-  const uri = `${CON_STRING}/${MONGO_ADMIN_DB}?${PARAMS}`;
-  const conn = mongoose.createConnection(uri);
-  conn.useDb(MONGO_ADMIN_DB);
-  conn.once("open", () => {
+  const conn = handleConnect(MONGO_ADMIN_DB);
+  const newConn = conn.useDb(MONGO_ADMIN_DB);
+  newConn.once("open", () => {
     console.log(`Connected to ${MONGO_ADMIN_DB} database`);
   });
 
   Object.keys(adminModels).forEach((key) => {
-    conn.model(key, adminModels[key]);
+    newConn.model(key, adminModels[key]);
   });
 
-  return conn;
+  return newConn;
 }
 
 export async function disconnectAdmin(conn: Connection): Promise<void> {

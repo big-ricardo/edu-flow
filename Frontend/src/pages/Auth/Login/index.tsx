@@ -28,10 +28,7 @@ const schema = z.object({
     .min(2, "A sigla deve ter no mínimo 2 caracteres")
     .trim()
     .transform((v) => v.toLowerCase().replace(/ /g, "")),
-  cpf: z
-    .string()
-    .length(11, "O CPF deve ter 11 dígitos")
-    .regex(/^\d+$/, "Insira apenas números no CPF"),
+  matriculation: z.string().min(6, "A matrícula deve ter no mínimo 6 dígitos"),
   password: z.string().min(6, "A senha deve ter no mínimo 6 dígitos"),
 });
 
@@ -117,9 +114,9 @@ const Login: React.FC = () => {
 
                 <InputText
                   input={{
-                    id: "cpf",
-                    label: "CPF",
-                    placeholder: "Insira o CPF",
+                    id: "matriculation",
+                    label: "Matrícula",
+                    placeholder: "Insira a matrícula",
                   }}
                 />
 

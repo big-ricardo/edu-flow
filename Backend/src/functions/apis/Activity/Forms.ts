@@ -10,6 +10,7 @@ const handler: HttpHandler = async (conn) => {
         roles: {
           $ne: IUserRoles.teacher,
         },
+        active: true,
       })
       .select({
         _id: 1,
@@ -27,6 +28,7 @@ const handler: HttpHandler = async (conn) => {
       roles: {
         $in: IUserRoles.teacher,
       },
+      active: true,
     })
     .select({
       _id: 1,

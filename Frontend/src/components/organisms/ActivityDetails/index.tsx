@@ -79,7 +79,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
             )}
           </Flex>
         </VStack>
-        <Accordion.Container defaultIndex={[0,1]} allowToggle allowMultiple>
+        <Accordion.Container defaultIndex={[0, 1]} allowToggle allowMultiple>
           <Accordion.Item>
             <Accordion.Button>Informações Extra</Accordion.Button>
             <Accordion.Panel>
@@ -87,12 +87,14 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
             </Accordion.Panel>
           </Accordion.Item>
 
-          <Accordion.Item>
-            <Accordion.Button>Linha do Tempo</Accordion.Button>
-            <Accordion.Panel>
-              <Timeline />
-            </Accordion.Panel>
-          </Accordion.Item>
+          {activity.workflows.length > 0 && (
+            <Accordion.Item>
+              <Accordion.Button>Linha do Tempo</Accordion.Button>
+              <Accordion.Panel>
+                <Timeline />
+              </Accordion.Panel>
+            </Accordion.Item>
+          )}
         </Accordion.Container>
       </Card>
     );

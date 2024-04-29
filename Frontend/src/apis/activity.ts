@@ -51,6 +51,23 @@ export const committedActivity = async (
   return res.data.data;
 };
 
+export const setUserEvaluations = async ({
+  activity,
+  evaluation,
+  data,
+}: {
+  activity: string;
+  evaluation: string;
+  data: Omit<IUser, "password" | "_id">;
+}) => {
+  const res = await api.put<ReqActivity>(
+    `/activity/${activity}/board-definition/${evaluation}`,
+    data
+  );
+
+  return res.data.data;
+};
+
 export const acceptActivity = async (data: {
   _id: string;
   accepted: "accepted" | "rejected";

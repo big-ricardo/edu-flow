@@ -102,3 +102,25 @@ export const getMyActivitiesPendingInteractions = async ({
 
   return res.data.data;
 };
+
+type ReqBoardDefinitions = Response<
+  Pick<
+    IActivity,
+    "_id" | "name" | "description" | "protocol" | "evaluations" | "users"
+  >[]
+>;
+
+export const getBoardDefinitions = async ({
+  queryKey: [, page = "1", limit = "10"],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqBoardDefinitions>(
+    "/dashboard/board-definitions",
+    {
+      params: { page, limit },
+    }
+  );
+
+  return res.data.data;
+};

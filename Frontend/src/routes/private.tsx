@@ -23,6 +23,7 @@ import Activity from "@pages/Portal/Activity";
 import ActivityProcess from "@pages/Portal/ActivityCommit";
 import ActivityAccept from "@pages/Portal/ActivityAccept";
 import EditResponse from "@pages/Edit";
+import ActivityBoardDefinition from "@pages/Portal/ActivityBordDefinition";
 
 const routes: RouteType = [
   {
@@ -120,6 +121,10 @@ const routes: RouteType = [
       {
         path: "/portal/activity-accept/:id",
         element: <ActivityAccept />,
+      },
+      {
+        path: "/portal/activity/:id/board-definition/:evaluation_id",
+        element: <ActivityBoardDefinition />,
       },
     ],
   },

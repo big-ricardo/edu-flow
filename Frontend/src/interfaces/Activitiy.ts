@@ -39,6 +39,21 @@ export type IActivityInteractions = {
   finished: boolean;
 };
 
+export type IActivityEvaluations = {
+  _id: string;
+  activity_workflow_id: string;
+  activity_step_id: string;
+  form: IForm;
+  final_grade: number;
+  answers: Array<{
+    _id: string;
+    status: IActivityStepStatus;
+    user: Omit<IUser, "password">;
+    data: IFormDraft | null;
+  }> | null;
+  finished: boolean;
+};
+
 export enum IActivityStepStatus {
   idle = "idle",
   inQueue = "in_queue",
@@ -78,6 +93,7 @@ export type IActivity = {
   status: IStatus;
   comments: IComment[];
   interactions: IActivityInteractions[];
+  evaluations: IActivityEvaluations[];
   workflows: ActivityWorkflow[];
   description: string;
   createdAt: string;

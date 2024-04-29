@@ -88,6 +88,10 @@ export type IStep = {
       type: NodeTypes.Interaction;
       data: IInteraction;
     }
+  | {
+      type: NodeTypes.Evaluated;
+      data: IEvaluated;
+    }
 );
 
 export enum IWorkflowDraftStatus {
@@ -155,7 +159,7 @@ export const schemaBase = new Schema<IWorkflowDraft>(
 
 export const schema = schemaBase.clone();
 
-schema.index({ name: 1, version: 1 }, { unique: true });
+schema.index({ parent: 1, version: 1 }, { unique: true });
 
 export default class WorkflowDraft {
   conn: mongoose.Connection;

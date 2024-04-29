@@ -81,6 +81,21 @@ export type IActivityInteractions = {
   finished: boolean;
 };
 
+export type IActivityEvaluations = {
+  _id: ObjectId;
+  activity_workflow_id: ObjectId;
+  activity_step_id: ObjectId;
+  form: IForm;
+  final_grade: number | null;
+  answers: mongoose.Types.DocumentArray<{
+    _id: ObjectId;
+    status: IActivityStepStatus;
+    user: Omit<IUser, "password">;
+    data: IFormDraft | null;
+  }> | null;
+  finished: boolean;
+};
+
 export type IActivity = {
   _id: ObjectId;
   name: string;
@@ -114,6 +129,7 @@ export type IActivity = {
   comments: IComment[];
   workflows: mongoose.Types.DocumentArray<ActivityWorkflow>;
   interactions: mongoose.Types.DocumentArray<IActivityInteractions>;
+  evaluations: mongoose.Types.DocumentArray<IActivityEvaluations>;
   description: string;
   createdAt: string;
   updatedAt: string;
@@ -151,7 +167,28 @@ const interactionSchema = new Schema<IActivityInteractions>({
     },
   ],
   finished: { type: Boolean, default: false },
-}).index({ "answer.user._id": 1, "answer.status": 1 }, { unique: false });
+}).index({ "answers.user._id": 1, "answers.status": 1 }, { unique: false });
+
+const evaluationsSchema = new Schema<IActivityEvaluations>({
+  _id: { type: Schema.Types.ObjectId, auto: true },
+  activity_workflow_id: { type: Schema.Types.ObjectId, required: true },
+  activity_step_id: { type: Schema.Types.ObjectId, required: true },
+  form: { type: Object, required: true },
+  final_grade: { type: Number, default: null },
+  answers: [
+    {
+      _id: { type: Schema.Types.ObjectId, auto: true },
+      status: {
+        type: String,
+        required: true,
+        enum: Object.values(IActivityStepStatus),
+      },
+      user: { type: userSchema, required: true },
+      data: { type: Object, default: null },
+    },
+  ],
+  finished: { type: Boolean, default: false },
+}).index({ "answers.user._id": 1, "answers.status": 1 }, { unique: false });
 
 const commentSchema = new Schema<IComment>(
   {
@@ -226,6 +263,7 @@ export const schema: Schema = new Schema<IActivity>(
     sub_masterminds: [{ type: userSchema, required: false, default: [] }],
     status: { type: statusSchema, required: true },
     interactions: [{ type: interactionSchema, required: false, default: [] }],
+    evaluations: [{ type: evaluationsSchema, required: false, default: [] }],
     workflows: [
       {
         type: ActivityWorkflowSchema,

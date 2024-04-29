@@ -125,7 +125,7 @@ export default class Http {
 
       return res.internalServerError();
     } finally {
-      //await mongo.disconnect(this.conn);
+      // await mongo.disconnect(this.conn);
     }
   };
 

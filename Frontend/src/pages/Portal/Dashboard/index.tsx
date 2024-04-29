@@ -5,6 +5,7 @@ import ApprovedActivities from "./components/ActivitiesProcess";
 import ActivitiesAccept from "./components/ActivitiesAccept";
 import OpenForms from "./components/OpenForms";
 import PendingInteractions from "./components/MyPendingInteractions";
+import BoardDefinitions from "./components/BoardDefinitions";
 
 const Dashboard: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const Dashboard: React.FC = () => {
       <ApprovedActivities />
       <ActivitiesAccept />
       <PendingInteractions />
+      <BoardDefinitions />
     </Box>
   );
 };

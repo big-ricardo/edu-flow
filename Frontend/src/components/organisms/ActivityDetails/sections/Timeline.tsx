@@ -7,6 +7,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
+  Tag,
   Text,
   useColorModeValue,
   useDisclosure,
@@ -157,7 +158,7 @@ const TimelineStepItem = ({
     [handleOpenModal]
   );
 
-  if (!step) return null;
+  if (!step || !step?.data.visible) return null;
 
   return (
     <MilestoneItem key={step._id} isStep status={data.status}>
@@ -183,7 +184,7 @@ const TimelineStepItem = ({
                 <Text fontWeight="bold">{answer.user.name}</Text>
                 <Text fontSize={"sm"}>{answer.user.email}</Text>
 
-                {!!answer?.data && (
+                {answer?.data ? (
                   <Button
                     size="sm"
                     mt="1"
@@ -193,6 +194,10 @@ const TimelineStepItem = ({
                   >
                     {statusMap[answer.status]}
                   </Button>
+                ) : (
+                  <Tag size="sm" variant="subtle" colorScheme="gray" mt="2">
+                    {statusMap[answer.status]}
+                  </Tag>
                 )}
               </Box>
             ))}

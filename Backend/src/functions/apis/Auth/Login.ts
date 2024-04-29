@@ -6,12 +6,12 @@ import { connect, connectAdmin } from "../../../services/mongo";
 import AdminClient from "../../../models/admin/Client";
 
 interface Body {
-  cpf: string;
+  matriculation: string;
   password: string;
   acronym: string;
 }
 export const handler: HttpHandler = async (_, req, context) => {
-  const { cpf, password, acronym } = req.body as Body;
+  const { matriculation, password, acronym } = req.body as Body;
 
   const adminConn = await connectAdmin();
 
@@ -26,7 +26,7 @@ export const handler: HttpHandler = async (_, req, context) => {
   const conn = await connect(client.acronym);
 
   const user = await conn.model("User").findOne({
-    cpf,
+    matriculation,
   });
 
   if (!user) {
@@ -57,11 +57,8 @@ export default new Http(handler)
   .setPublic()
   .setSchemaValidator((schema) => ({
     body: schema.object().shape({
-      cpf: schema
-        .string()
-        .matches(/^\d{11}$/)
-        .required(),
       password: schema.string().required(),
+      matriculation: schema.string().required(),
       acronym: schema.string().required(),
     }),
   }))

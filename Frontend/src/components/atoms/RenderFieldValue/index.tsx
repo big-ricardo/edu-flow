@@ -18,6 +18,18 @@ const RenderFieldValue = memo(
   }) => {
     if (!label || !value) return null;
 
+    if (!value)
+      return (
+        <Flex direction={"column"}>
+          <Text fontSize="sm" mr={2}>
+            {label}:
+          </Text>
+          <Text fontSize="sm" fontWeight={"bold"}>
+            Não informado
+          </Text>
+        </Flex>
+      );
+
     if (typeof value === "string" && value) {
       return (
         <Flex direction={"column"}>
@@ -70,7 +82,7 @@ const RenderFieldValue = memo(
           {label}:
         </Text>
         <Text fontSize="sm" fontWeight={"bold"}>
-          Não informado
+          {value}
         </Text>
       </Flex>
     );

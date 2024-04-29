@@ -40,7 +40,6 @@ const handler: HttpHandler = async (conn, req, context) => {
         const subMastermindData = await user.findOne({
           email: sub.email,
         });
-        console.log(">>>>> subMastermindData", subMastermindData);
         if (!subMastermindData) {
           const newUser = await new User(conn).model().create({
             ...sub,
