@@ -93,7 +93,8 @@ const handler: QueueWrapperHandler<TMessage> = async (
           status: "idle",
           user: u,
           data: null,
-        })) ?? null,
+        })) ?? undefined,
+      not_defined_board: destinations === null,
     });
 
     await activity.save();

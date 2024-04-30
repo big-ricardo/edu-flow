@@ -48,16 +48,15 @@ const handler: HttpHandler = async (conn, req) => {
       return user.toObject();
     })
   );
-  evaluation.answers = [];
+
   users.forEach((user) => {
-    console.log(user);
     evaluation.answers.push({
       user: user,
       data: null,
       status: "idle",
     });
   });
-
+  evaluation.not_defined_board = false;
   await activity.save();
 
   return res.success(activity.toObject());

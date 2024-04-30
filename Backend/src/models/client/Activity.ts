@@ -87,10 +87,12 @@ export type IActivityEvaluations = {
   activity_step_id: ObjectId;
   form: IForm;
   final_grade: number | null;
+  not_defined_board: boolean;
   answers: mongoose.Types.DocumentArray<{
     _id: ObjectId;
     status: IActivityStepStatus;
     user: Omit<IUser, "password">;
+    grade: number | null;
     data: IFormDraft | null;
   }> | null;
   finished: boolean;
@@ -175,6 +177,7 @@ const evaluationsSchema = new Schema<IActivityEvaluations>({
   activity_step_id: { type: Schema.Types.ObjectId, required: true },
   form: { type: Object, required: true },
   final_grade: { type: Number, default: null },
+  not_defined_board: { type: Boolean, default: false, index: true },
   answers: [
     {
       _id: { type: Schema.Types.ObjectId, auto: true },
@@ -183,6 +186,7 @@ const evaluationsSchema = new Schema<IActivityEvaluations>({
         required: true,
         enum: Object.values(IActivityStepStatus),
       },
+      grade: { type: Number, default: null },
       user: { type: userSchema, required: true },
       data: { type: Object, default: null },
     },

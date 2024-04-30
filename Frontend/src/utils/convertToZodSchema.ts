@@ -69,7 +69,7 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
         fieldSchema = z.date();
         break;
       case "evaluated":
-        fieldSchema = z.string(); // Not sure how to handle this type, fallback to string
+        fieldSchema = z.coerce.number();
         break;
       case "file":
         fieldSchema = z

@@ -1,7 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, { IActivityStepStatus } from "../../../models/client/Activity";
-import User from "../../../models/client/User";
+import Activity from "../../../models/client/Activity";
 
 interface Query {
   page?: number;
@@ -14,8 +13,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
   const pendingActivities = await new Activity(conn)
     .model()
     .find({
-      "evaluations.answers": null,
-      "evaluations.finished": false,
+      "evaluations.not_defined_board": true,
     })
     .select({
       _id: 1,

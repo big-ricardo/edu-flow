@@ -46,6 +46,10 @@ export type IField = {
     | { label: string; options: { label: string; value: string }[] }[];
   validation?: { min?: number; max?: number; pattern?: string };
   describe?: string;
+  weight?: number;
+  label?: string;
+  placeholder?: string;
+  create: boolean;
 };
 
 export type IFormDraft = {

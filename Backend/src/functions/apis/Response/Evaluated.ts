@@ -1,9 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, {
-  IActivityAccepted,
-  IActivityStepStatus,
-} from "../../../models/client/Activity";
+import Activity, { IActivityStepStatus } from "../../../models/client/Activity";
 import Form from "../../../models/client/Form";
 import FormDraft, {
   FieldTypes,
@@ -12,8 +9,7 @@ import FormDraft, {
 import moment from "moment";
 import uploadFileToBlob from "../../../services/upload";
 import User from "../../../models/client/User";
-import { ObjectId } from "mongoose";
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import {
   extraOutputsInteractionProcess,
   sendToQueue,
@@ -92,11 +88,19 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.notFound("Activity not found");
   }
 
+  let grade = 0;
+
   for (const field of formDraft.fields) {
     let value = rest[field.id];
     let mapped: IValue = null;
 
     if (!value || (Array.isArray(value) && !value.length)) {
+      field.value = value;
+      continue;
+    }
+
+    if (field.type === FieldTypes.Evaluated && typeof value === "number") {
+      grade += value * field.weight;
       field.value = value;
       continue;
     }
@@ -154,17 +158,17 @@ const handler: HttpHandler = async (conn, req, context) => {
     field.value = mapped || value;
   }
 
-  const activeInteraction = activity.interactions.findIndex(
-    (interaction) => !interaction.finished
+  const activeEvaluation = activity.evaluations.findIndex(
+    (evaluation) => !evaluation.finished
   );
 
-  if (activeInteraction === -1) {
-    return res.badRequest("No active interaction");
+  if (activeEvaluation === -1) {
+    return res.badRequest("No active evaluation");
   }
 
-  const interaction = activity.interactions[activeInteraction];
+  const evaluation = activity.evaluations[activeEvaluation];
 
-  const myAnswer = interaction.answers.findIndex(
+  const myAnswer = evaluation.answers.findIndex(
     (answer) => String(answer.user._id) === String(req.user.id)
   );
 
@@ -172,26 +176,25 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.badRequest("You already answered this interaction");
   }
 
-  interaction.answers[myAnswer].data = formDraft.toObject();
-  interaction.answers[myAnswer].status = IActivityStepStatus.finished;
+  evaluation.answers[myAnswer].data = formDraft.toObject();
+  evaluation.answers[myAnswer].status = IActivityStepStatus.finished;
+  evaluation.answers[myAnswer].grade = grade / 10;
 
-  const isAllAnswered = interaction.answers.every(
+  const isAllAnswered = evaluation.answers.every(
     (answer) => answer.status === IActivityStepStatus.finished
   );
 
   if (isAllAnswered) {
-    interaction.finished = true;
-
-    sendToQueue({
-      context,
-      message: {
-        activity_id: activity._id.toString(),
-        activity_workflow_id: interaction.activity_workflow_id.toString(),
-        activity_step_id: interaction.activity_step_id.toString(),
-        client: conn.name,
-      },
-      queueName: "interaction_process",
-    });
+    // sendToQueue({
+    //   context,
+    //   message: {
+    //     activity_id: activity._id.toString(),
+    //     activity_workflow_id: evaluation.activity_workflow_id.toString(),
+    //     activity_step_id: evaluation.activity_step_id.toString(),
+    //     client: conn.name,
+    //   },
+    //   queueName: "interaction_process",
+    // });
   }
 
   activity.save();
@@ -208,10 +211,10 @@ export default new Http(handler)
     body: schema.object().shape({}),
   }))
   .configure({
-    name: "ResponseInteraction",
+    name: "ResponseEvaluation",
     options: {
       methods: ["POST"],
-      route: "response/{form_id}/interaction/{activity_id}",
+      route: "response/{form_id}/evaluated/{activity_id}",
       extraOutputs: [extraOutputsInteractionProcess],
     },
   });
