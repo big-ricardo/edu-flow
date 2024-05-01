@@ -11,14 +11,13 @@ import {
   CardBody,
   Button,
   Flex,
-  useColorModeValue,
   Text,
   Divider,
   DrawerFooter,
   Badge,
 } from "@chakra-ui/react";
 import { FaComments } from "react-icons/fa";
-import { createOrUpdateComment, getComments } from "@apis/comment";
+import { createOrUpdateComment } from "@apis/comment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { memo, useMemo } from "react";
 import useAuth from "@hooks/useAuth";
@@ -170,7 +169,7 @@ interface CommentItemProps {
 
 const CommentItem: React.FC<CommentItemProps> = memo(({ comment }) => {
   return (
-    <Card mb={2} p={2} bg={useColorModeValue("gray.200", "gray.800")}>
+    <Card mb={2} p={2} bg={"bg.card"} borderRadius="md" boxShadow="sm">
       <Flex justifyContent="space-between">
         <Flex alignItems="start" gap={2} direction="column">
           <Text fontWeight="bold" title={comment.user.email} noOfLines={1}>

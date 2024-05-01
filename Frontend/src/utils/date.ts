@@ -1,4 +1,4 @@
-export function convertDateTime(date?: string) {
+export function convertDateTime(date?: string | null) {
   if (!date) return "Sem data";
 
   try {

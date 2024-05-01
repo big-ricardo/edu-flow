@@ -45,15 +45,15 @@ export default Interaction;
 export function InteractionIcon() {
   return (
     <Flex
-      bg={useColorModeValue("white", "gray.800")}
+      bg={"bg.card"}
       width="100px"
       height="80px"
       alignItems="center"
       justifyContent="center"
       border="1px solid"
-      borderColor={useColorModeValue("gray.300", "gray.600")}
       borderRadius="3px"
       transition="border-color 0.3s ease-in-out"
+      borderColor={"bg.page"}
     >
       <Box
         as={FaWpforms}

@@ -12,7 +12,6 @@ import {
   useToast,
   Divider,
   Flex,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { getFormBySlug } from "@apis/form";
 import Inputs from "@components/atoms/Inputs";
@@ -29,8 +28,6 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
-  const bg = useColorModeValue("gray.50", "gray.700");
-  const bgWrapper = useColorModeValue("gray.200", "gray.900");
 
   const activity_id = location.state?.activity_id as string | undefined;
 
@@ -129,12 +126,12 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
   }
 
   return (
-    <Box p={4} minH="100vh" bg={bgWrapper}>
+    <Box p={4} minH="100vh" bg={"bg.page"}>
       <Button colorScheme="blue" onClick={() => navigate(-1)}>
         Voltar
       </Button>
       <Center>
-        <Box bg={bg} w="xl" p={4} borderRadius="md" boxShadow="md">
+        <Box bg={"bg.card"} w="xl" p={4} borderRadius="md" boxShadow="md">
           <Box mb={4}>
             <Text fontSize="2xl" fontWeight="bold">
               {form?.name}

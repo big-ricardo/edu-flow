@@ -13,7 +13,7 @@ type TableProps = {
 
 const Table: React.FC<TableProps> = ({ columns, data, tableTitle }) => {
   return (
-    <ChakraTable variant="striped">
+    <ChakraTable>
       <TableCaption>{tableTitle}</TableCaption>
       <TableHead columns={columns} />
       <TableBody columns={columns} data={data} />

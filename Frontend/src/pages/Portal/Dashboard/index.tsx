@@ -1,6 +1,6 @@
 import React from "react";
 import MyActivities from "./components/MyActivities";
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import ApprovedActivities from "./components/ActivitiesProcess";
 import ActivitiesAccept from "./components/ActivitiesAccept";
 import OpenForms from "./components/OpenForms";
@@ -10,8 +10,7 @@ import PendingEvaluations from "./components/MyPendingEvaluations";
 
 const Dashboard: React.FC = () => {
   return (
-    <Box p={8} width="100%">
-      <h1>Dashboard</h1>
+    <Flex p={8} width="100%" direction="column" gap={8}>
       <OpenForms />
       <MyActivities />
       <ApprovedActivities />
@@ -19,7 +18,7 @@ const Dashboard: React.FC = () => {
       <PendingInteractions />
       <BoardDefinitions />
       <PendingEvaluations />
-    </Box>
+    </Flex>
   );
 };
 

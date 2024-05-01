@@ -2,13 +2,13 @@ import { getMyActivitiesPendingAcceptance } from "@apis/dashboard";
 import {
   Box,
   Button,
+  Divider,
   Flex,
   Grid,
   Heading,
   Spinner,
   Stack,
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import IActivity from "@interfaces/Activitiy";
 import { useQuery } from "@tanstack/react-query";
@@ -26,8 +26,13 @@ const ActivitiesAccept: React.FC = () => {
   if (data && data.activities.length === 0) return null;
 
   return (
-    <Box p={4}>
-      <Heading>Atividades para Aceitar</Heading>
+    <Box p={4} bg="bg.card" borderRadius="md">
+      <Heading size="md">Atividades para Aceitar</Heading>
+      <Text size="sm" color={"text.secondary"}>
+        Atividades pendentes de aceitação para sua participação.
+      </Text>
+
+      <Divider my={2} />
 
       {isLoading && <Spinner />}
 
@@ -75,10 +80,10 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
       borderWidth="1px"
       borderRadius="md"
       p={4}
-      borderColor={"gray"}
+      borderColor={"bg.border"}
       w={"100%"}
       h={"100%"}
-      bgColor={useColorModeValue("white", "gray.700")}
+      bgColor={"bg.card"}
     >
       <Stack
         spacing={2}
@@ -95,9 +100,6 @@ const ActivityItem: React.FC<ActivityItemProps> = memo(({ activity }) => {
             <FaPen />
           </Button>
         </Flex>
-        <Text fontSize="sm" noOfLines={2}>
-          {activity.description}
-        </Text>
         <Text>
           Criação: <strong>{convertDateTime(activity.createdAt)}</strong>
         </Text>

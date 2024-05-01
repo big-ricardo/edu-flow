@@ -9,7 +9,6 @@ import {
   ModalOverlay,
   Tag,
   Text,
-  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { MilestoneEnd, MilestoneItem } from "@components/molecules/TimeLine";
@@ -153,9 +152,6 @@ const TimelineStepItem = ({
     return null;
   }, [data._id, step?.type, activity?.evaluations]);
 
-  const bg = useColorModeValue("gray.50", "gray.800");
-  const border = useColorModeValue("black", "gray.100");
-
   const handleOpenModalItem = useCallback(
     (data: IFormDraft | null) => {
       const fields = data?.fields;
@@ -179,12 +175,15 @@ const TimelineStepItem = ({
         borderRadius="lg"
         alignItems="start"
         direction="column"
-        bg={bg}
-        borderColor={border}
+        borderWidth={1}
+        bg={"bg.card"}
+        borderColor={"bg.border"}
       >
         <Flex direction="row" alignItems="center" gap={2}>
           <Icon size={20} />
-          <Text fontSize="md">{step.data?.name}</Text>
+          <Text fontSize="md" fontWeight={"bold"}>
+            {step.data?.name}
+          </Text>
         </Flex>
         <Divider my={2} />
         {interaction && (
@@ -215,15 +214,17 @@ const TimelineStepItem = ({
         )}
         {evaluation && (
           <Box>
-            <Text fontWeight="bold">
-              Nota Final: {evaluation.final_grade ?? "Sem Nota"}
+            <Text fontSize="sm">
+              Nota Final: {evaluation.final_grade || "Aguardando avaliação"}
             </Text>
             <Divider my={2} />
             {evaluation?.answers?.map((answer) => (
               <Box key={answer._id}>
                 <Text fontWeight="bold">{answer.user.name}</Text>
                 <Text fontSize={"sm"}>{answer.user.email}</Text>
-                <Text fontSize={"sm"}>Nota: {answer.grade}</Text>
+                <Text fontSize={"sm"}>
+                  Nota: {answer.grade || "Aguardando"}
+                </Text>
                 {answer?.data ? (
                   <Button
                     size="sm"

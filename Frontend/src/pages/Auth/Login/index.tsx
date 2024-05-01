@@ -10,7 +10,6 @@ import {
   CardBody,
   Hide,
   Text,
-  useColorModeValue,
   Flex,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
@@ -87,7 +86,7 @@ const Login: React.FC = () => {
       justifyContent="center"
       height="100vh"
       gap="10"
-      bg={useColorModeValue("gray.200", "gray.900")}
+      bg={"bg.page"}
     >
       <FormProvider {...methods}>
         <Hide below="md">
@@ -100,7 +99,12 @@ const Login: React.FC = () => {
             Faça o login para acessar sua conta
           </Text>
         </Hide>
-        <Card p="10" w={{ base: "100%", md: "450px" }} boxShadow="lg">
+        <Card
+          p="10"
+          w={{ base: "100%", md: "450px" }}
+          boxShadow="lg"
+          bg={"bg.card"}
+        >
           <CardBody>
             <form onSubmit={onSubmit}>
               <Flex direction="column" gap="4">
@@ -130,9 +134,9 @@ const Login: React.FC = () => {
 
                 <Button
                   mt={4}
-                  colorScheme="blue"
                   type="submit"
                   isLoading={isPending}
+                  colorScheme="green"
                 >
                   Entrar
                 </Button>

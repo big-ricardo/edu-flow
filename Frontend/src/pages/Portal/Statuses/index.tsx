@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   Heading,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
@@ -114,7 +113,7 @@ const Statuses: React.FC = () => {
         p="4"
         borderRadius="md"
         direction="column"
-        bg={useColorModeValue("white", "gray.800")}
+        bg={"bg.card"}
       >
         <Table columns={columns} data={data} />
         <Pagination pagination={pagination} isLoading={isFetching} />

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
 import {
@@ -50,7 +50,7 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
 
   const answer = useMemo(() => {
     return activity?.form_draft?.fields.reduce((acc, field) => {
-      if (!field.value) return;
+      if (!field.value || acc[field.id]) return acc;
       acc[field.id] = field.value;
 
       if (field.type === FieldTypes.file) {

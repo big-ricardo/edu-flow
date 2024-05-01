@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Card,
+  Divider,
   Flex,
   Grid,
   Heading,
@@ -25,16 +26,17 @@ const OpenForms: React.FC = () => {
 
   if (!forms || forms.length === 0) {
     return (
-      <Box p={4}>
-        <Heading>Formulários Abertos</Heading>
+      <Box p={4} bg="bg.card" borderRadius="md">
+        <Heading size="md">Formulários Abertos</Heading>
         <Text>Nenhuma formulário disponível no momento.</Text>
       </Box>
     );
   }
 
   return (
-    <Box p={4}>
-      <Heading>Formulários Abertos</Heading>
+    <Box p={4} bg="bg.card" borderRadius="md">
+      <Heading size="md">Formulários Abertos</Heading>
+      <Divider my={2} />
 
       {isLoading && <Spinner />}
 
@@ -73,7 +75,7 @@ const FormItem: React.FC<ActivityItemProps> = memo(({ form }) => {
       borderWidth="1px"
       borderRadius="md"
       p={4}
-      borderColor={"gray"}
+      borderColor={"bg.border"}
       w={"100%"}
       h={"100%"}
     >
@@ -97,7 +99,7 @@ const FormItem: React.FC<ActivityItemProps> = memo(({ form }) => {
         <Text fontSize="sm" noOfLines={2}>
           {form.description}
         </Text>
-        <Text>
+        <Text fontSize="sm">
           Fechamento:{" "}
           {form.period?.open ? convertDateTime(form.period.open) : "Indefinido"}
         </Text>

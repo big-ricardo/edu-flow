@@ -20,8 +20,7 @@ function Dashboard() {
         flexDir="column"
         h="100vh"
         position="fixed"
-        bg={useColorModeValue("gray.50", "gray.900")}
-        shadow="lg"
+        bg={"bg.navbar"}
       >
         <Navbar />
         <Flex direction={"column"} mb="4">
@@ -41,7 +40,7 @@ function Dashboard() {
         minH={"100vh"}
         w={"100%"}
         ml={12}
-        bg={useColorModeValue("gray.200", "gray.900")}
+        bg={"bg.page"}
       >
         <Outlet />
       </Flex>
