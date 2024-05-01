@@ -32,6 +32,11 @@ export const extraOutputsInteractionProcess = output.serviceBusQueue({
   connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
 });
 
+export const extraOutputsEvaluationProcess = output.serviceBusQueue({
+  queueName: "evaluation_process",
+  connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
+});
+
 const extraOutputs = {
   swap_workflow: extraOutputsSwapWorkflow,
   send_email: extraOutputsSendEmail,
@@ -39,6 +44,7 @@ const extraOutputs = {
   evaluated: extraOutputsEvaluated,
   change_status: extraOutputsChangeStatus,
   interaction_process: extraOutputsInteractionProcess,
+  evaluation_process: extraOutputsEvaluationProcess,
 };
 
 const sbusOutputs = Object.values(extraOutputs);
@@ -52,14 +58,10 @@ type SendToQueue = ({
 }: {
   context: InvocationContext;
   queueName: string;
-  message: Object & GenericMessage
+  message: Object & GenericMessage;
 }) => void;
 
-export const sendToQueue: SendToQueue = ({
-  context,
-  queueName,
-  message,
-}) => {
+export const sendToQueue: SendToQueue = ({ context, queueName, message }) => {
   console.log("sendToQueue", queueName, message);
   context.extraOutputs.set(extraOutputs[queueName], message);
 

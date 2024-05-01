@@ -48,6 +48,7 @@ export type IActivityEvaluations = {
   answers: Array<{
     _id: string;
     status: IActivityStepStatus;
+    grade: number | null;
     user: Omit<IUser, "password">;
     data: IFormDraft | null;
   }> | null;

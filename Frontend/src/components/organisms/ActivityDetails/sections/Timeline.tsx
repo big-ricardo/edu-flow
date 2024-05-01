@@ -143,6 +143,16 @@ const TimelineStepItem = ({
     return null;
   }, [data._id, step?.type, interactions]);
 
+  const evaluation = useMemo(() => {
+    if (step?.type === NodeTypes.Evaluated) {
+      return activity?.evaluations?.find(
+        (evaluation) => evaluation.activity_step_id === data._id
+      );
+    }
+
+    return null;
+  }, [data._id, step?.type, activity?.evaluations]);
+
   const bg = useColorModeValue("gray.50", "gray.800");
   const border = useColorModeValue("black", "gray.100");
 
@@ -183,7 +193,37 @@ const TimelineStepItem = ({
               <Box key={answer._id}>
                 <Text fontWeight="bold">{answer.user.name}</Text>
                 <Text fontSize={"sm"}>{answer.user.email}</Text>
-
+                {answer?.data ? (
+                  <Button
+                    size="sm"
+                    mt="1"
+                    onClick={() => handleOpenModalItem(answer.data)}
+                    variant={"outline"}
+                    leftIcon={<BsArrowsFullscreen />}
+                  >
+                    {statusMap[answer.status]}
+                  </Button>
+                ) : (
+                  <Tag size="sm" variant="subtle" colorScheme="gray" mt="2">
+                    {statusMap[answer.status]}
+                  </Tag>
+                )}
+                <Divider my={2} />
+              </Box>
+            ))}
+          </Box>
+        )}
+        {evaluation && (
+          <Box>
+            <Text fontWeight="bold">
+              Nota Final: {evaluation.final_grade ?? "Sem Nota"}
+            </Text>
+            <Divider my={2} />
+            {evaluation?.answers?.map((answer) => (
+              <Box key={answer._id}>
+                <Text fontWeight="bold">{answer.user.name}</Text>
+                <Text fontSize={"sm"}>{answer.user.email}</Text>
+                <Text fontSize={"sm"}>Nota: {answer.grade}</Text>
                 {answer?.data ? (
                   <Button
                     size="sm"
@@ -201,6 +241,13 @@ const TimelineStepItem = ({
                 )}
               </Box>
             ))}
+
+            {!evaluation?.answers?.length && (
+              <Text mt="2" fontSize="sm">
+                Aguardando definição dos avaliadores
+              </Text>
+            )}
+            <Divider my={2} />
           </Box>
         )}
       </Flex>

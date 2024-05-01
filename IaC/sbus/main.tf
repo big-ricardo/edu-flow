@@ -72,3 +72,11 @@ resource "azurerm_servicebus_queue" "interaction_process" {
   max_delivery_count = 10
   lock_duration = "PT5M"
 }
+
+resource "azurerm_servicebus_queue" "evaluation_process" {
+  name                = "evaluation_process"
+  namespace_id = azurerm_servicebus_namespace.sbus.id
+  enable_partitioning = false
+  max_delivery_count = 10
+  lock_duration = "PT5M"
+}

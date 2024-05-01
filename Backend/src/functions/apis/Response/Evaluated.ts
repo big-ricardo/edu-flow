@@ -11,6 +11,7 @@ import uploadFileToBlob from "../../../services/upload";
 import User from "../../../models/client/User";
 import { ObjectId, Types } from "mongoose";
 import {
+  extraOutputsEvaluationProcess,
   extraOutputsInteractionProcess,
   sendToQueue,
 } from "../../../utils/sbusOutputs";
@@ -185,16 +186,16 @@ const handler: HttpHandler = async (conn, req, context) => {
   );
 
   if (isAllAnswered) {
-    // sendToQueue({
-    //   context,
-    //   message: {
-    //     activity_id: activity._id.toString(),
-    //     activity_workflow_id: evaluation.activity_workflow_id.toString(),
-    //     activity_step_id: evaluation.activity_step_id.toString(),
-    //     client: conn.name,
-    //   },
-    //   queueName: "interaction_process",
-    // });
+    sendToQueue({
+      context,
+      message: {
+        activity_id: activity._id.toString(),
+        activity_workflow_id: evaluation.activity_workflow_id.toString(),
+        activity_step_id: evaluation.activity_step_id.toString(),
+        client: conn.name,
+      },
+      queueName: "evaluation_process",
+    });
   }
 
   activity.save();
@@ -215,6 +216,6 @@ export default new Http(handler)
     options: {
       methods: ["POST"],
       route: "response/{form_id}/evaluated/{activity_id}",
-      extraOutputs: [extraOutputsInteractionProcess],
+      extraOutputs: [extraOutputsEvaluationProcess],
     },
   });
