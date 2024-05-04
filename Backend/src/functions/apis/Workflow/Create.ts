@@ -1,11 +1,13 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Workflow, { IWorkflow } from "../../../models/client/Workflow";
+import { IWorkflow } from "../../../models/client/Workflow";
+import WorkflowRepository from "../../../repositories/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const data = req.body as IWorkflow;
+  const workflowRepository = new WorkflowRepository(conn);
 
-  const workflow = await new Workflow(conn).model().create(data);
+  const workflow = await workflowRepository.create(data);
 
   workflow.save();
 

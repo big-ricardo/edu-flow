@@ -1,5 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import WorkflowDraft from "../../../models/client/WorkflowDraft";
+import WorkflowDraftRepository from "../../../repositories/WorkflowDraft";
 import res from "../../../utils/apiResponse";
 
 interface Query {
@@ -9,23 +10,31 @@ interface Query {
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { id } = req.params;
+  const workflowDraftRepository = new WorkflowDraftRepository(conn);
 
-  const workflows = await new WorkflowDraft(conn)
-    .model()
-    .find({
+  const workflows = await workflowDraftRepository.find({
+    populate: [
+      {
+        path: "owner",
+        select: {
+          _id: 1,
+          name: 1,
+        },
+      },
+    ],
+    where: {
       parent: id,
-    })
-    .populate("owner", {
-      _id: true,
-      name: true,
-    })
-    .select({
-      _id: true,
-      version: true,
-      status: true,
-      createdAt: true,
-    })
-    .sort({ createdAt: -1 });
+    },
+    select: {
+      _id: 1,
+      version: 1,
+      status: 1,
+      createdAt: 1,
+    },
+    sort: {
+      createdAt: -1,
+    },
+  });
 
   return res.success({
     workflows,

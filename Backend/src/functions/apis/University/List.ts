@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import University from "../../../models/client/University";
+import UniversityRepository from "../../../repositories/University";
 
 interface Query {
   page?: number;
@@ -9,12 +10,12 @@ interface Query {
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
+  const universityRepository = new UniversityRepository(conn);
 
-  const universities = await new University(conn)
-    .model()
-    .find()
-    .skip((page - 1) * limit)
-    .limit(limit);
+  const universities = await universityRepository.find({
+    skip: (page - 1) * limit,
+    limit,
+  });
 
   const total = await new University(conn).model().countDocuments();
   const totalPages = Math.ceil(total / limit);

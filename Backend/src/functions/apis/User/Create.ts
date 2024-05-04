@@ -2,14 +2,18 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import * as bcrypt from "bcrypt";
 import User, { IUser } from "../../../models/client/User";
-import Institute from "../../../models/client/Institute";
+import InstituteRepository from "../../../repositories/Institute";
 
 const handler: HttpHandler = async (conn, req, context) => {
   const data = req.body as IUser;
 
-  const hasInstitute = await new Institute(conn).model().findOne({
-    _id: data.institute,
-    active: true,
+  const instituteRepository = new InstituteRepository(conn);
+
+  const hasInstitute = await instituteRepository.findOne({
+    where: {
+      _id: data.institute,
+      active: true,
+    },
   });
 
   if (!hasInstitute) {

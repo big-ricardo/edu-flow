@@ -17,14 +17,11 @@ type BaseUser = {
   roles: IUserRoles[];
   institute: IInstitute;
   active: boolean;
-  university_degree?: string;
   isExternal: boolean;
-};
+  university_degree?: string;
+} & mongoose.Document;
 
-type AdminOrStudent = BaseUser & { role: "admin" | "student" };
-type Teacher = BaseUser & { role: "teacher"; university_degree: string };
-
-export type IUser = AdminOrStudent | Teacher;
+export type IUser = BaseUser;
 
 export const schema: Schema = new Schema<IUser>(
   {

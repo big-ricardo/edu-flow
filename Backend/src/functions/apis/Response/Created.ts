@@ -1,31 +1,18 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, {
-  IActivityAccepted,
-  IActivityStepStatus,
-} from "../../../models/client/Activity";
-import Form from "../../../models/client/Form";
-import FormDraft, {
-  FieldTypes,
-  IValue,
-} from "../../../models/client/FormDraft";
-import moment from "moment";
-import uploadFileToBlob, { FileUploaded } from "../../../services/upload";
-import User, { IUserRoles } from "../../../models/client/User";
+import { IActivityAccepted } from "../../../models/client/Activity";
+import { IFormType } from "../../../models/client/Form";
 import Status from "../../../models/client/Status";
-import { ObjectId } from "mongoose";
-import { Types } from "mongoose";
-import { NodeTypes } from "../../../models/client/WorkflowDraft";
-import { setHeapSnapshotNearHeapLimit } from "v8";
-
-interface File {
-  name: string;
-  mimeType: string;
-  base64: string;
-}
+import { ObjectId, Types } from "mongoose";
+import FormRepository from "../../../repositories/Form";
+import FormDraftRepository from "../../../repositories/FormDraft";
+import UserRepository from "../../../repositories/User";
+import ActivityRepository from "../../../repositories/Activity";
+import ResponseUseCases from "../../use-cases/Response";
+import BlobUploader from "../../../services/upload";
 
 interface IUser {
-  _id?: ObjectId;
+  _id: ObjectId;
   name: string;
   email: string;
 }
@@ -33,7 +20,9 @@ interface IUser {
 type DtoCreated = {
   name: string; // "name"
   description: string; // "description"
-  masterminds: Pick<IUser, "_id" | "name" | "email">;
+  masterminds:
+    | Pick<IUser, "_id" | "name" | "email">
+    | Array<Pick<IUser, "_id" | "name" | "email">>;
 } & {
   [key: string]: File | string | Array<string> | IUser | Array<IUser>;
 };
@@ -42,145 +31,71 @@ const handler: HttpHandler = async (conn, req) => {
   const rest = req.body as DtoCreated;
   const { name, description, masterminds } = rest;
 
-  const form = await new Form(conn)
-    .model()
-    .findOne({
-      _id: req.params.form_id,
-      active: true,
-      published: { $exists: true },
-      $and: [
-        {
-          $or: [
-            {
-              "period.open": null,
-            },
-            {
-              $and: [
-                {
-                  "period.open": {
-                    $lte: moment.utc().toDate(),
-                  },
-                },
-                {
-                  "period.close": {
-                    $gte: moment.utc().toDate(),
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
+  const formRepository = new FormRepository(conn);
+  const formDraftRepository = new FormDraftRepository(conn);
+  const userRepository = new UserRepository(conn);
+  const activityRepository = new ActivityRepository(conn);
+
+  const form = (
+    await formRepository.findOpenForms({
+      where: {
+        _id: req.params.form_id,
+        type: IFormType.Created,
+      },
     })
-    .select({
-      initial_status: 1,
-      published: 1,
-    });
+  )[0];
 
   if (!form) {
     return res.notFound("Form not found");
   }
 
-  const formDraft = await new FormDraft(conn).model().findById(form.published);
+  const formDraft = await formDraftRepository.findById({ id: form.published });
 
   if (!formDraft) {
     return res.notFound("Form draft not found");
   }
 
-  const mastermindsMapped = Array.isArray(masterminds)
-    ? masterminds
-    : [masterminds];
+  const responseUseCases = new ResponseUseCases(
+    formDraft,
+    new BlobUploader(req.user.id),
+    userRepository
+  );
 
-  const mastermindsExists = await new User(conn)
-    .model()
-    .find({
+  const mastermindsMapped = responseUseCases.getMastermindsMapped(masterminds);
+
+  const mastermindsExists = await userRepository.find({
+    where: {
       _id: {
         $in: mastermindsMapped,
       },
-    })
-    .select({
+    },
+    select: {
       _id: 1,
       name: 1,
       email: 1,
       matriculation: 1,
       university_degree: 1,
       institute: 1,
-    });
+    },
+  });
 
-  for (const field of formDraft.fields) {
-    let value = rest[field.id];
-    let mapped: IValue = null;
-
-    if (!value || (Array.isArray(value) && !value.length)) {
-      field.value = value;
-      continue;
-    }
-
-    if (field.type === FieldTypes.File && typeof value === "object") {
-      const file: File = value as File;
-
-      const uploaded = await uploadFileToBlob(
-        req.user.id,
-        file?.name,
-        file?.mimeType,
-        file?.base64
-      ).catch((err) => {
-        throw err;
-      });
-
-      if (!uploaded) {
-        return res.badRequest("Error on upload file");
-      }
-
-      mapped = uploaded;
-    }
-
-    if (field.type === FieldTypes.Teacher && Array.isArray(value)) {
-      const teachers = await new User(conn)
-        .model()
-        .find({
-          _id: {
-            $in: value.map((val) => val?._id).filter((val) => val),
-          },
-        })
-        .select({
-          password: 0,
-        });
-
-      mapped = value.map((val) => {
-        if (typeof val === "string") {
-          return teachers.find((teacher) => String(teacher._id) === val);
-        }
-
-        if (typeof val === "object") {
-          if (val?._id) {
-            return teachers.find((teacher) => String(teacher._id) === val._id);
-          }
-
-          return {
-            ...val,
-            isExternal: true,
-            _id: new Types.ObjectId(),
-          };
-        }
-      });
-    }
-
-    field.value = mapped || value;
-  }
+  await responseUseCases.processFormFields(rest);
 
   const status = await new Status(conn).model().findById(form.initial_status);
 
-  const user = await new User(conn).model().findById(req.user.id).select({
-    _id: 1,
-    name: 1,
-    email: 1,
-    matriculation: 1,
-    university_degree: 1,
-    institute: 1,
+  const user = await userRepository.findById({
+    id: req.user.id,
+    select: {
+      _id: 1,
+      name: 1,
+      email: 1,
+      matriculation: 1,
+      university_degree: 1,
+      institute: 1,
+    },
   });
 
-  const activity = await new Activity(conn).model().create({
+  const activity = await activityRepository.create({
     name,
     description,
     form: form._id,
@@ -191,12 +106,6 @@ const handler: HttpHandler = async (conn, req) => {
       accepted: IActivityAccepted.pending,
     })),
     form_draft: formDraft.toObject(),
-  });
-
-  await new User(conn).model().findByIdAndUpdate(req.user.id, {
-    $push: {
-      activities: activity._id,
-    },
   });
 
   return res.created(activity);

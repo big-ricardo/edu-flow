@@ -1,34 +1,36 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import FormDraft, { IFormDraft } from "../../../models/client/FormDraft";
-import Form from "../../../models/client/Form";
+import FormRepository from "../../../repositories/Form";
+import FormDraftRepository from "../../../repositories/FormDraft";
+import { IFormDraft } from "../../../models/client/FormDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const { status } = req.body as Pick<IFormDraft, "status">;
   const { id } = req.params;
 
-  const formDraft = await new FormDraft(conn).model().findByIdAndUpdate(
+  const formDraftRepository = new FormDraftRepository(conn);
+  const formRepository = new FormRepository(conn);
+
+  const formDraft = await formDraftRepository.findByIdAndUpdate({
     id,
-    {
+    data: {
       status,
     },
-    { new: true },
-  );
+  });
 
-  await new FormDraft(conn).model().updateMany(
-    { parent: formDraft.parent, _id: { $ne: formDraft._id } },
-    {
+  await formDraftRepository.updateMany({
+    where: { parent: formDraft.parent, _id: { $ne: formDraft._id } },
+    data: {
       status: "draft",
     },
-  );
+  });
 
-  const form = await new Form(conn).model().findByIdAndUpdate(
-    formDraft.parent,
-    {
+  const form = await formRepository.findByIdAndUpdate({
+    id: formDraft.parent,
+    data: {
       published: formDraft._id,
     },
-    { new: true },
-  );
+  });
 
   formDraft.save();
   form.save();

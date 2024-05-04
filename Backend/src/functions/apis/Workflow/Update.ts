@@ -1,14 +1,15 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Workflow, { IWorkflow } from "../../../models/client/Workflow";
+import { IWorkflow } from "../../../models/client/Workflow";
+import WorkflowRepository from "../../../repositories/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const data = req.body as IWorkflow;
   const { id } = req.params;
 
-  const workflow = await new Workflow(conn)
-    .model()
-    .findByIdAndUpdate(id, data, { new: true });
+  const workflowRepository = new WorkflowRepository(conn);
+
+  const workflow = await workflowRepository.findByIdAndUpdate({ id, data });
 
   workflow.save();
 

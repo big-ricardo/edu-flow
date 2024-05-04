@@ -1,5 +1,5 @@
 import { getActivity } from "@apis/activity";
-import { Center, Spinner } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 import ActivityProvider from "@contexts/ActivityContext";
 import { useQuery } from "@tanstack/react-query";
@@ -13,14 +13,15 @@ const Activity: React.FC = () => {
   const { data: activity, isLoading } = useQuery({
     queryKey: ["activity", id],
     queryFn: getActivity,
+
   });
 
-  if (isLoading) return <Spinner />;
+
 
   return (
     <Center width="100%" p={4}>
       <ActivityProvider>
-        <ActivityDetails activity={activity} />
+        <ActivityDetails {...{ activity, isLoading }} />
       </ActivityProvider>
     </Center>
   );

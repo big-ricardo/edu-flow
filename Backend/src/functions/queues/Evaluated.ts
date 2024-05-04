@@ -2,22 +2,24 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity from "../../models/client/Activity";
-import Form from "../../models/client/Form";
-import User, { IUser } from "../../models/client/User";
+import { IUser } from "../../models/client/User";
 import { IEvaluated, NodeTypes } from "../../models/client/WorkflowDraft";
+import ActivityRepository from "../../repositories/Activity";
+import FormRepository from "../../repositories/Form";
+import UserRepository from "../../repositories/User";
 
 interface TMessage extends GenericMessage {}
 
-const handler: QueueWrapperHandler<TMessage> = async (
-  conn,
-  messageQueue,
-) => {
+const handler: QueueWrapperHandler<TMessage> = async (conn, messageQueue) => {
   try {
     const { activity_id, activity_step_id, activity_workflow_id } =
       messageQueue;
 
-    const activity = await new Activity(conn).model().findById(activity_id);
+    const activityRepository = new ActivityRepository(conn);
+    const formRepository = new FormRepository(conn);
+    const userRepository = new UserRepository(conn);
+
+    const activity = await activityRepository.findById({ id: activity_id });
 
     if (!activity) {
       throw new Error("Activity not found");
@@ -72,17 +74,21 @@ const handler: QueueWrapperHandler<TMessage> = async (
         })
         .flat();
 
-      destinations = await new User(conn)
-        .model()
-        .find({
-          _id: { $in: destinationIds },
-        })
-        .select({
-          password: 0,
-        });
+      destinations = await userRepository.find({
+        where: { _id: { $in: destinationIds } },
+        select: {
+          _id: 1,
+          email: 1,
+          university_degree: 1,
+          name: 1,
+          role: 1,
+          institute: 1,
+          matriculation: 1,
+        },
+      });
     }
 
-    const form = await new Form(conn).model().findById(form_id);
+    const form = await formRepository.findById({ id: form_id });
 
     activity.evaluations.push({
       activity_workflow_id,

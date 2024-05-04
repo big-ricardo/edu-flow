@@ -1,23 +1,25 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, {
-  IActivityAccepted,
+import {
   IActivityStepStatus,
 } from "../../../models/client/Activity";
-import Form from "../../../models/client/Form";
-import FormDraft, {
+import { IFormType } from "../../../models/client/Form";
+import {
   FieldTypes,
   IValue,
 } from "../../../models/client/FormDraft";
-import moment from "moment";
 import uploadFileToBlob from "../../../services/upload";
-import User from "../../../models/client/User";
-import { ObjectId } from "mongoose";
-import { Types } from "mongoose";
+import { Types, ObjectId } from "mongoose";
 import {
   extraOutputsInteractionProcess,
   sendToQueue,
 } from "../../../utils/sbusOutputs";
+import FormRepository from "../../../repositories/Form";
+import FormDraftRepository from "../../../repositories/FormDraft";
+import ActivityRepository from "../../../repositories/Activity";
+import UserRepository from "../../../repositories/User";
+import ResponseUseCases from "../../use-cases/Response";
+import BlobUploader from "../../../services/upload";
 
 interface File {
   name: string;
@@ -38,121 +40,47 @@ type DtoCreated = {} & {
 const handler: HttpHandler = async (conn, req, context) => {
   const rest = req.body as DtoCreated;
 
-  const form = await new Form(conn)
-    .model()
-    .findOne({
-      _id: req.params.form_id,
-      active: true,
-      published: { $exists: true },
+  const formRepository = new FormRepository(conn);
+  const formDraftRepository = new FormDraftRepository(conn);
+  const activityRepository = new ActivityRepository(conn);
+  const userRepository = new UserRepository(conn);
 
-      $and: [
-        {
-          $or: [
-            {
-              "period.open": null,
-            },
-            {
-              $and: [
-                {
-                  "period.open": {
-                    $lte: moment.utc().toDate(),
-                  },
-                },
-                {
-                  "period.close": {
-                    $gte: moment.utc().toDate(),
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
+  const form = (
+    await formRepository.findOpenForms({
+      where: {
+        _id: req.params.form_id,
+        type: IFormType.Interaction,
+      },
     })
-    .select({
-      initial_status: 1,
-      published: 1,
-    });
+  )[0];
 
   if (!form) {
     return res.notFound("Form not found");
   }
 
-  const formDraft = await new FormDraft(conn).model().findById(form.published);
+  const formDraft = await formDraftRepository.findById({ id: form.published });
 
   if (!formDraft) {
     return res.notFound("Form draft not found");
   }
 
-  const activity = await new Activity(conn)
-    .model()
-    .findById(req.params.activity_id);
+  const activity = await activityRepository.findById({
+    id: req.params.activity_id,
+  });
 
   if (!activity) {
     return res.notFound("Activity not found");
   }
 
-  for (const field of formDraft.fields) {
-    let value = rest[field.id];
-    let mapped: IValue = null;
+  const responseUseCases = new ResponseUseCases(
+    formDraft,
+    new BlobUploader(req.user.id),
+    userRepository
+  );
 
-    if (!value || (Array.isArray(value) && !value.length)) {
-      field.value = value;
-      continue;
-    }
-
-    if (field.type === FieldTypes.File && typeof value === "object") {
-      const file: File = value as File;
-
-      const uploaded = await uploadFileToBlob(
-        req.user.id,
-        file?.name,
-        file?.mimeType,
-        file?.base64
-      ).catch((err) => {
-        throw err;
-      });
-
-      if (!uploaded) {
-        return res.badRequest("Error on upload file");
-      }
-
-      mapped = uploaded;
-    }
-
-    if (field.type === FieldTypes.Teacher && Array.isArray(value)) {
-      const teachers = await new User(conn)
-        .model()
-        .find({
-          _id: {
-            $in: value.map((val) => val?._id).filter((val) => val),
-          },
-        })
-        .select({
-          password: 0,
-        });
-
-      mapped = value.map((val) => {
-        if (typeof val === "string") {
-          return teachers.find((teacher) => String(teacher._id) === val);
-        }
-
-        if (typeof val === "object") {
-          if (val?._id) {
-            return teachers.find((teacher) => String(teacher._id) === val._id);
-          }
-
-          return {
-            ...val,
-            isExternal: true,
-            _id: new Types.ObjectId(),
-          };
-        }
-      });
-    }
-
-    field.value = mapped || value;
-  }
+  await responseUseCases.processFormFields(rest).catch((err) => {
+    return res.badRequest(err);
+  });
 
   const activeInteraction = activity.interactions.findIndex(
     (interaction) => !interaction.finished

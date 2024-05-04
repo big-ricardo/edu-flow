@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Activity from "../../../models/client/Activity";
+import ActivityRepository from "../../../repositories/Activity";
 
 interface Query {
   page?: number;
@@ -10,20 +11,19 @@ interface Query {
 export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const pendingActivities = await new Activity(conn)
-    .model()
-    .find({
-      "evaluations.not_defined_board": true,
-    })
-    .select({
+  const activityRepository = new ActivityRepository(conn);
+
+  const pendingActivities = await activityRepository.find({
+    where: { "evaluations.not_defined_board": true },
+    select: {
       _id: 1,
       name: 1,
       description: 1,
       protocol: 1,
       users: 1,
       evaluations: 1,
-    })
-    .exec();
+    },
+  });
 
   const data = pendingActivities.map((a) => {
     const activity = a.toObject();

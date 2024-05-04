@@ -4,9 +4,9 @@ import { ObjectId } from "mongoose";
 const AZURE_STORAGE_CONNECTION_STRING =
   process.env.AZURE_STORAGE_CONNECTION_STRING;
 
-const blobServiceClient = BlobServiceClient.fromConnectionString(
-  AZURE_STORAGE_CONNECTION_STRING
-);
+if (!AZURE_STORAGE_CONNECTION_STRING) {
+  throw new Error("AZURE_STORAGE_CONNECTION_STRING not found");
+}
 
 export interface FileUploaded {
   name: string;
@@ -16,48 +16,61 @@ export interface FileUploaded {
   containerName: string;
 }
 
-export default async function uploadFileToBlob(
-  containerName: string | ObjectId,
-  name: string,
-  mimeType: string,
-  base64: string
-): Promise<FileUploaded> {
-  name = `${Date.now()}@${name}`;
-  const containerClient = blobServiceClient.getContainerClient(
-    String(containerName)
-  );
-  await containerClient.createIfNotExists({
-    access: "blob",
-  });
-  const buffer = Buffer.from(base64.split(",")[1], "base64");
+class BlobUploader {
+  private blobServiceClient: BlobServiceClient;
+  containerName: string;
 
-  const blockBlobClient = containerClient.getBlockBlobClient(name);
-  await blockBlobClient.upload(buffer, Buffer.byteLength(base64), {
-    blobHTTPHeaders: {
-      blobContentType: mimeType,
-    },
-  });
+  constructor(containerName: string) {
+    this.blobServiceClient = BlobServiceClient.fromConnectionString(
+      AZURE_STORAGE_CONNECTION_STRING
+    );
+    this.containerName = containerName;
+  }
 
-  const fileUploaded: FileUploaded = {
-    name,
-    url: blockBlobClient.url,
-    mimeType: mimeType,
-    size: Buffer.byteLength(base64).toString(),
-    containerName: String(containerName),
-  };
+  async uploadFileToBlob(
+    name: string,
+    mimeType: string,
+    base64: string
+  ): Promise<FileUploaded> {
+    name = `${Date.now()}@${name}`;
+    const containerClient = this.blobServiceClient.getContainerClient(
+      String(this.containerName)
+    );
+    await containerClient.createIfNotExists({
+      access: "blob",
+    });
+    const buffer = Buffer.from(base64.split(",")[1], "base64");
 
-  return fileUploaded;
+    const blockBlobClient = containerClient.getBlockBlobClient(name);
+    await blockBlobClient.upload(buffer, Buffer.byteLength(base64), {
+      blobHTTPHeaders: {
+        blobContentType: mimeType,
+      },
+    });
+
+    const fileUploaded: FileUploaded = {
+      name,
+      url: blockBlobClient.url,
+      mimeType: mimeType,
+      size: Buffer.byteLength(base64).toString(),
+      containerName: String(this.containerName),
+    };
+
+    return fileUploaded;
+  }
+
+  async updateSas(file: FileUploaded) {
+    const containerClient = this.blobServiceClient.getContainerClient(
+      file.containerName
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(file.name);
+    const sas = await blockBlobClient.generateSasUrl({
+      expiresOn: new Date(new Date().valueOf() + 86400),
+      permissions: BlobSASPermissions.parse("r"),
+    });
+    file.url = sas;
+    return file;
+  }
 }
 
-export async function updateSas(file: FileUploaded) {
-  const containerClient = blobServiceClient.getContainerClient(
-    file.containerName
-  );
-  const blockBlobClient = containerClient.getBlockBlobClient(file.name);
-  const sas = await blockBlobClient.generateSasUrl({
-    expiresOn: new Date(new Date().valueOf() + 86400),
-    permissions: BlobSASPermissions.parse("r"),
-  });
-  file.url = sas;
-  return file;
-}
+export default BlobUploader;

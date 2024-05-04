@@ -1,24 +1,34 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import FormDraft from "../../../models/client/FormDraft";
+import FormDraftRepository from "../../../repositories/FormDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;
+  const formDraftRepository = new FormDraftRepository(conn);
 
-  const forms = await new FormDraft(conn)
-    .model()
-    .find({ parent: id })
-    .populate("owner", {
-      name: 1,
-      _id: 1,
-    })
-    .select({
+  const forms = await formDraftRepository.find({
+    where: {
+      parent: id,
+    },
+    select: {
       name: 1,
       status: 1,
       version: 1,
       createdAt: 1,
-    })
-    .sort({ createdAt: -1 });
+    },
+    sort: {
+      createdAt: -1,
+    },
+    populate: [
+      {
+        path: "owner",
+        select: {
+          name: 1,
+          _id: 1,
+        },
+      },
+    ],
+  });
 
   return res.success({
     forms,

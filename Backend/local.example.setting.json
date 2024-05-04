@@ -4,11 +4,15 @@
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
     "AzureWebJobsStorage": "",
+    "AZURE_STORAGE_CONNECTION_STRING": "",
+     "AZURE_SERVICE_BUS_CONNECTION_STRING": "",
     "JWT_SECRET": "",
     "MONGO_HOST": "",
-    "MONGO_PORT": "27017",
+    "MONGO_PORT": "",
     "MONGO_USER": "",
-    "MONGO_PASS": ""
+    "MONGO_PASS": "",
+    "EMAIL_ACCOUNT": "",
+    "EMAIL_PASSWORD": ""
   },
   "Host": {
     "CORS": "*"

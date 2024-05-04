@@ -1,11 +1,13 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Email, { IEmail } from "../../../models/client/Email";
+import { IEmail } from "../../../models/client/Email";
+import EmailRepository from "../../../repositories/Email";
 
 export const handler: HttpHandler = async (conn, req) => {
   const { slug, htmlTemplate, subject, cssTemplate } = req.body as IEmail;
+  const emailRepository = new EmailRepository(conn);
 
-  const email = await new Email(conn).model().create({
+  const email = await emailRepository.create({
     slug,
     subject,
     htmlTemplate,

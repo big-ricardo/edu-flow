@@ -1,11 +1,12 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Workflow from "../../../models/client/Workflow";
+import WorkflowRepository from "../../../repositories/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
+  const workflowRepository = new WorkflowRepository(conn);
 
-  const workflow = await new Workflow(conn).model().findById(id);
+  const workflow = await workflowRepository.findById({ id });
 
   if (!workflow) {
     return res.notFound("Workflow not found");

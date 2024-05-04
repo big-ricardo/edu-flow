@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Workflow from "../../../models/client/Workflow";
+import WorkflowRepository from "../../../repositories/Workflow";
 
 interface Query {
   page?: number;
@@ -9,19 +9,19 @@ interface Query {
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
+  const workflowRepository = new WorkflowRepository(conn);
 
-  const workflows = await new Workflow(conn)
-    .model()
-    .find()
-    .select({
+  const workflows = await workflowRepository.find({
+    select: {
       _id: 1,
       name: 1,
       active: 1,
-    })
-    .skip((page - 1) * limit)
-    .limit(limit);
+    },
+    skip: (page - 1) * limit,
+    limit,
+  });
 
-  const total = await new Workflow(conn).model().countDocuments();
+  const total = await workflowRepository.count();
   const totalPages = Math.ceil(total / limit);
 
   return res.success({

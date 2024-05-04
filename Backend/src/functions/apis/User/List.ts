@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import User from "../../../models/client/User";
+import UserRepository from "../../../repositories/User";
 
 interface Query {
   page?: number;
@@ -9,19 +10,15 @@ interface Query {
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
+  const userRepository = new UserRepository(conn);
 
-  const users = await new User(conn)
-    .model()
-    .find()
-    .select({
-      password: 0,
-    })
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .populate("institute", {
-      _id: 1,
-      acronym: 1,
-    });
+  const users = await userRepository.find({
+    sort: {
+      name: 1,
+    },
+    skip: (page - 1) * limit,
+    limit,
+  });
 
   const total = await new User(conn).model().countDocuments();
   const totalPages = Math.ceil(total / limit);

@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Form from "../../../models/client/Form";
+import FormRepository from "../../../repositories/Form";
 
 interface Query {
   page?: number;
@@ -10,17 +11,18 @@ interface Query {
 const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const forms = await new Form(conn)
-    .model()
-    .find()
-    .select({
+  const formRepository = new FormRepository(conn);
+
+  const forms = await formRepository.find({
+    skip: (page - 1) * limit,
+    limit,
+    select: {
       name: 1,
       type: 1,
       active: 1,
       slug: 1,
-    })
-    .skip((page - 1) * limit)
-    .limit(limit);
+    },
+  });
 
   const total = await new Form(conn).model().countDocuments();
   const totalPages = Math.ceil(total / limit);

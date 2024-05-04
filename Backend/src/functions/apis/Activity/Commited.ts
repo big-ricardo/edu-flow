@@ -1,15 +1,18 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, {
+import {
   IActivityState,
   IActivityStepStatus,
 } from "../../../models/client/Activity";
-import User, { IUser, IUserRoles } from "../../../models/client/User";
-import WorkflowDraft from "../../../models/client/WorkflowDraft";
-import Form, { IForm } from "../../../models/client/Form";
+import { IUser, IUserRoles } from "../../../models/client/User";
+import { IForm } from "../../../models/client/Form";
 import { IWorkflow } from "../../../models/client/Workflow";
 import sendNextQueue from "../../../utils/sendNextQueue";
 import sbusOutputs from "../../../utils/sbusOutputs";
+import ActivityRepository from "../../../repositories/Activity";
+import UserRepository from "../../../repositories/User";
+import WorkflowDraftRepository from "../../../repositories/WorkflowDraft";
+import FormRepository from "../../../repositories/Form";
 
 interface IActivityUpdate {
   name: string;
@@ -22,10 +25,12 @@ interface IActivityUpdate {
 const handler: HttpHandler = async (conn, req, context) => {
   const { id } = req.params as { id: string };
 
-  const activity = new Activity(conn).model();
-  const user = new User(conn).model();
+  const activityRepository = new ActivityRepository(conn);
+  const userRepository = new UserRepository(conn);
+  const workflowDraftRepository = new WorkflowDraftRepository(conn);
+  const formRepository = new FormRepository(conn);
 
-  const activityData = await activity.findById(id);
+  const activityData = await activityRepository.findById({ id });
 
   if (!activityData) {
     return res.error(404, {}, "Activity not found");
@@ -37,11 +42,11 @@ const handler: HttpHandler = async (conn, req, context) => {
   const subMastermind = await Promise.all(
     sub_masterminds.map(async (sub) => {
       if (sub.isExternal) {
-        const subMastermindData = await user.findOne({
-          email: sub.email,
+        const subMastermindData = await userRepository.findOne({
+          where: { email: sub.email },
         });
         if (!subMastermindData) {
-          const newUser = await new User(conn).model().create({
+          const newUser = await userRepository.create({
             ...sub,
             roles: [IUserRoles.teacher],
             university_degree: "mastermind",
@@ -65,7 +70,9 @@ const handler: HttpHandler = async (conn, req, context) => {
   activityData.sub_masterminds = subMastermind;
   activityData.save();
 
-  const userData = await user.find({ _id: { $in: users } });
+  const userData = await userRepository.find({
+    where: { _id: { $in: users } },
+  });
 
   if (userData.length !== users.length) {
     return res.error(400, {}, "Invalid user id");
@@ -77,16 +84,20 @@ const handler: HttpHandler = async (conn, req, context) => {
   activityData.sub_masterminds = subMastermind;
   activityData.state = IActivityState.processing;
 
-  const form = (await new Form(conn)
-    .model()
-    .findById(activityData.form)
-    .select({ workflow: 1 })
-    .populate("workflow")) as Omit<IForm, "workflow"> & { workflow: IWorkflow };
+  const form = (await formRepository.findById({
+    id: activityData.form.toString(),
+    select: { workflow: 1 },
+    populate: [{
+      path: "workflow",
+    }]
+  })) as IForm & { workflow: IWorkflow };
 
-  const workflowDraft = await new WorkflowDraft(conn)
-    .model()
-    .findById(form.workflow.published)
-    .select({ steps: 1 });
+  console.log("workflowDraft", form.workflow);
+  const workflowDraft = await workflowDraftRepository.findById({
+    id: form.workflow.published,
+    select: { steps: 1 },
+  });
+
 
   const firstStep = workflowDraft.steps.find((step) => step.id === "start");
 

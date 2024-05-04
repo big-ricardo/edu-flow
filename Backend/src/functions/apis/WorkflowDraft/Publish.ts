@@ -1,34 +1,35 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import WorkflowDraft, { IWorkflowDraft } from "../../../models/client/WorkflowDraft";
-import Workflow from "../../../models/client/Workflow";
+import { IWorkflowDraft } from "../../../models/client/WorkflowDraft";
+import WorkflowDraftRepository from "../../../repositories/WorkflowDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const { status } = req.body as Pick<IWorkflowDraft, "status">;
   const { id } = req.params;
 
-  const workflowDraft = await new WorkflowDraft(conn).model().findByIdAndUpdate(
+  const workflowDraftRepository = new WorkflowDraftRepository(conn);
+  const workflowRepository = new WorkflowDraftRepository(conn);
+
+  const workflowDraft = await workflowDraftRepository.findByIdAndUpdate({
     id,
-    {
+    data: {
       status,
     },
-    { new: true },
-  );
+  });
 
-  await new WorkflowDraft(conn).model().updateMany(
-    { parent: workflowDraft.parent, _id: { $ne: workflowDraft._id } },
-    {
+  await workflowDraftRepository.updateMany({
+    where: { parent: workflowDraft.parent, _id: { $ne: workflowDraft._id } },
+    data: {
       status: "draft",
     },
-  );
+  });
 
-  const workflow = await new Workflow(conn).model().findByIdAndUpdate(
-    workflowDraft.parent,
-    {
+  const workflow = await workflowRepository.findByIdAndUpdate({
+    id: workflowDraft.parent,
+    data: {
       published: workflowDraft._id,
     },
-    { new: true },
-  );
+  });
 
   workflowDraft.save();
   workflow.save();

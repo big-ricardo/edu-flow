@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, { IActivityState } from "../../../models/client/Activity";
+import { IActivityState } from "../../../models/client/Activity";
+import ActivityRepository from "../../../repositories/Activity";
 
 interface Query {
   page?: number;
@@ -10,18 +11,21 @@ interface Query {
 export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const activities = await new Activity(conn)
-    .model()
-    .find({
-      state: IActivityState.committed,
-    })
-    .populate("users", {
-      _id: 1,
-      name: 1,
-      matriculation: 1,
-    })
-    .skip((page - 1) * limit)
-    .limit(limit);
+  const activityRepository = new ActivityRepository(conn);
+
+  const activities = await activityRepository.find({
+    where: { state: IActivityState.committed },
+    populate: [
+      {
+        path: "users",
+        select: {
+          _id: 1,
+          name: 1,
+          matriculation: 1,
+        },
+      },
+    ],
+  });
 
   return res.success({
     activities,

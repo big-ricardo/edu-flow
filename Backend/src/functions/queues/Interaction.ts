@@ -2,10 +2,10 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity from "../../models/client/Activity";
-import Form from "../../models/client/Form";
-import User from "../../models/client/User";
 import { IInteraction, NodeTypes } from "../../models/client/WorkflowDraft";
+import ActivityRepository from "../../repositories/Activity";
+import FormRepository from "../../repositories/Form";
+import UserRepository from "../../repositories/User";
 import sendNextQueue from "../../utils/sendNextQueue";
 
 interface TMessage extends GenericMessage {}
@@ -19,7 +19,11 @@ const handler: QueueWrapperHandler<TMessage> = async (
     const { activity_id, activity_step_id, activity_workflow_id } =
       messageQueue;
 
-    const activity = await new Activity(conn).model().findById(activity_id);
+    const activityRepository = new ActivityRepository(conn);
+    const formRepository = new FormRepository(conn);
+    const userRepository = new UserRepository(conn);
+
+    const activity = await activityRepository.findById({ id: activity_id });
 
     if (!activity) {
       throw new Error("Activity not found");
@@ -75,16 +79,19 @@ const handler: QueueWrapperHandler<TMessage> = async (
       }
     }
 
-    const users = await new User(conn)
-      .model()
-      .find({
-        _id: { $in: destination },
-      })
-      .select({
-        password: 0,
-      });
+    const users = await userRepository.find({
+      where: { _id: { $in: destination } },
+      select: {
+        _id: 1,
+        name: 1,
+        email: 1,
+        matriculation: 1,
+        university_degree: 1,
+        institute: 1,
+      },
+    });
 
-    const form = await new Form(conn).model().findById(form_id);
+    const form = await formRepository.findById({ id: form_id });
 
     activity.interactions.push({
       activity_workflow_id,

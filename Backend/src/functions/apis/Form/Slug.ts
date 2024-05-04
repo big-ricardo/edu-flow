@@ -1,47 +1,40 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form, { IForm } from "../../../models/client/Form";
-import moment from "moment";
-import User from "../../../models/client/User";
-import Institute from "../../../models/client/Institute";
-import FormDraft, { IFormDraft } from "../../../models/client/FormDraft";
+import FormRepository from "../../../repositories/Form";
 
 const handler: HttpHandler = async (conn, req) => {
   const { slug } = req.params as { slug: string };
 
+  const formRepository = new FormRepository(conn);
+
   const form = (
-    await new Form(conn)
-      .model()
-      .findOne({
+    await formRepository.findOpenForms({
+      where: {
         slug,
-        active: true,
-        published: { $exists: true },
         $and: [
           {
             $or: [
               {
-                "period.open": null,
+                institute: {
+                  $eq: req.user.institute._id,
+                },
               },
               {
-                $and: [
-                  {
-                    "period.open": {
-                      $lte: moment.utc().toDate(),
-                    },
-                  },
-                  {
-                    "period.close": {
-                      $gte: moment.utc().toDate(),
-                    },
-                  },
-                ],
+                institute: {
+                  $eq: null,
+                },
               },
             ],
           },
         ],
-      })
-      .populate("published")
-  )?.toObject() as IForm & { published: IFormDraft };
+      },
+      populate: [
+        {
+          path: "published",
+        },
+      ],
+    })
+  )[0];
 
   if (!form) {
     return res.notFound("Form not found");

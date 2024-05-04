@@ -1,5 +1,13 @@
 import React, { memo, useEffect } from "react";
-import { Card, CardProps, Divider, Flex, Text, VStack } from "@chakra-ui/react";
+import {
+  Card,
+  CardProps,
+  Divider,
+  Flex,
+  Spinner,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import IActivity from "@interfaces/Activitiy";
 import { convertDateTime } from "@utils/date";
 import ActivityHeader from "./sections/ActivityHeader";
@@ -12,10 +20,11 @@ import useActivity from "@hooks/useActivity";
 
 interface ActivityDetailsProps extends CardProps {
   activity?: IActivity;
+  isLoading?: boolean;
 }
 
 const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
-  ({ activity, ...rest }) => {
+  ({ activity, isLoading, ...rest }) => {
     const { alterActivity, removeActivity } = useActivity();
 
     useEffect(() => {
@@ -25,6 +34,22 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
         removeActivity();
       };
     }, [activity, alterActivity, removeActivity]);
+
+    if (isLoading) {
+      return (
+        <Card
+          p={6}
+          borderRadius="2xl"
+          minWidth={"60%"}
+          boxShadow={"lg"}
+          h="100%"
+        >
+          <Flex justify="center" align="center" h="100%">
+            <Spinner />
+          </Flex>
+        </Card>
+      );
+    }
 
     if (!activity) return null;
 

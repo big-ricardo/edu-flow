@@ -1,13 +1,15 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import User, { IUserRoles } from "../../../models/client/User";
+import { IUserRoles } from "../../../models/client/User";
+import UserRepository from "../../../repositories/User";
 
 const handler: HttpHandler = async (conn, req, context) => {
   const { role } = req.params as { role: IUserRoles };
 
-  const users = await new User(conn)
-    .model()
-    .find({
+  const userReposiory = new UserRepository(conn);
+
+  const users = await userReposiory.find({
+    where: {
       active: true,
       isExternal: false,
       roles: {
@@ -15,10 +17,17 @@ const handler: HttpHandler = async (conn, req, context) => {
           $eq: role,
         },
       },
-    })
-    .select({
-      password: 0,
-    });
+    },
+    select: {
+      name: 1,
+      email: 1,
+      roles: 1,
+      active: 1,
+      isExternal: 1,
+      matriculation: 1,
+      institute: 1,
+    },
+  });
 
   return res.success(users);
 };

@@ -2,6 +2,7 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Activity, { IActivityStepStatus } from "../../../models/client/Activity";
 import User from "../../../models/client/User";
+import ActivityRepository from "../../../repositories/Activity";
 
 interface Query {
   page?: number;
@@ -11,13 +12,14 @@ interface Query {
 export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const pendingActivities = await new Activity(conn)
-    .model()
-    .find({
+  const activityRepository = new ActivityRepository(conn);
+
+  const pendingActivities = await activityRepository.find({
+    where: {
       "evaluations.answers.user._id": req.user.id,
       "evaluations.answers.status": IActivityStepStatus.idle,
-    })
-    .select({
+    },
+    select: {
       _id: 1,
       name: 1,
       description: 1,
@@ -25,7 +27,8 @@ export const handler: HttpHandler = async (conn, req, context) => {
       users: 1,
       "evaluations.form": 1,
       "evaluations.answers": 1,
-    });
+    },
+  });
 
   const myPendingActivities = pendingActivities
     .map((activity) => {

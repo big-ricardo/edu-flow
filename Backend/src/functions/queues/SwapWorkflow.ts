@@ -2,12 +2,11 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity, { IActivityStepStatus } from "../../models/client/Activity";
-import Workflow from "../../models/client/Workflow";
-import WorkflowDraft, {
-  ISwapWorkflow,
-  NodeTypes,
-} from "../../models/client/WorkflowDraft";
+import { IActivityStepStatus } from "../../models/client/Activity";
+import { ISwapWorkflow, NodeTypes } from "../../models/client/WorkflowDraft";
+import ActivityRepository from "../../repositories/Activity";
+import WorkflowRepository from "../../repositories/Workflow";
+import WorkflowDraftRepository from "../../repositories/WorkflowDraft";
 import sendNextQueue from "../../utils/sendNextQueue";
 
 interface TMessage extends GenericMessage {}
@@ -21,7 +20,11 @@ const handler: QueueWrapperHandler<TMessage> = async (
     const { activity_id, activity_step_id, activity_workflow_id } =
       messageQueue;
 
-    const activity = await new Activity(conn).model().findById(activity_id);
+    const activityRepository = new ActivityRepository(conn);
+    const workflowRepository = new WorkflowRepository(conn);
+    const workflowDraftRepository = new WorkflowDraftRepository(conn);
+
+    const activity = await activityRepository.findById({ id: activity_id });
 
     if (!activity) {
       throw new Error("Activity not found");
@@ -69,15 +72,15 @@ const handler: QueueWrapperHandler<TMessage> = async (
 
     const { workflow_id } = data;
 
-    const workflow = await new Workflow(conn).model().findById(workflow_id);
+    const workflow = await workflowRepository.findById({ id: workflow_id });
 
     if (!workflow) {
       throw new Error("Workflow not found");
     }
 
-    const workflowDraft = await new WorkflowDraft(conn)
-      .model()
-      .findById(workflow.published);
+    const workflowDraft = await workflowDraftRepository.findById({
+      id: workflow.published,
+    });
 
     if (!workflowDraft) {
       throw new Error("Workflow draft not found");

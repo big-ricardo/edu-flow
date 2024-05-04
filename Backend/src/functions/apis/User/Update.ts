@@ -46,7 +46,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     name: updatedUser.name,
     email: updatedUser.email,
     matriculation: updatedUser.matriculation,
-    role: updatedUser.role,
+    roles: updatedUser.roles,
     university_degree: updatedUser.university_degree,
   });
 };

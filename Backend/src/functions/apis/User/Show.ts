@@ -1,13 +1,18 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import User from "../../../models/client/User";
+import UserRepository from "../../../repositories/User";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
+  const userRepository = new UserRepository(conn);
 
-  const user = await new User(conn).model().findById(id).select({
-    password: 0,
-    __v: 0,
+  const user = await userRepository.findById({
+    id,
+    select: {
+      password: 0,
+      __v: 0,
+    },
   });
 
   if (!user) {

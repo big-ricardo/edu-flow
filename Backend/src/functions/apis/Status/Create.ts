@@ -1,11 +1,14 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Status, { IStatus } from "../../../models/client/Status";
+import { IStatus } from "../../../models/client/Status";
+import StatusRepository from "../../../repositories/Status";
 
 const handler: HttpHandler = async (conn, req) => {
   const { name, type } = req.body as IStatus;
 
-  const status = await new Status(conn).model().create({
+  const statusRepository = new StatusRepository(conn);
+
+  const status = await statusRepository.create({
     name,
     type,
   });

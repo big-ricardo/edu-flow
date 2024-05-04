@@ -1,25 +1,25 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form, { IForm } from "../../../models/client/Form";
+import { IForm } from "../../../models/client/Form";
 import moment from "moment";
+import FormRepository from "../../../repositories/Form";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;
   const { period, ...formData } = req.body as IForm;
 
-  const form = await new Form(conn).model().findByIdAndUpdate(
+  const formRepository = new FormRepository(conn);
+
+  const form = await formRepository.findByIdAndUpdate({
     id,
-    {
+    data: {
       ...formData,
       period: {
         open: period.open ? moment.utc(period.open).toDate() : null,
         close: period.close ? moment.utc(period.close).toDate() : null,
       },
     },
-    {
-      new: true,
-    },
-  );
+  });
 
   form.save();
 

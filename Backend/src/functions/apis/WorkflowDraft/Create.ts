@@ -6,7 +6,8 @@ import WorkflowDraft, {
 } from "../../../models/client/WorkflowDraft";
 import nodeValidator from "../../../utils/nodesValidator";
 import validateGraph from "../../../utils/validateGraphs";
-import Workflow from "../../../models/client/Workflow";
+import WorkflowRepository from "../../../repositories/Workflow";
+import WorkflowDraftRepository from "../../../repositories/WorkflowDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const { steps, viewport } = req.body as Pick<
@@ -18,17 +19,20 @@ const handler: HttpHandler = async (conn, req) => {
 
   validateGraph(steps);
 
-  const existsWorkflow = await new Workflow(conn).model().findById(id);
+  const workflowRepository = new WorkflowRepository(conn);
+  const workflowDraftRepository = new WorkflowDraftRepository(conn);
+
+  const existsWorkflow = await workflowRepository.findById({ id });
 
   if (!existsWorkflow) {
     return res.notFound("Workflow not found");
   }
 
-  const newVersion = await new WorkflowDraft(conn).model().countDocuments({
+  const newVersion = await workflowDraftRepository.count({
     parent: id,
   });
 
-  const workflowDraft = await new WorkflowDraft(conn).model().create({
+  const workflowDraft = await workflowDraftRepository.create({
     version: newVersion + 1,
     owner: req.user.id,
     parent: id,

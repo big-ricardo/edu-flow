@@ -103,9 +103,9 @@ export type IWorkflowDraft = {
   _id: string;
   name: string;
   status: "draft" | "published";
-  owner: Schema.Types.ObjectId;
+  owner: Schema.Types.ObjectId | string;
   steps: IStep[];
-  parent: Schema.Types.ObjectId | null;
+  parent: Schema.Types.ObjectId | string | null;
   viewport: { x: number; y: number; zoom: number };
   createdAt: string;
   updatedAt: string;

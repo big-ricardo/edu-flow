@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Status from "../../../models/client/Status";
+import StatusRepository from "../../../repositories/Status";
 
 interface Query {
   page?: number;
@@ -10,13 +10,14 @@ interface Query {
 const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const statuses = await new Status(conn)
-    .model()
-    .find()
-    .skip((page - 1) * limit)
-    .limit(limit);
+  const statusRepository = new StatusRepository(conn);
 
-  const total = await new Status(conn).model().countDocuments();
+  const statuses = await statusRepository.find({
+    skip: (page - 1) * limit,
+    limit,
+  });
+
+  const total = await statusRepository.count();
   const totalPages = Math.ceil(total / limit);
 
   return res.success({

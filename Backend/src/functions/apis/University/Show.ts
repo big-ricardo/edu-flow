@@ -1,11 +1,12 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import University from "../../../models/client/University";
+import UniversityRepository from "../../../repositories/University";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
+  const universityRepository = new UniversityRepository(conn);
 
-  const university = await new University(conn).model().findById(id);
+  const university = await universityRepository.findById({ id });
 
   if (!university) {
     return res.notFound("University not found");

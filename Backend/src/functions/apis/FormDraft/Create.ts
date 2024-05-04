@@ -1,23 +1,31 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import FormDraft, { FieldTypes, IFormDraft } from "../../../models/client/FormDraft";
-import Form from "../../../models/client/Form";
+import { FieldTypes, IFormDraft } from "../../../models/client/FormDraft";
+import FormRepository from "../../../repositories/Form";
+import FormDraftRepository from "../../../repositories/FormDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const formData = req.body as IFormDraft;
   const { id } = req.params;
 
-  const form = await new Form(conn).model().exists({ _id: id });
+  const formRepository = new FormRepository(conn);
+  const formDraftRepository = new FormDraftRepository(conn);
+
+  const form = await formRepository.findOne({
+    where: {
+      _id: id,
+    },
+  });
 
   if (!form) {
     return res.notFound("Form not found");
   }
 
-  const newVersion = await new FormDraft(conn).model().countDocuments({
+  const newVersion = await formDraftRepository.count({
     parent: id,
   });
 
-  const formDraft = await new FormDraft(conn).model().create({
+  const formDraft = await formDraftRepository.create({
     ...formData,
     parent: id,
     owner: req.user.id,
@@ -52,12 +60,12 @@ export default new Http(handler)
               schema.object().shape({
                 label: schema.string().required(),
                 value: schema.string().required(),
-              }),
+              })
             )
             .when("type", ([type], schema) => {
               if (["select", "radio", "checkbox"].includes(type)) {
                 return schema.required(
-                  "options is required for select, radio and checkbox fields",
+                  "options is required for select, radio and checkbox fields"
                 );
               }
               return schema.nullable().default(null);
@@ -67,7 +75,7 @@ export default new Http(handler)
             max: schema.number().nullable().optional(),
             pattern: schema.string().nullable().optional(),
           }),
-        }),
+        })
       ),
     }),
   }))

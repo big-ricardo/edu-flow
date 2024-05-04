@@ -2,6 +2,7 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Activity from "../../../models/client/Activity";
 import User, { IUser, IUserRoles } from "../../../models/client/User";
+import ActivityRepository from "../../../repositories/Activity";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id, evaluation_id } = req.params as {
@@ -12,7 +13,11 @@ const handler: HttpHandler = async (conn, req) => {
     users: Pick<IUser, "_id" | "isExternal" | "email">[];
   };
 
-  const activity = await new Activity(conn).model().findById(id).exec();
+  const activityRepository = new ActivityRepository(conn);
+
+  const activity = await activityRepository.findById({
+    id,
+  });
 
   if (!activity) return res.notFound("Atividade não encontrada");
 

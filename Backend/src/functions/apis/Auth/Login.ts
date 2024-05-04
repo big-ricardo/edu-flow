@@ -4,6 +4,7 @@ import * as bcrypt from "bcrypt";
 import jwt from "../../../services/jwt";
 import { connect, connectAdmin } from "../../../services/mongo";
 import AdminClient from "../../../models/admin/Client";
+import UserRepository from "../../../repositories/User";
 
 interface Body {
   matriculation: string;
@@ -23,10 +24,13 @@ export const handler: HttpHandler = async (_, req, context) => {
     return res.notFound("User or password not found");
   }
 
-  const conn = await connect(client.acronym);
+  const conn = connect(client.acronym);
+  const userRepository = new UserRepository(conn);
 
-  const user = await conn.model("User").findOne({
-    matriculation,
+  const user = await userRepository.findOne({
+    where: {
+      matriculation,
+    },
   });
 
   if (!user) {
@@ -45,7 +49,7 @@ export const handler: HttpHandler = async (_, req, context) => {
     roles: user.roles,
     institute: user.institute,
     slug: acronym,
-    client: client.toObject(),
+    client: conn.name,
   });
 
   return res.success({

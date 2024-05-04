@@ -1,12 +1,15 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
-import Activity, { IComment } from "../../../models/client/Activity";
+import { IComment } from "../../../models/client/Activity";
+import ActivityRepository from "../../../repositories/Activity";
 import res from "../../../utils/apiResponse";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;
   const { content } = req.body as Pick<IComment, "content">;
 
-  const activity = await new Activity(conn).model().findById(id);
+  const activityRepository = new ActivityRepository(conn);
+
+  const activity = await activityRepository.findById({ id });
 
   if (!activity) {
     return res.notFound("Activity not found");

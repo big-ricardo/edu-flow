@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Email from "../../../models/client/Email";
+import EmailRepository from "../../../repositories/Email";
 
 interface Query {
   page?: number;
@@ -9,12 +10,12 @@ interface Query {
 
 export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
+  const emailRepository = new EmailRepository(conn);
 
-  const emails = await new Email(conn)
-    .model()
-    .find()
-    .skip((page - 1) * limit)
-    .limit(limit);
+  const emails = await emailRepository.find({
+    skip: (page - 1) * limit,
+    limit,
+  });
 
   const total = await new Email(conn).model().countDocuments();
   const totalPages = Math.ceil(total / limit);

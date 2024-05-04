@@ -1,11 +1,13 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Email from "../../../models/client/Email";
+import EmailRepository from "../../../repositories/Email";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const email = await new Email(conn).model().findById(id);
+  const emailRepository = new EmailRepository(conn);
+
+  const email = await emailRepository.findById({id});
 
   if (!email) {
     return res.notFound("Email not found");

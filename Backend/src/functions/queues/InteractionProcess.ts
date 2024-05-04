@@ -2,13 +2,8 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity from "../../models/client/Activity";
-import Status from "../../models/client/Status";
-import {
-  IChangeStatus,
-  IInteraction,
-  NodeTypes,
-} from "../../models/client/WorkflowDraft";
+import { IInteraction } from "../../models/client/WorkflowDraft";
+import ActivityRepository from "../../repositories/Activity";
 import sendNextQueue from "../../utils/sendNextQueue";
 
 interface TMessage extends GenericMessage {}
@@ -22,7 +17,9 @@ const handler: QueueWrapperHandler<TMessage> = async (
     const { activity_id, activity_step_id, activity_workflow_id } =
       messageQueue;
 
-    const activity = await new Activity(conn).model().findById(activity_id);
+    const activityRepository = new ActivityRepository(conn);
+
+    const activity = await activityRepository.findById({ id: activity_id });
 
     if (!activity) {
       throw new Error("Activity not found");

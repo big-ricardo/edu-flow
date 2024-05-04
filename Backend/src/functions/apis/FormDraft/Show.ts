@@ -1,11 +1,13 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import FormDraft from "../../../models/client/FormDraft";
+import FormDraftRepository from "../../../repositories/FormDraft";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const form = await new FormDraft(conn).model().findById(id);
+  const formDraftRepository = new FormDraftRepository(conn);
+
+  const form = await formDraftRepository.findById({ id });
 
   if (!form) {
     return res.notFound("FormDraft not found");

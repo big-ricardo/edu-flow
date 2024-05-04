@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import University from "../../../models/client/University";
-import Institute from "../../../models/client/Institute";
+import UniversityRepository from "../../../repositories/University";
+import InstituteRepository from "../../../repositories/Institute";
 
 interface DtoUniversity {
   name?: string;
@@ -13,23 +13,22 @@ const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;
   const { name, acronym, active } = req.body as DtoUniversity;
 
-  const university = new University(conn).model();
-  const updatedUniversity = await university.findByIdAndUpdate(
+  const universityRepository = new UniversityRepository(conn);
+  const instituteRepository = new InstituteRepository(conn);
+
+  const updatedUniversity = await universityRepository.findByIdAndUpdate({
     id,
-    { name, acronym, active },
-    { new: true }
-  );
+    data: { name, acronym, active },
+  });
 
   if (!updatedUniversity) {
     return res.notFound("University not found");
   }
 
-  await new Institute(conn)
-    .model()
-    .updateMany(
-      { "university._id": id },
-      { "university.name": name, "university.acronym": acronym }
-    );
+  await instituteRepository.updateMany({
+    where: { "university._id": id },
+    data: { "university.name": name, "university.acronym": acronym },
+  });
 
   return res.success(updatedUniversity);
 };

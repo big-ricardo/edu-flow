@@ -2,12 +2,9 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import Activity from "../../models/client/Activity";
-import Email from "../../models/client/Email";
-import WorkflowDraft, {
-  ISendEmail,
-  NodeTypes,
-} from "../../models/client/WorkflowDraft";
+import { ISendEmail, NodeTypes } from "../../models/client/WorkflowDraft";
+import ActivityRepository from "../../repositories/Activity";
+import EmailRepository from "../../repositories/Email";
 import { sendEmail } from "../../services/email";
 import replaceSmartValues from "../../utils/replaceSmartValues";
 import sendNextQueue from "../../utils/sendNextQueue";
@@ -23,7 +20,10 @@ const handler: QueueWrapperHandler<TMessage> = async (
     const { activity_id, activity_step_id, activity_workflow_id } =
       messageQueue;
 
-    const activity = await new Activity(conn).model().findById(activity_id);
+    const activityRepository = new ActivityRepository(conn);
+    const emailRepository = new EmailRepository(conn);
+
+    const activity = await activityRepository.findById({ id: activity_id });
 
     if (!activity) {
       throw new Error("Activity not found");
@@ -65,7 +65,7 @@ const handler: QueueWrapperHandler<TMessage> = async (
 
     const { to, email_id } = data;
 
-    const email = await new Email(conn).model().findById(email_id);
+    const email = await emailRepository.findById({ id: email_id });
 
     if (!email) {
       throw new Error("Email not found");
@@ -93,7 +93,12 @@ const handler: QueueWrapperHandler<TMessage> = async (
       replaceValues: htmlTemplate,
     });
 
-    await sendEmail(toReplaced, subjectReplaced, htmlTemplateReplaced, cssTemplate);
+    await sendEmail(
+      toReplaced,
+      subjectReplaced,
+      htmlTemplateReplaced,
+      cssTemplate
+    );
 
     await sendNextQueue({
       conn,

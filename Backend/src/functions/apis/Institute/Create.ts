@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Institute from "../../../models/client/Institute";
-import University from "../../../models/client/University";
+import UniversityRepository from "../../../repositories/University";
+import InstituteRepository from "../../../repositories/Institute";
 
 interface DtoInstitute {
   name: string;
@@ -12,11 +12,14 @@ interface DtoInstitute {
 const handler: HttpHandler = async (conn, req) => {
   const { name, acronym, university } = req.body as DtoInstitute;
 
-  const universityData = await new University(conn)
-    .model()
-    .findById(university);
+  const universityRepository = new UniversityRepository(conn);
+  const instituteRepository = new InstituteRepository(conn);
 
-  const institute = await new Institute(conn).model().create({
+  const universityData = await universityRepository.findById({
+    id: university,
+  });
+
+  const institute = await instituteRepository.create({
     name,
     acronym,
     university: universityData.toObject(),

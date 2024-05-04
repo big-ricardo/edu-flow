@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Institute from "../../../models/client/Institute";
+import InstituteRepository from "../../../repositories/Institute";
 
 interface Query {
   page?: number;
@@ -10,17 +10,24 @@ interface Query {
 const handler: HttpHandler = async (conn, req) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const institutes = await new Institute(conn)
-    .model()
-    .find()
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .populate("university", {
-      _id: 1,
-      acronym: 1,
-    });
+  const instituteRepository = new InstituteRepository(conn);
 
-  const total = await new Institute(conn).model().countDocuments();
+  const institutes = await instituteRepository
+    .find({
+      skip: (page - 1) * limit,
+      limit,
+      populate: [
+        {
+          path: "university",
+          select: {
+            _id: 1,
+            acronym: 1,
+          },
+        },
+      ],
+    })
+
+  const total = await instituteRepository.count();
   const totalPages = Math.ceil(total / limit);
 
   return res.success({

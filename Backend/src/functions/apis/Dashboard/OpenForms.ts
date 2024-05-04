@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form from "../../../models/client/Form";
-import moment from "moment";
+import FormRepository from "../../../repositories/Form";
+import { IFormType } from "../../../models/client/Form";
 
 const predefinedValues = {
   teachers: null,
@@ -10,44 +10,36 @@ const predefinedValues = {
 };
 
 const handler: HttpHandler = async (conn, req) => {
-  const forms = await new Form(conn).model().find({
-    active: true,
-    published: { $exists: true },
-    $and: [
-      {
-        $or: [
-          {
-            "institute": {
-              $eq: req.user.institute._id,
+  const formRepository = new FormRepository(conn);
+
+  const forms = await formRepository.findOpenForms({
+    where: {
+      type: IFormType.Created,
+      $and: [
+        {
+          $or: [
+            {
+              institute: {
+                $eq: req.user.institute._id,
+              },
             },
-          },
-          {
-            institute: {
-              $eq: null,
+            {
+              institute: {
+                $eq: null,
+              },
             },
-          },
-        ],
-      },
-      {
-        $or: [
-          {
-            "period.open": {
-              $exists: false,
-            },
-          },
-          {
-            "period.open": {
-              $lte: moment.utc().toDate(),
-            },
-          },
-        ],
-      },
-      {
-        "period.close": {
-          $gte: moment.utc().toDate(),
+          ],
         },
-      },
-    ],
+      ],
+    },
+    select: {
+      name: 1,
+      slug: 1,
+      description: 1,
+      period: 1,
+      published: 1,
+      institute: 1,
+    },
   });
 
   if (!forms) {

@@ -1,15 +1,20 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, {
+import {
   IActivityAccepted,
   IActivityState,
 } from "../../../models/client/Activity";
+import ActivityRepository from "../../../repositories/Activity";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
   const { accepted } = req.body as { accepted: IActivityAccepted };
 
-  const activity = await new Activity(conn).model().findById(id).exec();
+  const activityRepository = new ActivityRepository(conn);
+
+  const activity = await activityRepository.findById({
+    id,
+  });
 
   if (!activity) return res.notFound("Atividade não encontrada");
 

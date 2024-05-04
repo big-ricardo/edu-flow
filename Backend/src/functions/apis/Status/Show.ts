@@ -1,11 +1,13 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Status from "../../../models/client/Status";
+import StatusRepository from "../../../repositories/Status";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const status = await new Status(conn).model().findById(id);
+  const statusRepository = new StatusRepository(conn);
+
+  const status = await statusRepository.findById({ id });
 
   if (!status) {
     return res.notFound("Status not found");

@@ -1,6 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import WorkflowDraft, { IStep } from "../../../models/client/WorkflowDraft";
+import WorkflowDraftRepository from "../../../repositories/WorkflowDraft";
 
 const convertBackToReactFlowObject = (nodesArray: IStep[]) => {
   const nodes = nodesArray.map(({ next, ...node }) => node);
@@ -35,8 +36,9 @@ const convertBackToReactFlowObject = (nodesArray: IStep[]) => {
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
+  const workflowDraftRepository = new WorkflowDraftRepository(conn);
 
-  const workflow = await new WorkflowDraft(conn).model().findById(id);
+  const workflow = await workflowDraftRepository.findById({ id });
 
   if (!workflow) {
     return res.notFound("WorkflowDraft not found");

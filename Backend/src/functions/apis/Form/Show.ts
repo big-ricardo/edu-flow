@@ -1,11 +1,24 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form from "../../../models/client/Form";
+import FormRepository from "../../../repositories/Form";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
 
-  const form = await new Form(conn).model().findById(id).populate("published");
+  const formRepository = new FormRepository(conn);
+
+  const form = await formRepository.find({
+    where: { id },
+    populate: [
+      {
+        path: "populate",
+        select: {
+          name: 1,
+          _id: 1,
+        },
+      },
+    ],
+  });
 
   if (!form) {
     return res.notFound("Form not found");

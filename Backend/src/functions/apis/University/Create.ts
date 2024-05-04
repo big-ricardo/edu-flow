@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import University from "../../../models/client/University";
+import UniversityRepository from "../../../repositories/University";
 
 interface DtoUniversity {
   name: string;
@@ -9,8 +9,9 @@ interface DtoUniversity {
 
 const handler: HttpHandler = async (conn, req) => {
   const { name, acronym } = req.body as DtoUniversity;
+  const universityRepository = new UniversityRepository(conn);
 
-  const university = await new University(conn).model().create({
+  const university = await universityRepository.create({
     name,
     acronym,
   });

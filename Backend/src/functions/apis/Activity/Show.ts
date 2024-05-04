@@ -1,11 +1,14 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity from "../../../models/client/Activity";
+import ActivityRepository from "../../../repositories/Activity";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params as { id: string };
+  const activityRepository = new ActivityRepository(conn);
 
-  const activity = await new Activity(conn).model().findById(id);
+  const activity = await activityRepository.findById({
+    id,
+  });
 
   if (!activity) {
     return res.notFound("Activity not found");

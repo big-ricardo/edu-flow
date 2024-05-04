@@ -4,6 +4,7 @@ import Activity, {
   IActivityAccepted,
   IActivityState,
 } from "../../../models/client/Activity";
+import ActivityRepository from "../../../repositories/Activity";
 
 interface Query {
   page?: number;
@@ -13,14 +14,16 @@ interface Query {
 export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
-  const activities = await new Activity(conn)
-    .model()
-    .find({
+  const activityRepository = new ActivityRepository(conn);
+
+  const activities = await activityRepository.find({
+    where: {
       state: IActivityState.created,
       "masterminds.user._id": req.user.id,
-    })
-    .skip((page - 1) * limit)
-    .limit(limit);
+    },
+    skip: (page - 1) * limit,
+    limit,
+  });
 
   return res.success({
     activities,

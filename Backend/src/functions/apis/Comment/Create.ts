@@ -1,13 +1,16 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
-import Activity, { IComment } from "../../../models/client/Activity";
+import { IComment } from "../../../models/client/Activity";
+import ActivityRepository from "../../../repositories/Activity";
 import res from "../../../utils/apiResponse";
 
 const handler: HttpHandler = async (conn, req) => {
   const data = req.body as Pick<IComment, "content">;
 
-  const comment = await new Activity(conn).model().findByIdAndUpdate(
-    req.params.id,
-    {
+  const activityRepository = new ActivityRepository(conn);
+
+  const comment = await activityRepository.findByIdAndUpdate({
+    id: req.params.id,
+    data: {
       $push: {
         comments: {
           user: {
@@ -21,8 +24,7 @@ const handler: HttpHandler = async (conn, req) => {
         },
       },
     },
-    { new: true }
-  );
+  });
 
   comment.save();
 

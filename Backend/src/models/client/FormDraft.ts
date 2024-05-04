@@ -53,10 +53,10 @@ export type IField = {
 };
 
 export type IFormDraft = {
-  _id: string;
+  _id: string | ObjectId;
   status: IFormStatus;
-  parent: ObjectId;
-  owner: ObjectId;
+  parent: ObjectId | string;
+  owner: ObjectId | string;
   fields: IField[];
   version: number;
   createdAt: string;

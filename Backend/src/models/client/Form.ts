@@ -7,17 +7,17 @@ export enum IFormType {
 }
 
 export type IForm = {
-  _id: string;
+  _id: string | ObjectId;
   name: string;
   slug: string;
   initial_status: ObjectId | null;
   type: IFormType;
-  period?: { open: string; close: string };
+  period?: { open: string | null | Date; close: string | null | Date };
   active: boolean;
   description: string;
-  published: ObjectId | null;
-  institute: ObjectId | null;
-  workflow: ObjectId | null;
+  published: ObjectId | string | null;
+  institute: ObjectId | string | null;
+  workflow: ObjectId | string | null;
 } & mongoose.Document;
 
 export const schema = new Schema<IForm>(
@@ -43,7 +43,7 @@ export const schema = new Schema<IForm>(
   },
   {
     timestamps: true,
-  },
+  }
 ).index({ slug: 1, status: 1, "period.open": 1, "period.close": 1 });
 
 export default class Form {

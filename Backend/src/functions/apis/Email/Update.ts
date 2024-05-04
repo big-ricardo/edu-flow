@@ -1,17 +1,23 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Email, { IEmail } from "../../../models/client/Email";
+import { IEmail } from "../../../models/client/Email";
+import EmailRepository from "../../../repositories/Email";
 
 const handler: HttpHandler = async (conn, req) => {
   const { id } = req.params;
   const { slug, htmlTemplate, subject, cssTemplate } = req.body as IEmail;
 
-  const status = new Email(conn).model();
-  const updateEmail = await status.findByIdAndUpdate(
+  const emailRepository = new EmailRepository(conn);
+
+  const updateEmail = await emailRepository.findByIdAndUpdate({
     id,
-    { slug, htmlTemplate, subject, cssTemplate },
-    { new: true }
-  );
+    data: {
+      slug,
+      htmlTemplate,
+      subject,
+      cssTemplate,
+    },
+  });
 
   if (!updateEmail) {
     return res.notFound("Email not found");
