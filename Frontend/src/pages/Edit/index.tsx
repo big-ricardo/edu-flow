@@ -52,17 +52,6 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
     return activity?.form_draft?.fields.reduce((acc, field) => {
       if (!field.value || acc[field.id]) return acc;
       acc[field.id] = field.value;
-
-      if (field.type === FieldTypes.file) {
-        acc[field.id] = field.value?.name;
-      }
-
-      if (field.predefined === FieldTypes.teachers) {
-        acc[field.id] = Array.isArray(field.value)
-          ? field.value.map((el) => el._id)
-          : field?.value._id;
-      }
-
       return acc;
     }, {});
   }, [activity?.form_draft?.fields]);
@@ -79,9 +68,8 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
     reset,
     formState: { isDirty, errors },
   } = methods;
-
-  console.log(errors);
-
+  
+  console.log("erros", errors);
   useEffect(() => {
     reset(answer);
   }, [answer, reset]);

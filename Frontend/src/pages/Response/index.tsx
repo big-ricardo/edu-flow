@@ -49,8 +49,6 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
     formState: { isDirty, errors },
   } = methods;
 
-  console.log(errors);
-
   const { mutateAsync, isPending: isSubmitting } = useMutation({
     mutationFn: responseForm,
     onSuccess: () => {

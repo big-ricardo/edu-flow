@@ -6,7 +6,7 @@ import {
   IValue,
 } from "../../../models/client/FormDraft";
 import { IUser } from "../../../models/client/User";
-import BlobUploader from "../../../services/upload";
+import BlobUploader, { FileUploaded } from "../../../services/upload";
 import UserRepository from "../../../repositories/User";
 
 interface File {
@@ -67,19 +67,9 @@ class ResponseUseCases {
     }
 
     if (field.type === FieldTypes.File && typeof value === "object") {
-      const file: File = value as File;
+      const file: FileUploaded = value as FileUploaded;
 
-      const uploaded = await this.blobUploader
-        .uploadFileToBlob(file?.name, file?.mimeType, file?.base64)
-        .catch((err) => {
-          throw err;
-        });
-
-      if (!uploaded) {
-        throw new Error("Error on upload file");
-      }
-
-      mapped = uploaded;
+      mapped = file;
     }
 
     if (field.type === FieldTypes.Teacher && Array.isArray(value)) {

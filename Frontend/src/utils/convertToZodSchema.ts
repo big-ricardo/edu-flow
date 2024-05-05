@@ -72,30 +72,13 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
         fieldSchema = z.coerce.number();
         break;
       case "file":
-        fieldSchema = z
-          .any()
-          .refine(
-            (files) => !files.length || files?.[0]?.size <= MAX_FILE_SIZE,
-            `Max file size is 5MB.`
-          )
-          .refine(
-            (files) =>
-              !files.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-            ".jpg, .jpeg, .png and .webp .pdf files are accepted."
-          )
-          .transform(async (files: FileList) => {
-            if (!files.length) {
-              return [];
-            }
-
-            const base64 = await getBase64(files[0]);
-            return {
-              name: files[0].name,
-              size: files[0].size,
-              mimeType: files[0].type,
-              base64,
-            };
-          });
+        fieldSchema = z.object({
+          containerName: z.string(),
+          name: z.string(),
+          url: z.string(),
+          mimeType: z.string(),
+          size: z.string(),
+        });
         break;
       case "teacher":
         fieldSchema = z.array(

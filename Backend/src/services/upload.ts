@@ -1,5 +1,6 @@
 import { BlobSASPermissions, BlobServiceClient } from "@azure/storage-blob";
 import { ObjectId } from "mongoose";
+import { access } from "node:fs";
 
 const AZURE_STORAGE_CONNECTION_STRING =
   process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -68,8 +69,23 @@ class BlobUploader {
       expiresOn: new Date(new Date().valueOf() + 86400),
       permissions: BlobSASPermissions.parse("r"),
     });
+    console.log(file)
+    console.log(sas)
     file.url = sas;
     return file;
+  }
+
+  async getSasUrl(file: { fileName: string; mimeType: string; size: string }) {
+    const containerClient = this.blobServiceClient.getContainerClient(
+      String(this.containerName)
+    );
+    await containerClient.createIfNotExists({ access: "blob" });
+    const blockBlobClient = containerClient.getBlockBlobClient(file.fileName);
+    const sas = await blockBlobClient.generateSasUrl({
+      expiresOn: new Date(new Date().valueOf() + 2 * 60 * 1000),
+      permissions: BlobSASPermissions.parse("w"),
+    });
+    return sas;
   }
 }
 

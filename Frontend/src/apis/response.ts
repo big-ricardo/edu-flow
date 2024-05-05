@@ -53,3 +53,23 @@ export const updateResponseForm = async ({
 
   return res.data.data;
 };
+
+export const getSasUrl = async ({
+  fileName,
+  mimeType,
+  size,
+}: {
+  fileName: string;
+  mimeType: string;
+  size: number;
+}) => {
+  const res = await api.post<
+    Response<{ url: string; fileName: string; containerName: string }>
+  >(`/client-sas`, {
+    fileName,
+    mimeType,
+    size,
+  });
+
+  return res.data;
+};
