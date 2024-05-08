@@ -110,6 +110,10 @@ class BaseRepository<T extends Document> {
   async count(where?: FilterQuery<T>): Promise<number> {
     return this.model.countDocuments(where).exec();
   }
+
+  async delete({ where }: { where: FilterQuery<T> }) {
+    return this.model.deleteMany(where).exec();
+  }
 }
 
 export default BaseRepository;

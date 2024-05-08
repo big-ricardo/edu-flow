@@ -10,6 +10,7 @@ import UserRepository from "../../../repositories/User";
 import ActivityRepository from "../../../repositories/Activity";
 import ResponseUseCases from "../../use-cases/Response";
 import BlobUploader from "../../../services/upload";
+import AnswerRepository from "../../../repositories/Answer";
 
 interface IUser {
   _id: ObjectId;
@@ -106,6 +107,20 @@ const handler: HttpHandler = async (conn, req) => {
       accepted: IActivityAccepted.pending,
     })),
     form_draft: formDraft.toObject(),
+  });
+
+  const answerRepository = new AnswerRepository(conn);
+
+  await answerRepository.updateMany({
+    where: {
+      form: form._id,
+      user: req.user.id,
+      submitted: false,
+    },
+    data: {
+      activity: activity._id,
+      submitted: true,
+    },
   });
 
   return res.created(activity);

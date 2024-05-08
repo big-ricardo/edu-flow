@@ -20,6 +20,7 @@ import ActivityRepository from "../../../repositories/Activity";
 import UserRepository from "../../../repositories/User";
 import ResponseUseCases from "../../use-cases/Response";
 import BlobUploader from "../../../services/upload";
+import AnswerRepository from "../../../repositories/Answer";
 
 interface File {
   name: string;
@@ -121,6 +122,18 @@ const handler: HttpHandler = async (conn, req, context) => {
       queueName: "interaction_process",
     });
   }
+
+  const answerRepository = new AnswerRepository(conn);
+
+  await answerRepository.updateMany({
+    where: {
+      form: form._id,
+      user: req.user.id,
+    },
+    data: {
+      submitted: true,
+    },
+  });
 
   activity.save();
 

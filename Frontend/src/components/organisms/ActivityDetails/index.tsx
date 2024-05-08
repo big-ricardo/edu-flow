@@ -43,6 +43,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
           minWidth={"60%"}
           boxShadow={"lg"}
           h="100%"
+          bg="bg.card"
         >
           <Flex justify="center" align="center" h="100%">
             <Spinner />
@@ -59,6 +60,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
         borderRadius="2xl"
         minWidth={"60%"}
         boxShadow={"lg"}
+        bg="bg.card"
         {...rest}
       >
         <ActivityHeader

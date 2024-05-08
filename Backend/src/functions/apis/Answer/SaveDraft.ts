@@ -39,14 +39,12 @@ const handler: HttpHandler = async (conn, req, context) => {
 
   const formRepository = new FormRepository(conn);
   const formDraftRepository = new FormDraftRepository(conn);
-  const activityRepository = new ActivityRepository(conn);
   const userRepository = new UserRepository(conn);
 
   const form = (
     await formRepository.findOpenForms({
       where: {
         _id: req.params.form_id,
-        type: IFormType.Evaluated,
       },
     })
   )[0];
@@ -61,14 +59,6 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.notFound("Form draft not found");
   }
 
-  const activity = await activityRepository.findById({
-    id: req.params.activity_id,
-  });
-
-  if (!activity) {
-    return res.notFound("Activity not found");
-  }
-
   const responseUseCases = new ResponseUseCases(
     formDraft,
     new BlobUploader(req.user.id),
@@ -77,75 +67,53 @@ const handler: HttpHandler = async (conn, req, context) => {
 
   await responseUseCases.processFormFields(rest);
 
-  const activeEvaluation = activity.evaluations.findIndex(
-    (evaluation) => !evaluation.finished
-  );
+  const answer = formDraft.fields.reduce((acc, field) => {
+    return {
+      ...acc,
+      [field.id]: field.value ?? undefined,
+    };
+  }, {});
 
-  if (activeEvaluation === -1) {
-    return res.badRequest("No active evaluation");
-  }
-
-  const evaluation = activity.evaluations[activeEvaluation];
-
-  const myAnswer = evaluation.answers.findIndex(
-    (answer) => String(answer.user._id) === String(req.user.id)
-  );
-
-  if (myAnswer === -1) {
-    return res.badRequest("You already answered this interaction");
-  }
-
-  evaluation.answers[myAnswer].data = formDraft.toObject();
-  evaluation.answers[myAnswer].status = IActivityStepStatus.finished;
-  evaluation.answers[myAnswer].grade = responseUseCases.getGrade() / 10;
-
-  const isAllAnswered = evaluation.answers.every(
-    (answer) => answer.status === IActivityStepStatus.finished
-  );
-
-  if (isAllAnswered) {
-    sendToQueue({
-      context,
-      message: {
-        activity_id: activity._id.toString(),
-        activity_workflow_id: evaluation.activity_workflow_id.toString(),
-        activity_step_id: evaluation.activity_step_id.toString(),
-        client: conn.name,
-      },
-      queueName: "evaluation_process",
-    });
-  }
+  console.log(answer);
 
   const answerRepository = new AnswerRepository(conn);
 
-  await answerRepository.updateMany({
-    where: {
-      form: form._id,
+  const existDraft = (
+    await answerRepository.find({
+      where: {
+        user: req.user.id,
+        form: form._id,
+        submitted: false,
+      },
+    })
+  ).at(0);
+
+  if (existDraft) {
+    existDraft.data = answer;
+
+    await existDraft.save();
+  } else {
+    await answerRepository.create({
       user: req.user.id,
-    },
-    data: {
-      submitted: true,
-    },
-  });
+      form: form._id,
+      data: answer,
+    });
+  }
 
-  activity.save();
-
-  return res.created(activity);
+  return res.created(answer);
 };
 
 export default new Http(handler)
   .setSchemaValidator((schema) => ({
     params: schema.object().shape({
       form_id: schema.string().required(),
-      activity_id: schema.string().required(),
     }),
     body: schema.object().shape({}),
   }))
   .configure({
-    name: "ResponseEvaluation",
+    name: "AnswerDraftSave",
     options: {
       methods: ["POST"],
-      route: "response/{form_id}/evaluated/{activity_id}",
-      extraOutputs: [extraOutputsEvaluationProcess],
+      route: "form/{form_id}/answer",
     },
   });

@@ -15,11 +15,11 @@ interface TableBodyProps {
 const TableBodyC: React.FC<TableBodyProps> = ({ columns, data }) => {
   return (
     <Tbody>
-      {data.map((row, index) => (
+      {data?.map((row, index) => (
         <Row key={`Row-${index}`} row={row} columns={columns} />
       ))}
 
-      {data.length === 0 && (
+      {data?.length === 0 && (
         <Tr>
           <Td colSpan={columns.length} textAlign="center">
             Nenhum registro encontrado

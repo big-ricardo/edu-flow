@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ import Inputs from "@components/atoms/Inputs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import convertToZodSchema from "@utils/convertToZodSchema";
 import { responseForm } from "@apis/response";
+import DraftHandle from "./DraftHandle";
 
 interface ResponseProps {
   isPreview?: boolean;
@@ -40,13 +41,18 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
     queryFn: getFormBySlug,
   });
 
+  const schema = useMemo(() => {
+    if (!form) return null;
+    return convertToZodSchema(form.published?.fields ?? []);
+  }, [form]);
+
   const methods = useForm({
-    resolver: zodResolver(convertToZodSchema(form?.published?.fields ?? [])),
+    resolver: zodResolver(schema),
   });
 
   const {
     handleSubmit,
-    formState: { isDirty, errors },
+    formState: { isDirty },
   } = methods;
 
   const { mutateAsync, isPending: isSubmitting } = useMutation({
@@ -138,6 +144,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
             <Divider my={4} />
           </Box>
           <FormProvider {...methods}>
+            <DraftHandle form_id={form?._id} />
             <form onSubmit={onSubmit}>
               <Flex direction="column" align="center" justify="center" gap="3">
                 <Inputs fields={form?.published?.fields ?? []} />

@@ -1,16 +1,14 @@
 import mongoose, { Schema } from "mongoose";
-import { FileUploaded } from "../../services/upload";
+import { IField } from "./FormDraft";
 
 export type IAnswer = {
   _id: string;
   user: string;
-  activity: string;
+  activity: string | null;
   submitted: boolean;
-  form_draft: string;
+  form: string;
   data: {
-    [key: string]:
-      | string
-      | FileUploaded
+    [key: string]: IField["value"];
   };
   createdAt: string;
   updatedAt: string;
@@ -19,11 +17,16 @@ export type IAnswer = {
 export const schema: Schema<IAnswer> = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    activity: { type: Schema.Types.ObjectId, ref: "Activity", required: true },
-    submitted: { type: Boolean, default: false },
-    form_draft: {
+    activity: {
       type: Schema.Types.ObjectId,
-      ref: "FormDraft",
+      ref: "Activity",
+      required: false,
+      default: null,
+    },
+    submitted: { type: Boolean, default: false },
+    form: {
+      type: Schema.Types.ObjectId,
+      ref: "Form",
       required: true,
     },
     data: { type: Object, required: true },
@@ -31,7 +34,7 @@ export const schema: Schema<IAnswer> = new Schema(
   {
     timestamps: true,
   }
-).index({ user: 1, activity: 1, form_draft: 1 }, { unique: true });
+).index({ user: 1, form: 1 }, { unique: false });
 
 export default class Answer {
   conn: mongoose.Connection;

@@ -29,7 +29,6 @@ const Password: React.FC<TextProps> = ({ input }) => {
   return (
     <FormControl
       id="password"
-      mt={4}
       isInvalid={!!errors.password}
       position="relative"
       isRequired={input.required}
