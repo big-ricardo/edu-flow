@@ -54,6 +54,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "WorkflowList",
+    permission: "workflow.read",
     options: {
       methods: ["GET"],
       route: "workflows",

@@ -1,10 +1,6 @@
 import { getUsers } from "@apis/users";
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import Can from "@components/atoms/Can";
 import Pagination from "@components/organisms/Pagination";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
@@ -64,9 +60,11 @@ const Create = memo(() => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-        Criar Usuário
-      </Button>
+      <Can permission="user.create">
+        <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
+          Criar Usuário
+        </Button>
+      </Can>
     </div>
   );
 });

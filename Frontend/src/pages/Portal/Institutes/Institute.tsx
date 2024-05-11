@@ -21,6 +21,7 @@ import {
 import Text from "@components/atoms/Inputs/Text";
 import Switch from "@components/atoms/Inputs/Switch";
 import Select from "@components/atoms/Inputs/Select";
+import Can from "@components/atoms/Can";
 
 const Schema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -168,14 +169,18 @@ export default function Institute() {
               >
                 Cancelar
               </Button>
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isPending || isLoading}
-                type="submit"
+              <Can
+                permission={isEditing ? "institute.update" : "institute.create"}
               >
-                {isEditing ? "Editar" : "Criar"}
-              </Button>
+                <Button
+                  mt={4}
+                  colorScheme="blue"
+                  isLoading={isPending || isLoading}
+                  type="submit"
+                >
+                  {isEditing ? "Editar" : "Criar"}
+                </Button>
+              </Can>
             </Flex>
           </CardBody>
         </Card>

@@ -25,6 +25,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "WorkflowUpdate",
+    permission: "workflow.update",
     options: {
       methods: ["PUT"],
       route: "workflow/{id}",

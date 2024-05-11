@@ -61,6 +61,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "WorkflowDraftShow",
+    permission: "workflowDraft.read",
     options: {
       methods: ["GET"],
       route: "workflow-draft/{id}",

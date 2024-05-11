@@ -44,6 +44,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "EmailUpdate",
+    permission: "email.update",
     options: {
       methods: ["PUT"],
       route: "email/{id}",

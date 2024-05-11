@@ -11,6 +11,8 @@ import {
   Hide,
   Text,
   Flex,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import useAuth from "@hooks/useAuth";
@@ -46,7 +48,7 @@ const ForgotPassword: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const { mutateAsync, isPending } = useMutation({
+  const { mutateAsync, isPending, isSuccess } = useMutation({
     mutationFn: forgotPassword,
     onSuccess: () => {
       toast({
@@ -56,7 +58,6 @@ const ForgotPassword: React.FC = () => {
         isClosable: true,
         icon: <FaCheckCircle />,
       });
-      navigate("/auth/reset-password");
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
@@ -98,6 +99,13 @@ const ForgotPassword: React.FC = () => {
         >
           <CardBody>
             <form onSubmit={onSubmit}>
+              {isSuccess && (
+                <Alert status="success" mb={4}>
+                  <AlertIcon />
+                  Acesse seu email para recuperar a senha
+                </Alert>
+              )}
+
               <Flex direction="column" gap="4">
                 <InputText
                   input={{

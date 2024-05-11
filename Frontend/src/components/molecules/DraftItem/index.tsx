@@ -28,7 +28,7 @@ const DraftItem: React.FC<DraftItemProps> = memo(({ draft, onEdit }) => {
 
   const createdAt = useMemo(
     () => convertDateTime(draft.createdAt),
-    [draft.createdAt],
+    [draft.createdAt]
   );
 
   return (

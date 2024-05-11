@@ -30,6 +30,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UserShow",
+    permission: "user.read",
     options: {
       methods: ["GET"],
       route: "user/{id}",

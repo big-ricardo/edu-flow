@@ -27,6 +27,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "StatusCreate",
+    permission: "status.create",
     options: {
       methods: ["POST"],
       route: "status",

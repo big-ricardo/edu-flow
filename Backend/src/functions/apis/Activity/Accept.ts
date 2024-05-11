@@ -62,6 +62,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "ActivityAccept",
+    permission: "activity.accept",
     options: {
       methods: ["PUT"],
       route: "activity-accept/{id}",

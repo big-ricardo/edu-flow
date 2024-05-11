@@ -1,9 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
 import React, { memo, useCallback, useMemo } from "react";
@@ -12,6 +7,7 @@ import { BiRefresh, BiEdit } from "react-icons/bi";
 import { getForms } from "@apis/form";
 import Pagination from "@components/organisms/Pagination";
 import IForm from "@interfaces/Form";
+import Can from "@components/atoms/Can";
 
 const columns = [
   {
@@ -63,9 +59,11 @@ const Create = memo(() => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleSelect} size="sm">
-        Criar Formulário
-      </Button>
+      <Can permission="form.create">
+        <Button colorScheme="blue" mr={2} onClick={handleSelect} size="sm">
+          Criar Formulário
+        </Button>
+      </Can>
     </div>
   );
 });

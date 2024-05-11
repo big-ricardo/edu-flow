@@ -7,12 +7,12 @@ const handler: HttpHandler = async (conn, req) => {
 
   const answerRepository = new AnswerRepository(conn);
 
-  const answer = (await answerRepository.find({
+  const answer = await answerRepository.findOne({
     where: {
       form: form_id,
       submitted: false,
     },
-  })).at(0);
+  })
 
   return res.success(answer);
 };
@@ -25,6 +25,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "AnswerDraftShow",
+    permission: "answer.read",
     options: {
       methods: ["GET"],
       route: "form/{form_id}/answer",

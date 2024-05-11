@@ -22,7 +22,7 @@ import InfoTooltip from "@components/atoms/Inputs/InfoTooltip";
 import Select from "@components/atoms/Inputs/Select";
 import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IUserRoles } from "@interfaces/User";
+import { ITeacherDegrees, IUserRoles } from "@interfaces/User";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import {
@@ -48,9 +48,18 @@ const UserSchema = z.object({
       acronym: z.string(),
     }),
   }),
+  university_degree: z.enum([
+    ITeacherDegrees.mastermind,
+    ITeacherDegrees.doctor,
+  ]).nullable(),
 });
 
 type IUserForm = z.infer<typeof UserSchema>;
+
+const ITeacherDegreesMap = {
+  [ITeacherDegrees.mastermind]: "Mestre",
+  [ITeacherDegrees.doctor]: "Doutor",
+};
 
 interface UserModalProps {
   isOpen: boolean;
@@ -100,6 +109,18 @@ const UserModal: React.FC<UserModalProps> = ({
               <InputText input={{ id: "name", label: "Nome" }} />
               <InputText input={{ id: "email", label: "Email" }} />
               <InputText input={{ id: "matriculation", label: "Matrícula" }} />
+              <Select
+                input={{
+                  id: "university_degree",
+                  label: "Grau Acadêmico",
+                  options: Object.entries(ITeacherDegreesMap).map(
+                    ([key, value]) => ({
+                      value: key,
+                      label: value,
+                    })
+                  ),
+                }}
+              />
               <Divider />
               <Heading as={"h5"} fontSize={"lg"}>
                 Instituto
@@ -197,7 +218,7 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
     () =>
       teachers
         ?.filter((teacher) =>
-          fields.every((field) => field.email !== teacher.email)
+          fields.every((field) => field?.email !== teacher.email)
         )
         ?.map((teacher) => ({
           value: teacher._id,

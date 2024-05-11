@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getStatus, createOrUpdateStatus } from "@apis/status";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
+import Can from "@components/atoms/Can";
 
 const statusSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -142,14 +143,16 @@ export default function Status() {
               >
                 Cancelar
               </Button>
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isPending || isLoading}
-                type="submit"
-              >
-                {isEditing ? "Editar" : "Criar"}
-              </Button>
+              <Can permission={isEditing ? "status.edit" : "status.create"}>
+                <Button
+                  mt={4}
+                  colorScheme="blue"
+                  isLoading={isPending || isLoading}
+                  type="submit"
+                >
+                  {isEditing ? "Editar" : "Criar"}
+                </Button>
+              </Can>
             </Flex>
           </CardBody>
         </Card>

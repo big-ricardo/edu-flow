@@ -7,17 +7,8 @@ const handler: HttpHandler = async (conn, req) => {
 
   const formRepository = new FormRepository(conn);
 
-  const form = await formRepository.find({
-    where: { id },
-    populate: [
-      {
-        path: "populate",
-        select: {
-          name: 1,
-          _id: 1,
-        },
-      },
-    ],
+  const form = await formRepository.findOne({
+    where: { _id: id },
   });
 
   if (!form) {
@@ -35,6 +26,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormShow",
+    permission: "form.read",
     options: {
       methods: ["GET"],
       route: "form/{id}",

@@ -38,6 +38,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "InstituteCreate",
+    permission: "institute.create",
     options: {
       methods: ["POST"],
       route: "institute",

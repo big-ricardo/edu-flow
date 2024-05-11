@@ -5,6 +5,7 @@ import jwt from "../../../services/jwt";
 import { connect, connectAdmin } from "../../../services/mongo";
 import AdminClient from "../../../models/admin/Client";
 import UserRepository from "../../../repositories/User";
+import { Permissions } from "../../../services/permissions";
 
 interface Body {
   matriculation: string;
@@ -41,6 +42,8 @@ export const handler: HttpHandler = async (_, req, context) => {
     return res.unauthorized("User or password not found");
   }
 
+  const permissions = Permissions.getPermissionsByRoles(user.roles);
+
   const token = await jwt.sign({
     id: user._id,
     name: user.name,
@@ -50,6 +53,7 @@ export const handler: HttpHandler = async (_, req, context) => {
     institute: user.institute,
     slug: acronym,
     client: conn.name,
+    permissions,
   });
 
   return res.success({
@@ -67,7 +71,7 @@ export default new Http(handler)
     }),
   }))
   .configure({
-    name: "Login",
+    name: "AuthLogin",
     options: {
       methods: ["POST"],
       route: "auth/login",

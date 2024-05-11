@@ -85,6 +85,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "ActivityBoardDefinition",
+    permission: "activity.board-definition",
     options: {
       methods: ["PUT"],
       route: "activity/{id}/board-definition/{evaluation_id}",

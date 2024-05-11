@@ -50,6 +50,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "EmailList",
+    permission: "email.update",
     options: {
       methods: ["GET"],
       route: "emails",

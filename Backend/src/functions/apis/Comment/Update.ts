@@ -54,6 +54,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "CommentUpdate",
+    permission: "comment.update",
     options: {
       methods: ["PUT"],
       route: "activity/{id}/comment/{commentId}",

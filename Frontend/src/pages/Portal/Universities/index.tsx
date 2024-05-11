@@ -1,9 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
 import React, { memo, useCallback, useMemo } from "react";
@@ -12,6 +7,7 @@ import { BiRefresh, BiEdit } from "react-icons/bi";
 import University from "@interfaces/University";
 import { getUniversities } from "@apis/univertities";
 import Pagination from "@components/organisms/Pagination";
+import Can from "@components/atoms/Can";
 
 const columns = [
   {
@@ -57,9 +53,11 @@ const Create = memo(() => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-        Criar Universidade
-      </Button>
+      <Can permission="university.create">
+        <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
+          Criar Universidade
+        </Button>
+      </Can>
     </div>
   );
 });

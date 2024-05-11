@@ -1,9 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import Pagination from "@components/organisms/Pagination";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +6,7 @@ import React, { memo, useCallback, useMemo } from "react";
 import { BiEdit, BiRefresh } from "react-icons/bi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getInstitutes } from "@apis/institutes";
+import Can from "@components/atoms/Can";
 
 const columns = [
   {
@@ -60,9 +56,11 @@ const Create = memo(() => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-        Criar Instituto
-      </Button>
+      <Can permission="institute.create">
+        <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
+          Criar Instituto
+        </Button>
+      </Can>
     </div>
   );
 });

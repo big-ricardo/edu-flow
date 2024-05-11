@@ -24,6 +24,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "AnswerShow",
+    permission: "answer.read",
     options: {
       methods: ["GET"],
       route: "answer/{id}",

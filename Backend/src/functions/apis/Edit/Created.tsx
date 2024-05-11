@@ -1,26 +1,13 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity, {
+import {
   IActivityAccepted,
   IActivityState,
-  IActivityStepStatus,
 } from "../../../models/client/Activity";
-import Form from "../../../models/client/Form";
-import FormDraft, {
-  FieldTypes,
-  IValue,
-} from "../../../models/client/FormDraft";
-import moment from "moment";
-import uploadFileToBlob, { FileUploaded } from "../../../services/upload";
-import User, { IUserRoles } from "../../../models/client/User";
-import Status from "../../../models/client/Status";
 import { ObjectId } from "mongoose";
-import { Types } from "mongoose";
-import { NodeTypes } from "../../../models/client/WorkflowDraft";
-import { setHeapSnapshotNearHeapLimit } from "v8";
 import ActivityRepository from "../../../repositories/Activity";
 import UserRepository from "../../../repositories/User";
-import ResponseUseCases from "../../use-cases/Response";
+import ResponseUseCases from "../../../use-cases/Response";
 import BlobUploader from "../../../services/upload";
 
 interface File {
@@ -89,7 +76,7 @@ const handler: HttpHandler = async (conn, req) => {
   });
 
   await responseUseCases.processFormFields(rest);
-  
+
   activity.name = name;
   activity.description = description;
   activity.masterminds = mastermindsExists?.map((mastermind) => ({
@@ -116,6 +103,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "EditResponse",
+    permission: "activity.update",
     options: {
       methods: ["POST"],
       route: "response/{activity_id}/edit",

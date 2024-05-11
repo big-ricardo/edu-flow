@@ -41,6 +41,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "ActivityShow",
+    permission: "activity.read",
     options: {
       methods: ["GET"],
       route: "activity/{id}",

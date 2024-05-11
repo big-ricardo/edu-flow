@@ -13,7 +13,13 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: (failureCount, error) => {
-        if (isAxiosError(error) && error.response?.status === 404) return false;
+        if (
+          isAxiosError(error) &&
+          (error.response?.status === 404 ||
+            error.response?.status === 403 ||
+            error.response?.status === 401)
+        )
+          return false;
         if (failureCount < 2) return true;
         return false;
       },
@@ -33,5 +39,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </AuthContext>
       </QueryClientProvider>
     </ChakraProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );

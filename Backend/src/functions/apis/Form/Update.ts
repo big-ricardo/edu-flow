@@ -67,6 +67,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormUpdate",
+    permission: "form.update",
     options: {
       methods: ["PUT"],
       route: "form/{id}",

@@ -49,6 +49,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormPublish",
+    permission: "formDraft.publish",
     options: {
       methods: ["PATCH"],
       route: "form-draft/{id}",

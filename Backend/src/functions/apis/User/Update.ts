@@ -86,6 +86,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UserUpdate",
+    permission: "user.update",
     options: {
       methods: ["PUT"],
       route: "user/{id}",

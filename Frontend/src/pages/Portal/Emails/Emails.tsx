@@ -18,6 +18,7 @@ import { z } from "zod";
 import { createOrUpdateEmail, getEmail } from "@apis/email";
 import EmailTemplateHook from "@components/organisms/EmailTemplate/hook";
 import { FaArrowLeft, FaSave, FaTrashAlt } from "react-icons/fa";
+import Can from "@components/atoms/Can";
 
 const emailSchema = z.object({
   slug: z
@@ -155,14 +156,16 @@ const EmailTemplate: React.FC = () => {
             <FaTrashAlt />
           </Button>
 
-          <Button
-            colorScheme="green"
-            onClick={onSubmit}
-            size="sm"
-            isLoading={isPending}
-          >
-            <FaSave /> &nbsp; Salvar Alterações
-          </Button>
+          <Can permission={isEditing ? "email.edit" : "email.create"}>
+            <Button
+              colorScheme="green"
+              onClick={onSubmit}
+              size="sm"
+              isLoading={isPending}
+            >
+              <FaSave /> &nbsp; Salvar Alterações
+            </Button>
+          </Can>
         </Flex>
       </Card>
 

@@ -1,8 +1,5 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import { FieldTypes, IValue } from "../../../models/client/FormDraft";
-import uploadFileToBlob from "../../../services/upload";
-import User from "../../../models/client/User";
 import { ObjectId, Types } from "mongoose";
 import {
   extraOutputsEvaluationProcess,
@@ -13,10 +10,10 @@ import FormDraftRepository from "../../../repositories/FormDraft";
 import ActivityRepository from "../../../repositories/Activity";
 import { IFormType } from "../../../models/client/Form";
 import { IActivityStepStatus } from "../../../models/client/Activity";
-import ResponseUseCases from "../../use-cases/Response";
 import UserRepository from "../../../repositories/User";
 import BlobUploader from "../../../services/upload";
 import AnswerRepository from "../../../repositories/Answer";
+import ResponseUseCases from "../../../use-cases/Response";
 
 interface File {
   name: string;
@@ -143,6 +140,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "ResponseEvaluation",
+    permission: "response.create",
     options: {
       methods: ["POST"],
       route: "response/{form_id}/evaluated/{activity_id}",

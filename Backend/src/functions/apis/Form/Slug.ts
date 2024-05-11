@@ -51,6 +51,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormSlug",
+    permission: "response.create",
     options: {
       methods: ["GET"],
       route: "form/slug/{slug}",

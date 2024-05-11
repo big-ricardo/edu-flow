@@ -23,6 +23,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UniversityShow",
+    permission: "university.read",
     options: {
       methods: ["GET"],
       route: "university/{id}",

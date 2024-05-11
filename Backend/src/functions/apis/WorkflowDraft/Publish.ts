@@ -48,6 +48,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "WorkflowPublish",
+    permission: "workflowDraft.publish",
     options: {
       methods: ["PATCH"],
       route: "workflow-draft/{id}",

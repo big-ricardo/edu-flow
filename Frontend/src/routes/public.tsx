@@ -3,6 +3,7 @@ import { RouteType } from ".";
 
 import Login from "@pages/Auth/Login";
 import ForgotPassword from "@pages/Auth/ForgotPassword";
+import AlterPassword from "@pages/Auth/AlterPassword";
 
 const routes: RouteType = [
   {
@@ -12,6 +13,10 @@ const routes: RouteType = [
   {
     path: "/auth/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/auth/alter-password/:token",
+    element: <AlterPassword />,
   },
   {
     path: "*",

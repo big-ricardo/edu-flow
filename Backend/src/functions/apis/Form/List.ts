@@ -57,6 +57,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormsList",
+    permission: "form.view",
     options: {
       methods: ["GET"],
       route: "forms",

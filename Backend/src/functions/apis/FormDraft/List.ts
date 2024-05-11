@@ -43,6 +43,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormsDraftList",
+    permission: "formDraft.view",
     options: {
       methods: ["GET"],
       route: "form-drafts/{id}",

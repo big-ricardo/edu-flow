@@ -23,6 +23,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "WorkflowShow",
+    permission: "workflow.read",
     options: {
       methods: ["GET"],
       route: "workflow/{id}",

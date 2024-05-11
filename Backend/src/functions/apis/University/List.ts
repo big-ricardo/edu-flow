@@ -50,6 +50,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UniversityList",
+    permission: "university.read",
     options: {
       methods: ["GET"],
       route: "universities",

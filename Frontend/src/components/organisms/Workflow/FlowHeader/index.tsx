@@ -7,6 +7,7 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
+import Can from "@components/atoms/Can";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React from "react";
@@ -75,7 +76,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
     navigate(
       `/portal/workflow-draft/${params.workflow_id}/${id}/${
         isView ? "edit" : "view"
-      }`,
+      }`
     );
   }, [navigate, id, isView, params.workflow_id]);
 
@@ -107,38 +108,46 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
         </Flex>
 
         <Flex gap="2" align="center">
-          <Button
-            colorScheme="blue"
-            onClick={handleNavigate}
-            variant="outline"
-            size="sm"
-            title={isView ? "Editar" : "Visualizar"}
+          <Can
+            permission={isView ? "workflowDraft.create" : "workflowDraft.read"}
           >
-            {isView ? <FaPen /> : <FaEye />}
-          </Button>
-          {isView ? (
             <Button
               colorScheme="blue"
-              onClick={handlePublish}
+              onClick={handleNavigate}
               variant="outline"
               size="sm"
               title={isView ? "Editar" : "Visualizar"}
-              isDisabled={status === "published"}
-              isLoading={isPendingPublish}
             >
-              <Box as={FaPushed} transform="rotate(90deg)" /> &nbsp;
-              {status === "published" ? "Publicado" : "Publicar"}
+              {isView ? <FaPen /> : <FaEye />}
             </Button>
+          </Can>
+          {isView ? (
+            <Can permission="workflowDraft.publish">
+              <Button
+                colorScheme="green"
+                isDisabled={status !== "draft"}
+                onClick={handlePublish}
+                variant="outline"
+                size="sm"
+                isLoading={isPendingPublish}
+                title={status === "draft" ? "Publicar" : "Despublicar"}
+              >
+                {status === "draft" ? <FaPushed /> : <FaSave />} &nbsp;
+                {status === "draft" ? "Publicar" : "Publicado"}
+              </Button>
+            </Can>
           ) : (
-            <Button
-              colorScheme="green"
-              mr={2}
-              onClick={onSave}
-              size="sm"
-              isLoading={isPending}
-            >
-              <FaSave /> &nbsp; Salvar Nova Versão
-            </Button>
+            <Can permission="workflowDraft.create">
+              <Button
+                colorScheme="green"
+                mr={2}
+                onClick={onSave}
+                size="sm"
+                isLoading={isPending}
+              >
+                <FaSave /> &nbsp; Salvar Nova Versão
+              </Button>
+            </Can>
           )}
         </Flex>
       </Flex>

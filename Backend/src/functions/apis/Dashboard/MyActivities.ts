@@ -53,6 +53,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "DashboardMyActivities",
+    permission: "activity.read",
     options: {
       methods: ["GET"],
       route: "dashboard/my-activities",

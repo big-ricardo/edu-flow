@@ -153,6 +153,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "ActivityCommitted",
+    permission: "activity.committed",
     options: {
       methods: ["PUT"],
       route: "activity-committed/{id}",

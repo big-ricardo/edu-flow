@@ -24,6 +24,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormDraftShow",
+    permission: "formDraft.read",
     options: {
       methods: ["GET"],
       route: "form-draft/{id}",

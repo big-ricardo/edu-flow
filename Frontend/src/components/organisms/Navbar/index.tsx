@@ -19,23 +19,9 @@ import {
   BsPostcardFill,
 } from "react-icons/bs";
 import { FaRegEnvelope, FaUniversity } from "react-icons/fa";
-
 import { GoWorkflow } from "react-icons/go";
-import React, { useMemo } from "react";
-import useAuth from "../../../hooks/useAuth";
-
-const links = [{ to: "/portal", label: "Dashboard", icon: BsHouse }];
-
-const coordinatorLinks = [
-  { to: "/portal/users", label: "Usuários", icon: BsPerson },
-  { to: "/portal/institutes", label: "Instituições", icon: BsBuilding },
-  { to: "/portal/universities", label: "Universidades", icon: FaUniversity },
-  { to: "/portal/statuses", label: "Status", icon: BsTag },
-  { to: "/portal/emails", label: "Emails", icon: FaRegEnvelope },
-  { to: "/portal/forms", label: "Formulários", icon: BsFileEarmarkText },
-  { to: "/portal/workflows", label: "Fluxos", icon: GoWorkflow },
-  { to: "/portal/reportings", label: "Relatórios", icon: BsPostcardFill },
-];
+import React from "react";
+import Can from "@components/atoms/Can";
 
 const CustomCard = React.forwardRef<HTMLSpanElement, TagProps>(
   ({ children, ...rest }, ref) => (
@@ -52,33 +38,95 @@ const CustomCard = React.forwardRef<HTMLSpanElement, TagProps>(
         <TagLabel>{children}</TagLabel>
       </Tag>
     </Box>
-  ),
+  )
 );
 
 function Sidebar() {
   const location = useLocation();
-  const [token] = useAuth();
-
-  const items = useMemo(() => {
-    if (token?.role === "student") {
-      return links;
-    }
-    return links.concat(coordinatorLinks);
-  }, [token?.role]);
 
   return (
     <List fontSize="xl" spacing={4}>
       <ListItem py={1}></ListItem>
-      {items.map((data) => (
+      <Can permission="dashboard.view">
         <NavLink
-          key={data.to}
-          {...data}
-          active={
-            location.pathname.includes(data.to) &&
-            (data.to !== "/portal" || location.pathname === "/portal")
-          }
+          to="/portal"
+          label="Dashboard"
+          icon={BsHouse}
+          active={location.pathname === "/portal"}
         />
-      ))}
+      </Can>
+
+      <Can permission="user.view">
+        <NavLink
+          to="/portal/users"
+          label="Usuários"
+          icon={BsPerson}
+          active={location.pathname === "/portal/users"}
+        />
+      </Can>
+
+      <Can permission="institute.view">
+        <NavLink
+          to="/portal/institutes"
+          label="Instituições"
+          icon={BsBuilding}
+          active={location.pathname === "/portal/institutes"}
+        />
+      </Can>
+
+      <Can permission="university.view">
+        <NavLink
+          to="/portal/universities"
+          label="Universidades"
+          icon={FaUniversity}
+          active={location.pathname === "/portal/universities"}
+        />
+      </Can>
+
+      <Can permission="status.view">
+        <NavLink
+          to="/portal/statuses"
+          label="Status"
+          icon={BsTag}
+          active={location.pathname === "/portal/statuses"}
+        />
+      </Can>
+
+      <Can permission="email.view">
+        <NavLink
+          to="/portal/emails"
+          label="Emails"
+          icon={FaRegEnvelope}
+          active={location.pathname === "/portal/emails"}
+        />
+      </Can>
+
+      <Can permission="form.view">
+        <NavLink
+          to="/portal/forms"
+          label="Formulários"
+          icon={BsFileEarmarkText}
+          active={location.pathname === "/portal/forms"}
+        />
+      </Can>
+
+      <Can permission="workflow.view">
+        <NavLink
+          to="/portal/workflows"
+          label="Fluxos"
+          icon={GoWorkflow}
+          active={location.pathname === "/portal/workflows"}
+        />
+      </Can>
+
+      <Can permission="reporting.view">
+        <NavLink
+          to="/portal/reportings"
+          label="Relatórios"
+          icon={BsPostcardFill}
+          active={location.pathname === "/portal/reportings"}
+        />
+      </Can>
     </List>
   );
 }
@@ -115,7 +163,7 @@ const NavLink = React.memo(
         </Tooltip>
       </ChakraLink>
     </ListItem>
-  ),
+  )
 );
 
 export default Sidebar;

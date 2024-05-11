@@ -1,19 +1,9 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import { FieldTypes, IValue } from "../../../models/client/FormDraft";
-import uploadFileToBlob from "../../../services/upload";
-import User from "../../../models/client/User";
-import { ObjectId, Types } from "mongoose";
-import {
-  extraOutputsEvaluationProcess,
-  sendToQueue,
-} from "../../../utils/sbusOutputs";
+import { ObjectId } from "mongoose";
 import FormRepository from "../../../repositories/Form";
 import FormDraftRepository from "../../../repositories/FormDraft";
-import ActivityRepository from "../../../repositories/Activity";
-import { IFormType } from "../../../models/client/Form";
-import { IActivityStepStatus } from "../../../models/client/Activity";
-import ResponseUseCases from "../../use-cases/Response";
+import ResponseUseCases from "../../../use-cases/Response";
 import UserRepository from "../../../repositories/User";
 import BlobUploader from "../../../services/upload";
 import AnswerRepository from "../../../repositories/Answer";
@@ -112,6 +102,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "AnswerDraftSave",
+    permission: "answer.create",
     options: {
       methods: ["POST"],
       route: "form/{form_id}/answer",

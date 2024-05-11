@@ -24,6 +24,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "InstituteShow",
+    permission: "institute.read",
     options: {
       methods: ["GET"],
       route: "institute/{id}",

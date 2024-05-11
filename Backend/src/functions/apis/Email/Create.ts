@@ -38,6 +38,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "EmailCreate",
+    permission: "email.create",
     options: {
       methods: ["POST"],
       route: "email",

@@ -51,6 +51,7 @@ const handler: HttpHandler = async (conn, req) => {
 
 export default new Http(handler).configure({
   name: "DashboardOpenForms",
+  permission: "activity.create",
   options: {
     methods: ["GET"],
     route: "dashboard/open-forms",

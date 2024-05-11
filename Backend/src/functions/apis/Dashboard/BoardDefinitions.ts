@@ -60,6 +60,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "DashboardBoardDefinitions",
+    permission: "activity.board-definition",
     options: {
       methods: ["GET"],
       route: "dashboard/board-definitions",

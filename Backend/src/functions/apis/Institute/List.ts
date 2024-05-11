@@ -60,6 +60,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "InstituteList",
+    permission: "institute.read",
     options: {
       methods: ["GET"],
       route: "institutes",

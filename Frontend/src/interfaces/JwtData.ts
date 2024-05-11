@@ -17,4 +17,5 @@ export default interface JwtData {
     acronym: string;
     name: string;
   };
+  permissions: string[];
 }

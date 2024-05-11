@@ -65,6 +65,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormCreate",
+    permission: "form.create",
     options: {
       methods: ["POST"],
       route: "form",

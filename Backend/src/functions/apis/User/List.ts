@@ -53,6 +53,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UsersList",
+    permission: "user.read",
     options: {
       methods: ["GET"],
       route: "users",

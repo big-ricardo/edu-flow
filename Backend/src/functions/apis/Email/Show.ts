@@ -24,6 +24,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "EmailShow",
+    permission: "email.read",
     options: {
       methods: ["GET"],
       route: "email/{id}",

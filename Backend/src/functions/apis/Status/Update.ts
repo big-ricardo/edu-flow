@@ -33,6 +33,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "StatusUpdate",
+    permission: "status.update",
     options: {
       methods: ["PUT"],
       route: "status/{id}",

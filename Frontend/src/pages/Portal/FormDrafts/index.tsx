@@ -31,6 +31,7 @@ import {
   publishFormDraft,
 } from "@apis/formDraft";
 import { AxiosError } from "axios";
+import Can from "@components/atoms/Can";
 
 export default function FormDraft() {
   const toast = useToast();
@@ -220,27 +221,31 @@ export default function FormDraft() {
             {isPreview ? <FaPen /> : <FaEye />}
           </Button>
 
-          <Button
-            colorScheme="green"
-            isLoading={isPending}
-            isDisabled={!isDirty}
-            onClick={onSubmit}
-            size="sm"
-          >
-            <FaSave /> &nbsp; Salvar Nova Versão
-          </Button>
+          <Can permission="formDraft.create">
+            <Button
+              colorScheme="green"
+              isLoading={isPending}
+              isDisabled={!isDirty}
+              onClick={onSubmit}
+              size="sm"
+            >
+              <FaSave /> &nbsp; Salvar Nova Versão
+            </Button>
+          </Can>
 
-          <Button
-            colorScheme="blue"
-            onClick={handlePublish}
-            variant="outline"
-            size="sm"
-            isDisabled={formDraft?.status === "published"}
-            isLoading={isPendingPublish}
-          >
-            <Box as={FaPushed} transform="rotate(90deg)" /> &nbsp;
-            {formDraft?.status === "published" ? "Publicado" : "Publicar"}
-          </Button>
+          <Can permission="formDraft.publish">
+            <Button
+              colorScheme="blue"
+              onClick={handlePublish}
+              variant="outline"
+              size="sm"
+              isDisabled={formDraft?.status === "published"}
+              isLoading={isPendingPublish}
+            >
+              <Box as={FaPushed} transform="rotate(90deg)" /> &nbsp;
+              {formDraft?.status === "published" ? "Publicado" : "Publicar"}
+            </Button>
+          </Can>
         </Flex>
       </Card>
 

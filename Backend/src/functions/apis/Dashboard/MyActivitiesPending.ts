@@ -49,6 +49,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "DashboardPendingActivities",
+    permission: "activity.read",
     options: {
       methods: ["GET"],
       route: "dashboard/my-pending-activities",

@@ -19,6 +19,7 @@ import Select from "@components/atoms/Inputs/Select";
 import { createOrUpdateUser, getUser, getUserForms } from "@apis/users";
 import Password from "@components/atoms/Inputs/Password";
 import { IUserRoles } from "@interfaces/User";
+import Can from "@components/atoms/Can";
 
 const Schema = z
   .object({
@@ -261,14 +262,16 @@ export default function User() {
               >
                 Cancelar
               </Button>
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isPending || isLoading}
-                type="submit"
-              >
-                {isEditing ? "Editar" : "Criar"}
-              </Button>
+              <Can permission={isEditing ? "user.update" : "user.create"}>
+                <Button
+                  mt={4}
+                  colorScheme="blue"
+                  isLoading={isPending || isLoading}
+                  type="submit"
+                >
+                  {isEditing ? "Editar" : "Criar"}
+                </Button>
+              </Can>
             </Flex>
           </CardBody>
         </Card>

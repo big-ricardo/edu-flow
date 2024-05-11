@@ -46,6 +46,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UniversityUpdate",
+    permission: "university.update",
     options: {
       methods: ["PUT"],
       route: "university/{id}",

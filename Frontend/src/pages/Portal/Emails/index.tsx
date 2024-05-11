@@ -1,9 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
 import React, { memo, useCallback, useMemo } from "react";
@@ -12,6 +7,7 @@ import { BiRefresh, BiEdit } from "react-icons/bi";
 import { getEmails } from "@apis/email";
 import Pagination from "@components/organisms/Pagination";
 import IEmail from "@interfaces/Email";
+import Can from "@components/atoms/Can";
 
 const columns = [
   {
@@ -37,9 +33,11 @@ const Action = memo((email: IEmail) => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
-        <BiEdit size={20} />
-      </Button>
+      <Can permission="email.read">
+        <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
+          <BiEdit size={20} />
+        </Button>
+      </Can>
     </div>
   );
 });
@@ -53,9 +51,11 @@ const Create = memo(() => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-        Criar Template de Email
-      </Button>
+      <Can permission="email.create">
+        <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
+          Criar Template de Email
+        </Button>
+      </Can>
     </div>
   );
 });

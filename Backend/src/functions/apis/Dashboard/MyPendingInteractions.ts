@@ -76,6 +76,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "DashboardPendingInteractions",
+    permission: "activity.update",
     options: {
       methods: ["GET"],
       route: "dashboard/my-pending-interactions",

@@ -24,6 +24,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "StatusShow",
+    permission: "status.read",
     options: {
       methods: ["GET"],
       route: "status/{id}",

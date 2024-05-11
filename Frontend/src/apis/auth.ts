@@ -22,3 +22,20 @@ export const forgotPassword = async (data: {
   );
   return response.data;
 };
+
+export const alterPassword = async (data: {
+  password: string;
+  confirmPassword: string;
+  token: string;
+}): Promise<Response<unknown>> => {
+  const response = await api.post<Response<unknown>>(
+    "/auth/alter-password",
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${data.token}`,
+      },
+    }
+  );
+  return response.data;
+};

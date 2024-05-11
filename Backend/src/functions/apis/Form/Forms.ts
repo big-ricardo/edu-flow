@@ -56,6 +56,7 @@ const handler: HttpHandler = async (conn) => {
 
 export default new Http(handler).configure({
   name: "FormForms",
+  permission: "form.read",
   options: {
     methods: ["GET"],
     route: "form/forms",

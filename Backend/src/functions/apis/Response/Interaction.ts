@@ -1,15 +1,8 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import {
-  IActivityStepStatus,
-} from "../../../models/client/Activity";
+import { IActivityStepStatus } from "../../../models/client/Activity";
 import { IFormType } from "../../../models/client/Form";
-import {
-  FieldTypes,
-  IValue,
-} from "../../../models/client/FormDraft";
-import uploadFileToBlob from "../../../services/upload";
-import { Types, ObjectId } from "mongoose";
+import { ObjectId } from "mongoose";
 import {
   extraOutputsInteractionProcess,
   sendToQueue,
@@ -18,9 +11,9 @@ import FormRepository from "../../../repositories/Form";
 import FormDraftRepository from "../../../repositories/FormDraft";
 import ActivityRepository from "../../../repositories/Activity";
 import UserRepository from "../../../repositories/User";
-import ResponseUseCases from "../../use-cases/Response";
 import BlobUploader from "../../../services/upload";
 import AnswerRepository from "../../../repositories/Answer";
+import ResponseUseCases from "../../../use-cases/Response";
 
 interface File {
   name: string;
@@ -150,6 +143,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "ResponseInteraction",
+    permission: "response.create",
     options: {
       methods: ["POST"],
       route: "response/{form_id}/interaction/{activity_id}",

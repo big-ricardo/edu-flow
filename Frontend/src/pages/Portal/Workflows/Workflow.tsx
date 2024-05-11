@@ -21,6 +21,7 @@ import { createOrUpdateWorkflow, getWorkflow } from "@apis/workflows";
 import Switch from "@components/atoms/Inputs/Switch";
 import { getWorkflowDrafts } from "@apis/workflowDraft";
 import DraftItem from "@components/molecules/DraftItem";
+import Can from "@components/atoms/Can";
 
 const statusSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -140,18 +141,22 @@ export default function Workflow() {
               >
                 Cancelar
               </Button>
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isPending || isLoading}
-                type="submit"
-                isDisabled={!isDirty}
-              >
-                {isEditing ? "Editar" : "Criar"}
-              </Button>
+              <Can permission="workflow.create">
+                <Button
+                  mt={4}
+                  colorScheme="blue"
+                  isLoading={isPending || isLoading}
+                  type="submit"
+                  isDisabled={!isDirty}
+                >
+                  {isEditing ? "Editar" : "Criar"}
+                </Button>
+              </Can>
             </Flex>
 
-            {isEditing && <WorkflowVersions id={id} />}
+            <Can permission="workflowDraft.view">
+              {isEditing && <WorkflowVersions id={id} />}
+            </Can>
           </CardBody>
         </Card>
       </FormProvider>
@@ -179,7 +184,7 @@ const WorkflowVersions: React.FC<WorkflowVersionsProps> = memo(({ id }) => {
     (draftId: string) => {
       navigate(`/portal/workflow-draft/${id}/${draftId}/view`);
     },
-    [navigate, id],
+    [navigate, id]
   );
   return (
     <Flex mt="8" justify="center" align="center" direction="column" gap="5">

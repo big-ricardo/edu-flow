@@ -50,6 +50,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "StatusList",
+    permission: "status.create",
     options: {
       methods: ["GET"],
       route: "statuses",

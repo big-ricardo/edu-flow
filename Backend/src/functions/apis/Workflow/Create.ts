@@ -23,6 +23,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "WorkflowCreate",
+    permission: "workflow.create",
     options: {
       methods: ["POST"],
       route: "workflow",

@@ -3,14 +3,14 @@ import res from "../../../utils/apiResponse";
 import { IActivityAccepted } from "../../../models/client/Activity";
 import { IFormType } from "../../../models/client/Form";
 import Status from "../../../models/client/Status";
-import { ObjectId, Types } from "mongoose";
+import { ObjectId } from "mongoose";
 import FormRepository from "../../../repositories/Form";
 import FormDraftRepository from "../../../repositories/FormDraft";
 import UserRepository from "../../../repositories/User";
 import ActivityRepository from "../../../repositories/Activity";
-import ResponseUseCases from "../../use-cases/Response";
 import BlobUploader from "../../../services/upload";
 import AnswerRepository from "../../../repositories/Answer";
+import ResponseUseCases from "../../../use-cases/Response";
 
 interface IUser {
   _id: ObjectId;
@@ -138,6 +138,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "ResponseCreated",
+    permission: "response.create",
     options: {
       methods: ["POST"],
       route: "response/{form_id}/created",

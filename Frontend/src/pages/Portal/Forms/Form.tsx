@@ -23,6 +23,7 @@ import { getFormDrafts } from "@apis/formDraft";
 import { createOrUpdateForm, getForm, getFormForms } from "@apis/form";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import Select from "@components/atoms/Inputs/Select";
+import Can from "@components/atoms/Can";
 
 const statusSchema = z
   .object({
@@ -302,18 +303,22 @@ export default function Workflow() {
               >
                 Cancelar
               </Button>
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isPending || isLoading}
-                type="submit"
-                isDisabled={!isDirty}
-              >
-                {isEditing ? "Editar" : "Criar"}
-              </Button>
+              <Can permission={isEditing ? "form.update" : "form.create"}>
+                <Button
+                  mt={4}
+                  colorScheme="blue"
+                  isLoading={isPending || isLoading}
+                  type="submit"
+                  isDisabled={!isDirty}
+                >
+                  {isEditing ? "Editar" : "Criar"}
+                </Button>
+              </Can>
             </Flex>
 
-            {isEditing && <FormVersions id={id} formType={formType} />}
+            <Can permission="formDraft.view">
+              {isEditing && <FormVersions id={id} formType={formType} />}
+            </Can>
           </CardBody>
         </Card>
       </FormProvider>
@@ -357,14 +362,16 @@ const FormVersions: React.FC<FormVersionsProps> = memo(({ id, formType }) => {
 
       <Flex direction="column" gap="5" wrap="wrap" w="100%">
         {!formDrafts?.forms?.length && (
-          <Button
-            colorScheme="blue"
-            variant="outline"
-            onClick={handleNewDraft}
-            isLoading={isLoadingDrafts}
-          >
-            Criar rascunho
-          </Button>
+          <Can permission="formDraft.create">
+            <Button
+              colorScheme="blue"
+              variant="outline"
+              onClick={handleNewDraft}
+              isLoading={isLoadingDrafts}
+            >
+              Criar rascunho
+            </Button>
+          </Can>
         )}
 
         {formDrafts?.forms?.map((draft) => (

@@ -81,6 +81,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "FormDraftCreate",
+    permission: "formDraft.create",
     options: {
       methods: ["POST"],
       route: "form-draft/{id}",

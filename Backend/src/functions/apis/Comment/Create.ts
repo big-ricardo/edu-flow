@@ -44,6 +44,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "CommentCreate",
+    permission: "comment.create",
     options: {
       methods: ["POST"],
       route: "comment/{id}",

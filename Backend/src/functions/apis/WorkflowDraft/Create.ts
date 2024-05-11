@@ -85,6 +85,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "WorkflowDraftCreate",
+    permission: "workflowDraft.create",
     options: {
       methods: ["POST"],
       route: "workflow-draft/{id}",

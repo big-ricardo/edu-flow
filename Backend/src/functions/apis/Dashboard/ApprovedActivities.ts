@@ -51,6 +51,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "DashboardApprovedActivities",
+    permission: "activity.committed",
     options: {
       methods: ["GET"],
       route: "dashboard/approved-activities",

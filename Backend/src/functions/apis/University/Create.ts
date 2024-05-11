@@ -30,6 +30,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UniversityCreate",
+    permission: "university.create",
     options: {
       methods: ["POST"],
       route: "university",

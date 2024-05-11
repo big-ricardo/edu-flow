@@ -7,16 +7,23 @@ import OpenForms from "./components/OpenForms";
 import PendingInteractions from "./components/MyPendingInteractions";
 import BoardDefinitions from "./components/BoardDefinitions";
 import PendingEvaluations from "./components/MyPendingEvaluations";
+import Can from "@components/atoms/Can";
 
 const Dashboard: React.FC = () => {
   return (
     <Flex p={8} width="100%" direction="column" gap={8}>
-      <OpenForms />
+      <Can permission="activity.create">
+        <OpenForms />
+      </Can>
       <MyActivities />
-      <ApprovedActivities />
+      <Can permission="activity.committed">
+        <ApprovedActivities />
+      </Can>
+      <Can permission="activity.board-definition">
+        <BoardDefinitions />
+      </Can>
       <ActivitiesAccept />
       <PendingInteractions />
-      <BoardDefinitions />
       <PendingEvaluations />
     </Flex>
   );

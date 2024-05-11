@@ -12,6 +12,7 @@ import jwt from "../services/jwt";
 import mongo from "../services/mongo";
 import { Connection, ObjectId } from "mongoose";
 import { IInstitute } from "../models/client/Institute";
+import { Permissions } from "../services/permissions";
 
 const hasBody = ["POST", "PUT", "PATCH"];
 
@@ -34,6 +35,7 @@ interface User {
   role: "student" | "admin" | "teacher" | "coordinator";
   institute: IInstitute;
   slug: string;
+  permissions: Array<string>;
 }
 
 export type HttpHandler = (
@@ -64,6 +66,7 @@ export default class Http {
     headers: yup.object().shape({}).nullable(),
   });
   private name: string;
+  private permission: string;
   private conn: Connection | null = null;
 
   constructor(handler: typeof Http.prototype.handler) {
@@ -79,6 +82,19 @@ export default class Http {
 
       if (!this.isPublic) {
         user = jwt.verify(headers);
+
+        if (this.permission) {
+          const permissions = new Permissions(user.permissions);
+
+          const hasPermission = permissions.hasPermission(this.permission);
+
+          if (!hasPermission) {
+            throw {
+              status: 403,
+              message: "You don't have permission to access this resource",
+            };
+          }
+        }
       }
 
       await this.schemaValidator
@@ -131,10 +147,12 @@ export default class Http {
 
   public configure = (configs: {
     name: string;
+    permission?: string;
     options: Omit<HttpFunctionOptions, "handler">;
   }): this => {
-    const { name, options } = configs;
+    const { name, permission, options } = configs;
     this.name = name;
+    this.permission = permission;
 
     app.http(name, {
       ...options,

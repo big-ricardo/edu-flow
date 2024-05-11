@@ -4,10 +4,10 @@ import {
   IField,
   IFormDraft,
   IValue,
-} from "../../../models/client/FormDraft";
-import { IUser } from "../../../models/client/User";
-import BlobUploader, { FileUploaded } from "../../../services/upload";
-import UserRepository from "../../../repositories/User";
+} from "../../models/client/FormDraft";
+import { IUser } from "../../models/client/User";
+import BlobUploader, { FileUploaded } from "../../services/upload";
+import UserRepository from "../../repositories/User";
 
 interface File {
   name: string;

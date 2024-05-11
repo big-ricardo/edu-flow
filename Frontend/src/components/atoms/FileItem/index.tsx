@@ -1,40 +1,31 @@
-import { Text, Icon, Flex } from "@chakra-ui/react";
+import { Text, Icon, Flex, Divider } from "@chakra-ui/react";
 import { FileUploaded } from "@interfaces/Answer";
-import { IconType } from "react-icons";
-import {
-  FaFileImage,
-  FaFileAudio,
-  FaFileVideo,
-  FaFilePdf,
-  FaFile,
-} from "react-icons/fa";
+import { DefaultExtensionType, FileIcon, defaultStyles } from "react-file-icon";
 
 interface FileProps {
   file: FileUploaded;
 }
 
 const FileItem: React.FC<FileProps> = ({ file }) => {
-  let IconComponent: IconType;
-
-  if (file.mimeType.startsWith("image")) {
-    IconComponent = FaFileImage;
-  } else if (file.mimeType.startsWith("audio")) {
-    IconComponent = FaFileAudio;
-  } else if (file.mimeType.startsWith("video")) {
-    IconComponent = FaFileVideo;
-  } else if (file.mimeType === "application/pdf") {
-    IconComponent = FaFilePdf;
-  } else {
-    IconComponent = FaFile;
-  }
-
   if (!file.name) return null;
 
+  const extension = file.mimeType.split("/").pop() as DefaultExtensionType;
+
   return (
-    <Flex direction={"column"}>
+    <Flex direction={"column"} w="fit-content">
       <a href={file.url} target="_blank">
-        <Flex direction="row" gap={1} alignItems="center">
-          <Icon as={IconComponent} />
+        <Flex
+          direction="row"
+          alignItems="center"
+          border="1px solid"
+          p={2}
+          borderRadius="md"
+          gap={2}
+        >
+          <Icon boxSize={10}>
+            <FileIcon extension={extension} {...defaultStyles?.[extension]} />
+          </Icon>
+          <Divider orientation="vertical" />
           <Text fontSize="sm" fontWeight={"bold"}>
             {file.name.split("@").pop()}
           </Text>

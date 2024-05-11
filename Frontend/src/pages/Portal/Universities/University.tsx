@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getUniversity, createOrUpdateUniversity } from "@apis/univertities";
 import Text from "@components/atoms/Inputs/Text";
 import Switch from "@components/atoms/Inputs/Switch";
+import Can from "@components/atoms/Can";
 
 const universitySchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -141,14 +142,20 @@ export default function University() {
               >
                 Cancelar
               </Button>
-              <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isPending || isLoading}
-                type="submit"
+              <Can
+                permission={
+                  isEditing ? "university.update" : "university.create"
+                }
               >
-                {isEditing ? "Editar" : "Criar"}
-              </Button>
+                <Button
+                  mt={4}
+                  colorScheme="blue"
+                  isLoading={isPending || isLoading}
+                  type="submit"
+                >
+                  {isEditing ? "Editar" : "Criar"}
+                </Button>
+              </Can>
             </Flex>
           </CardBody>
         </Card>

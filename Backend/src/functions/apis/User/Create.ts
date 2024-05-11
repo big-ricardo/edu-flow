@@ -59,6 +59,7 @@ export default new Http(handler)
   }))
   .configure({
     name: "UserCreate",
+    permission: "user.create",
     options: {
       methods: ["POST"],
       route: "user",
