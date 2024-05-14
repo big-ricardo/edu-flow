@@ -1,10 +1,8 @@
 import { publishUnpublish } from "@apis/workflowDraft";
 import {
-  Box,
   Button,
   Flex,
   Heading,
-  useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 import Can from "@components/atoms/Can";
@@ -83,7 +81,6 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
   return (
     <Panel position="top-center" style={{ width: "100%", margin: 0 }}>
       <Flex
-        bg={useColorModeValue("white", "gray.700")}
         width="100%"
         height="100%"
         alignItems="center"
@@ -91,6 +88,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
         position={"relative"}
         p={2}
         shadow={"md"}
+        bg="bg.navbar"
       >
         <Flex alignItems="center" gap={2}>
           <Heading size="md" fontWeight="bold">

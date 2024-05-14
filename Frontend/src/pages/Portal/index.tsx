@@ -1,17 +1,10 @@
-import {
-  Flex,
-  IconButton,
-  useColorMode,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import Navbar from "@components/organisms/Navbar";
 import { Outlet } from "react-router-dom";
 import ProfileMenu from "@components/organisms/ProfileMenu";
-import { FaSun, FaMoon } from "react-icons/fa";
+import SwitchTheme from "@components/molecules/SwicthTheme";
 
 function Dashboard() {
-  const { toggleColorMode } = useColorMode();
-
   return (
     <Flex flexDir={"row"} position="relative">
       <Flex
@@ -24,24 +17,12 @@ function Dashboard() {
       >
         <Navbar />
         <Flex direction={"column"} mb="4">
-          <IconButton
-            mb={4}
-            aria-label="toggle theme"
-            rounded="full"
-            size="xs"
-            onClick={toggleColorMode}
-            icon={useColorModeValue(<FaMoon />, <FaSun />)}
-          />
+          <SwitchTheme />
           <ProfileMenu />
         </Flex>
       </Flex>
 
-      <Flex
-        minH={"100vh"}
-        w={"100%"}
-        ml={12}
-        bg={"bg.page"}
-      >
+      <Flex minH={"100vh"} w={"100%"} ml={12} bg={"bg.page"}>
         <Outlet />
       </Flex>
     </Flex>

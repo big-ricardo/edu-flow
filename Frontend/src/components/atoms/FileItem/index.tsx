@@ -1,4 +1,4 @@
-import { Text, Icon, Flex, Divider } from "@chakra-ui/react";
+import { Text, Icon, Flex, Divider, Box } from "@chakra-ui/react";
 import { FileUploaded } from "@interfaces/Answer";
 import { DefaultExtensionType, FileIcon, defaultStyles } from "react-file-icon";
 
@@ -12,16 +12,16 @@ const FileItem: React.FC<FileProps> = ({ file }) => {
   const extension = file.mimeType.split("/").pop() as DefaultExtensionType;
 
   return (
-    <Flex direction={"column"} w="fit-content">
+    <Box
+      p={2}
+      px={4}
+      borderRadius={4}
+      w={"fit-content"}
+      borderColor="border.primary"
+      borderWidth={1}
+    >
       <a href={file.url} target="_blank">
-        <Flex
-          direction="row"
-          alignItems="center"
-          border="1px solid"
-          p={2}
-          borderRadius="md"
-          gap={2}
-        >
+        <Flex direction="row" alignItems="center" gap={2}>
           <Icon boxSize={10}>
             <FileIcon extension={extension} {...defaultStyles?.[extension]} />
           </Icon>
@@ -31,7 +31,7 @@ const FileItem: React.FC<FileProps> = ({ file }) => {
           </Text>
         </Flex>
       </a>
-    </Flex>
+    </Box>
   );
 };
 

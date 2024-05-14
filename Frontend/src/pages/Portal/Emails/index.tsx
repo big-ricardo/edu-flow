@@ -34,7 +34,7 @@ const Action = memo((email: IEmail) => {
   return (
     <div>
       <Can permission="email.read">
-        <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
+        <Button mr={2} onClick={handleEdit} size="sm">
           <BiEdit size={20} />
         </Button>
       </Can>

@@ -1,9 +1,22 @@
-import { extendTheme } from "@chakra-ui/react";
+import { defineStyleConfig, extendTheme } from "@chakra-ui/react";
+
+const Card = defineStyleConfig({
+  baseStyle: {
+    container: {
+      bg: "bg.card",
+      borderRadius: "md",
+      boxShadow: "md",
+    },
+  },
+});
 
 const customTheme = {
   fonts: {
-    heading: `'Rubik', sans-serif`,
-    body: `'Rubik', sans-serif`,
+    heading: `'Roboto Mono', sans-serif`,
+    body: `'Roboto Mono', sans-serif`,
+  },
+  components: {
+    Card,
   },
   semanticTokens: {
     colors: {

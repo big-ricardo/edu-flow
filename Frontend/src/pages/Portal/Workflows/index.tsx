@@ -34,7 +34,7 @@ const Action = memo((workflow: Pick<IWorkflow, "name" | "active" | "_id">) => {
   return (
     <div>
       <Can permission="workflow.read">
-        <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
+        <Button mr={2} onClick={handleEdit} size="sm">
           <BiEdit size={20} />
         </Button>
       </Can>

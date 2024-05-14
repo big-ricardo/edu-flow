@@ -2,13 +2,14 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import { IWorkflowDraft } from "../../../models/client/WorkflowDraft";
 import WorkflowDraftRepository from "../../../repositories/WorkflowDraft";
+import WorkflowRepository from "../../../repositories/Workflow";
 
 const handler: HttpHandler = async (conn, req) => {
   const { status } = req.body as Pick<IWorkflowDraft, "status">;
   const { id } = req.params;
 
   const workflowDraftRepository = new WorkflowDraftRepository(conn);
-  const workflowRepository = new WorkflowDraftRepository(conn);
+  const workflowRepository = new WorkflowRepository(conn);
 
   const workflowDraft = await workflowDraftRepository.findByIdAndUpdate({
     id,
@@ -31,8 +32,8 @@ const handler: HttpHandler = async (conn, req) => {
     },
   });
 
-  workflowDraft.save();
-  workflow.save();
+  await workflowDraft.save();
+  await workflow.save();
 
   return res.created(workflowDraft);
 };

@@ -43,7 +43,7 @@ const Action = memo((form: Pick<IForm, "_id" | "slug">) => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
+      <Button mr={2} onClick={handleEdit} size="sm">
         <BiEdit size={20} />
       </Button>
     </div>

@@ -22,6 +22,7 @@ import { FaRegEnvelope, FaUniversity } from "react-icons/fa";
 import { GoWorkflow } from "react-icons/go";
 import React from "react";
 import Can from "@components/atoms/Can";
+import Icon from "@components/atoms/Icon";
 
 const CustomCard = React.forwardRef<HTMLSpanElement, TagProps>(
   ({ children, ...rest }, ref) => (
@@ -46,7 +47,10 @@ function Sidebar() {
 
   return (
     <List fontSize="xl" spacing={4}>
-      <ListItem py={1}></ListItem>
+      <ListItem >
+        <Icon w="50px" />
+      </ListItem>
+
       <Can permission="dashboard.view">
         <NavLink
           to="/portal"

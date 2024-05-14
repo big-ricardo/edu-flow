@@ -289,25 +289,6 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 isMulti
               />
             )}
-
-            <Switch
-              input={{
-                label: "Não utilizar nota no calculo da nota final",
-                id: "notUseGrade",
-                required: true,
-              }}
-            />
-
-            {watch("notUseGrade") === false && (
-              <NumberInput
-                input={{
-                  label: "Peso da Avaliação",
-                  id: "weight",
-                  placeholder: "Digite o peso da avaliação de 0 a 100",
-                  required: true,
-                }}
-              />
-            )}
           </>
         );
       default:

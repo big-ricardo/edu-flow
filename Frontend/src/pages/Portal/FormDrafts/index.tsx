@@ -183,6 +183,7 @@ export default function FormDraft() {
         position="sticky"
         top="0"
         zIndex="sticky"
+        bg="bg.navbar"
       >
         <Flex direction="row" gap="3" alignItems="center">
           <Heading size="md" fontWeight="bold">

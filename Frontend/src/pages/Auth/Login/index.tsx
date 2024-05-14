@@ -11,6 +11,7 @@ import {
   Hide,
   Text,
   Flex,
+  Divider,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import useAuth from "@hooks/useAuth";
@@ -20,6 +21,8 @@ import { useNavigate } from "react-router-dom";
 import InputText from "@components/atoms/Inputs/Text";
 import Password from "@components/atoms/Inputs/Password";
 import { login } from "@apis/auth";
+import Icon from "@components/atoms/Icon";
+import SwitchTheme from "@components/molecules/SwicthTheme";
 
 const schema = z.object({
   acronym: z
@@ -87,22 +90,37 @@ const Login: React.FC = () => {
       display="flex"
       flexDirection="row"
       alignItems="center"
-      justifyContent="center"
+      justifyContent="space-around"
       height="100vh"
-      gap="10"
       bg={"bg.page"}
     >
       <FormProvider {...methods}>
         <Hide below="md">
-          <Text
-            variant="title"
-            w={{ base: "30%", xl: "40%" }}
-            fontSize="5xl"
-            fontWeight="semibold"
-          >
-            Faça o login para acessar sua conta
-          </Text>
+          <Flex direction="column" gap="4" alignItems="center">
+            <Flex alignItems="center" justifyContent="center">
+              <Icon w="150px" />
+            </Flex>
+
+            <Text
+              fontSize="2xl"
+              fontWeight="bold"
+              textAlign="center"
+              color="text.primary"
+            >
+              Bem-vindo ao Edu Flow
+            </Text>
+            <Text
+              fontSize="sm"
+              textAlign="center"
+              color="text.secondary"
+              maxW="400px"
+            >
+              Faça login para acessar o sistema de gestão acadêmica
+            </Text>
+            <SwitchTheme />
+          </Flex>
         </Hide>
+
         <Card
           p="10"
           w={{ base: "100%", md: "450px" }}
@@ -110,6 +128,21 @@ const Login: React.FC = () => {
           bg={"bg.card"}
         >
           <CardBody>
+            <Hide above="md">
+              <Flex alignItems="center" justifyContent="center" gap="4">
+                <Icon w="60px" />
+                <Text
+                  fontSize="xl"
+                  fontWeight="bold"
+                  textAlign="center"
+                  color="text.primary"
+                >
+                  Bem-vindo ao Edu Flow
+                </Text>
+              </Flex>
+              <Divider my="5" />
+            </Hide>
+
             <form onSubmit={onSubmit}>
               <Flex direction="column" gap="4">
                 <InputText
@@ -140,7 +173,7 @@ const Login: React.FC = () => {
                   mt={4}
                   type="submit"
                   isLoading={isPending}
-                  colorScheme="green"
+                  colorScheme="blue"
                 >
                   Entrar
                 </Button>

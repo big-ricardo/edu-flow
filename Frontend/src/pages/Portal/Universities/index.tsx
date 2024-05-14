@@ -37,7 +37,7 @@ const Action = memo((university: University) => {
 
   return (
     <div>
-      <Button colorScheme="blue" mr={2} onClick={handleEdit} size="sm">
+      <Button mr={2} onClick={handleEdit} size="sm">
         <BiEdit size={20} />
       </Button>
     </div>
