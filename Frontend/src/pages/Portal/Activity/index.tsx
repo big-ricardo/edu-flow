@@ -1,9 +1,10 @@
 import { getActivity } from "@apis/activity";
-import { Button, Center } from "@chakra-ui/react";
+import { Box, Button, Center, IconButton } from "@chakra-ui/react";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 import ActivityProvider from "@contexts/ActivityContext";
 import { useQuery } from "@tanstack/react-query";
 import React, { useCallback } from "react";
+import { FaSync } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Activity: React.FC = () => {
@@ -11,7 +12,12 @@ const Activity: React.FC = () => {
   const id = params.id ?? "";
   const navigate = useNavigate();
 
-  const { data: activity, isLoading } = useQuery({
+  const {
+    data: activity,
+    isLoading,
+    isRefetching,
+    refetch,
+  } = useQuery({
     queryKey: ["activity", id],
     queryFn: getActivity,
   });
@@ -20,18 +26,33 @@ const Activity: React.FC = () => {
     navigate(-1);
   }, [navigate]);
 
+  const handleRefresh = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
   return (
     <Center width="100%" p={4} flexDirection={"column"}>
-      <div style={{
-        width: "80%",
-      }}>
+      <div
+        style={{
+          width: "80%",
+        }}
+      >
         <Button onClick={handleBack} colorScheme="blue">
           Voltar
         </Button>
       </div>
-      <ActivityProvider>
+      <ActivityProvider refetch={refetch}>
         <ActivityDetails {...{ activity, isLoading }} />
       </ActivityProvider>
+      <Box position="fixed" bottom={4} right={4}>
+        <IconButton
+          aria-label="Refresh"
+          onClick={handleRefresh}
+          isLoading={isRefetching}
+        >
+          <FaSync />
+        </IconButton>
+      </Box>
     </Center>
   );
 };

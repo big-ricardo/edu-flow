@@ -72,8 +72,6 @@ const ApprovedActivities: React.FC = () => {
 
       <Divider my={2} />
 
-      {isLoading && <Spinner />}
-
       <Table columns={columns} data={rows ?? []} isLoading={isLoading} />
     </Box>
   );

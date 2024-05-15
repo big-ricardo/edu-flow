@@ -51,7 +51,7 @@ const BoardDefinitions: React.FC = () => {
   );
 
   const rows = useMemo(() => {
-    if (!data || data.length === 0) return null;
+    if (!data || data.length === 0) return [];
 
     return data.map((activity) => ({
       ...activity,
@@ -63,15 +63,17 @@ const BoardDefinitions: React.FC = () => {
     }));
   }, [data, handleView]);
 
+  console.log(rows);
+
   if (data && data.length === 0) return null;
 
   return (
-    <Box p={4}>
-      <Heading>Definição de Avaliadores</Heading>
+    <Box p={4} bg="bg.card" borderRadius="md">
+      <Heading size="md">Definição de Avaliadores</Heading>
 
       <Divider my={4} />
 
-      <Table columns={columns} rows={rows} isLoading={isLoading} />
+      <Table columns={columns} data={rows} isLoading={isLoading} />
     </Box>
   );
 };

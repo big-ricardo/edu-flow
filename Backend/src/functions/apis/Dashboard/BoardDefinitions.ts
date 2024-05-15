@@ -17,11 +17,11 @@ export const handler: HttpHandler = async (conn, req, context) => {
     where: { "evaluations.not_defined_board": true },
     select: {
       _id: 1,
+      protocol: 1,
       name: 1,
       description: 1,
-      protocol: 1,
-      users: 1,
       evaluations: 1,
+      createAt: 1,
     },
   });
 

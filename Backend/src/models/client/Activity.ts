@@ -106,6 +106,7 @@ export type IActivity = {
   users: IUserChild[];
   form: mongoose.Types.ObjectId;
   form_draft: IFormDraft;
+  finished_at: Date | null;
   masterminds: {
     accepted: IActivityAccepted;
     user: Pick<
@@ -254,6 +255,7 @@ export const schema: Schema = new Schema<IActivity>(
       default: IActivityState.created,
     },
     users: [{ type: userSchema, required: true }],
+    finished_at: { type: Date, required: false, default: null },
     masterminds: [
       {
         accepted: {

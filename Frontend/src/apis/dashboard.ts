@@ -27,16 +27,17 @@ type Activity = Pick<
 
 type ReqMyActivities = Response<{
   activities: Activity[];
+  finishedActivities: Activity[];
   pagination: IPagination;
 }>;
 
 export const getMyActivities = async ({
-  queryKey: [, page = "1", limit = "10"],
+  queryKey: [, finished = "finished", page = "1", limit = "10"],
 }: {
   queryKey: string[];
 }) => {
   const res = await api.get<ReqMyActivities>("/dashboard/my-activities", {
-    params: { page, limit },
+    params: { page, limit, finished: finished === "finished" },
   });
 
   return res.data.data;
@@ -121,7 +122,7 @@ export const getMyActivitiesPendingEvaluations = async ({
 type ReqBoardDefinitions = Response<
   Pick<
     IActivity,
-    "_id" | "name" | "description" | "protocol" | "evaluations" | "users"
+    "_id" | "name" | "description" | "protocol" | "evaluations" | "createdAt"
   >[]
 >;
 
@@ -139,3 +140,15 @@ export const getBoardDefinitions = async ({
 
   return res.data.data;
 };
+
+export const getMyActivitiesTracking = async ({
+  queryKey: [, page = "1", limit = "10"],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqBoardDefinitions>("/dashboard/my-activity-tracking", {
+    params: { page, limit },
+  });
+
+  return res.data.data;
+}

@@ -8,6 +8,7 @@ import PendingInteractions from "./components/MyPendingInteractions";
 import BoardDefinitions from "./components/BoardDefinitions";
 import PendingEvaluations from "./components/MyPendingEvaluations";
 import Can from "@components/atoms/Can";
+import ActivityTracking from "./components/MyActivitiesTracking";
 
 const Dashboard: React.FC = () => {
   return (
@@ -22,7 +23,10 @@ const Dashboard: React.FC = () => {
       <Can permission="activity.board-definition">
         <BoardDefinitions />
       </Can>
-      <ActivitiesAccept />
+      <Can permission="activity.accept">
+        <ActivitiesAccept />
+        <ActivityTracking />
+      </Can>
       <PendingInteractions />
       <PendingEvaluations />
     </Flex>

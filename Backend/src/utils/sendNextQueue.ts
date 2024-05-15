@@ -70,6 +70,7 @@ export default async function sendNextQueue({
           exec.finished = true;
         }
         activity.state = IActivityState.finished;
+        activity.finished_at = new Date();
       }
     }
     await activity.save();

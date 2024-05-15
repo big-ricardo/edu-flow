@@ -1,6 +1,9 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import { IActivityStepStatus } from "../../../models/client/Activity";
+import {
+  IActivityAccepted,
+  IActivityStepStatus,
+} from "../../../models/client/Activity";
 import ActivityRepository from "../../../repositories/Activity";
 import UserRepository from "../../../repositories/User";
 
@@ -17,48 +20,29 @@ export const handler: HttpHandler = async (conn, req, context) => {
 
   const user = await userRepository.findById({ id: req.user.id });
 
-  const pendingActivities = await activityRepository.find({
+  const activities = await activityRepository.find({
     where: {
-      $and: [{ "evaluations.answers.user": user }],
+      // $or: [
+      //   {
+      //     "masterminds.user._id": user._id,
+      //     "masterminds.status": IActivityAccepted.accepted,
+      //   },
+      //   {
+      //     "sub_masterminds._id": user._id,
+      //   },
+      // ],
+      "masterminds.user._id": user._id,
     },
     select: {
       _id: 1,
       name: 1,
       description: 1,
       protocol: 1,
-      users: 1,
-      "evaluations.form": 1,
-      "evaluations.answers": 1,
+      createdAt: 1,
     },
   });
-  //TODO: Fix this query returning all activities with evaluations
-  const myPendingActivities = pendingActivities
-    .map((activity) => {
-      const evaluation = activity.evaluations.find((evaluation) =>
-        evaluation.answers.some(
-          (answer) =>
-            answer.user._id.toString() === req.user.id &&
-            answer.status === IActivityStepStatus.idle
-        )
-      );
 
-      if (!evaluation) {
-        return null;
-      }
-
-      const myAnswer = evaluation.answers.find(
-        (answer) => answer.user._id.toString() === req.user.id
-      );
-
-      return {
-        ...activity.toObject(),
-        form: evaluation.form,
-        status: myAnswer.status,
-      };
-    })
-    .filter((activity) => activity !== null);
-
-  return res.success(myPendingActivities);
+  return res.success(activities);
 };
 
 export default new Http(handler)
@@ -79,10 +63,10 @@ export default new Http(handler)
       .optional(),
   }))
   .configure({
-    name: "DashboardPendingEvaluations",
+    name: "DashboardActivitiesTracking",
     permission: "activity.update",
     options: {
       methods: ["GET"],
-      route: "dashboard/my-pending-evaluations",
+      route: "dashboard/my-activity-tracking",
     },
   });
