@@ -32,19 +32,18 @@ const Activity: React.FC = () => {
 
   return (
     <Center width="100%" p={4} flexDirection={"column"}>
-      <div
-        style={{
-          width: "80%",
-        }}
+      <Box
+        w="100%"
+        mb={4}
       >
         <Button onClick={handleBack} colorScheme="blue">
           Voltar
         </Button>
-      </div>
+      </Box>
       <ActivityProvider refetch={refetch}>
         <ActivityDetails {...{ activity, isLoading }} />
       </ActivityProvider>
-      <Box position="fixed" bottom={4} right={4}>
+      <Box position="fixed" top={4} right={4}>
         <IconButton
           aria-label="Refresh"
           onClick={handleRefresh}

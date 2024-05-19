@@ -34,7 +34,7 @@ type IItem = Awaited<ReturnType<typeof getMyActivitiesTracking>>[0];
 
 const ActivityTracking: React.FC = () => {
   const { data, isLoading } = useQuery({
-    queryKey: ["my-pending-evaluations"],
+    queryKey: ["my-tracking-activities"],
     queryFn: getMyActivitiesTracking,
   });
 
@@ -42,8 +42,7 @@ const ActivityTracking: React.FC = () => {
 
   const handleView = useCallback(
     (activity: IItem) => {
-      navigate(`/portal/activity
-      /${activity._id}`);
+      navigate(`/portal/activity/${activity._id}`);
     },
     [navigate]
   );

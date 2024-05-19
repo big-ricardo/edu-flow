@@ -2,7 +2,7 @@ import mongoose, { ObjectId, Schema, Types } from "mongoose";
 import { IUser } from "./User";
 import { IStatus } from "./Status";
 import { IFormDraft, schema as schemaFormDraft } from "./FormDraft";
-import { IStep, IWorkflowDraft } from "./WorkflowDraft";
+import {  IWorkflowDraft } from "./WorkflowDraft";
 import { IForm } from "./Form";
 
 export enum IActivityState {

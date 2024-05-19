@@ -19,7 +19,8 @@ export const handler: HttpHandler = async (conn, req, context) => {
 
   const pendingActivities = await activityRepository.find({
     where: {
-      $and: [{ "evaluations.answers.user": user }],
+      "evaluations.answers.user": user,
+      "evaluations.answers.status": IActivityStepStatus.idle,
     },
     select: {
       _id: 1,
@@ -36,9 +37,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
     .map((activity) => {
       const evaluation = activity.evaluations.find((evaluation) =>
         evaluation.answers.some(
-          (answer) =>
-            answer.user._id.toString() === req.user.id &&
-            answer.status === IActivityStepStatus.idle
+          (answer) => answer.user._id.toString() === req.user.id
         )
       );
 

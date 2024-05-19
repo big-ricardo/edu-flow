@@ -22,7 +22,7 @@ import InputText from "@components/atoms/Inputs/Text";
 import Password from "@components/atoms/Inputs/Password";
 import { login } from "@apis/auth";
 import Icon from "@components/atoms/Icon";
-import SwitchTheme from "@components/molecules/SwicthTheme";
+import SwitchTheme from "@components/molecules/SwitchTheme";
 
 const schema = z.object({
   acronym: z
@@ -122,7 +122,7 @@ const Login: React.FC = () => {
         </Hide>
 
         <Card
-          p="10"
+          p={[4,10]}
           w={{ base: "100%", md: "450px" }}
           boxShadow="lg"
           bg={"bg.card"}

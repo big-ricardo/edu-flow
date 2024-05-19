@@ -12,7 +12,7 @@ import ActivityTracking from "./components/MyActivitiesTracking";
 
 const Dashboard: React.FC = () => {
   return (
-    <Flex p={8} width="100%" direction="column" gap={8}>
+    <Flex p={[4,8]} width="100%" direction="column" gap={8}>
       <Can permission="activity.create">
         <OpenForms />
       </Can>

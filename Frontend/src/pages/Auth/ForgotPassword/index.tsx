@@ -92,7 +92,7 @@ const ForgotPassword: React.FC = () => {
     >
       <FormProvider {...methods}>
         <Card
-          p="10"
+          p={[4, 8]}
           w={{ base: "100%", md: "450px" }}
           boxShadow="lg"
           bg={"bg.card"}

@@ -61,7 +61,7 @@ const Timeline: React.FC<MilestoneItemProps> = () => {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent p="5" minW="400">
+        <ModalContent p="5">
           <ModalCloseButton />
 
           <ExtraFields fields={modalData || []} />
@@ -187,7 +187,7 @@ const TimelineStepItem = ({
         </Flex>
         <Divider my={2} />
         {interaction && (
-          <Box>
+          <Box w="100%">
             {interaction.answers.map((answer) => (
               <Box key={answer._id}>
                 <Text fontWeight="bold">{answer.user.name}</Text>
@@ -213,7 +213,7 @@ const TimelineStepItem = ({
           </Box>
         )}
         {evaluation && (
-          <Box>
+          <Box w="100%">
             <Text fontSize="sm">
               Nota Final: {evaluation.final_grade || "Aguardando avaliação"}
             </Text>

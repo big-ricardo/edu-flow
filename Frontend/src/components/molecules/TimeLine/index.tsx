@@ -86,7 +86,7 @@ export const MilestoneItem: React.FC<MilestoneItemProps> = ({
         </Circle>
         {!skipTrail && <Box w="1px" flex={1} bg={"gray"} my={-1} zIndex={0} />}
       </Flex>
-      <Box {...boxProps} pb={5}>
+      <Box {...boxProps} pb={5} maxW={"80%"}>
         {children}
       </Box>
     </Flex>

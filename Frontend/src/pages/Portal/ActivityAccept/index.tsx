@@ -104,7 +104,7 @@ export default function ActivityAccept() {
     );
 
   return (
-    <Flex w="70%" my="6" mx="auto" px="6" justify="center" direction="column">
+    <Flex w={["100%", "70%"]} my="6" mx="auto" px="6" justify="center" direction="column">
       <Card
         as="form"
         onSubmit={onSubmit}

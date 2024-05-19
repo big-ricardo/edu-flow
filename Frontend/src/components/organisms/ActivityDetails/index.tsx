@@ -38,7 +38,7 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
     if (isLoading) {
       return (
         <Card
-          p={6}
+          p={[0, 6]}
           borderRadius="2xl"
           minWidth={"60%"}
           boxShadow={"lg"}
@@ -56,9 +56,9 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
 
     return (
       <Card
-        p={6}
+        p={[4, 6]}
         borderRadius="2xl"
-        minWidth={"60%"}
+        w={["100%", "60%"]}
         boxShadow={"lg"}
         bg="bg.card"
         {...rest}
@@ -115,12 +115,12 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
           </Accordion.Item>
 
           {activity.workflows.length > 0 && (
-            <Accordion.Item>
-              <Accordion.Button>Linha do Tempo</Accordion.Button>
-              <Accordion.Panel>
-                <Timeline />
-              </Accordion.Panel>
-            </Accordion.Item>
+            <Flex direction="column" gap={4}>
+              <Text fontWeight={"bold"} fontSize="md">
+                Linha do Tempo
+              </Text>
+              <Timeline />
+            </Flex>
           )}
         </Accordion.Container>
       </Card>

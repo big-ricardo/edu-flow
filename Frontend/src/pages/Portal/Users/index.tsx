@@ -8,6 +8,12 @@ import React, { memo, useCallback, useMemo } from "react";
 import { BiEdit, BiRefresh } from "react-icons/bi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+const roleMap = {
+  admin: "Admin",
+  student: "Estudante",
+  teacher: "Professor",
+};
+
 const columns = [
   {
     key: "name",
@@ -89,6 +95,7 @@ const Users: React.FC = () => {
 
     return users.map((user) => ({
       ...user,
+      roles: user.roles.map((role) => roleMap[role]).join(", "),
       active: user.active ? "Ativo" : "Inativo",
       institute: user.institute?.acronym,
       actions: <Action {...user} />,
@@ -96,7 +103,7 @@ const Users: React.FC = () => {
   }, [users]);
 
   return (
-    <Box width="100%" p="10">
+    <Box width="100%" p={[4, 10]}>
       <Heading>Usuários</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button

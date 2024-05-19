@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
 import {
   Avatar,
   Button,
@@ -14,6 +13,14 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  useBreakpointValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import useAuth from "@hooks/useAuth";
 
@@ -32,6 +39,8 @@ const rolesMap = (role: string) => {
 
 const AvatarMenu: React.FC = () => {
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   const [auth, setAuth] = useAuth();
 
@@ -45,53 +54,100 @@ const AvatarMenu: React.FC = () => {
     navigate("/");
   }, [setAuth, navigate]);
 
+  const userDetails = useCallback(() => {
+    return (
+      <Flex flexDir="column" alignItems="start">
+        <Flex flexDir="row" alignItems="center" gap={1}>
+          <Text mb={2} fontWeight="bold" fontSize="md">
+            {userName}
+          </Text>
+          <Text mb={2} fontSize="sm" opacity={0.7}>
+            #{matriculation}
+          </Text>
+        </Flex>
+        <Flex flexDir="row" alignItems="center" gap={1}>
+          <Text mb={2} fontSize="sm">
+            Perfil:
+          </Text>
+          <Text mb={2} fontSize="sm" fontWeight="bold">
+            {roles?.map((role) => rolesMap(role)).join(", ")}
+          </Text>
+        </Flex>
+        <Flex flexDir="row" alignItems="center" gap={1}>
+          <Text mb={2} fontSize="sm">
+            Email:
+          </Text>
+          <Text mb={2} fontSize="sm" fontWeight="bold">
+            {email}
+          </Text>
+        </Flex>
+      </Flex>
+    );
+  }, [userName, matriculation, roles, email]);
+
   return (
-    <Popover placement="right-start">
-      <PopoverTrigger>
-        <Avatar
-          name={userName ?? "Usuário"}
-          src="https://bit.ly/broken-link"
-          size="sm"
-        />
-      </PopoverTrigger>
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverCloseButton />
-        <PopoverHeader>Configurações</PopoverHeader>
-        <PopoverBody>
-          <Flex flexDir="column" alignItems="start">
-            <Flex flexDir="row" alignItems="center" gap={1}>
-              <Text mb={2} fontWeight="bold" fontSize="md">
-                {userName}
-              </Text>
-              <Text mb={2} fontSize="sm" opacity={0.7}>
-                #{matriculation}
-              </Text>
-            </Flex>
-            <Flex flexDir="row" alignItems="center" gap={1}>
-              <Text mb={2} fontSize="sm">
-                Perfil:
-              </Text>
-              <Text mb={2} fontSize="sm" fontWeight="bold">
-                {roles?.map((role) => rolesMap(role)).join(", ")}
-              </Text>
-            </Flex>
-            <Flex flexDir="row" alignItems="center" gap={1}>
-              <Text mb={2} fontSize="sm">
-                Email:
-              </Text>
-              <Text mb={2} fontSize="sm" fontWeight="bold">
-                {email}
-              </Text>
-            </Flex>
+    <>
+      {isMobile ? (
+        // Mobile view using Modal
+        <>
+          <Flex align="center" gap={2} onClick={onOpen} cursor="pointer">
+            <Avatar
+              name={userName ?? "Usuário"}
+              src="https://bit.ly/broken-link"
+              size="sm"
+            />
+            <Text fontWeight="bold">{userName}</Text>
           </Flex>
-          <Divider my={2} />
-          <Button color={"icons"} size="sm" onClick={handleLogout}>
-            Logout
-          </Button>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>
+                <Flex align="center" gap={2}>
+                  <Avatar
+                    name={userName ?? "Usuário"}
+                    src="https://bit.ly/broken-link"
+                    size="sm"
+                  />
+                  <Text fontWeight="bold">{userName}</Text>
+                </Flex>
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                {userDetails()}
+                <Divider my={2} />
+                <Button colorScheme="blue" size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+        </>
+      ) : (
+        // Desktop view using Popover
+        <Popover placement="right-start">
+          <PopoverTrigger>
+            <Avatar
+              name={userName ?? "Usuário"}
+              src="https://bit.ly/broken-link"
+              size="sm"
+              cursor="pointer"
+            />
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverHeader>Configurações</PopoverHeader>
+            <PopoverBody>
+              {userDetails()}
+              <Divider my={2} />
+              <Button colorScheme="blue" size="sm" onClick={handleLogout}>
+                Logout
+              </Button>
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
+      )}
+    </>
   );
 };
 

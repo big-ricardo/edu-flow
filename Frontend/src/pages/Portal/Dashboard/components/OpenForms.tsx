@@ -45,7 +45,7 @@ const OpenForms: React.FC = () => {
           gap={4}
           mt={4}
           width="100%"
-          templateColumns="repeat(auto-fill, minmax(350px, 1fr))"
+          templateColumns="repeat(auto-fill, minmax(290px, 1fr))"
         >
           {forms?.map((form) => (
             <FormItem key={form._id} form={form} />

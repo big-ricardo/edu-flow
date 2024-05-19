@@ -53,8 +53,7 @@ const PendingEvaluations: React.FC = () => {
 
   const handleView = useCallback(
     (activity: IItem) => {
-      navigate(`/portal/activity
-      /${activity._id}`);
+      navigate(`/portal/activity/${activity._id}`);
     },
     [navigate]
   );

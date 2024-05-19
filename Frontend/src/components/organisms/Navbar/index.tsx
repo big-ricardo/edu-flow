@@ -7,6 +7,7 @@ import {
   Link as ChakraLink,
   TagLabel,
   TagProps,
+  Hide,
 } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 
@@ -36,7 +37,14 @@ const CustomCard = React.forwardRef<HTMLSpanElement, TagProps>(
         justifyContent="flex-start"
         alignItems="center"
       >
-        <TagLabel>{children}</TagLabel>
+        <TagLabel
+          display="flex"
+          justifyContent="flex-start"
+          flexDirection={"row"}
+          gap={4}
+        >
+          {children}
+        </TagLabel>
       </Tag>
     </Box>
   )
@@ -47,9 +55,11 @@ function Sidebar() {
 
   return (
     <List fontSize="xl" spacing={4}>
-      <ListItem >
-        <Icon w="50px" />
-      </ListItem>
+      <Hide below="md">
+        <ListItem>
+          <Icon w="50px" />
+        </ListItem>
+      </Hide>
 
       <Can permission="dashboard.view">
         <NavLink
@@ -156,6 +166,7 @@ const NavLink = React.memo(
           size="md"
           placement="right-end"
           id={to.replace("/portal/", "")}
+          display="flex"
         >
           <CustomCard
             _hover={{ textDecor: "none", color: "blue.500" }}
@@ -163,6 +174,7 @@ const NavLink = React.memo(
             color={active ? "blue.500" : ""}
           >
             <Icon size={24} />
+            <Hide above="md">{label}</Hide>
           </CustomCard>
         </Tooltip>
       </ChakraLink>
