@@ -44,13 +44,6 @@ const CircleNode: React.FC<CircleNodeProps> = ({ data, selected }) => {
       border="1px solid"
       borderColor={borderColor}
     >
-      {!data?.name && data?.hasMenu && (
-        <Box position="absolute" top={-1} right={2} textAlign="center">
-          <Badge colorScheme="red" borderRadius="full" p={0}>
-            <BiInfoCircle />
-          </Badge>
-        </Box>
-      )}
       <div>{data.label}</div>
       {data?.hasHandleLeft && (
         <Handle
@@ -59,29 +52,6 @@ const CircleNode: React.FC<CircleNodeProps> = ({ data, selected }) => {
           position={Position.Left}
           style={{ background: "#555", left: "-10px" }}
         />
-      )}
-
-      {selected && data.hasMenu && (
-        <Flex
-          position="absolute"
-          bottom="-35px"
-          cursor="pointer"
-          bg={menuBg}
-          borderRadius="5px"
-          p="3px"
-          gap="1"
-        >
-          <Button
-            className="edgebutton"
-            onClick={onOpen}
-            size="xs"
-            rounded="full"
-            p={0}
-            colorScheme="gray"
-          >
-            <BiSliderAlt size="15px" />
-          </Button>
-        </Flex>
       )}
 
       {data?.hasHandleRight && (

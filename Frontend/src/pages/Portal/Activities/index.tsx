@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import React, { memo, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiRefresh, BiEdit } from "react-icons/bi";
-import { getForms } from "@apis/form";
 import Pagination from "@components/organisms/Pagination";
-import IForm from "@interfaces/Form";
 import Can from "@components/atoms/Can";
 import Filter from "@components/organisms/Filter";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
+import { getActivities } from "@apis/activity";
+import IActivity from "@interfaces/Activitiy";
 
 const columns = [
   {
@@ -18,12 +18,16 @@ const columns = [
     label: "Nome",
   },
   {
-    key: "type",
-    label: "Tipo",
+    key: "protocol",
+    label: "Protocolo",
   },
   {
-    key: "active",
+    key: "status",
     label: "Status",
+  },
+  {
+    key: "users",
+    label: "Usuários",
   },
   {
     key: "actions",
@@ -31,22 +35,16 @@ const columns = [
   },
 ];
 
-const FormTypes = {
-  created: "Criação",
-  interaction: "Interação",
-  evaluated: "Avaliação",
-};
-
-const Action = memo((form: Pick<IForm, "_id" | "slug">) => {
+const Action = memo((activity: Pick<IActivity, "_id">) => {
   const navigate = useNavigate();
 
-  const handleEdit = useCallback(() => {
-    navigate(`/portal/form/${form._id}`);
-  }, [navigate, form._id]);
+  const handleSee = useCallback(() => {
+    navigate(`/portal/activity/${activity._id}`);
+  }, [navigate, activity._id]);
 
   return (
     <div>
-      <Button mr={2} onClick={handleEdit} size="sm">
+      <Button mr={2} onClick={handleSee} size="sm">
         <BiEdit size={20} />
       </Button>
     </div>
@@ -71,33 +69,33 @@ const Create = memo(() => {
   );
 });
 
-const Forms: React.FC = () => {
+const Activities: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const {
-    data: { forms, pagination } = {},
+    data: { activities, pagination } = {},
     isFetching,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["forms", searchParams.toString()],
-    queryFn: getForms,
+    queryKey: ["activities", searchParams.toString()],
+    queryFn: getActivities,
   });
 
   const data = useMemo(() => {
-    if (!forms) return [];
+    if (!activities) return [];
 
-    return forms.map((form) => ({
-      ...form,
-      active: form.active ? "Ativo" : "Inativo",
-      type: FormTypes[form.type],
-      actions: <Action {...form} />,
+    return activities.map((activity) => ({
+      ...activity,
+      status: activity.status.name,
+      users: activity.users.map((user) => user.name).join(", "),
+      actions: <Action {...activity} />,
     }));
-  }, [forms]);
+  }, [activities]);
 
   return (
     <Box width="100%" p="10">
-      <Heading>Fomulários</Heading>
+      <Heading>Atividades</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -113,36 +111,9 @@ const Forms: React.FC = () => {
       <Filter.Container>
         <Text input={{ label: "Nome", id: "name" }} />
 
-        <Select
-          input={{
-            label: "Tipo",
-            id: "type",
-            placeholder: "Selecione um tipo",
-            options: Object.entries(FormTypes).map(([key, value]) => ({
-              label: value,
-              value: key,
-            })),
-          }}
-          isMulti
-        />
+        <Text input={{ label: "Protocolo", id: "protocol" }} />
 
-        <Select
-          input={{
-            label: "Ativo",
-            id: "active",
-            placeholder: "Selecione um tipo",
-            options: [
-              {
-                label: "Ativo",
-                value: "true",
-              },
-              {
-                label: "Inativo",
-                value: "false",
-              },
-            ],
-          }}
-        />
+        <Text input={{ label: "Status", id: "status" }} />
       </Filter.Container>
 
       <Flex
@@ -167,4 +138,4 @@ const Forms: React.FC = () => {
   );
 };
 
-export default Forms;
+export default Activities;

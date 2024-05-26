@@ -151,7 +151,7 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
             }}
             noOptionsMessage={() => "Sem opções"}
             options={input?.options}
-            placeholder={input.placeholder}
+            placeholder={input.placeholder || "Selecione uma opção"}
             isMulti={isMulti}
             isClearable={!input?.required}
             styles={styles}

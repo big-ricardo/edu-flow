@@ -2,9 +2,11 @@ import useAuth from "./hooks/useAuth";
 import { publicRoutes, privateRoutes } from "./routes";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import api from "./services/api";
+import { useMemo } from "react";
 
 function App() {
   const [auth, setAuth] = useAuth();
+  const permissions = auth?.permissions ?? [];
 
   api.interceptors.response.use(
     (response) => {
@@ -16,8 +18,41 @@ function App() {
         setAuth(null);
       }
       return Promise.reject(error);
-    },
+    }
   );
+
+  const privateRoutesPermitted = useMemo(() => {
+    return privateRoutes
+      .map((route) => {
+        if (route?.children?.length) {
+          const children = route.children
+            .map((child) => {
+              if (!child.permission) {
+                return child;
+              }
+
+              if (permissions.includes(child.permission)) {
+                return child;
+              }
+            })
+            .filter(Boolean);
+
+          return {
+            ...route,
+            children,
+          };
+        }
+
+        if (!route.permission) {
+          return route;
+        }
+
+        if (permissions.includes(route.permission)) {
+          return route;
+        }
+      })
+      .filter(Boolean);
+  }, [permissions]);
 
   return (
     <BrowserRouter>
@@ -26,7 +61,7 @@ function App() {
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
         {auth &&
-          privateRoutes.map((route) => (
+          privateRoutesPermitted.map((route) => (
             <Route key={route.path} path={route.path} element={route.element}>
               {route.children?.map((child) => (
                 <Route

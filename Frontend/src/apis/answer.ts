@@ -17,16 +17,18 @@ export const getAnswer = async ({
 
 export const saveDraft = async ({
   formId,
+  activityId,
   data,
 }: {
   formId: string;
   data: Record<string, any>;
+  activityId: string;
 }) => {
-  return await api.post(`/form/${formId}/answer`, data);
+  return await api.post(`/form/${formId}/answer/${activityId}`, data);
 };
 
 export const getDraftAnswer = async ({
-  queryKey: [, formId],
+  queryKey: [, formId, , activityId],
 }: {
   queryKey: string[];
 }) => {
@@ -34,7 +36,7 @@ export const getDraftAnswer = async ({
     Response<{
       data: Record<string, IField>;
     }>
-  >(`/form/${formId}/answer`);
+  >(`/form/${formId}/answer/${activityId}`);
 
   return response.data.data;
 };

@@ -1,20 +1,37 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Form from "../../../models/client/Form";
+import { IFormType } from "../../../models/client/Form";
 import FormRepository from "../../../repositories/Form";
+import FilterQueryBuilder, {
+  WhereType,
+} from "../../../utils/filterQueryBuilder";
 
 interface Query {
   page?: number;
   limit?: number;
+  type?: IFormType;
+  active?: boolean;
+  name?: string;
+  slug?: string;
 }
 
-const handler: HttpHandler = async (conn, req, context) => {
-  const { page = 1, limit = 10 } = req.query as Query;
+const filterQueryBuilder = new FilterQueryBuilder({
+  type: WhereType.ARRAY,
+  active: WhereType.BOOLEAN,
+  name: WhereType.ILIKE,
+  slug: WhereType.ILIKE,
+});
+
+const handler: HttpHandler = async (conn, req) => {
+  const { page = 1, limit = 10, ...filters } = req.query as Query;
 
   const formRepository = new FormRepository(conn);
 
+  const where = filterQueryBuilder.build(filters);
+
   const forms = await formRepository.find({
     skip: (page - 1) * limit,
+    where,
     limit,
     select: {
       name: 1,
@@ -24,7 +41,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     },
   });
 
-  const total = await new Form(conn).model().countDocuments();
+  const total = await new FormRepository(conn).count({ where });
   const totalPages = Math.ceil(total / limit);
 
   return res.success({
@@ -52,6 +69,12 @@ export default new Http(handler)
           .number()
           .optional()
           .transform((v) => Number(v)),
+        type: schema
+          .array(schema.mixed().oneOf(Object.values(IFormType)))
+          .optional(),
+        active: schema.boolean().optional(),
+        name: schema.string().min(3).max(255).optional().default(undefined),
+        slug: schema.string().min(3).max(255).optional().default(undefined),
       })
       .optional(),
   }))

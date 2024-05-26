@@ -3,16 +3,16 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormContext } from "react-hook-form";
 import { Flex, Icon, Spinner, Text } from "@chakra-ui/react";
 import { saveDraft, getDraftAnswer } from "@apis/answer";
-import { convertDateTime } from "@utils/date";
 import { MdCheck, MdError } from "react-icons/md";
 
 interface DraftHandleProps {
   form_id?: string | null;
+  activity_id?: string | null;
 }
 
-const DraftHandle: React.FC<DraftHandleProps> = memo(({ form_id }) => {
+const DraftHandle: React.FC<DraftHandleProps> = memo(({ form_id, activity_id }) => {
   const { data: draftAnswer } = useQuery({
-    queryKey: ["form", form_id ?? "", "draft-answer"],
+    queryKey: ["form", form_id ?? "", "draft-answer", activity_id ?? ""],
     queryFn: getDraftAnswer,
     enabled: !!form_id,
   });
@@ -39,6 +39,7 @@ const DraftHandle: React.FC<DraftHandleProps> = memo(({ form_id }) => {
     const interval = setInterval(() => {
       if (isDirty) {
         mutateAsync({
+          activityId: activity_id ?? "",
           formId: form_id ?? "",
           data: methods.getValues(),
         });

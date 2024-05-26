@@ -28,7 +28,9 @@ export default class FormRepository extends BaseRepository<IForm> {
     return this.find({
       where: {
         active: true,
-        published: { $exists: true },
+        published: {
+          $ne: null,
+        },
         ...options.where,
         $and: [
           {

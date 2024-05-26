@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthContext from "./contexts/AuthContext";
 import "./styles/global.css";
 import { isAxiosError } from "axios";
+import { ErrorBoundary } from "react-error-boundary";
+import FallbackRender from "./fallback-error";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,11 +35,13 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ChakraProvider theme={Theme}>
-      <QueryClientProvider client={queryClient}>
-        <AuthContext>
-          <App />
-        </AuthContext>
-      </QueryClientProvider>
+      <ErrorBoundary FallbackComponent={FallbackRender}>
+        <QueryClientProvider client={queryClient}>
+          <AuthContext>
+            <App />
+          </AuthContext>
+        </QueryClientProvider>
+      </ErrorBoundary>
     </ChakraProvider>
   </React.StrictMode>
 );

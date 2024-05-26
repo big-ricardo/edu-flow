@@ -1,26 +1,38 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import User from "../../../models/client/User";
 import UserRepository from "../../../repositories/User";
+import FilterQueryBuilder, { WhereType } from "../../../utils/filterQueryBuilder";
 
 interface Query {
   page?: number;
   limit?: number;
+  name?: string;
+  matriculation?: string;
+  active?: boolean;
+  isExternal?: boolean;
 }
 
-const handler: HttpHandler = async (conn, req, context) => {
-  const { page = 1, limit = 10 } = req.query as Query;
+const filterQueryBuilder = new FilterQueryBuilder({
+  name: WhereType.ILIKE,
+  matriculation: WhereType.EQUAL,
+  active: WhereType.BOOLEAN,
+  isExternal: WhereType.BOOLEAN,
+});
+
+const handler: HttpHandler = async (conn, req) => {
+  const { page = 1, limit = 10, ...filters } = req.query as Query;
+
   const userRepository = new UserRepository(conn);
 
+  const where = filterQueryBuilder.build(filters);
+
   const users = await userRepository.find({
-    sort: {
-      name: 1,
-    },
     skip: (page - 1) * limit,
+    where,
     limit,
   });
 
-  const total = await new User(conn).model().countDocuments();
+  const total = await userRepository.count({ where });
   const totalPages = Math.ceil(total / limit);
 
   return res.success({
@@ -48,6 +60,10 @@ export default new Http(handler)
           .number()
           .optional()
           .transform((v) => Number(v)),
+        name: schema.string().min(3).max(255).optional().default(undefined),
+        matricula: schema.string().min(3).max(255).optional().default(undefined),
+        active: schema.boolean().optional(),
+        isExternal: schema.boolean().optional(),
       })
       .optional(),
   }))

@@ -26,13 +26,11 @@ type ReqUsers = Response<
 type ReqUser = Response<User>;
 
 export const getUsers = async ({
-  queryKey: [, page = "1", limit = "10"],
+  queryKey: [, query],
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<ReqUsers>("/users", {
-    params: { page, limit },
-  });
+  const res = await api.get<ReqUsers>(`/users?${query}`);
 
   return res.data.data;
 };
@@ -56,7 +54,7 @@ export const updateUser = async (data: User) => {
 };
 
 export const createOrUpdateUser = async (
-  data: Omit<User, "_id" | "password"> & { _id?: string; password?: string },
+  data: Omit<User, "_id" | "password"> & { _id?: string; password?: string }
 ) => {
   if (data?._id) {
     return updateUser(data as User);

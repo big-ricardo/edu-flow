@@ -144,7 +144,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
             <Divider my={4} />
           </Box>
           <FormProvider {...methods}>
-            <DraftHandle form_id={form?._id} />
+            <DraftHandle form_id={form?._id} activity_id={activity_id} />
             <form onSubmit={onSubmit}>
               <Flex direction="column" align="center" justify="center" gap="3">
                 <Inputs fields={form?.published?.fields ?? []} />

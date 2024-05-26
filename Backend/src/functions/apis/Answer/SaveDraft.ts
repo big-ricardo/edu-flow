@@ -68,15 +68,14 @@ const handler: HttpHandler = async (conn, req, context) => {
 
   const answerRepository = new AnswerRepository(conn);
 
-  const existDraft = (
-    await answerRepository.find({
-      where: {
-        user: req.user.id,
-        form: form._id,
-        submitted: false,
-      },
-    })
-  ).at(0);
+  const existDraft = await answerRepository.findOne({
+    where: {
+      user: req.user.id,
+      form: form._id,
+      submitted: false,
+      activity: req.params.activity_id ?? null,
+    },
+  });
 
   if (existDraft) {
     existDraft.data = answer;
@@ -85,6 +84,7 @@ const handler: HttpHandler = async (conn, req, context) => {
   } else {
     await answerRepository.create({
       user: req.user.id,
+      activity: req.params.activity_id ?? null,
       form: form._id,
       data: answer,
     });
@@ -97,6 +97,7 @@ export default new Http(handler)
   .setSchemaValidator((schema) => ({
     params: schema.object().shape({
       form_id: schema.string().required(),
+      activity_id: schema.string().optional().default(null),
     }),
     body: schema.object().shape({}),
   }))
@@ -105,6 +106,6 @@ export default new Http(handler)
     permission: "answer.create",
     options: {
       methods: ["POST"],
-      route: "form/{form_id}/answer",
+      route: "form/{form_id}/answer/{activity_id?}",
     },
   });

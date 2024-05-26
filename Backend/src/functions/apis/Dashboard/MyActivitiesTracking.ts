@@ -20,18 +20,17 @@ export const handler: HttpHandler = async (conn, req, context) => {
 
   const user = await userRepository.findById({ id: req.user.id });
 
-  const activities = await activityRepository.find({
+  const activitiesOpen = await activityRepository.find({
     where: {
-      // $or: [
-      //   {
-      //     "masterminds.user._id": user._id,
-      //     "masterminds.status": IActivityAccepted.accepted,
-      //   },
-      //   {
-      //     "sub_masterminds._id": user._id,
-      //   },
-      // ],
-      "masterminds.user._id": user._id,
+      finished_at: null,
+      $or: [
+        {
+          "masterminds.user._id": user._id,
+        },
+        {
+          "sub_masterminds._id": user._id,
+        },
+      ],
     },
     select: {
       _id: 1,
@@ -42,7 +41,33 @@ export const handler: HttpHandler = async (conn, req, context) => {
     },
   });
 
-  return res.success(activities);
+  const activitiesFinished = await activityRepository.find({
+    where: {
+      finished_at: {
+        $ne: null,
+      },
+      $or: [
+        {
+          "masterminds.user._id": user._id,
+        },
+        {
+          "sub_masterminds._id": user._id,
+        },
+      ],
+    },
+    select: {
+      _id: 1,
+      name: 1,
+      description: 1,
+      protocol: 1,
+      createdAt: 1,
+    },
+  });
+
+  return res.success({
+    activities: activitiesOpen,
+    finishedActivities: activitiesFinished,
+  });
 };
 
 export default new Http(handler)

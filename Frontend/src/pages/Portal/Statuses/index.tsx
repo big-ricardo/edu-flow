@@ -8,6 +8,9 @@ import { getStatuses } from "@apis/status";
 import Pagination from "@components/organisms/Pagination";
 import IStatus from "@interfaces/Status";
 import Can from "@components/atoms/Can";
+import Filter from "@components/organisms/Filter";
+import Text from "@components/atoms/Inputs/Text";
+import Select from "@components/atoms/Inputs/Select";
 
 const columns = [
   {
@@ -67,15 +70,13 @@ const Create = memo(() => {
 const Statuses: React.FC = () => {
   const [searchParams] = useSearchParams();
 
-  const page = searchParams.get("page") ?? 1;
-
   const {
     data: { statuses, pagination } = {},
     isFetching,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["statuses", String(page)],
+    queryKey: ["statuses", searchParams.toString()],
     queryFn: getStatuses,
   });
 
@@ -103,6 +104,29 @@ const Statuses: React.FC = () => {
         </Button>
         <Create />
       </Flex>
+
+      <Filter.Container>
+        <Text
+          input={{
+            id: "name",
+            label: "Nome",
+            placeholder: "Digite um nome",
+          }}
+        />
+
+        <Select
+          input={{
+            id: "type",
+            label: "Tipo",
+            options: [
+              { value: "done", label: "Concluído" },
+              { value: "progress", label: "Em progresso" },
+              { value: "canceled", label: "Cancelado" },
+            ],
+          }}
+        />
+      </Filter.Container>
+
       <Flex
         justifyContent="center"
         alignItems="center"

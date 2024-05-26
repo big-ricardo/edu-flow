@@ -8,7 +8,7 @@ export interface IEmail extends mongoose.Document {
   cssTemplate: string;
 }
 
-export const schema: Schema = new Schema(
+export const schema = new Schema<IEmail>(
   {
     slug: { type: String, required: true, unique: true },
     subject: { type: String, required: true },

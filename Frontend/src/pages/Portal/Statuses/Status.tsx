@@ -143,7 +143,7 @@ export default function Status() {
               >
                 Cancelar
               </Button>
-              <Can permission={isEditing ? "status.edit" : "status.create"}>
+              <Can permission={isEditing ? "status.update" : "status.create"}>
                 <Button
                   mt={4}
                   colorScheme="blue"

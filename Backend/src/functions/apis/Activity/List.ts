@@ -1,7 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import StatusRepository from "../../../repositories/Status";
-import { StatusType } from "../../../models/client/Status";
+import ActivityRepository from "../../../repositories/Activity";
 import FilterQueryBuilder, {
   WhereType,
 } from "../../../utils/filterQueryBuilder";
@@ -10,37 +9,45 @@ interface Query {
   page?: number;
   limit?: number;
   name?: string;
-  type?: StatusType;
+  protocol?: string;
+  status?: string;
 }
 
 const filterQueryBuilder = new FilterQueryBuilder({
   name: WhereType.ILIKE,
-  type: WhereType.ARRAY,
+  status: WhereType.ILIKE,
+  protocol: WhereType.ILIKE,
 });
 
-const handler: HttpHandler = async (conn, req, context) => {
-  const { page = 1, limit = 10, ...filter } = req.query as Query;
+const handler: HttpHandler = async (conn, req) => {
+  const { page = 1, limit = 10, ...filters } = req.query as Query;
 
-  const statusRepository = new StatusRepository(conn);
+  const activityRepository = new ActivityRepository(conn);
 
-  const where = filterQueryBuilder.build(filter);
+  const where = filterQueryBuilder.build(filters);
 
-  const statuses = await statusRepository.find({
-    where,
+  const activities = await activityRepository.find({
     skip: (page - 1) * limit,
+    where,
     limit,
+    select: {
+      name: 1,
+      protocol: 1,
+      status: 1,
+      users: 1,
+    },
   });
 
-  const total = await statusRepository.count({ where });
+  const total = await activityRepository.count({ where });
   const totalPages = Math.ceil(total / limit);
 
   return res.success({
-    statuses,
+    activities,
     pagination: {
       page: Number(page),
       total,
       totalPages,
-      count: statuses.length + (page - 1) * limit,
+      count: activities.length + (page - 1) * limit,
     },
   });
 };
@@ -59,16 +66,17 @@ export default new Http(handler)
           .number()
           .optional()
           .transform((v) => Number(v)),
-        name: schema.string().optional(),
-        type: schema.mixed().oneOf(["active", "inactive"]).optional(),
+        name: schema.string().min(3).max(255).optional().default(undefined),
+        status: schema.string().min(3).max(255).optional().default(undefined),
+        protocol: schema.string().min(3).max(255).optional().default(undefined),
       })
       .optional(),
   }))
   .configure({
-    name: "StatusList",
-    permission: "status.create",
+    name: "ActivityList",
+    permission: "activity.view",
     options: {
       methods: ["GET"],
-      route: "statuses",
+      route: "activities",
     },
   });

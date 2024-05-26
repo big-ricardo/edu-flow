@@ -8,13 +8,11 @@ type ReqStatuses = Response<{ statuses: Status[] } & IPagination>;
 type ReqStatus = Response<Status>;
 
 export const getStatuses = async ({
-  queryKey: [, page = "1", limit = "10"],
+  queryKey: [, query],
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<ReqStatuses>("/statuses", {
-    params: { page, limit },
-  });
+  const res = await api.get<ReqStatuses>(`/statuses?${query}`);	
 
   return res.data.data;
 };

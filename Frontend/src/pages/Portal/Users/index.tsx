@@ -1,6 +1,9 @@
 import { getUsers } from "@apis/users";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import Can from "@components/atoms/Can";
+import Select from "@components/atoms/Inputs/Select";
+import Text from "@components/atoms/Inputs/Text";
+import Filter from "@components/organisms/Filter";
 import Pagination from "@components/organisms/Pagination";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
@@ -78,15 +81,13 @@ const Create = memo(() => {
 const Users: React.FC = () => {
   const [searchParams] = useSearchParams();
 
-  const page = searchParams.get("page") ?? 1;
-
   const {
     data: { users, pagination } = {},
     isFetching,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["users", String(page)],
+    queryKey: ["users", searchParams.toString()],
     queryFn: getUsers,
   });
 
@@ -116,6 +117,45 @@ const Users: React.FC = () => {
         </Button>
         <Create />
       </Flex>
+
+      <Filter.Container>
+        <Text
+          input={{
+            label: "Nome",
+            id: "name",
+          }}
+        />
+
+        <Text
+          input={{
+            label: "Matrícula",
+            id: "matriculation",
+          }}
+        />
+
+        <Select
+          input={{
+            label: "Ativo",
+            id: "active",
+            options: [
+              { label: "Ativo", value: "true" },
+              { label: "Inativo", value: "false" },
+            ],
+          }}
+        />
+
+        <Select
+          input={{
+            label: "Externo",
+            id: "isExternal",
+            options: [
+              { label: "Sim", value: "true" },
+              { label: "Não", value: "false" },
+            ],
+          }}
+        />
+      </Filter.Container>
+
       <Flex
         justifyContent="center"
         alignItems="center"

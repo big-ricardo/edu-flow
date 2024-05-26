@@ -24,6 +24,7 @@ import ActivityProcess from "@pages/Portal/ActivityCommit";
 import ActivityAccept from "@pages/Portal/ActivityAccept";
 import EditResponse from "@pages/Edit";
 import ActivityBoardDefinition from "@pages/Portal/ActivityBordDefinition";
+import Activities from "@pages/Portal/Activities";
 
 const routes: RouteType = [
   {
@@ -37,94 +38,152 @@ const routes: RouteType = [
       {
         path: "/portal/workflows",
         element: <Workflows />,
+        permission: "workflow.view",
       },
       {
         path: "/portal/workflow",
         element: <Workflow />,
+        permission: "workflow.create",
       },
       {
-        path: "/portal/workflow/:id?",
+        path: "/portal/workflow/:id",
         element: <Workflow />,
+        permission: "workflow.update",
       },
       {
         path: "/portal/workflow-draft/:workflow_id/:id/view",
         element: <WorkflowDraft isView />,
+        permission: "workflowDraft.view",
       },
       {
         path: "/portal/workflow-draft/:workflow_id/:id/edit",
         element: <WorkflowDraft />,
+        permission: "workflowDraft.create",
       },
       {
         path: "/portal/workflow-draft/:workflow_id",
         element: <WorkflowDraft />,
+        permission: "workflowDraft.create",
       },
       {
         path: "/portal/emails",
         element: <EmailsTemplate />,
+        permission: "email.view",
       },
       {
-        path: "/portal/email/:id?",
+        path: "/portal/email",
         element: <EmailTemplate />,
+        permission: "email.create",
+      },
+      {
+        path: "/portal/email/:id",
+        element: <EmailTemplate />,
+        permission: "email.update",
       },
       {
         path: "/portal/users",
         element: <Users />,
+        permission: "user.view",
       },
       {
-        path: "/portal/user/:id?",
+        path: "/portal/user",
         element: <User />,
+        permission: "user.create",
+      },
+      {
+        path: "/portal/user/:id",
+        element: <User />,
+        permission: "user.update",
       },
       {
         path: "/portal/institutes",
         element: <Institutes />,
+        permission: "institute.view",
       },
       {
-        path: "/portal/institute/:id?",
+        path: "/portal/institute",
         element: <Institute />,
+        permission: "institute.create",
+      },
+      {
+        path: "/portal/institute/:id",
+        element: <Institute />,
+        permission: "institute.update",
       },
       {
         path: "/portal/universities",
         element: <Universities />,
+        permission: "university.view",
       },
       {
-        path: "/portal/university/:id?",
+        path: "/portal/university",
         element: <University />,
+        permission: "university.create",
+      },
+      {
+        path: "/portal/university/:id",
+        element: <University />,
+        permission: "university.update",
       },
       {
         path: "/portal/statuses",
         element: <Statuses />,
+        permission: "status.view",
       },
       {
-        path: "/portal/status/:id?",
+        path: "/portal/status",
         element: <Status />,
+        permission: "status.create",
+      },
+      {
+        path: "/portal/status/:id",
+        element: <Status />,
+        permission: "status.update",
       },
       {
         path: "/portal/forms",
         element: <Forms />,
+        permission: "form.view",
       },
       {
-        path: "/portal/form/:id?",
+        path: "/portal/form",
         element: <Form />,
+        permission: "form.create",
+      },
+      {
+        path: "/portal/form/:id",
+        element: <Form />,
+        permission: "form.update",
       },
       {
         path: "/portal/form-draft/:form_id/:id?",
         element: <FormDraft />,
+        permission: "formDraft.create",
+      },
+      {
+        path: "/portal/activities",
+        element: <Activities />,
+        permission: "activity.view",
       },
       {
         path: "/portal/activity/:id",
         element: <Activity />,
+        permission: "activity.read",
       },
       {
         path: "/portal/activity-process/:id",
         element: <ActivityProcess />,
+        permission: "activity.committed",
       },
       {
         path: "/portal/activity-accept/:id",
         element: <ActivityAccept />,
+        permission: "activity.accept",
       },
       {
         path: "/portal/activity/:id/board-definition/:evaluation_id",
         element: <ActivityBoardDefinition />,
+        permission: "activity.board-definition",
       },
     ],
   },

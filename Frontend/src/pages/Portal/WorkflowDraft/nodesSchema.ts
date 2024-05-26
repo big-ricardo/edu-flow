@@ -20,8 +20,6 @@ const schemas: NodeSchemas = {
     visible: z.boolean().default(true),
   }),
   [NodeTypes.Circle]: z.object({
-    name: z.string().min(3, { message: "Nome é obrigatório" }),
-    active: z.boolean().default(true),
     visible: z.boolean().default(false),
   }),
   [NodeTypes.SwapWorkflow]: z.object({

@@ -146,7 +146,7 @@ export const getMyActivitiesTracking = async ({
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<ReqBoardDefinitions>("/dashboard/my-activity-tracking", {
+  const res = await api.get<ReqMyActivities>("/dashboard/my-activity-tracking", {
     params: { page, limit },
   });
 

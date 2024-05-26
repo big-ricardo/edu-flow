@@ -7,20 +7,18 @@ import IFormDraft from "@interfaces/FormDraft";
 type Form = IForm;
 type ReqForms = Response<
   {
-    forms: Pick<IForm, "_id" | "name" | "slug" | "type" | "status">[];
+    forms: Pick<IForm, "_id" | "name" | "slug" | "type" | "active">[];
   } & IPagination
 >;
 type ReqForm = Response<Form>;
 type ReqFormWithFields = Response<Form & { published: IFormDraft }>;
 
 export const getForms = async ({
-  queryKey: [, page = "1", limit = "10"],
+  queryKey: [, query],
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<ReqForms>("/forms", {
-    params: { page, limit },
-  });
+  const res = await api.get<ReqForms>(`/forms?${query}`);
 
   return res.data.data;
 };

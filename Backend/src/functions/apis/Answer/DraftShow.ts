@@ -3,7 +3,7 @@ import res from "../../../utils/apiResponse";
 import AnswerRepository from "../../../repositories/Answer";
 
 const handler: HttpHandler = async (conn, req) => {
-  const { form_id } = req.params as { form_id: string };
+  const { form_id, activity_id } = req.params as { form_id: string, activity_id?: string };
 
   const answerRepository = new AnswerRepository(conn);
 
@@ -11,6 +11,7 @@ const handler: HttpHandler = async (conn, req) => {
     where: {
       form: form_id,
       submitted: false,
+      activity: activity_id ?? null,
     },
   })
 
@@ -21,6 +22,7 @@ export default new Http(handler)
   .setSchemaValidator((schema) => ({
     params: schema.object({
       form_id: schema.string().required(),
+      activity_id: schema.string().optional().nullable(),
     }),
   }))
   .configure({
@@ -28,6 +30,6 @@ export default new Http(handler)
     permission: "answer.read",
     options: {
       methods: ["GET"],
-      route: "form/{form_id}/answer",
+      route: "form/{form_id}/answer/{activity_id?}",
     },
   });

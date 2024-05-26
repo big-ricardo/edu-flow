@@ -19,7 +19,6 @@ export const schema: Schema<IAnswer> = new Schema(
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     activity: {
       type: Schema.Types.ObjectId,
-      ref: "Activity",
       required: false,
       default: null,
     },

@@ -41,16 +41,16 @@ const OpenForms: React.FC = () => {
       {isLoading && <Spinner />}
 
       {forms && (
-        <Grid
+        <Flex
           gap={4}
           mt={4}
           width="100%"
-          templateColumns="repeat(auto-fill, minmax(290px, 1fr))"
+          flexWrap="wrap"
         >
           {forms?.map((form) => (
             <FormItem key={form._id} form={form} />
           ))}
-        </Grid>
+        </Flex>
       )}
     </Box>
   );
@@ -76,8 +76,9 @@ const FormItem: React.FC<ActivityItemProps> = memo(({ form }) => {
       borderRadius="md"
       p={4}
       borderColor={"bg.border"}
-      w={"100%"}
+      w={["100%", "100%", "30%"]}
       h={"100%"}
+      gap={2}
     >
       <Stack
         spacing={2}
@@ -101,7 +102,7 @@ const FormItem: React.FC<ActivityItemProps> = memo(({ form }) => {
         </Text>
         <Text fontSize="sm">
           Fechamento:{" "}
-          {form.period?.open ? convertDateTime(form.period.open) : "Indefinido"}
+          {form.period?.open ? convertDateTime(form.period.close) : "Indefinido"}
         </Text>
       </Stack>
     </Card>

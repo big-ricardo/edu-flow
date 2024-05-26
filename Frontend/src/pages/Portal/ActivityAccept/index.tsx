@@ -164,7 +164,7 @@ export default function ActivityAccept() {
         </CardBody>
       </Card>
       <ActivityProvider>
-        <ActivityDetails activity={activity} />
+        <ActivityDetails activity={activity} w="100%" />
       </ActivityProvider>
     </Flex>
   );

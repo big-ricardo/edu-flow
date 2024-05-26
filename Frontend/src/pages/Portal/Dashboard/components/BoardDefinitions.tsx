@@ -63,8 +63,6 @@ const BoardDefinitions: React.FC = () => {
     }));
   }, [data, handleView]);
 
-  console.log(rows);
-
   if (data && data.length === 0) return null;
 
   return (

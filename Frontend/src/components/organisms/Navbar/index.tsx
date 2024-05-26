@@ -18,6 +18,7 @@ import {
   BsTag,
   BsFileEarmarkText,
   BsPostcardFill,
+  BsActivity,
 } from "react-icons/bs";
 import { FaRegEnvelope, FaUniversity } from "react-icons/fa";
 import { GoWorkflow } from "react-icons/go";
@@ -67,6 +68,15 @@ function Sidebar() {
           label="Dashboard"
           icon={BsHouse}
           active={location.pathname === "/portal"}
+        />
+      </Can>
+
+      <Can permission="activity.view">
+        <NavLink
+          to="/portal/activities"
+          label="Atividades"
+          icon={BsActivity}
+          active={location.pathname === "/portal/activities"}
         />
       </Can>
 

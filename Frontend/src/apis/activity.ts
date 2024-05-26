@@ -1,18 +1,26 @@
 import Response from "@interfaces/Response";
-import IActivity, { IActivityDetails } from "@interfaces/Activitiy";
+import IActivity from "@interfaces/Activitiy";
 import api from "@services/api";
 import IUser from "@interfaces/User";
+import IPagination from "@interfaces/Pagination";
 
 type ReqActivity = Response<IActivity>;
 
+type ReqActivities = Response<
+  {
+    activities: Pick<
+      IActivity,
+      "_id" | "name" | "status" | "users" | "protocol"
+    >[];
+  } & IPagination
+>;
+
 export const getActivities = async ({
-  queryKey: [, page = "1", limit = "10"],
+  queryKey: [, query],
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<ReqActivity>("/activities", {
-    params: { page, limit },
-  });
+  const res = await api.get<ReqActivities>(`/activities?${query}`);
 
   return res.data.data;
 };
@@ -22,7 +30,7 @@ export const getActivity = async ({
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<Response<IActivityDetails>>(`/activity/${id}`);
+  const res = await api.get<Response<IActivity>>(`/activity/${id}`);
 
   return res.data.data;
 };

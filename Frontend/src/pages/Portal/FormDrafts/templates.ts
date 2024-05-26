@@ -28,7 +28,7 @@ const created: Template = {
     },
     {
       id: "masterminds",
-      type: "multiselect",
+      type: "teacher",
       required: true,
       visible: true,
       system: true,
@@ -37,7 +37,7 @@ const created: Template = {
     },
     {
       id: "submastermind",
-      type: "multiselect",
+      type: "teacher",
       required: false,
       visible: true,
       system: true,
