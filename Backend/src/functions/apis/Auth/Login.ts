@@ -8,12 +8,12 @@ import UserRepository from "../../../repositories/User";
 import { Permissions } from "../../../services/permissions";
 
 interface Body {
-  matriculation: string;
+  email: string;
   password: string;
   acronym: string;
 }
 export const handler: HttpHandler = async (_, req, context) => {
-  const { matriculation, password, acronym } = req.body as Body;
+  const { email, password, acronym } = req.body as Body;
 
   const adminConn = await connectAdmin();
 
@@ -30,7 +30,7 @@ export const handler: HttpHandler = async (_, req, context) => {
 
   const user = await userRepository.findOne({
     where: {
-      matriculation,
+      email,
     },
   });
 
@@ -66,7 +66,7 @@ export default new Http(handler)
   .setSchemaValidator((schema) => ({
     body: schema.object().shape({
       password: schema.string().required(),
-      matriculation: schema.string().required(),
+      email: schema.string().required(),
       acronym: schema.string().required(),
     }),
   }))

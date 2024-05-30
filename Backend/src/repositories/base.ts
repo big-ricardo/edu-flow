@@ -107,8 +107,10 @@ class BaseRepository<T extends Document> {
       .exec();
   }
 
-  async count(where?: FilterQuery<T>): Promise<number> {
-    return this.model.countDocuments(where).exec();
+  async count(props?: { where: FilterQuery<T> }): Promise<number> {
+    return this.model.countDocuments(props?.where, {
+      maxTimeMS: 1000,
+    });
   }
 
   async delete({ where }: { where: FilterQuery<T> }) {

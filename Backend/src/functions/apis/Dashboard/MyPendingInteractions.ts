@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import  { IActivityStepStatus } from "../../../models/client/Activity";
+import { IActivityStepStatus } from "../../../models/client/Activity";
 import ActivityRepository from "../../../repositories/Activity";
 
 interface Query {
@@ -15,8 +15,12 @@ export const handler: HttpHandler = async (conn, req, context) => {
 
   const pendingActivities = await activityRepository.find({
     where: {
-      "interactions.answers.user._id": req.user.id,
-      "interactions.answers.status": IActivityStepStatus.idle,
+      interactions: {
+        $elemMatch: {
+          "answers.user._id": req.user.id,
+          "answers.status": IActivityStepStatus.idle,
+        },
+      },
     },
     select: {
       _id: 1,

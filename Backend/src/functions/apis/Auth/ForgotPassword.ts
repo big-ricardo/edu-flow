@@ -5,6 +5,7 @@ import { connect, connectAdmin } from "../../../services/mongo";
 import AdminClient from "../../../models/admin/Client";
 import UserRepository from "../../../repositories/User";
 import { sendEmail } from "../../../services/email";
+import emailTemplate from "../../../utils/emailTemplate";
 
 interface Body {
   email: string;
@@ -43,87 +44,20 @@ export const handler: HttpHandler = async (_, req, context) => {
     client: conn.name,
   });
 
-  const html = `
-      <div class="email-container">
-          <div class="header">
-              <h1>Edu Flow</h1>
-          </div>
-          <div class="content">
-              <p>Olá, ${user.name}!</p>
-              <p>Recebemos uma solicitação para restaurar sua senha de acesso em nosso site.</p>
-              <p>Ela ocorreu em ${new Date().toLocaleString()}.</p>
-              <p>Se você reconhece essa ação, clique no botão abaixo para prosseguir:</p>
-              <div class="button-container">
-                  <a href="${process.env.FRONTEND_URL}/auth/alter-password/${token}" class="button">REDEFINIR SENHA</a>
-              </div>
-              <p>Atenciosamente,</p>
-              <p>Equipe Edu Flow</p>
-          </div>
-          <div class="footer">
-              <p>&copy; 2024 Edu Flow. Todos os direitos reservados.</p>
-          </div>
-      </div>
-  `;
+  const content = `<p>Olá, ${user.name}!</p>
+    <p>Recebemos uma solicitação para restaurar sua senha de acesso em nosso site.</p>
+    <p>Ela ocorreu em ${new Date().toLocaleString()}.</p>
+    <p>Se você reconhece essa ação, clique no botão abaixo para prosseguir:</p>
+    <div class="button-container">
+        <a href="${
+          process.env.FRONTEND_URL
+        }/auth/alter-password/${token}" class="button">REDEFINIR SENHA</a>
+    </div>
+ `;
 
-  const css = `
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      color: #333;
-  }
-  img {
-      max-width: 100px;
-  }
-  .email-container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  .header {
-      text-align: center;
-      padding-bottom: 20px;
-  }
-  .header h1 {
-      margin: 0;
-      color: #333;
-  }
-  .content {
-      line-height: 1.6;
-  }
-  .content p {
-      margin: 10px 0;
-  }
-  .button-container {
-      text-align: center;
-      margin: 20px 0;
-  }
-  .button-container a {
-    text-align: center;
-    text-decoration: none;
-    color: #383838;
-  }
-  .button {
-      background-color: #00c0c9;
-      color: white;
-      padding: 15px 25px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
-  }
-  .footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 12px;
-      color: #999;
-  }
-  `;
+  const { html, css } = emailTemplate(content);
 
-  await sendEmail(email, "Reset Password", html, css);
+  await sendEmail(email, "EduFlow | Redefinição de senha", html, css);
 
   return res.success({
     success: true,

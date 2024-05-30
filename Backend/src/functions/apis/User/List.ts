@@ -1,7 +1,9 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import UserRepository from "../../../repositories/User";
-import FilterQueryBuilder, { WhereType } from "../../../utils/filterQueryBuilder";
+import FilterQueryBuilder, {
+  WhereType,
+} from "../../../utils/filterQueryBuilder";
 
 interface Query {
   page?: number;
@@ -33,6 +35,7 @@ const handler: HttpHandler = async (conn, req) => {
   });
 
   const total = await userRepository.count({ where });
+
   const totalPages = Math.ceil(total / limit);
 
   return res.success({
@@ -61,7 +64,12 @@ export default new Http(handler)
           .optional()
           .transform((v) => Number(v)),
         name: schema.string().min(3).max(255).optional().default(undefined),
-        matricula: schema.string().min(3).max(255).optional().default(undefined),
+        matricula: schema
+          .string()
+          .min(3)
+          .max(255)
+          .optional()
+          .default(undefined),
         active: schema.boolean().optional(),
         isExternal: schema.boolean().optional(),
       })

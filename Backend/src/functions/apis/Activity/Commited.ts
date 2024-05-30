@@ -49,7 +49,6 @@ const handler: HttpHandler = async (conn, req, context) => {
           const newUser = await userRepository.create({
             ...sub,
             roles: [IUserRoles.teacher],
-            university_degree: "mastermind",
             password: "password",
             isExternal: true,
           });
@@ -92,12 +91,10 @@ const handler: HttpHandler = async (conn, req, context) => {
     }]
   })) as IForm & { workflow: IWorkflow };
 
-  console.log("workflowDraft", form.workflow);
   const workflowDraft = await workflowDraftRepository.findById({
     id: form.workflow.published,
     select: { steps: 1 },
   });
-
 
   const firstStep = workflowDraft.steps.find((step) => step.id === "start");
 

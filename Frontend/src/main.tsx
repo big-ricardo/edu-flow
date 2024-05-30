@@ -9,6 +9,7 @@ import "./styles/global.css";
 import { isAxiosError } from "axios";
 import { ErrorBoundary } from "react-error-boundary";
 import FallbackRender from "./fallback-error";
+import "./instrument";
 
 const queryClient = new QueryClient({
   defaultOptions: {

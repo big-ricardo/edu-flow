@@ -63,7 +63,7 @@ export type IFormDraft = {
   updatedAt: string;
 } & mongoose.Document;
 
-export const schema: Schema = new Schema<IFormDraft>(
+export const schema = new Schema<IFormDraft>(
   {
     status: {
       type: String,

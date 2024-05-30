@@ -12,7 +12,7 @@ type BaseUser = {
   name: string;
   email: string;
   password: string;
-  matriculation: string;
+  matriculation?: string;
   activities: ObjectId[];
   roles: IUserRoles[];
   institute: IInstitute;
@@ -29,9 +29,12 @@ export const schema: Schema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: true },
     active: { type: Boolean, default: true },
-    matriculation: { type: String, required: true, unique: true, index: true },
-    activities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
     isExternal: { type: Boolean, default: false, index: true },
+    matriculation: {
+      type: String,
+      index: true,
+    },
+    activities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
     roles: [
       {
         type: String,
@@ -57,6 +60,10 @@ export const schema: Schema = new Schema<IUser>(
   if (!this.roles.includes(IUserRoles.teacher)) {
     this.university_degree = null;
   }
+  if (this.isExternal) {
+    this.matriculation = null;
+  }
+
   next();
 });
 

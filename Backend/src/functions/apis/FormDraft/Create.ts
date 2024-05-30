@@ -22,7 +22,9 @@ const handler: HttpHandler = async (conn, req) => {
   }
 
   const newVersion = await formDraftRepository.count({
+   where: {
     parent: id,
+    },
   });
 
   const formDraft = await formDraftRepository.create({
@@ -50,6 +52,7 @@ export default new Http(handler)
             .required()
             .matches(/(\{\{[a-z]+\.[a-z]+\}\})|([a-z]+(?:-[a-z]+)*)|([a-z]+)/),
           type: schema.string().required().oneOf(Object.values(FieldTypes)),
+          label: schema.string().required(),
           value: schema.string().nullable(),
           visible: schema.boolean().default(true),
           required: schema.boolean().required(),

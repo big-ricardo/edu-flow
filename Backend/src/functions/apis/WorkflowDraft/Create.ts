@@ -29,7 +29,9 @@ const handler: HttpHandler = async (conn, req) => {
   }
 
   const newVersion = await workflowDraftRepository.count({
-    parent: id,
+    where: {
+      parent: id,
+    },
   });
 
   const workflowDraft = await workflowDraftRepository.create({

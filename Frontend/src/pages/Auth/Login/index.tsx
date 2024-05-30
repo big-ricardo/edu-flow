@@ -30,7 +30,7 @@ const schema = z.object({
     .min(2, "A sigla deve ter no mínimo 2 caracteres")
     .trim()
     .transform((v) => v.toLowerCase().replace(/ /g, "")),
-  matriculation: z.string().min(6, "A matrícula deve ter no mínimo 6 dígitos"),
+  email: z.string().email("Insira um email válido"),
   password: z.string().min(6, "A senha deve ter no mínimo 6 dígitos"),
 });
 
@@ -155,9 +155,9 @@ const Login: React.FC = () => {
 
                 <InputText
                   input={{
-                    id: "matriculation",
-                    label: "Matrícula",
-                    placeholder: "Insira a matrícula",
+                    id: "email",
+                    label: "Email",
+                    placeholder: "Insira seu email institucional",
                   }}
                 />
 

@@ -147,7 +147,7 @@ const userSchema = new Schema<IUserChild>({
   isExternal: { type: Boolean, required: false },
   name: { type: String, required: true },
   email: { type: String, required: true },
-  matriculation: { type: String, required: true },
+  matriculation: { type: String, required: () => !(this as IUserChild).isExternal },
   university_degree: { type: String, required: false },
   institute: { type: Object, required: true },
 });

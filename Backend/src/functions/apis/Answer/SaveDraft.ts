@@ -97,7 +97,7 @@ export default new Http(handler)
   .setSchemaValidator((schema) => ({
     params: schema.object().shape({
       form_id: schema.string().required(),
-      activity_id: schema.string().optional().default(null),
+      activity_id: schema.string().optional().nullable(),
     }),
     body: schema.object().shape({}),
   }))

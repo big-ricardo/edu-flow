@@ -127,7 +127,7 @@ const ForgotPassword: React.FC = () => {
                   mt={4}
                   type="submit"
                   isLoading={isPending}
-                  colorScheme="green"
+                  colorScheme="blue"
                 >
                   Recuperar senha
                 </Button>

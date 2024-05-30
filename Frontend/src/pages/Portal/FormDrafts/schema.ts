@@ -10,7 +10,7 @@ const formsZodSchema = z
           label: z
             .string()
             .min(3, "Label precisa ter min 3 caracteres")
-            .max(100, "Label precisa ter no máximo 100 caracteres"),
+            .max(200, "Label precisa ter no máximo 100 caracteres"),
           placeholder: z.string().optional(),
           type: z.enum([
             "text",

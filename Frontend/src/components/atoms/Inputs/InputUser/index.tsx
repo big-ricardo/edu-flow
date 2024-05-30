@@ -38,8 +38,6 @@ const UserSchema = z.object({
   _id: z.string().optional(),
   name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
   email: z.string().email(),
-  matriculation: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
-  isExternal: z.boolean().default(true),
   institute: z.object({
     name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
     acronym: z.string(),
@@ -108,7 +106,6 @@ const UserModal: React.FC<UserModalProps> = ({
             <Flex direction="column" gap="4">
               <InputText input={{ id: "name", label: "Nome" }} />
               <InputText input={{ id: "email", label: "Email" }} />
-              <InputText input={{ id: "matriculation", label: "Matrícula" }} />
               <Select
                 input={{
                   id: "university_degree",

@@ -28,16 +28,23 @@ const Schema = z
       .min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
     matriculation: z
       .string()
-      .min(3, { message: "Matrícula deve ter no mínimo 3 caracteres" }),
+      .max(15, { message: "Matrícula deve ter no máximo 15 caracteres" }),
     email: z.string().email({ message: "Email inválido" }),
     roles: z.array(z.nativeEnum(IUserRoles)),
-    isExternal: z.boolean().optional(),
+    isExternal: z.boolean().optional().default(false),
     institute: z.string(),
     active: z.boolean(),
     password: z.string().optional(),
     confirmPassword: z.string().optional(),
     university_degree: z.enum(["mastermind", "doctor"]).optional().nullable(),
   })
+  .refine(
+    (data) => !data.isExternal || (data.isExternal && !data.matriculation),
+    {
+      message: "Matrícula não é necessária para usuários externos",
+      path: ["matriculation"],
+    }
+  )
   .refine(
     (data) =>
       !data.roles.includes(IUserRoles.teacher) ||
@@ -70,14 +77,14 @@ export default function User() {
   const isEditing = !!params?.id;
   const id = params?.id ?? "";
 
-  const { data: institute, isLoading } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["user", id],
     queryFn: getUser,
     enabled: isEditing,
   });
 
   const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["forms", "institute"],
+    queryKey: ["forms", "user"],
     queryFn: getUserForms,
     retryOnMount: false,
     staleTime: 1000 * 60 * 60,
@@ -112,7 +119,10 @@ export default function User() {
 
   const methods = useForm<UniversityFormInputs>({
     resolver: zodResolver(Schema),
-    defaultValues: institute ?? {},
+    defaultValues: user ?? {
+      isExternal: false,
+      active: true,
+    },
   });
 
   const {
@@ -123,6 +133,7 @@ export default function User() {
   } = methods;
 
   const isTeacher = watch("roles")?.includes(IUserRoles.teacher);
+  const isExternal = watch("isExternal");
 
   const onSubmit = handleSubmit(async (data) => {
     await mutateAsync(isEditing ? { ...data, _id: id } : data);
@@ -133,13 +144,13 @@ export default function User() {
   }, [navigate]);
 
   useEffect(() => {
-    if (institute) {
+    if (user) {
       reset({
-        ...institute,
-        institute: institute.institute._id,
+        ...user,
+        institute: user.institute._id,
       });
     }
-  }, [institute, reset]);
+  }, [user, reset]);
 
   useEffect(() => {}, [errors]);
 
@@ -156,7 +167,7 @@ export default function User() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {isEditing ? "Editar" : "Criar"} Instituto
+              {isEditing ? "Editar" : "Criar"} Usuário
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
@@ -172,14 +183,16 @@ export default function User() {
               <Switch input={{ id: "active", label: "Ativo" }} />
             </Flex>
             <Flex justify="space-between" gap="4" direction={["column", "row"]}>
-              <Text
-                input={{
-                  id: "matriculation",
-                  label: "Matrícula",
-                  placeholder: "Matrícula",
-                  required: true,
-                }}
-              />
+              {!isExternal && (
+                <Text
+                  input={{
+                    id: "matriculation",
+                    label: "Matrícula",
+                    placeholder: "Matrícula",
+                    required: true,
+                  }}
+                />
+              )}
               <Select
                 input={{
                   id: "roles",

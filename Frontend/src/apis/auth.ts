@@ -4,7 +4,7 @@ import Response from "@interfaces/Response";
 type LoginResponse = Response<{ token: string }>;
 
 export const login = async (data: {
-  matriculation: string;
+  email: string;
   password: string;
   acronym: string;
 }): Promise<LoginResponse> => {

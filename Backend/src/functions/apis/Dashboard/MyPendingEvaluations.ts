@@ -15,8 +15,13 @@ export const handler: HttpHandler = async (conn, req, context) => {
 
   const pendingActivities = await activityRepository.find({
     where: {
-      "evaluations.answers.user._id": req.user.id,
-      "evaluations.answers.status": IActivityStepStatus.idle,
+      evaluations: {
+        $elemMatch: {
+          "answers.user._id": req.user.id,
+          "answers.status": IActivityStepStatus.idle,
+        },
+      },
+      "evaluations.status": IActivityStepStatus.idle,
     },
     select: {
       _id: 1,

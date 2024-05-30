@@ -9,6 +9,7 @@ const handler: HttpHandler = async (conn, req) => {
 
   const answer = await answerRepository.findOne({
     where: {
+      user: req.user.id,
       form: form_id,
       submitted: false,
       activity: activity_id ?? null,
