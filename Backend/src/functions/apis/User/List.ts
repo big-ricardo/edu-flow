@@ -2,7 +2,7 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import UserRepository from "../../../repositories/User";
 import FilterQueryBuilder, {
-  WhereType,
+  WhereEnum,
 } from "../../../utils/filterQueryBuilder";
 
 interface Query {
@@ -15,10 +15,10 @@ interface Query {
 }
 
 const filterQueryBuilder = new FilterQueryBuilder({
-  name: WhereType.ILIKE,
-  matriculation: WhereType.EQUAL,
-  active: WhereType.BOOLEAN,
-  isExternal: WhereType.BOOLEAN,
+  name: WhereEnum.ILIKE,
+  matriculation: WhereEnum.EQUAL,
+  active: WhereEnum.BOOLEAN,
+  isExternal: WhereEnum.BOOLEAN,
 });
 
 const handler: HttpHandler = async (conn, req) => {

@@ -3,7 +3,7 @@ import res from "../../../utils/apiResponse";
 import { IFormType } from "../../../models/client/Form";
 import FormRepository from "../../../repositories/Form";
 import FilterQueryBuilder, {
-  WhereType,
+  WhereEnum,
 } from "../../../utils/filterQueryBuilder";
 
 interface Query {
@@ -16,10 +16,10 @@ interface Query {
 }
 
 const filterQueryBuilder = new FilterQueryBuilder({
-  type: WhereType.ARRAY,
-  active: WhereType.BOOLEAN,
-  name: WhereType.ILIKE,
-  slug: WhereType.ILIKE,
+  type: WhereEnum.ARRAY,
+  active: WhereEnum.BOOLEAN,
+  name: WhereEnum.ILIKE,
+  slug: WhereEnum.ILIKE,
 });
 
 const handler: HttpHandler = async (conn, req) => {

@@ -6,11 +6,10 @@ import ActivityRepository from "../../../repositories/Activity";
 interface Query {
   page?: number;
   limit?: number;
-  finished?: boolean;
 }
 
 export const handler: HttpHandler = async (conn, req, context) => {
-  const { page = 1, limit = 10, finished } = req.query as Query;
+  const { page = 1, limit = 10 } = req.query as Query;
 
   const activityRepository = new ActivityRepository(conn);
 

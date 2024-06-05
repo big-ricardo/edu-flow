@@ -116,29 +116,8 @@ const ActivitiesTracking: React.FC = () => {
     }));
   }, [data, handleView, handleEdit]);
 
-  const rowsFinished = useMemo(() => {
-    if (!data || data.finishedActivities.length === 0) return null;
-
-    return data.finishedActivities.map((activity) => ({
-      ...activity,
-      createdAt: convertDateTime(activity.createdAt),
-      finished_at: convertDateTime(activity.finished_at),
-      actions: (
-        <Flex>
-          <Button mr={2} onClick={() => handleView(activity)} size="sm">
-            <FaEye />
-          </Button>
-        </Flex>
-      ),
-    }));
-  }, [data, handleView, handleEdit]);
-
-  if (!rows && !rowsFinished) {
-    return null;
-  }
-
   return (
-    <Box p={4} mb={4} bg="bg.card" borderRadius="md">
+    <Box p={4} mb={4} bg="bg.card" borderRadius="md" id="activity-tracking">
       <Heading size="md" mb="5">
         Acompanhamento de Atividades
       </Heading>
@@ -147,18 +126,10 @@ const ActivitiesTracking: React.FC = () => {
       <Tabs>
         <TabList>
           <Tab>Em andamento</Tab>
-          <Tab>Finalizadas</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
             <Table columns={columns} data={rows ?? []} isLoading={isLoading} />
-          </TabPanel>
-          <TabPanel>
-            <Table
-              columns={columnsFinished}
-              data={rowsFinished ?? []}
-              isLoading={isLoading}
-            />
           </TabPanel>
         </TabPanels>
       </Tabs>

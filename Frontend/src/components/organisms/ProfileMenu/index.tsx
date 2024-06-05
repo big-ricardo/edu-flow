@@ -86,9 +86,8 @@ const AvatarMenu: React.FC = () => {
   }, [userName, matriculation, roles, email]);
 
   return (
-    <>
+    <div id="profile-menu">
       {isMobile ? (
-        // Mobile view using Modal
         <>
           <Flex align="center" gap={2} onClick={onOpen} cursor="pointer">
             <Avatar
@@ -147,7 +146,7 @@ const AvatarMenu: React.FC = () => {
           </PopoverContent>
         </Popover>
       )}
-    </>
+    </div>
   );
 };
 

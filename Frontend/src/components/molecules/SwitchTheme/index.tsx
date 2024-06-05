@@ -13,6 +13,7 @@ const SwitchTheme: React.FC = () => {
       size="xs"
       onClick={toggleColorMode}
       icon={useColorModeValue(<FaMoon />, <FaSun />)}
+      id="switch-theme"
     />
   );
 };

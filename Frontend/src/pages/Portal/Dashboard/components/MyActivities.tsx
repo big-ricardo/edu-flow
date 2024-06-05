@@ -132,7 +132,7 @@ const MyActivities: React.FC = () => {
   }, [data, handleView, handleEdit]);
 
   return (
-    <Box p={4} mb={4} bg="bg.card" borderRadius="md">
+    <Box p={4} mb={4} bg="bg.card" borderRadius="md" id="my-activities">
       <Heading size="md" mb="5">
         Minhas Atividades
       </Heading>

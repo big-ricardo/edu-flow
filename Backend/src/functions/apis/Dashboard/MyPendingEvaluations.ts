@@ -21,7 +21,6 @@ export const handler: HttpHandler = async (conn, req, context) => {
           "answers.status": IActivityStepStatus.idle,
         },
       },
-      "evaluations.status": IActivityStepStatus.idle,
     },
     select: {
       _id: 1,
@@ -38,7 +37,9 @@ export const handler: HttpHandler = async (conn, req, context) => {
     .map((activity) => {
       const evaluation = activity.evaluations.find((evaluation) =>
         evaluation.answers.some(
-          (answer) => answer.user._id.toString() === req.user.id
+          (answer) =>
+            answer.user._id.toString() === req.user.id &&
+            answer.status === IActivityStepStatus.idle
         )
       );
 
@@ -47,7 +48,9 @@ export const handler: HttpHandler = async (conn, req, context) => {
       }
 
       const myAnswer = evaluation.answers.find(
-        (answer) => answer.user._id.toString() === req.user.id
+        (answer) =>
+          answer.user._id.toString() === req.user.id &&
+          answer.status === IActivityStepStatus.idle
       );
 
       return {

@@ -4,6 +4,7 @@ import { Tbody, Tr, Td } from "@chakra-ui/react";
 import { TableHeadProps } from "../TableHead";
 
 export interface TableData {
+  _id: string;
   [key: string]: string | React.ReactNode;
 }
 

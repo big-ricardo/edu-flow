@@ -26,7 +26,7 @@ const OpenForms: React.FC = () => {
 
   if (!forms || forms.length === 0) {
     return (
-      <Box p={4} bg="bg.card" borderRadius="md">
+      <Box p={4} bg="bg.card" borderRadius="md" id="open-forms">
         <Heading size="md">Formulários Abertos</Heading>
         <Text>Nenhuma formulário disponível no momento.</Text>
       </Box>
@@ -34,7 +34,7 @@ const OpenForms: React.FC = () => {
   }
 
   return (
-    <Box p={4} bg="bg.card" borderRadius="md">
+    <Box p={4} bg="bg.card" borderRadius="md" id="open-forms">
       <Heading size="md">Formulários Abertos</Heading>
       <Divider my={2} />
 

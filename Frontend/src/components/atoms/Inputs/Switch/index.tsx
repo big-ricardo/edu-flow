@@ -12,6 +12,7 @@ interface SwitchProps {
     id: string;
     label: string;
     required?: boolean;
+    defaultValue?: boolean;
   };
   isDisabled?: boolean;
 }
@@ -41,7 +42,7 @@ const Switch: React.FC<SwitchProps> = ({ input, isDisabled }) => {
               onChange={onChange}
               isChecked={value}
               ml={2}
-              defaultChecked
+              defaultChecked={input.defaultValue}
             />
           )}
           rules={{ required: !!input.required }}

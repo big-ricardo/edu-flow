@@ -2,8 +2,9 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import ActivityRepository from "../../../repositories/Activity";
 import FilterQueryBuilder, {
-  WhereType,
+  WhereEnum,
 } from "../../../utils/filterQueryBuilder";
+import { IUserRoles } from "../../../models/client/User";
 
 interface Query {
   page?: number;
@@ -11,24 +12,58 @@ interface Query {
   name?: string;
   protocol?: string;
   status?: string;
+  finished_at?: boolean;
 }
 
-const filterQueryBuilder = new FilterQueryBuilder({
-  name: WhereType.ILIKE,
-  status: WhereType.ILIKE,
-  protocol: WhereType.ILIKE,
-});
+const filterQueryBuilder = new FilterQueryBuilder(
+  {
+    name: WhereEnum.ILIKE,
+    status: {
+      type: WhereEnum.ILIKE,
+      alias: "status.name",
+    },
+    protocol: WhereEnum.ILIKE,
+    finished_at: WhereEnum.CUSTOM,
+  },
+  {
+    finished_at: (value) => ({
+      $ne: value === "true" ? null : undefined,
+    }),
+  }
+);
 
 const handler: HttpHandler = async (conn, req) => {
   const { page = 1, limit = 10, ...filters } = req.query as Query;
+  const isAdmin = req.user.roles.includes(IUserRoles.admin);
 
   const activityRepository = new ActivityRepository(conn);
 
   const where = filterQueryBuilder.build(filters);
 
+  console.log("where", where);
+
   const activities = await activityRepository.find({
     skip: (page - 1) * limit,
-    where,
+    where: isAdmin
+      ? where
+      : {
+          ...where,
+          $and: [
+            {
+              $or: [
+                {
+                  "users._id": req.user.id,
+                },
+                {
+                  "sub_masterminds._id": req.user.id,
+                },
+                {
+                  "masterminds.user._id": req.user.id,
+                },
+              ],
+            },
+          ],
+        },
     limit,
     select: {
       name: 1,
@@ -69,6 +104,7 @@ export default new Http(handler)
         name: schema.string().min(3).max(255).optional().default(undefined),
         status: schema.string().min(3).max(255).optional().default(undefined),
         protocol: schema.string().min(3).max(255).optional().default(undefined),
+        finished: schema.boolean().optional().default(false),
       })
       .optional(),
   }))

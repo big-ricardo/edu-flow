@@ -3,7 +3,7 @@ import res from "../../../utils/apiResponse";
 import StatusRepository from "../../../repositories/Status";
 import { StatusType } from "../../../models/client/Status";
 import FilterQueryBuilder, {
-  WhereType,
+  WhereEnum,
 } from "../../../utils/filterQueryBuilder";
 
 interface Query {
@@ -14,8 +14,8 @@ interface Query {
 }
 
 const filterQueryBuilder = new FilterQueryBuilder({
-  name: WhereType.ILIKE,
-  type: WhereType.ARRAY,
+  name: WhereEnum.ILIKE,
+  type: WhereEnum.ARRAY,
 });
 
 const handler: HttpHandler = async (conn, req, context) => {

@@ -37,7 +37,9 @@ export const handler: HttpHandler = async (conn, req, context) => {
     .map((activity) => {
       const interaction = activity.interactions.find((interaction) =>
         interaction.answers.some(
-          (answer) => answer.user._id.toString() === req.user.id
+          (answer) =>
+            answer.user._id.toString() === req.user.id &&
+            answer.status === IActivityStepStatus.idle
         )
       );
 
@@ -46,7 +48,9 @@ export const handler: HttpHandler = async (conn, req, context) => {
       }
 
       const myAnswer = interaction.answers.find(
-        (answer) => answer.user._id.toString() === req.user.id
+        (answer) =>
+          answer.user._id.toString() === req.user.id &&
+          answer.status === IActivityStepStatus.idle
       );
 
       return {

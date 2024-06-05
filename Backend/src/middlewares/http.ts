@@ -13,6 +13,7 @@ import mongo from "../services/mongo";
 import { Connection, ObjectId } from "mongoose";
 import { IInstitute } from "../models/client/Institute";
 import { Permissions } from "../services/permissions";
+import { IUserRoles } from "../models/client/User";
 
 const hasBody = ["POST", "PUT", "PATCH"];
 
@@ -32,7 +33,7 @@ interface User {
   name: string;
   matriculation: string;
   email: string;
-  role: "student" | "admin" | "teacher" | "coordinator";
+  roles: IUserRoles;
   institute: IInstitute;
   slug: string;
   permissions: Array<string>;

@@ -41,32 +41,8 @@ export const handler: HttpHandler = async (conn, req, context) => {
     },
   });
 
-  const activitiesFinished = await activityRepository.find({
-    where: {
-      finished_at: {
-        $ne: null,
-      },
-      $or: [
-        {
-          "masterminds.user._id": user._id,
-        },
-        {
-          "sub_masterminds._id": user._id,
-        },
-      ],
-    },
-    select: {
-      _id: 1,
-      name: 1,
-      description: 1,
-      protocol: 1,
-      createdAt: 1,
-    },
-  });
-
   return res.success({
     activities: activitiesOpen,
-    finishedActivities: activitiesFinished,
   });
 };
 

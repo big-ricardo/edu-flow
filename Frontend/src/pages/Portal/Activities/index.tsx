@@ -11,6 +11,7 @@ import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
 import { getActivities } from "@apis/activity";
 import IActivity from "@interfaces/Activitiy";
+import Switch from "@components/atoms/Inputs/Switch";
 
 const columns = [
   {
@@ -114,6 +115,8 @@ const Activities: React.FC = () => {
         <Text input={{ label: "Protocolo", id: "protocol" }} />
 
         <Text input={{ label: "Status", id: "status" }} />
+
+        <Switch input={{ label: "Finalizado", id: "finished_at", defaultValue: false }} />
       </Filter.Container>
 
       <Flex
