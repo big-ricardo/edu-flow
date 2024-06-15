@@ -149,7 +149,7 @@ export default function ActivityBoardDefinition() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              Confirmação de Atividade
+              Definição de Avaliadores
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">

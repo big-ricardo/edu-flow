@@ -29,13 +29,7 @@ const Table: React.FC<TableProps> = ({
 }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  return !isMobile ? (
-    <ChakraTable>
-      <TableCaption>{tableTitle}</TableCaption>
-      <TableHead columns={columns} />
-      <TableBody columns={columns} data={data} />
-    </ChakraTable>
-  ) : (
+  return isMobile ? (
     <div>
       <Text fontSize="lg" fontWeight="bold">
         {tableTitle}
@@ -54,6 +48,12 @@ const Table: React.FC<TableProps> = ({
         ))}
       </Flex>
     </div>
+  ) : (
+    <ChakraTable>
+      <TableCaption>{tableTitle}</TableCaption>
+      <TableHead columns={columns} />
+      <TableBody columns={columns} data={data} />
+    </ChakraTable>
   );
 };
 

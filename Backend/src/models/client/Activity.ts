@@ -24,7 +24,7 @@ export enum IActivityAccepted {
 }
 
 export type IComment = {
-  _id: string;
+  _id: string | mongoose.Types.ObjectId;
   user: IUserChild;
   content: string;
   viewed: mongoose.Types.ObjectId[];
@@ -104,7 +104,7 @@ export type IActivity = {
   protocol: string;
   state: IActivityState;
   users: IUserChild[];
-  form: mongoose.Types.ObjectId;
+  form: mongoose.Types.ObjectId | string;
   form_draft: IFormDraft;
   finished_at: Date | null;
   masterminds: {

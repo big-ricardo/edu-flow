@@ -69,8 +69,6 @@ class BlobUploader {
       expiresOn: new Date(new Date().valueOf() + 86400),
       permissions: BlobSASPermissions.parse("r"),
     });
-    console.log(file)
-    console.log(sas)
     file.url = sas;
     return file;
   }

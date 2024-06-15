@@ -132,7 +132,7 @@ const UserModal: React.FC<UserModalProps> = ({
                 input={{ id: "institute.university.name", label: "Nome" }}
               />
               <InputText
-                input={{ id: "institute.university.acronym", label: "Silga" }}
+                input={{ id: "institute.university.acronym", label: "Sigla" }}
               />
             </Flex>
           </FormProvider>

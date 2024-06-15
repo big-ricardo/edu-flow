@@ -7,7 +7,7 @@ export enum IFormType {
 }
 
 export type IForm = {
-  _id: string | ObjectId;
+  _id: ObjectId | string;
   name: string;
   slug: string;
   initial_status: ObjectId | null;

@@ -12,6 +12,7 @@ import {
   Divider,
   Flex,
   Heading,
+  Icon,
   Spinner,
   useToast,
 } from "@chakra-ui/react";
@@ -24,6 +25,7 @@ import { createOrUpdateForm, getForm, getFormForms } from "@apis/form";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import Select from "@components/atoms/Inputs/Select";
 import Can from "@components/atoms/Can";
+import { FaArrowAltCircleRight, FaArrowLeft } from "react-icons/fa";
 
 const statusSchema = z
   .object({
@@ -167,6 +169,13 @@ export default function Workflow() {
           w="100%"
           maxW="600px"
         >
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            w="fit-content"
+          >
+            <FaArrowLeft />
+          </Button>
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
               {isEditing ? "Editar" : "Criar"} Formulário

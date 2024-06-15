@@ -99,7 +99,7 @@ const handler: HttpHandler = async (conn, req) => {
   const activity = await activityRepository.create({
     name,
     description,
-    form: form._id,
+    form: String(form._id),
     status: status.toObject(),
     users: [user.toObject()],
     masterminds: mastermindsExists?.map((mastermind) => ({

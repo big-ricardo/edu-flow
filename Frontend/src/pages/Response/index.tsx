@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import convertToZodSchema from "@utils/convertToZodSchema";
 import { responseForm } from "@apis/response";
 import DraftHandle from "./DraftHandle";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface ResponseProps {
   isPreview?: boolean;
@@ -131,15 +132,21 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
 
   return (
     <Box p={4} minH="100vh" bg={"bg.page"}>
-      <Button colorScheme="blue" onClick={() => navigate(-1)}>
-        Voltar
-      </Button>
       <Center>
-        <Box bg={"bg.card"} w="xl" p={4} borderRadius="md" boxShadow="md">
-          <Box mb={4}>
-            <Text fontSize="2xl" fontWeight="bold">
+        <Box bg={"bg.card"} w="xl" borderRadius="md" boxShadow="md" p={4}>
+          <Flex align="center" justify="space-between">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              w="fit-content"
+            >
+              <FaArrowLeft />
+            </Button>
+            <Text fontSize="2xl" fontWeight="bold" w="100%" textAlign="center">
               {form?.name}
             </Text>
+          </Flex>
+          <Box mb={4} mt={2}>
             <Text>{form?.description}</Text>
             <Divider my={4} />
           </Box>

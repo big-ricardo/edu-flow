@@ -4,7 +4,7 @@ import ActivityDetails from "@components/organisms/ActivityDetails";
 import ActivityProvider from "@contexts/ActivityContext";
 import { useQuery } from "@tanstack/react-query";
 import React, { useCallback } from "react";
-import { FaSync } from "react-icons/fa";
+import { FaArrowLeft, FaSync } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Activity: React.FC = () => {
@@ -32,12 +32,9 @@ const Activity: React.FC = () => {
 
   return (
     <Center width="100%" p={4} flexDirection={"column"}>
-      <Box
-        w="100%"
-        mb={4}
-      >
-        <Button onClick={handleBack} colorScheme="blue">
-          Voltar
+      <Box w="100%" mb={4}>
+        <Button variant="ghost" onClick={() => navigate(-1)} w="fit-content">
+          <FaArrowLeft />
         </Button>
       </Box>
       <ActivityProvider refetch={refetch}>

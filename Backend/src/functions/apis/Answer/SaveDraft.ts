@@ -71,7 +71,7 @@ const handler: HttpHandler = async (conn, req, context) => {
   const existDraft = await answerRepository.findOne({
     where: {
       user: req.user.id,
-      form: form._id,
+      form: String(form._id),
       submitted: false,
       activity: req.params.activity_id ?? null,
     },
@@ -85,7 +85,7 @@ const handler: HttpHandler = async (conn, req, context) => {
     await answerRepository.create({
       user: req.user.id,
       activity: req.params.activity_id ?? null,
-      form: form._id,
+      form: String(form._id),
       data: answer,
     });
   }

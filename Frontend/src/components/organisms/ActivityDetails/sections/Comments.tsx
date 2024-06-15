@@ -80,16 +80,12 @@ const Comments: React.FC<CommentsProps> = ({ id }) => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>Comentários</DrawerHeader>
-          <DrawerBody>
-            <Card w="full" h="full">
-              <CardBody>
-                <Flex direction="column" gap={2} h="full" overflowY="auto">
-                  {comments?.map((comment) => (
-                    <CommentItem key={comment._id} comment={comment} />
-                  ))}
-                </Flex>
-              </CardBody>
-            </Card>
+          <DrawerBody overflow={"auto"}>
+            <Flex direction="column" gap={2} h="full" overflowY="auto">
+              {comments?.map((comment) => (
+                <CommentItem key={comment._id} comment={comment} />
+              ))}
+            </Flex>
           </DrawerBody>
           <DrawerFooter>
             <CommentForm id={id} />
