@@ -161,7 +161,6 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
                     type="submit"
                     colorScheme="blue"
                     isLoading={isSubmitting}
-                    isDisabled={isPreview || !isDirty}
                   >
                     Enviar
                   </Button>

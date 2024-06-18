@@ -7,3 +7,4 @@
 *.tfplan
 *.tfout
 .terraform.lock.hcl
+app-settings.json
