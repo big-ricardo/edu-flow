@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: 20
-  PROJECT_PATH: ./backend
+  PROJECT_PATH: ./Backend
   ARTIFACT_NAME: build-${{ github.event.repository.name }}-backend-${{ github.run_id }}
 
 jobs:
