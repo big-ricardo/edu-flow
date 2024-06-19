@@ -1,14 +1,9 @@
 import {
-  Badge,
-  Box,
-  Button,
   Flex,
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import useDrawer from "@hooks/useDrawer";
 import React, { useMemo } from "react";
-import { BiInfoCircle, BiSliderAlt } from "react-icons/bi";
 import { Handle, NodeProps, Position } from "reactflow";
 import CustomHandle from "../CustomHandle";
 
@@ -23,8 +18,6 @@ interface CircleNodeProps extends NodeProps {
 }
 
 const CircleNode: React.FC<CircleNodeProps> = ({ data, selected }) => {
-  const menuBg = useColorModeValue("white", "gray.700");
-  const { onOpen } = useDrawer();
   const theme = useColorMode();
 
   const borderColor = useMemo(() => {

@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
-import React, { memo, useCallback, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiRefresh, BiEdit } from "react-icons/bi";
 import { getForms } from "@apis/form";

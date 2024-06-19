@@ -1,24 +1,6 @@
 import { z } from "zod";
 import { IField } from "@interfaces/FormDraft";
 
-const MAX_FILE_SIZE = 20 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "application/pdf",
-];
-
-async function getBase64(file: File) {
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-
-  return new Promise((resolve, reject) => {
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-}
-
 //@ts-ignore
 export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
   const schemaObject: {

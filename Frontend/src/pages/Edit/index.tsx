@@ -19,7 +19,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import convertToZodSchema from "@utils/convertToZodSchema";
 import { updateResponseForm } from "@apis/response";
 import { getActivity } from "@apis/activity";
-import { FieldTypes } from "@interfaces/FormDraft";
 import { getForm } from "@apis/form";
 import { FaArrowLeft } from "react-icons/fa";
 

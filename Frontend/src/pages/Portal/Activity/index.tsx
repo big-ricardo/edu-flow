@@ -22,10 +22,6 @@ const Activity: React.FC = () => {
     queryFn: getActivity,
   });
 
-  const handleBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
   const handleRefresh = useCallback(() => {
     refetch();
   }, [refetch]);

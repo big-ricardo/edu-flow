@@ -15,7 +15,7 @@ import Table from "@components/organisms/Table";
 import { IActivityState } from "@interfaces/Activitiy";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FaEye, FaPen } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 

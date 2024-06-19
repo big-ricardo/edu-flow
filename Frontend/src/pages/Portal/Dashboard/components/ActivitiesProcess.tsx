@@ -1,5 +1,5 @@
 import { getApprovedActivities } from "@apis/dashboard";
-import { Box, Button, Divider, Heading, Spinner, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Heading, Text } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";

@@ -25,7 +25,7 @@ interface ResponseProps {
   isPreview?: boolean;
 }
 
-const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
+const Response: React.FC<ResponseProps> = memo(() => {
   const params = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,7 +53,7 @@ const Response: React.FC<ResponseProps> = memo(({ isPreview = false }) => {
 
   const {
     handleSubmit,
-    formState: { isDirty },
+    formState,
   } = methods;
 
   const { mutateAsync, isPending: isSubmitting } = useMutation({

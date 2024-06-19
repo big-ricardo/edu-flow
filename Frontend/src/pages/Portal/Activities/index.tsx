@@ -1,14 +1,13 @@
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
-import React, { memo, useCallback, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiRefresh, BiEdit } from "react-icons/bi";
 import Pagination from "@components/organisms/Pagination";
 import Can from "@components/atoms/Can";
 import Filter from "@components/organisms/Filter";
 import Text from "@components/atoms/Inputs/Text";
-import Select from "@components/atoms/Inputs/Select";
 import { getActivities } from "@apis/activity";
 import IActivity from "@interfaces/Activitiy";
 import Switch from "@components/atoms/Inputs/Switch";

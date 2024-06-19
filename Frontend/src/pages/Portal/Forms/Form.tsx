@@ -12,7 +12,6 @@ import {
   Divider,
   Flex,
   Heading,
-  Icon,
   Spinner,
   useToast,
 } from "@chakra-ui/react";
@@ -25,7 +24,7 @@ import { createOrUpdateForm, getForm, getFormForms } from "@apis/form";
 import TextArea from "@components/atoms/Inputs/TextArea";
 import Select from "@components/atoms/Inputs/Select";
 import Can from "@components/atoms/Can";
-import { FaArrowAltCircleRight, FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 
 const statusSchema = z
   .object({
