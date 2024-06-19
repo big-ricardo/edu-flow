@@ -41,7 +41,7 @@ jobs:
         if: steps.packages.outputs.cache-hit != 'true'
         run: |
           cd ${{ env.PROJECT_PATH }}
-          npm install
+          npm install --legacy-peer-deps
 
   build:
     runs-on: ubuntu-latest
