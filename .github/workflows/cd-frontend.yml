@@ -82,13 +82,13 @@ jobs:
       - name: "Remove Dev Dependencies"
         shell: bash
         run: |
-              pushd './ ${{env.PROJECT_PATH}}'
+              pushd '${{env.PROJECT_PATH}}'
               npm prune --production
         
       - name: "Zip build artifact"
         shell: bash
         run: |
-          pushd './ ${{env.PROJECT_PATH}}'
+          pushd '${{env.PROJECT_PATH}}'
           zip -r ${{env.ARTIFACT_NAME}}.zip * 
 
       - name: "Upload Artifact of Function App"
