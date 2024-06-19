@@ -21,6 +21,7 @@ import { updateResponseForm } from "@apis/response";
 import { getActivity } from "@apis/activity";
 import { FieldTypes } from "@interfaces/FormDraft";
 import { getForm } from "@apis/form";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface ResponseProps {
   isPreview?: boolean;
@@ -68,7 +69,7 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
     reset,
     formState: { isDirty, errors },
   } = methods;
-  
+
   console.log("erros", errors);
   useEffect(() => {
     reset(answer);
@@ -135,15 +136,21 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
 
   return (
     <Box p={4} minH="100vh" bg={bgWrapper}>
-      <Button colorScheme="blue" onClick={() => navigate(-1)}>
-        Voltar
-      </Button>
       <Center>
         <Box bg={bg} w="xl" p={4} borderRadius="md" boxShadow="md">
-          <Box mb={4}>
-            <Text fontSize="2xl" fontWeight="bold">
+          <Flex align="center" justify="space-between">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              w="fit-content"
+            >
+              <FaArrowLeft />
+            </Button>
+            <Text fontSize="2xl" fontWeight="bold" w="100%" textAlign="center">
               {form?.name}
             </Text>
+          </Flex>
+          <Box mb={4} mt={2}>
             <Text>{form?.description}</Text>
             <Divider my={4} />
           </Box>

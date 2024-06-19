@@ -2,21 +2,15 @@ import mongoose, { Connection } from "mongoose";
 import clientModels from "../models/client";
 import adminModels from "../models/admin";
 
-const {
-  MONGO_HOST,
-  MONGO_USER,
-  MONGO_PASS,
-  MONGO_PORT = "27017",
-  MONGO_ADMIN_DB = "global",
-} = process.env;
+const { MONGO_URI, MONGO_PARAMS = "", MONGO_ADMIN_DB = "global" } = process.env;
 
-if (!MONGO_HOST || !MONGO_USER || !MONGO_PASS) {
-  throw new Error("Missing MONGO_* environment variables");
+if (!MONGO_URI) {
+  throw new Error("Missing MONGO_URI environment variable");
 }
 
-const CON_STRING = `mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}:${MONGO_PORT}`;
-const PARAMS =
-  "authSource=admin&readPreference=primary&ssl=false&directConnection=true";
+const CON_STRING = MONGO_URI;
+const CON_PARAMS = MONGO_PARAMS;
+
 const mongoOptions: mongoose.ConnectOptions = {
   autoIndex: true,
   connectTimeoutMS: 10000,
@@ -26,7 +20,7 @@ const mongoOptions: mongoose.ConnectOptions = {
 const connectionMap = new Map<string, Connection>();
 
 const handleConnect = (db: string) =>
-  mongoose.createConnection(`${CON_STRING}/${db}?${PARAMS}`, mongoOptions);
+  mongoose.createConnection(`${CON_STRING}/${db}?${CON_PARAMS}`, mongoOptions);
 
 export function connect(db: string): Connection {
   if (connectionMap.has(db)) {

@@ -24,6 +24,7 @@ export const handler: HttpHandler = async (conn, req, context) => {
       name: 1,
       description: 1,
       protocol: 1,
+      state: 1,
       createdAt: 1,
     },
     populate: [

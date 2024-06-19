@@ -20,7 +20,6 @@ import {
 import InputText from "@components/atoms/Inputs/Text";
 import InfoTooltip from "@components/atoms/Inputs/InfoTooltip";
 import Select from "@components/atoms/Inputs/Select";
-import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ITeacherDegrees, IUserRoles } from "@interfaces/User";
 import { useQuery } from "@tanstack/react-query";
@@ -33,6 +32,7 @@ import {
 } from "react-hook-form";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import { z } from "zod";
+import ErrorMessages from "../ErrorMessage";
 
 const UserSchema = z.object({
   _id: z.string().optional(),
@@ -157,6 +157,7 @@ interface InputUserProps {
     describe?: string | null;
     multi?: boolean;
     created?: boolean;
+    required?: boolean;
   };
 }
 
@@ -179,6 +180,14 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
       maxLength: {
         value: input.multi ? 10 : 1,
         message: "Max length is 10f",
+      },
+      minLength: {
+        value: input.required ? 1 : 0,
+        message: "Min length is 1",
+      },
+      required: {
+        value: input.required ?? false,
+        message: "Selecione um professor",
       },
     },
   });
@@ -272,7 +281,7 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
           </Button>
         )}
       </Flex>
-      <ErrorMessage errors={errors} name={input.id} as="p" />
+      <ErrorMessages id={input.id} />
       <UserModal
         isOpen={isOpen}
         onClose={closeEditModal}

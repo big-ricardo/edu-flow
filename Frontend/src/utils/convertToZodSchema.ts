@@ -99,7 +99,7 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
               }),
             }),
           })
-        );
+        ).min(field.required ? 1 : 0, "Selecione um professor");
         break;
       default:
         fieldSchema = z.string(); // Fallback to string for unknown types
