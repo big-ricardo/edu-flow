@@ -10,6 +10,7 @@ env:
   NODE_VERSION: 20
   PROJECT_PATH: ./Frontend
   ARTIFACT_NAME: build-${{ github.event.repository.name }}frontend-${{ github.run_id }}
+  OUTPUT_PATH: /dist
   CI: false
 
 jobs:
@@ -83,14 +84,14 @@ jobs:
       - name: "Zip build artifact"
         shell: bash
         run: |
-          pushd '${{env.PROJECT_PATH}}'
+          pushd '${{env.PROJECT_PATH}}'/${{env.OUTPUT_PATH}}
           zip -r ${{env.ARTIFACT_NAME}}.zip * 
 
       - name: "Upload Artifact of Function App"
         uses: actions/upload-artifact@v3
         with:
           name: ${{env.ARTIFACT_NAME}}
-          path:  ${{env.PROJECT_PATH}}/${{env.ARTIFACT_NAME}}.zip
+          path:  ${{env.PROJECT_PATH}}/${{env.OUTPUT_PATH}}/${{env.ARTIFACT_NAME}}.zip
           if-no-files-found: error
 
   # test:
@@ -151,6 +152,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           azure_static_web_apps_api_token: ${{ secrets.TOKEN }}
           action: "upload"
-          app_location: "/"
+          app_location: "dist"
           app_artifact_location: "/"
           skip_app_build: true
