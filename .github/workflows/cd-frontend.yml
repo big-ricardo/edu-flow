@@ -35,8 +35,8 @@ jobs:
         with:
           path: |
             ${{env.PROJECT_PATH}}/node_modules
-          key: ${{ runner.os }}-backend-${{ hashFiles('${{env.PROJECT_PATH}}/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-backend-
+          key: ${{ runner.os }}-frontend-${{ hashFiles('${{env.PROJECT_PATH}}/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-frontend-
 
       - name: Install Dependencies
         if: steps.packages.outputs.cache-hit != 'true'
@@ -69,8 +69,8 @@ jobs:
         with:
           path: |
             ${{env.PROJECT_PATH}}/node_modules
-          key: ${{ runner.os }}-backend-${{ hashFiles('${{env.PROJECT_PATH}}/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-backend-
+          key: ${{ runner.os }}-frontend-${{ hashFiles('${{env.PROJECT_PATH}}/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-frontend-
 
       - name: Build
         env:
@@ -122,8 +122,8 @@ jobs:
   #       with:
   #         path: |
   #           ${{env.PROJECT_PATH}}/node_modules
-  #         key: ${{ runner.os }}-backend-${{ hashFiles('${{env.PROJECT_PATH}}/pnpm-lock.yaml') }}
-  #         restore-keys: ${{ runner.os }}-backend-
+  #         key: ${{ runner.os }}-frontend-${{ hashFiles('${{env.PROJECT_PATH}}/pnpm-lock.yaml') }}
+  #         restore-keys: ${{ runner.os }}-frontend-
 
   #     - name: Test
   #       run: |
