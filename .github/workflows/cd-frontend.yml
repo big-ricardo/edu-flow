@@ -79,12 +79,6 @@ jobs:
         run: |
               cd ${{ env.PROJECT_PATH }}
               npm run build
-
-      - name: "Remove Dev Dependencies"
-        shell: bash
-        run: |
-              pushd '${{env.PROJECT_PATH}}'
-              npm --omit=dev --legacy-peer-deps
         
       - name: "Zip build artifact"
         shell: bash
