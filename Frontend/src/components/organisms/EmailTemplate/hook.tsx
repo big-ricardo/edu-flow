@@ -5,6 +5,7 @@ import newsletter from "grapesjs-preset-newsletter";
 import customCode from "grapesjs-custom-code";
 import parserPostcss from "grapesjs-parser-postcss";
 import pluginExport from "grapesjs-plugin-export";
+// @ts-ignore
 import pluginJsTable from "grapesjs-table";
 
 interface EmailTemplateHookProps {

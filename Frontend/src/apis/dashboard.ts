@@ -13,6 +13,7 @@ type Activity = Pick<
   | "protocol"
   | "state"
   | "form_draft"
+  | "finished_at"
 > & {
   users: {
     _id: string;

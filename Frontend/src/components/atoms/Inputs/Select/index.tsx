@@ -35,6 +35,19 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
   const backgroundColorHover = colorMode === "light" ? "#e9e9e9" : "#363636";
   const color = colorMode === "light" ? "#000" : "#fff";
 
+  const backgroundOption = useCallback(
+    (isSelect: boolean, isFocused: boolean) => {
+      if (isSelect) {
+        return backgroundColorSelected;
+      } else if (isFocused) {
+        return backgroundColorHover;
+      } else {
+        return backgroundColor;
+      }
+    },
+    [backgroundColor, backgroundColorSelected, backgroundColorHover]
+  );
+
   const styles: StylesConfig = useMemo(() => {
     return {
       control: (provided) => ({
@@ -62,9 +75,7 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
       }),
       option: (provided, state) => ({
         ...provided,
-        backgroundColor: state.isSelected
-          ? backgroundColorSelected
-          : state.isFocused && backgroundColorHover,
+        backgroundColor: backgroundOption(state.isSelected, state.isFocused),
         color: color,
         "&:hover": {
           backgroundColor: backgroundColorHover,
@@ -137,7 +148,9 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
           <ReactSelect
             value={searchValue(value)}
             ref={ref}
-            onChange={(value: { value: string }[] | { value: string }) => {
+            onChange={(newValue: unknown) => {
+              const value = newValue as { value: string }[] | { value: string };
+
               if (!value) {
                 onChange(null);
                 return;
@@ -151,7 +164,7 @@ const Select: React.FC<SelectProps> = ({ input, isMulti, isLoading }) => {
             }}
             noOptionsMessage={() => "Sem opções"}
             options={input?.options}
-            placeholder={input.placeholder || "Selecione uma opção"}
+            placeholder={input.placeholder ?? "Selecione uma opção"}
             isMulti={isMulti}
             isClearable={!input?.required}
             styles={styles}

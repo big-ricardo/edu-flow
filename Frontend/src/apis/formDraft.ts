@@ -1,11 +1,8 @@
 import Response from "@interfaces/Response";
 import IFormDraft from "@interfaces/FormDraft";
 import api from "@services/api";
-import { ReactFlowJsonObject } from "reactflow";
 
-export type ReqWorkflow = Response<
-  ReactFlowJsonObject & Omit<IFormDraft, "steps">
->;
+export type ReqFormDraft = Response<Omit<IFormDraft, "steps">>;
 
 type ReqFormDrafts = Response<{
   forms: Pick<
@@ -29,29 +26,29 @@ export const getFormDraft = async ({
 }: {
   queryKey: string[];
 }) => {
-  const res = await api.get<ReqWorkflow>(`/form-draft/${id}`);
+  const res = await api.get<ReqFormDraft>(`/form-draft/${id}`);
 
   return res.data.data;
 };
 
 export const createFormDraft = async (
-  data: Pick<IFormDraft, "fields" | "parent">,
+  data: Pick<IFormDraft, "fields" | "parent">
 ) => {
-  const res = await api.post<ReqWorkflow>(`/form-draft/${data.parent}`, data);
+  const res = await api.post<ReqFormDraft>(`/form-draft/${data.parent}`, data);
 
   return res.data.data;
 };
 
 export const publishFormDraft = async (
-  data: Pick<IFormDraft, "_id" | "status">,
+  data: Pick<IFormDraft, "_id" | "status">
 ) => {
-  const res = await api.patch<ReqWorkflow>(`/form-draft/${data._id}`, data);
+  const res = await api.patch<ReqFormDraft>(`/form-draft/${data._id}`, data);
 
   return res.data.data;
 };
 
 export const createOrUpdateFormDraft = async (
-  data: Pick<IFormDraft, "fields" | "status" | "parent" | "_id">,
+  data: Pick<IFormDraft, "fields" | "status" | "parent" | "_id">
 ) => {
   return createFormDraft(data);
 };

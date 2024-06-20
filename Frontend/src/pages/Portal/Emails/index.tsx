@@ -79,6 +79,7 @@ const Statuses: React.FC = () => {
     if (!emails) return [];
 
     return emails.map((email) => ({
+      ...email,
       slug: email.slug,
       subject: email.subject,
       actions: <Action {...email} />,

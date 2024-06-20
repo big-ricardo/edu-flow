@@ -77,7 +77,7 @@ const PendingEvaluations: React.FC = () => {
     }));
   }, [data, handleResponse]);
 
-  if (data && data.length === 0) return null;
+  if (formData && formData.length === 0) return null;
 
   return (
     <Box p={4} bg="bg.card" borderRadius="md">
@@ -88,9 +88,8 @@ const PendingEvaluations: React.FC = () => {
 
       <Table
         columns={columns}
-        data={formData}
+        data={formData ?? []}
         isLoading={isLoading}
-        emptyText="Nenhuma interação pendente."
       />
     </Box>
   );

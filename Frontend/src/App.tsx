@@ -17,7 +17,7 @@ function App() {
         window.location.href = "/";
         setAuth(null);
       }
-      return Promise.reject(error);
+      return Promise.reject(new Error(error));
     }
   );
 
@@ -62,13 +62,17 @@ function App() {
         ))}
         {auth &&
           privateRoutesPermitted.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element}>
-              {route.children?.map((child) => (
+            <Route
+              key={route?.path}
+              path={route?.path}
+              element={route?.element}
+            >
+              {route?.children?.map((child) => (
                 <Route
-                  key={`${route.path}-${child.path}`}
-                  path={child.path}
-                  element={child.element}
-                  index={child.index}
+                  key={`${route?.path}-${child?.path}`}
+                  path={child?.path}
+                  element={child?.element}
+                  index={child?.index}
                 />
               ))}
             </Route>

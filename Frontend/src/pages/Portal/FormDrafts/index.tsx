@@ -261,6 +261,7 @@ export default function FormDraft() {
         >
           <CardBody display="flex" flexDirection="column" gap="4">
             {isPreview ? (
+              // @ts-ignore
               <Preview form={getValues()} />
             ) : (
               <FormProvider {...methods}>

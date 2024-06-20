@@ -5,7 +5,7 @@ import { TableHeadProps } from "../TableHead";
 
 export interface TableData {
   _id: string;
-  [key: string]: string | React.ReactNode;
+  [key: string]: string | React.ReactNode | object;
 }
 
 interface TableBodyProps {
@@ -44,7 +44,7 @@ const Row = memo(({ row, columns }: RowProps) => {
     <Tr>
       {columns.map((column, index) => (
         <Td key={`Td-${index}`} isNumeric={column.isNumeric}>
-          {row[column.key]}
+          {row[column.key] as React.ReactNode}
         </Td>
       ))}
     </Tr>

@@ -45,12 +45,29 @@ export const getActivityForms = async () => {
   return res.data.data;
 };
 
-export const committedActivity = async (
-  data: Pick<
-    IActivity,
-    "_id" | "name" | "description" | "users" | "sub_masterminds"
-  >
-) => {
+export const committedActivity = async (data: {
+  users: [string, ...string[]];
+  _id: string;
+  name: string;
+  description: string;
+  sub_masterminds: {
+    name: string;
+    email: string;
+    institute: {
+      name: string;
+      acronym: string;
+      university: {
+        name: string;
+        acronym: string;
+        _id?: string;
+      };
+      _id?: string;
+    };
+    _id?: string;
+    matriculation?: string;
+    isExternal?: boolean;
+  }[];
+}) => {
   const res = await api.put<ReqActivity>(
     `/activity-committed/${data._id}`,
     data
@@ -66,7 +83,9 @@ export const setUserEvaluations = async ({
 }: {
   activity: string;
   evaluation: string;
-  data: Omit<IUser, "password" | "_id">;
+  data: {
+    users: Pick<IUser, "name" | "email">[];
+  };
 }) => {
   const res = await api.put<ReqActivity>(
     `/activity/${activity}/board-definition/${evaluation}`,

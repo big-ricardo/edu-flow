@@ -16,6 +16,7 @@ const ActiveStateMap = {
   [IActivityState.processing]: "Em andamento",
   [IActivityState.created]: "Fase de criação",
   [IActivityState.finished]: "Finalizado",
+  [IActivityState.committed]: "Aceito",
 };
 
 const ActivityHeader: React.FC<ActivityHeaderProps> = ({

@@ -21,6 +21,7 @@ import { updateResponseForm } from "@apis/response";
 import { getActivity } from "@apis/activity";
 import { getForm } from "@apis/form";
 import { FaArrowLeft } from "react-icons/fa";
+import IActivity from "@interfaces/Activitiy";
 
 interface ResponseProps {
   isPreview?: boolean;
@@ -43,13 +44,15 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
   });
 
   const { data: form } = useQuery({
-    queryKey: ["form", activity?.form ?? ""],
+    queryKey: ["form", activity?.form?._id ?? ""],
     queryFn: getForm,
     enabled: !!activity?.form,
   });
 
   const answer = useMemo(() => {
-    return activity?.form_draft?.fields.reduce((acc, field) => {
+    return activity?.form_draft?.fields.reduce<
+      Record<string, IActivity["form_draft"]["fields"][0]["value"]>
+    >((acc, field) => {
       if (!field.value || acc[field.id]) return acc;
       acc[field.id] = field.value;
       return acc;
@@ -69,7 +72,6 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
     formState: { isDirty, errors },
   } = methods;
 
-  console.log("erros", errors);
   useEffect(() => {
     reset(answer);
   }, [answer, reset]);
@@ -103,7 +105,6 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
     try {
       if (!params.id) return;
       await mutateAsync({
-        form: { type: "created" },
         activity_id: params?.id,
         data,
       });

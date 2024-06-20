@@ -4,6 +4,10 @@ import { FormProvider, useForm } from "react-hook-form";
 import { BiSearch } from "react-icons/bi";
 import { useSearchParams } from "react-router-dom";
 
+interface FormData {
+  [key: string]: string | string[];
+}
+
 const Container: React.FC<React.HTMLAttributes<HTMLDivElement>> = memo(
   ({ children }) => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -11,16 +15,15 @@ const Container: React.FC<React.HTMLAttributes<HTMLDivElement>> = memo(
       defaultValues: Object.fromEntries(searchParams),
     });
 
-    const onSubmit = methods.handleSubmit((data) => {
-      const search: Record<string, string | Array<string>> = {};
+    const onSubmit = methods.handleSubmit((data: FormData) => {
+      const search: Record<string, string> = {};
 
       Object.keys(data).forEach((key) => {
-        if (Array.isArray(data[key])) {
-          if (data[key].length) {
-            search[key] = data[key].join(",");
-          }
-        } else if (data[key]) {
-          search[key] = data[key];
+        const value = data[key];
+        if (Array.isArray(value)) {
+          search[key] = value.join(",");
+        } else if (value) {
+          search[key] = value;
         }
       });
 

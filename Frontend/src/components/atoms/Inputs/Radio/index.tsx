@@ -10,9 +10,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 import InfoTooltip from "../InfoTooltip";
 
-type IOption =
-  | { value: string; label: string }
-  | { label: string; options: IOption[] };
+type IOption = { value: string; label: string };
 
 interface RadioProps {
   input: {

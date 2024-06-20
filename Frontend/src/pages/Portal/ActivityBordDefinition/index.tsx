@@ -31,6 +31,7 @@ const activitySchema = z.object({
       institute: z.object({
         _id: z.string().optional(),
         name: z.string(),
+        active: z.boolean().default(true),
         acronym: z.string(),
         university: z.object({
           _id: z.string().optional(),

@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import BlockConfig from "@components/molecules/Workflow/FlowPanel/BlockConfig";
 import useDrawer from "@hooks/useDrawer";
-import { NodeTypes } from "@interfaces/Workflow";
+import { NodeTypes } from "@interfaces/WorkflowDraft";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useOnSelectionChange, useReactFlow } from "reactflow";

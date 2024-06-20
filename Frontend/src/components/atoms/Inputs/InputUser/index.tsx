@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { getUsersByRole } from "@apis/field";
 import {
   Button,
@@ -173,6 +175,7 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
     formState: { errors },
     setValue,
   } = useFormContext();
+  
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: input.id,

@@ -99,6 +99,7 @@ export type IActivity = {
   description: string;
   createdAt: string;
   updatedAt: string;
+  finished_at: string;
 };
 
 export default IActivity;

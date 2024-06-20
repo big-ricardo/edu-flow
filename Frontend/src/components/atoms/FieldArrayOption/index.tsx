@@ -1,6 +1,6 @@
 import { Button, Divider, Flex, Heading } from "@chakra-ui/react";
-import { formFormSchema } from "@pages/Portal/Forms/Form";
 import Text from "@components/atoms/Inputs/Text";
+import { formFormSchema } from "@pages/Portal/FormDrafts/schema";
 import { memo, useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaPlus, FaTrash } from "react-icons/fa";

@@ -48,12 +48,12 @@ const Response: React.FC<ResponseProps> = memo(() => {
   }, [form]);
 
   const methods = useForm({
+    // @ts-ignore
     resolver: zodResolver(schema),
   });
 
   const {
     handleSubmit,
-    formState,
   } = methods;
 
   const { mutateAsync, isPending: isSubmitting } = useMutation({

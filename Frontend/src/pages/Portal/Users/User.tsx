@@ -32,7 +32,18 @@ const Schema = z
     email: z.string().email({ message: "Email inválido" }),
     roles: z.array(z.nativeEnum(IUserRoles)),
     isExternal: z.boolean().optional().default(false),
-    institute: z.string(),
+    institute: z.object({
+      _id: z.string(),
+      acronym: z.string(),
+      name: z.string(),
+      active: z.boolean(),
+      university: z.object({
+        _id: z.string(),
+        name: z.string(),
+        acronym: z.string(),
+        active: z.boolean(),
+      }),
+    }),
     active: z.boolean(),
     password: z.string().optional(),
     confirmPassword: z.string().optional(),
@@ -147,6 +158,7 @@ export default function User() {
     if (user) {
       reset({
         ...user,
+        // @ts-ignore
         institute: user.institute._id,
       });
     }

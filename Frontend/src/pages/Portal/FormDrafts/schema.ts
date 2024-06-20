@@ -30,8 +30,24 @@ const formsZodSchema = z
           multi: z.boolean().optional().default(false),
           created: z.boolean().optional().default(false),
           required: z.boolean().optional().default(false),
-          value: z.string().optional().nullable(),
+          value: z.union([
+            z.string(),
+            z.null(),
+            z.object({
+              _id: z.string(),
+              name: z.string(),
+              matriculation: z.string(),
+              email: z.string(),
+            }),
+            z.object({
+              _id: z.string(),
+              name: z.string(),
+              matriculation: z.string(),
+              email: z.string(),
+            }),
+          ]),
           visible: z.boolean().optional().default(true),
+          predefined: z.enum(["teachers", "students", "institutions"]).nullable(),
           system: z.boolean().optional().default(false),
           weight: z.coerce
             .number()

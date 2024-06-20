@@ -91,7 +91,7 @@ const File: React.FC<FileProps> = ({ input }) => {
       fileName: file.name,
       mimeType: file.type,
       size: file.size,
-    }).catch((e: AxiosError) => {
+    }).catch((e: AxiosError<{ message?: string }>) => {
       toast({
         title: "Erro ao realizar upload do arquivo",
         description: e.response?.data?.message ?? "Erro  ao realizar upload",

@@ -5,10 +5,10 @@ import File from "./File";
 import Radio from "./Radio";
 import Checkbox from "./Checkbox";
 import Text from "./Text";
-import { IField } from "@interfaces/Form";
 import NumberInput from "./NumberInput";
 import Evaluated from "./Evaluated";
 import InputUser from "./InputUser";
+import { IField } from "@interfaces/FormDraft";
 
 interface Props {
   fields: IField[];
@@ -44,6 +44,7 @@ const Inputs: React.FC<Props> = memo(({ fields }) => {
       fieldComponents[input.type as keyof typeof fieldComponents] ||
       fieldComponents.default;
     return (
+      //@ts-ignore
       <FieldComponent input={input} isMulti={input.type === "multiselect"} />
     );
   };

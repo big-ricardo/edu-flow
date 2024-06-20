@@ -17,7 +17,7 @@ import TableHead, {
 type TableProps = {
   columns: TableHeadProps["columns"];
   tableTitle?: string;
-  data: TableData[];
+  data: TableData[] | null;
   isLoading?: boolean;
 };
 
@@ -52,7 +52,7 @@ const Table: React.FC<TableProps> = ({
     <ChakraTable>
       <TableCaption>{tableTitle}</TableCaption>
       <TableHead columns={columns} />
-      <TableBody columns={columns} data={data} />
+      <TableBody columns={columns} data={data ?? []} />
     </ChakraTable>
   );
 };
@@ -89,7 +89,7 @@ const CardItem = ({
       <Text fontSize="sm" fontWeight="bold">
         {column.label}:
       </Text>
-      <Text fontSize="sm">{data[column.key]}</Text>
+      <Text fontSize="sm">{data[column.key] as React.ReactNode}</Text>
     </Flex>
   );
 };
