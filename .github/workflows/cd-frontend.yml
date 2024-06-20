@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
               pushd '${{env.PROJECT_PATH}}'
-              npm prune --production
+              npm --omit=dev --legacy-peer-deps
         
       - name: "Zip build artifact"
         shell: bash
