@@ -84,7 +84,6 @@ export default function Institute() {
 
   const metohods = useForm<UniversityFormInputs>({
     resolver: zodResolver(Schema),
-    defaultValues: institute ?? {},
   });
 
   const {

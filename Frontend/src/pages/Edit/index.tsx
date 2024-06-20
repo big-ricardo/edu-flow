@@ -69,7 +69,7 @@ const EditResponse: React.FC<ResponseProps> = memo(() => {
   const {
     handleSubmit,
     reset,
-    formState: { isDirty, errors },
+    formState: { isDirty },
   } = methods;
 
   useEffect(() => {

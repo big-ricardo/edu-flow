@@ -16,6 +16,7 @@ const created: Template = {
       system: true,
       label: "Nome da atividade",
       predefined: null,
+      value: null,
     },
     {
       id: "description",
@@ -25,6 +26,7 @@ const created: Template = {
       system: true,
       label: "Descrição da atividade",
       predefined: null,
+      value: null,
     },
     {
       id: "masterminds",
@@ -34,6 +36,7 @@ const created: Template = {
       system: true,
       predefined: "teachers",
       label: "Orientador",
+      value: null,
     },
     {
       id: "submastermind",
@@ -43,6 +46,7 @@ const created: Template = {
       system: true,
       predefined: "teachers",
       label: "Coorientador",
+      value: null,
     },
   ],
 };
@@ -68,7 +72,7 @@ const templates: {
 const keys = Object.keys(templates);
 
 export default function getTemplate(
-  templateId: string | undefined | null,
+  templateId: string | undefined | null
 ): Template | object {
   if (!templateId) return {};
 
