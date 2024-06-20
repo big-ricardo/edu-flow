@@ -152,6 +152,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           azure_static_web_apps_api_token: ${{ secrets.TOKEN }}
           action: "upload"
-          app_location: "dist"
+          app_location: "/"
           app_artifact_location: "/"
           skip_app_build: true
