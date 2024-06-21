@@ -3,8 +3,8 @@ run-name: "[CD] Frontend by ${{ github.actor }}"
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - main
 
 env:
   NODE_VERSION: 20
@@ -126,7 +126,7 @@ jobs:
   #         npm run test
 
   deploy:
-    name: "Azure Functions Deploy"
+    name: "Azure Static Webapp Deploy"
     needs: build
     runs-on: ubuntu-latest
     outputs:

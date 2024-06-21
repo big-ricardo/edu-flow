@@ -3,8 +3,8 @@ run-name: "[CD] Backend by ${{ github.actor }}"
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - main
 
 env:
   NODE_VERSION: 20
