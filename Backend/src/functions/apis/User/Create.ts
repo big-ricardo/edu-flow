@@ -13,7 +13,7 @@ const handler: HttpHandler = async (conn, req, context) => {
 
   const hasInstitute = await instituteRepository.findOne({
     where: {
-      _id: data.institute,
+      _id: data.institute?._id ?? data.institute,
       active: true,
     },
   });

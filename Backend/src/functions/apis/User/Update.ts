@@ -18,7 +18,7 @@ const handler: HttpHandler = async (conn, req, context) => {
   const hasInstitute = data.institute
     ? (
         await new Institute(conn).model().findOne({
-          _id: data.institute,
+          _id: data.institute?._id ?? data.institute,
         })
       ).toObject()
     : existingUser.institute;

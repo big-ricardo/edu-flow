@@ -3,6 +3,7 @@ import Response from "@interfaces/Response";
 import IUser from "@interfaces/User";
 import api from "@services/api";
 import IInstitute from "@interfaces/Institute";
+import Institute from "@pages/Portal/Institutes/Institute";
 
 type User = Pick<
   IUser,
@@ -41,7 +42,7 @@ export const getUser = async ({ queryKey: [, id] }: { queryKey: string[] }) => {
   return res.data.data;
 };
 
-export const createUser = async (data: Omit<User, "_id" | "password">) => {
+export const createUser = async (data: Omit<User, "_id" | "password" | "institute">) => {
   const res = await api.post<ReqUser>("/user", data);
 
   return res.data.data;
@@ -54,7 +55,11 @@ export const updateUser = async (data: User) => {
 };
 
 export const createOrUpdateUser = async (
-  data: Omit<User, "_id" | "password"> & { _id?: string; password?: string }
+  data: Omit<User, "_id" | "password" | "institute"> & {
+    _id?: string;
+    password?: string;
+    institute: IInstitute | string;
+  }
 ) => {
   if (data?._id) {
     return updateUser(data as User);

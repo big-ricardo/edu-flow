@@ -132,12 +132,12 @@ export default class Http {
       );
     } catch (error) {
       context.error(error);
-      Sentry.captureException(error);
 
       if (error.name === "TokenExpiredError") {
         return res.unauthorized("Token expired in " + error.expiredAt);
       }
 
+      Sentry.captureException(error);
       if (error.status) {
         return res.error(error.status, null, error.message);
       }
