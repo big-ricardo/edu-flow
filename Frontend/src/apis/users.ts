@@ -3,7 +3,6 @@ import Response from "@interfaces/Response";
 import IUser from "@interfaces/User";
 import api from "@services/api";
 import IInstitute from "@interfaces/Institute";
-import Institute from "@pages/Portal/Institutes/Institute";
 
 type User = Pick<
   IUser,
