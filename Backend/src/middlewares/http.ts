@@ -14,6 +14,7 @@ import { Connection, ObjectId } from "mongoose";
 import { IInstitute } from "../models/client/Institute";
 import { Permissions } from "../services/permissions";
 import { IUserRoles } from "../models/client/User";
+import Sentry from "../services/sentry";
 
 const hasBody = ["POST", "PUT", "PATCH"];
 
@@ -131,6 +132,7 @@ export default class Http {
       );
     } catch (error) {
       context.error(error);
+      Sentry.captureException(error);
 
       if (error.name === "TokenExpiredError") {
         return res.unauthorized("Token expired in " + error.expiredAt);
