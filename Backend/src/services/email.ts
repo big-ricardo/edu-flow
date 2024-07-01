@@ -1,20 +1,14 @@
-import * as nodemailer from "nodemailer";
+import sendgrid from "@sendgrid/mail";
 import * as cheerio from "cheerio";
 
-const userAccount = process.env.EMAIL_ACCOUNT;
-const userPassword = process.env.EMAIL_PASSWORD;
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
 
-if (!userAccount || !userPassword) {
-  throw new Error("Email account or password not found");
+if (!sendgridApiKey) {
+  throw new Error("SENDGRID_API_KEY not found");
 }
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: userAccount,
-    pass: userPassword,
-  },
-});
+sendgrid.setApiKey(sendgridApiKey);
+
 
 export const sendEmail = async (
   to: string | Array<string>,
@@ -24,8 +18,8 @@ export const sendEmail = async (
 ) => {
   const { html: htmlWithCid, attachments } = convertBase64ToCid(html, css);
 
-  await transporter
-    .sendMail({
+  await sendgrid
+    .send({
       from: process.env.EMAIL_ACCOUNT,
       to,
       subject,

@@ -5,14 +5,15 @@
     "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
     "AzureWebJobsStorage": "",
     "AZURE_STORAGE_CONNECTION_STRING": "",
-     "AZURE_SERVICE_BUS_CONNECTION_STRING": "",
+    "AZURE_SERVICE_BUS_CONNECTION_STRING": "",
     "JWT_SECRET": "",
-    "MONGO_HOST": "",
-    "MONGO_PORT": "",
-    "MONGO_USER": "",
-    "MONGO_PASS": "",
-    "EMAIL_ACCOUNT": "",
-    "EMAIL_PASSWORD": ""
+    "JWT_RESET_PASSWORD_SECRET": "",
+    "FRONTEND_URL": "",
+    "MONGO_URI": "",
+    "MONGO_PARAMS": "",
+    "SENTRY_DSN": "",
+    "SENDGRID_API_KEY": "",
+    "NODE_ENV": "development"
   },
   "Host": {
     "CORS": "*"
