@@ -41,7 +41,9 @@ export const getUser = async ({ queryKey: [, id] }: { queryKey: string[] }) => {
   return res.data.data;
 };
 
-export const createUser = async (data: Omit<User, "_id" | "password" | "institute">) => {
+export const createUser = async (
+  data: Omit<User, "_id" | "password" | "institute">
+) => {
   const res = await api.post<ReqUser>("/user", data);
 
   return res.data.data;
@@ -73,6 +75,15 @@ type ReqUserForms = Response<{
 }>;
 export const getUserForms = async () => {
   const res = await api.get<ReqUserForms>("/user/forms");
+
+  return res.data.data;
+};
+
+type ReqTutorials = Response<{ tutorials: string[] }>;
+export const updateTutorials = async (id: string, tutorial: string) => {
+  const res = await api.get<ReqTutorials>(`/user/${id}/tutorial`, {
+    params: { tutorial },
+  });
 
   return res.data.data;
 };

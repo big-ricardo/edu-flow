@@ -25,6 +25,50 @@ import { GoWorkflow } from "react-icons/go";
 import React from "react";
 import Can from "@components/atoms/Can";
 import Icon from "@components/atoms/Icon";
+import Tutorial, { JoyrideSteps } from "@components/molecules/Tutorial";
+
+const steps: JoyrideSteps = [
+  {
+    target: "#dashboard",
+    content: "Clique aqui para voltar para a página inicial quando quiser.",
+  },
+  {
+    target: "#activities",
+    content: "Clique aqui para ver as suas atividades.",
+  },
+  {
+    target: "#users",
+    content: "Clique aqui para adicionar/ver usuários.",
+  },
+  {
+    target: "#institutes",
+    content: "Clique aqui para ver as instituições.",
+  },
+  {
+    target: "#universities",
+    content: "Clique aqui para ver as universidades.",
+  },
+  {
+    target: "#statuses",
+    content: "Clique aqui para criar/editar os status.",
+  },
+  {
+    target: "#emails",
+    content: "Clique aqui para criar/editar os templates de emails.",
+  },
+  {
+    target: "#forms",
+    content: "Clique aqui para criar/editar os formulários.",
+  },
+  {
+    target: "#workflows",
+    content: "Clique aqui para criar/editar os fluxos.",
+  },
+  {
+    target: "#reportings",
+    content: "Clique aqui para criar/editar os relatórios.",
+  },
+];
 
 const CustomCard = React.forwardRef<HTMLSpanElement, TagProps>(
   ({ children, ...rest }, ref) => (
@@ -56,6 +100,8 @@ function Sidebar() {
 
   return (
     <List fontSize="xl" spacing={4}>
+      <Tutorial name="navbar" steps={steps} />
+
       <Hide below="md">
         <ListItem>
           <Icon w="50px" />
@@ -64,6 +110,7 @@ function Sidebar() {
 
       <Can permission="dashboard.view">
         <NavLink
+          id="dashboard"
           to="/portal"
           label="Dashboard"
           icon={BsHouse}
@@ -73,6 +120,7 @@ function Sidebar() {
 
       <Can permission="activity.view">
         <NavLink
+          id="activities"
           to="/portal/activities"
           label="Atividades"
           icon={BsActivity}
@@ -82,6 +130,7 @@ function Sidebar() {
 
       <Can permission="user.view">
         <NavLink
+          id="users"
           to="/portal/users"
           label="Usuários"
           icon={BsPerson}
@@ -91,6 +140,7 @@ function Sidebar() {
 
       <Can permission="institute.view">
         <NavLink
+          id="institutes"
           to="/portal/institutes"
           label="Instituições"
           icon={BsBuilding}
@@ -100,6 +150,7 @@ function Sidebar() {
 
       <Can permission="university.view">
         <NavLink
+          id="universities"
           to="/portal/universities"
           label="Universidades"
           icon={FaUniversity}
@@ -109,6 +160,7 @@ function Sidebar() {
 
       <Can permission="status.view">
         <NavLink
+          id="statuses"
           to="/portal/statuses"
           label="Status"
           icon={BsTag}
@@ -118,6 +170,7 @@ function Sidebar() {
 
       <Can permission="email.view">
         <NavLink
+          id="emails"
           to="/portal/emails"
           label="Emails"
           icon={FaRegEnvelope}
@@ -127,6 +180,7 @@ function Sidebar() {
 
       <Can permission="form.view">
         <NavLink
+          id="forms"
           to="/portal/forms"
           label="Formulários"
           icon={BsFileEarmarkText}
@@ -136,6 +190,7 @@ function Sidebar() {
 
       <Can permission="workflow.view">
         <NavLink
+          id="workflows"
           to="/portal/workflows"
           label="Fluxos"
           icon={GoWorkflow}
@@ -145,6 +200,7 @@ function Sidebar() {
 
       <Can permission="reporting.view">
         <NavLink
+          id="reportings"
           to="/portal/reportings"
           label="Relatórios"
           icon={BsPostcardFill}
@@ -157,17 +213,19 @@ function Sidebar() {
 
 const NavLink = React.memo(
   ({
+    id,
     to,
     label,
     icon: Icon,
     active = false,
   }: {
+    id: string;
     to: string;
     label: string;
     icon: React.ElementType;
     active?: boolean;
   }) => (
-    <ListItem>
+    <ListItem key={id} id={id}>
       <ChakraLink as={ReactRouterLink} to={to}>
         <Tooltip
           label={label}

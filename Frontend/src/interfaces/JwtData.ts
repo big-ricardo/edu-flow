@@ -18,4 +18,5 @@ export default interface JwtData {
     name: string;
   };
   permissions: string[];
+  tutorials: string[];
 }

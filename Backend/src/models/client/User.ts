@@ -19,6 +19,7 @@ type BaseUser = {
   active: boolean;
   isExternal: boolean;
   university_degree?: string;
+  tutorials: string[];
 } & mongoose.Document;
 
 export type IUser = BaseUser;
@@ -52,6 +53,7 @@ export const schema: Schema = new Schema<IUser>(
       required: () => (this as IUser).roles?.includes(IUserRoles.teacher),
       enum: ["mastermind", "doctor"],
     },
+    tutorials: [{ type: String }],
   },
   {
     timestamps: true,

@@ -9,7 +9,7 @@ import BoardDefinitions from "./components/BoardDefinitions";
 import PendingEvaluations from "./components/MyPendingEvaluations";
 import Can from "@components/atoms/Can";
 import ActivityTracking from "./components/MyActivitiesTracking";
-import Joyride, { JoyrideSteps } from "@components/molecules/Joyride";
+import Tutorial, { JoyrideSteps } from "@components/molecules/Tutorial";
 
 const steps: JoyrideSteps = [
   {
@@ -40,7 +40,7 @@ const steps: JoyrideSteps = [
 const Dashboard: React.FC = () => {
   return (
     <Flex p={[4, 8]} width="100%" direction="column" gap={8}>
-      <Joyride run steps={steps} />
+      <Tutorial steps={steps} name="dashboard" />
       <Can permission="activity.create">
         <OpenForms />
       </Can>

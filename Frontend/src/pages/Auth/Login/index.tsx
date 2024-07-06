@@ -67,7 +67,7 @@ const Login: React.FC = () => {
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
         title: "Erro ao fazer login",
-        description: error?.response?.data?.message ?? error.message,
+        description: error.message,
         status: "error",
         duration: 9000,
         isClosable: true,
