@@ -45,7 +45,6 @@ const Login: React.FC = () => {
 
   const toast = useToast({
     position: "top-right",
-    variant: "left-accent",
     isClosable: true,
   });
   const [, setAuth] = useAuth();

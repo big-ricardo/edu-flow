@@ -53,7 +53,6 @@ export default function Workflow() {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["workflows"] });
@@ -66,7 +65,6 @@ export default function Workflow() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },

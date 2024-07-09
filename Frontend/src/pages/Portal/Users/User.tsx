@@ -114,7 +114,6 @@ export default function User() {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       navigate(-1);
@@ -125,7 +124,6 @@ export default function User() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },

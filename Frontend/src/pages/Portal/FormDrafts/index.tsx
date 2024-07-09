@@ -76,7 +76,6 @@ export default function FormDraft() {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["form-drafts"] });
@@ -88,7 +87,6 @@ export default function FormDraft() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },
@@ -103,7 +101,6 @@ export default function FormDraft() {
           status: "success",
           duration: 3000,
           isClosable: true,
-          variant: "left-accent",
           position: "top-right",
         });
         queryClient.invalidateQueries({ queryKey: ["form-draft", id] });
@@ -115,7 +112,6 @@ export default function FormDraft() {
           status: "error",
           duration: 3000,
           isClosable: true,
-          variant: "left-accent",
           position: "top-right",
         });
       },

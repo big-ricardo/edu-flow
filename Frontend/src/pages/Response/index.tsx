@@ -64,7 +64,6 @@ const Response: React.FC<ResponseProps> = memo(() => {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       navigate(-1);
@@ -75,7 +74,6 @@ const Response: React.FC<ResponseProps> = memo(() => {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },

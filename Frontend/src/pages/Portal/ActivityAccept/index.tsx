@@ -46,7 +46,6 @@ export default function ActivityAccept() {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["activities"] });
@@ -59,7 +58,6 @@ export default function ActivityAccept() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },

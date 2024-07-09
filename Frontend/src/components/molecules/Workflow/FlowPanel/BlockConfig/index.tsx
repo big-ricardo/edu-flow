@@ -9,7 +9,15 @@ import {
   useForm,
   useFormContext,
 } from "react-hook-form";
-import { Button, Flex, Spinner } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Spinner,
+} from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Text from "@components/atoms/Inputs/Text";
 import nodesSchema, {
@@ -18,7 +26,8 @@ import nodesSchema, {
 import Switch from "@components/atoms/Inputs/Switch";
 import NumberInput from "@components/atoms/Inputs/NumberInput";
 import { getFormWithFields } from "@apis/form";
-import { FaTrash } from "react-icons/fa";
+import { FaPlusCircle, FaTrash } from "react-icons/fa";
+import StatusForm from "@pages/Portal/Statuses/Form";
 
 interface BlockConfigProps {
   type: NodeTypes;
@@ -137,15 +146,30 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 required: true,
               }}
             />
-            <Select
-              input={{
-                label: "Status",
-                id: "status_id",
-                placeholder: "Selecione um status",
-                options: formsData?.statuses ?? [],
-                required: true,
-              }}
-            />
+
+            <Flex justifyContent={"space-between"} alignItems={"end"} gap={5}>
+              <Select
+                input={{
+                  label: "Status",
+                  id: "status_id",
+                  placeholder: "Selecione um status",
+                  options: formsData?.statuses ?? [],
+                  required: true,
+                }}
+              />
+
+              <Popover>
+                <PopoverTrigger>
+                  <Button leftIcon={<FaPlusCircle />}></Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverBody>
+                    <StatusForm bg={"transparent"} isModal />
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            </Flex>
+
             <Switch
               input={{
                 label: "Visivel",

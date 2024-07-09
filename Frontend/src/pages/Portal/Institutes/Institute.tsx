@@ -65,7 +65,6 @@ export default function Institute() {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       navigate(-1);
@@ -76,7 +75,6 @@ export default function Institute() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },

@@ -30,7 +30,8 @@
       "@config/*": ["config/*"],
       "@constants/*": ["constants/*"],
       "@contexts/*": ["contexts/*"],
-      "@apis/*": ["apis/*"]
+      "@apis/*": ["apis/*"],
+      "@docs/*": ["docs/*"],
     }
   },
   "include": ["src"],

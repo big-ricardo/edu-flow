@@ -111,19 +111,17 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       navigate(`/portal/workflow-draft/${data.parent}/${data._id}/view`);
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
+      console.log(error)
       toast({
         title: `Erro ao ${isEditing ? "editar" : "criar"} workflow`,
-        description: error?.response?.data?.message ?? error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },
@@ -147,7 +145,6 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
           status: "error",
           duration: 3000,
           isClosable: true,
-          variant: "left-accent",
           position: "top-right",
         });
         return;

@@ -98,7 +98,6 @@ const File: React.FC<FileProps> = ({ input }) => {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       setUploadStatus("error");
@@ -138,7 +137,6 @@ const File: React.FC<FileProps> = ({ input }) => {
           status: "error",
           duration: 3000,
           isClosable: true,
-          variant: "left-accent",
           position: "top-right",
         });
       });

@@ -19,6 +19,8 @@ import { createOrUpdateEmail, getEmail } from "@apis/email";
 import EmailTemplateHook from "@components/organisms/EmailTemplate/hook";
 import { FaArrowLeft, FaSave, FaTrashAlt } from "react-icons/fa";
 import Can from "@components/atoms/Can";
+import HelpArea from "@components/organisms/HelpArea";
+import HelpSmartValues from "@docs/smart-values";
 
 const emailSchema = z.object({
   slug: z
@@ -61,7 +63,6 @@ const EmailTemplate: React.FC = () => {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["emails"] });
@@ -74,7 +75,6 @@ const EmailTemplate: React.FC = () => {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },
@@ -166,6 +166,10 @@ const EmailTemplate: React.FC = () => {
               <FaSave /> &nbsp; Salvar Alterações
             </Button>
           </Can>
+
+          <HelpArea>
+            <HelpSmartValues />
+          </HelpArea>
         </Flex>
       </Card>
 

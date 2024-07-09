@@ -40,7 +40,6 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["workflow", id] });
@@ -53,7 +52,6 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },

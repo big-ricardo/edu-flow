@@ -65,7 +65,6 @@ export default function ActivityBoardDefinition() {
         status: "success",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["activities"] });
@@ -78,7 +77,6 @@ export default function ActivityBoardDefinition() {
         status: "error",
         duration: 3000,
         isClosable: true,
-        variant: "left-accent",
         position: "top-right",
       });
     },

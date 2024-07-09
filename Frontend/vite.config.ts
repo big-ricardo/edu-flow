@@ -41,6 +41,7 @@ export default ({ mode }) => {
         "@constants": "/src/constants",
         "@contexts": "/src/contexts",
         "@apis": "/src/apis",
+        "@docs": "/src/docs",
       },
     },
   
