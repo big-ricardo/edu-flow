@@ -10,13 +10,27 @@ const replaceSmartValues = async <T extends string | string[]>({
   activity_id: string;
   replaceValues: T;
 }): Promise<T> => {
-  const activity = (
+  const activityBase = (
     await new Activity(conn).model().findById(activity_id)
   ).toObject();
 
-  if (!activity) {
+  if (!activityBase) {
     return replaceValues;
   }
+
+  const customFields = activityBase?.form_draft.fields.reduce((acc, field) => {
+    if (field.system) {
+      return acc;
+    }
+
+    acc[field.id] = field.value;
+    return acc;
+  }, {});
+
+  const activity = {
+    ...activityBase,
+    ...customFields,
+  };
 
   if (Array.isArray(replaceValues)) {
     return replaceValues.map((replaceValue) => {

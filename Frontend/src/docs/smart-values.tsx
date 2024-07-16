@@ -1,6 +1,56 @@
-import { Flex, Heading, Text, List, ListItem, Code } from "@chakra-ui/react";
+import {
+  Flex,
+  List,
+  ListItem,
+  Code,
+  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
 
 const HelpSmartValues = () => {
+  const data = [
+    { field: "name", description: "Nome do Sistema" },
+    { field: "description", description: "Descrição do Sistema" },
+    { field: "state", description: "Estado do Sistema" },
+    { field: "users[].name", description: "Nome do Usuário" },
+    { field: "users[].email", description: "Email do Usuário" },
+    { field: "users[].matriculation", description: "Matrícula do Usuário" },
+    { field: "users[].institute.name", description: "Nome do Instituto" },
+    {
+      field: "users[].institute.acronym",
+      description: "Acrônimo do Instituto",
+    },
+    {
+      field: "users[].institute.university.name",
+      description: "Nome da Universidade",
+    },
+    {
+      field: "users[].institute.university.acronym",
+      description: "Acrônimo da Universidade",
+    },
+    { field: "masterminds[].user.name", description: "Nome do Orientador" },
+    { field: "masterminds[].user.email", description: "Email do Orientador" },
+    {
+      field: "masterminds[].user.matriculation",
+      description: "Matrícula do Orientador",
+    },
+    {
+      field: "masterminds[].user.university_degree",
+      description: "Grau Universitário do Orientador",
+    },
+    { field: "status.name", description: "Nome do Status" },
+    { field: "status.type", description: "Tipo do Status" },
+    { field: "protocol", description: "Protocolo do Sistema" },
+  ];
+
   return (
     <Flex
       p={5}
@@ -53,16 +103,15 @@ const HelpSmartValues = () => {
         maxW="100%"
         overflowX="auto"
       >
-        Olá, ${"{{'cliente.nome'}}"}! Sua atividade está agendada para $
-        {"{{'atividade.data'}}"}.
+        Olá, ${"{{'activity.#users.name'}}"}! Seu protocolo é $
+        {"{{'activity.protocol'}}"}.
       </Code>
       <Text mb={2}>
-        Se você tiver uma atividade com o nome do cliente como "João" e a data
-        da atividade como "10 de julho", o texto será automaticamente convertido
-        para:
+        Se você tiver uma atividade com o nome do cliente como "João" e
+        protocolo 123456, o texto será automaticamente convertido para:
       </Text>
       <Code p={2} mb={5} display="block" whiteSpace="pre">
-        Olá, João! Sua atividade está agendada para 10 de julho.
+        Olá, João! Seu protocolo é 123456.
       </Code>
 
       <Heading as="h3" size="sm" mb={3}>
@@ -72,14 +121,14 @@ const HelpSmartValues = () => {
         O Smart Values também lida com listas e arrays. Por exemplo:
       </Text>
       <Code p={2} mb={2} display="block" whiteSpace="pre">
-        Itens na atividade: ${"{{'atividade.itens.#nome'}}"}.
+        Participantes: ${"{{'activity.#users.name'}}"}.
       </Code>
       <Text mb={2}>
-        Se a atividade tiver itens com os nomes "Item1", "Item2" e "Item3", o
+        Se a atividade tiver itens com os nomes "João", "Maria" e "Pedro", o
         texto será convertido para:
       </Text>
       <Code p={2} mb={5} display="block" whiteSpace="pre">
-        Itens na atividade: Item1, Item2, Item3.
+        Participantes: João, Maria, Pedro.
       </Code>
 
       <Heading as="h2" fontSize="lg" mb={3}>
@@ -99,7 +148,7 @@ const HelpSmartValues = () => {
             Crie seu template de texto
           </Text>
           : Use as variáveis dentro do template. Por exemplo:{" "}
-          <Code>Olá, ${"{{'cliente.nome'}}"}!</Code>
+          <Code>Olá, ${"{{'activity.summary'}}"}!</Code>
         </ListItem>
         <ListItem>
           3.{" "}
@@ -110,6 +159,54 @@ const HelpSmartValues = () => {
           da atividade.
         </ListItem>
       </List>
+
+      <Box maxW="800px" mx="auto">
+        <Heading as="h1" size="xl" mb={5}>
+          Campos Disponíveis para Smart Values
+        </Heading>
+        <Text mb={5}>
+          Abaixo estão listados os campos que podem ser utilizados no Smart
+          Values para personalizar suas mensagens:
+        </Text>
+        <TableContainer>
+          <Table variant="striped" colorScheme="blue" size={"sm"}>
+            <Thead>
+              <Tr>
+                <Th>Campo</Th>
+                <Th>Descrição</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {data.map((item, index) => (
+                <Tr key={index}>
+                  <Td>
+                    <Code>{item.field}</Code>
+                  </Td>
+                  <Td>{item.description}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
+
+      <Heading as="h2" fontSize="lg" my={3}>
+        Campos Customizados
+      </Heading>
+
+      <Text mb={2}>
+        Além dos campos padrão, você também pode acessar campos customizados
+        criados nos formulários da atividade. Por exemplo:
+      </Text>
+
+      <Text mb={2}>
+        Se você tiver um campo customizado com id "custom_field", você pode
+        acessá-lo da seguinte forma:
+      </Text>
+
+      <Code p={2} mb={2} display="block" whiteSpace="pre">
+        Nome do Campo: ${"{{'activity.custom_field'}}"}
+      </Code>
 
       <Heading as="h2" fontSize="lg" mb={3}>
         Dicas Úteis
@@ -134,7 +231,7 @@ const HelpSmartValues = () => {
             Arrays e Listas
           </Text>
           : Use <Code>#</Code> para indicar que está lidando com listas ou
-          arrays. Por exemplo, <Code>${"{{atividade.itens.#nome}}"}</Code>.
+          arrays. Por exemplo, <Code>${"{{activity.#user.name}}"}</Code>.
         </ListItem>
       </List>
 
@@ -159,16 +256,6 @@ const HelpSmartValues = () => {
       <Text mb={5}>
         R: Sim! Você pode usar quantas variáveis precisar dentro do seu
         template.
-      </Text>
-
-      <Heading as="h2" fontSize="lg" mb={3}>
-        Conclusão
-      </Heading>
-      <Text mb={5}>
-        O Smart Values é uma ferramenta poderosa para personalizar seus textos
-        de forma dinâmica e automática, economizando tempo e esforço. Com apenas
-        alguns passos simples, você pode criar mensagens personalizadas para
-        cada atividade. Experimente e veja como pode facilitar sua comunicação!
       </Text>
     </Flex>
   );
