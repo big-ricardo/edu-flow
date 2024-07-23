@@ -9,7 +9,6 @@ if (!sendgridApiKey) {
 
 sendgrid.setApiKey(sendgridApiKey);
 
-
 export const sendEmail = async (
   to: string | Array<string>,
   subject: string,
@@ -28,6 +27,7 @@ export const sendEmail = async (
     })
     .catch((err) => {
       console.log(err);
+      console.log(err?.response?.body);
       throw err;
     });
 };
@@ -40,7 +40,7 @@ function convertBase64ToCid(html, css) {
     const src = $(this).attr("src");
 
     // Verificar se o src contém uma imagem base64
-    if (src && src.startsWith("data:")) {
+    if (src?.startsWith("data:")) {
       const cid = crypto.randomUUID(); // Gerar um CID único
       $(this).attr("src", `cid:${cid}`); // Substituir o src por cid
 
@@ -49,10 +49,10 @@ function convertBase64ToCid(html, css) {
 
       attachments.push({
         filename: `${cid}.${mimeType.split("/")[1]}`, // Nome de arquivo baseado no CID e tipo MIME
-        content: Buffer.from(base64Data, "base64"), // Conteúdo da imagem como Buffer
-        cid: cid, // Content-ID para referência no e-mail
-        contentType: mimeType, // Tipo MIME do arquivo
-        encoding: "base64",
+        content: base64Data,
+        content_id: cid, // Content-ID para referência no e-mail
+        disposition: "inline",
+        type: mimeType, // Tipo MIME do arquivo
       });
     }
   });

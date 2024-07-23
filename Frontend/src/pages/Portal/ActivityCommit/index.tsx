@@ -196,7 +196,7 @@ export default function ActivityCommit() {
             <InputUser
               input={{
                 id: "sub_masterminds",
-                label: t("common.fields.masterminds"),
+                label: t("common.fields.sub_masterminds"),
                 created: true,
               }}
             />

@@ -144,7 +144,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
                 size="sm"
                 isLoading={isPending}
               >
-                <FaSave /> &nbsp; {t("common.submit")}
+                <FaSave /> &nbsp; {t("workflowDraft.submit")}
               </Button>
             </Can>
           )}

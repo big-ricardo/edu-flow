@@ -32,8 +32,10 @@ import {
 } from "@apis/formDraft";
 import { AxiosError } from "axios";
 import Can from "@components/atoms/Can";
+import { useTranslation } from "react-i18next";
 
 export default function FormDraft() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,20 +72,22 @@ export default function FormDraft() {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createFormDraft,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
-        title: `Formulário ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t("formDraft.created"),
         status: "success",
         duration: 3000,
         isClosable: true,
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["form-drafts"] });
-      navigate(-1);
+      navigate(`/portal/form-draft/${data.parent}/${data._id}`, {
+        state: { formType },
+      });
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} formulário`,
+        title: t("formDraft.error"),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -97,7 +101,7 @@ export default function FormDraft() {
       mutationFn: publishFormDraft,
       onSuccess: () => {
         toast({
-          title: `Form publicado com sucesso`,
+          title: t("formDraft.published"),
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -107,7 +111,7 @@ export default function FormDraft() {
       },
       onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
         toast({
-          title: `Erro ao publicar formulário`,
+          title: t("formDraft.error"),
           description: error?.response?.data?.message ?? error.message,
           status: "error",
           duration: 3000,
@@ -185,17 +189,18 @@ export default function FormDraft() {
       >
         <Flex direction="row" gap="3" alignItems="center">
           <Heading size="md" fontWeight="bold">
-            {isEditing ? "Editar" : "Criar"} Formulário
+            {t(`formDraft.${isEditing ? "edit" : "create"}`)}
           </Heading>
           <Button
             colorScheme="blue"
             onClick={handleBack}
             variant="ghost"
             size="sm"
-            title="Voltar"
+            title={t("formDraft.back")}
           >
             <FaArrowLeft />
           </Button>
+          {t("common.fields.version")}: #{formDraft?.version ?? 1}
         </Flex>
 
         <Flex gap="2" align="center">
@@ -228,7 +233,7 @@ export default function FormDraft() {
               onClick={onSubmit}
               size="sm"
             >
-              <FaSave /> &nbsp; Salvar Nova Versão
+              <FaSave /> &nbsp; {t("formDraft.submit")}
             </Button>
           </Can>
 
@@ -242,7 +247,9 @@ export default function FormDraft() {
               isLoading={isPendingPublish}
             >
               <Box as={FaPushed} transform="rotate(90deg)" /> &nbsp;
-              {formDraft?.status === "published" ? "Publicado" : "Publicar"}
+              {formDraft?.status === "published"
+                ? t("formDraft.unPublish")
+                : t("formDraft.publish")}
             </Button>
           </Can>
         </Flex>

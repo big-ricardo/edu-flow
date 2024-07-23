@@ -68,7 +68,7 @@ const handler: QueueWrapperHandler<TMessage> = async (
       0
     );
 
-    evaluation.final_grade = accGrade / evaluation.answers.length;
+    evaluation.final_grade = parseFloat((accGrade / evaluation.answers.length).toFixed(2));
     evaluation.finished = true;
 
     const approved = evaluation.final_grade >= average;

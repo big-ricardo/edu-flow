@@ -285,7 +285,7 @@
     "title": "Rascunho",
     "edit": "Editar fluxo",
     "view": "Visualizar fluxo",
-    "edited": "Fluxo editado com sucesso",
+    "updated": "Fluxo editado com sucesso",
     "error": "Erro ao salvar fluxo",
     "submit": "Salvar nova versão",
     "create": "Criar fluxo",
@@ -313,7 +313,7 @@
     "create": "Criar formulário",
     "created": "Formulário criado com sucesso",
     "edit": "Editar formulário",
-    "edited": "Formulário editado com sucesso",
+    "updated": "Formulário editado com sucesso",
     "cancel": "Cancelar",
     "success": "Formulário salvo com sucesso",
     "error": "Erro ao salvar formulário",
@@ -325,5 +325,19 @@
       "interaction": "Interação",
       "evaluation": "Avaliação"
     }
+  },
+  "formDraft":{
+    "title": "Rascunho",
+    "edit": "Editar formulário",
+    "view": "Visualizar formulário",
+    "edited": "Formulário editado com sucesso",
+    "error": "Erro ao salvar formulário",
+    "submit": "Salvar nova versão",
+    "publish": "Publicar",
+    "unPublish": "Despublicar",
+    "published": "Formulário publicado com sucesso",
+    "invalid": "Formulário inválido",
+    "back": "Voltar",
+    "config": "Configuração"
   }
 }

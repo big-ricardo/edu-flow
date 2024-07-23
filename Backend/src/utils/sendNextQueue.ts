@@ -44,6 +44,8 @@ export default async function sendNextQueue({
       (step) => step.id === currentStep.next[path]
     );
 
+    console.log("Next step", nextStep, !!nextStep);
+
     if (nextStep) {
       activity.workflows[activityWorkflowIndex].steps.push({
         step: nextStep._id,

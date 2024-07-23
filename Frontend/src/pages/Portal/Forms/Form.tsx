@@ -219,7 +219,7 @@ export default function Workflow() {
                 <Select
                   input={{
                     id: "initial_status",
-                    label: t("form.fields.initialStatus"),
+                    label: t("common.fields.initialStatus"),
                     required: true,
                     options: formsData?.status ?? [],
                   }}
@@ -234,7 +234,7 @@ export default function Workflow() {
                   <Select
                     input={{
                       id: "workflow",
-                      label: t("form.fields.workflow"),
+                      label: t("common.fields.workflow"),
                       required: true,
                       options: formsData?.workflows ?? [],
                     }}
@@ -243,7 +243,7 @@ export default function Workflow() {
                   <Select
                     input={{
                       id: "institute",
-                      label: t("form.fields.institute"),
+                      label: t("common.fields.institute"),
                       options: formsData?.institutes ?? [],
                     }}
                     isLoading={isLoadingForms}
