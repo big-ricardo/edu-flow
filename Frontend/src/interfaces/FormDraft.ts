@@ -33,7 +33,7 @@ export type IField = {
     | "file"
     | "teacher";
   required?: boolean;
-  predefined: "teachers" | "students" | "institutions" | null;
+  predefined?: "teachers" | "students" | "institutions" | null;
   multi?: boolean;
   created?: boolean;
   value:
