@@ -8,6 +8,7 @@ import Pagination from "@components/organisms/Pagination";
 import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
 import React, { memo, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { BiEdit, BiRefresh } from "react-icons/bi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -20,11 +21,11 @@ const roleMap = {
 const columns = [
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "email",
-    label: "Email",
+    label: "common.fields.email",
   },
   {
     key: "institute",
@@ -32,15 +33,15 @@ const columns = [
   },
   {
     key: "active",
-    label: "Status",
+    label: "common.fields.active",
   },
   {
     key: "roles",
-    label: "Função",
+    label: "common.fields.profiles",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
@@ -61,6 +62,7 @@ const Action = memo((user: { _id: string }) => {
 });
 
 const Create = memo(() => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
@@ -71,7 +73,7 @@ const Create = memo(() => {
     <div>
       <Can permission="user.create">
         <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-          Criar Usuário
+          {t("users.create")}
         </Button>
       </Can>
     </div>
@@ -79,6 +81,7 @@ const Create = memo(() => {
 });
 
 const Users: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const {
@@ -97,7 +100,9 @@ const Users: React.FC = () => {
     return users.map((user) => ({
       ...user,
       roles: user.roles.map((role) => roleMap[role]).join(", "),
-      active: user.active ? "Ativo" : "Inativo",
+      active: user.active
+        ? t("common.fields.active")
+        : t("common.fields.inactive"),
       institute: user.institute?.acronym,
       actions: <Action {...user} />,
     }));
@@ -105,7 +110,7 @@ const Users: React.FC = () => {
 
   return (
     <Box width="100%" p={[4, 10]}>
-      <Heading>Usuários</Heading>
+      <Heading>{t("users.title")}</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -121,36 +126,36 @@ const Users: React.FC = () => {
       <Filter.Container>
         <Text
           input={{
-            label: "Nome",
+            label: t("common.fields.name"),
             id: "name",
           }}
         />
 
         <Text
           input={{
-            label: "Matrícula",
+            label: t("common.fields.matriculation"),
             id: "matriculation",
           }}
         />
 
         <Select
           input={{
-            label: "Ativo",
+            label: t("common.fields.active"),
             id: "active",
             options: [
-              { label: "Ativo", value: "true" },
-              { label: "Inativo", value: "false" },
+              { label: t("common.fields.active"), value: "true" },
+              { label: t("common.fields.inactive"), value: "false" },
             ],
           }}
         />
 
         <Select
           input={{
-            label: "Externo",
+            label: t("common.fields.external"),
             id: "isExternal",
             options: [
-              { label: "Sim", value: "true" },
-              { label: "Não", value: "false" },
+              { label: t("common.yes"), value: "true" },
+              { label: t("common.no"), value: "false" },
             ],
           }}
         />
@@ -171,7 +176,7 @@ const Users: React.FC = () => {
       </Flex>
       {isError && (
         <Flex justifyContent="center" alignItems="center" mt="4" width="100%">
-          <Heading color="red.500">Erro ao carregar dados</Heading>
+          <Heading color="red.500">{t("table.error")}</Heading>
         </Flex>
       )}
     </Box>

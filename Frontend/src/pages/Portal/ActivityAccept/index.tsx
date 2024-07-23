@@ -19,6 +19,7 @@ import { acceptActivity, getActivity } from "@apis/activity";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import ActivityProvider from "@contexts/ActivityContext";
+import { useTranslation } from "react-i18next";
 
 const activitySchema = z.object({
   accepted: z.enum(["accepted", "rejected"]),
@@ -27,6 +28,7 @@ const activitySchema = z.object({
 type ActivityFormSchema = z.infer<typeof activitySchema>;
 
 export default function ActivityAccept() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -42,7 +44,7 @@ export default function ActivityAccept() {
     mutationFn: acceptActivity,
     onSuccess: () => {
       toast({
-        title: "Atividade salvada com sucesso",
+        title: t("activityAccept.success"),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -54,7 +56,7 @@ export default function ActivityAccept() {
     },
     onError: () => {
       toast({
-        title: `Erro ao salvar atividade`,
+        title: t("activityAccept.error"),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -102,7 +104,14 @@ export default function ActivityAccept() {
     );
 
   return (
-    <Flex w={["100%", "70%"]} my="6" mx="auto" px="6" justify="center" direction="column">
+    <Flex
+      w={["100%", "70%"]}
+      my="6"
+      mx="auto"
+      px="6"
+      justify="center"
+      direction="column"
+    >
       <Card
         as="form"
         onSubmit={onSubmit}
@@ -113,7 +122,7 @@ export default function ActivityAccept() {
       >
         <CardHeader>
           <Box textAlign="center" fontSize="lg" fontWeight="bold">
-            Confirmação de Atividade
+            {t("activityAccept.title")}
           </Box>
         </CardHeader>
         <CardBody display="flex" flexDirection="column" gap="4">
@@ -132,14 +141,14 @@ export default function ActivityAccept() {
                       colorScheme="green"
                       onClick={handleAccept}
                     >
-                      Aceitar
+                      {t("activityAccept.submit")}
                     </Button>
                     <Button
                       leftIcon={<FaTimes />}
                       colorScheme="red"
                       onClick={handleReject}
                     >
-                      Rejeitar
+                      {t("activityAccept.reject")}
                     </Button>
                   </>
                 ) : (
@@ -149,10 +158,10 @@ export default function ActivityAccept() {
                       onClick={onSubmit}
                       isLoading={isPending}
                     >
-                      Confirmar
+                      {t("activityAccept.confirm")}
                     </Button>
                     <Button colorScheme="red" onClick={handleCancel}>
-                      Cancelar
+                      {t("activityAccept.cancel")}
                     </Button>
                   </>
                 )}

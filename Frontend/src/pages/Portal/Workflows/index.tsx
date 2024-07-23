@@ -8,19 +8,20 @@ import Pagination from "@components/organisms/Pagination";
 import { getWorkflows } from "@apis/workflows";
 import { IWorkflow } from "@interfaces/Workflow";
 import Can from "@components/atoms/Can";
+import { useTranslation } from "react-i18next";
 
 const columns = [
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "status",
-    label: "Status",
+    label: "common.fields.status",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
@@ -43,6 +44,7 @@ const Action = memo((workflow: Pick<IWorkflow, "name" | "active" | "_id">) => {
 });
 
 const Create = memo(() => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
@@ -53,7 +55,7 @@ const Create = memo(() => {
     <div>
       <Can permission="workflow.create">
         <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-          Criar Workflow
+          {t("workflows.create")}
         </Button>
       </Can>
     </div>
@@ -61,6 +63,7 @@ const Create = memo(() => {
 });
 
 const Statuses: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const page = searchParams.get("page") ?? 1;
@@ -80,14 +83,16 @@ const Statuses: React.FC = () => {
 
     return workflows.map((workflow) => ({
       ...workflow,
-      status: workflow.active ? "Ativo" : "Inativo",
+      status: workflow.active
+        ? t("common.fields.active")
+        : t("common.fields.inactive"),
       actions: <Action {...workflow} />,
     }));
   }, [workflows]);
 
   return (
     <Box width="100%" p="10">
-      <Heading>Workflow</Heading>
+      <Heading>{t("workflows.title")}</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -114,7 +119,7 @@ const Statuses: React.FC = () => {
       </Flex>
       {isError && (
         <Flex justifyContent="center" alignItems="center" mt="4" width="100%">
-          <Heading color="red.500">Erro ao carregar dados</Heading>
+          <Heading color="red.500">{t("workflows.error")}</Heading>
         </Flex>
       )}
     </Box>

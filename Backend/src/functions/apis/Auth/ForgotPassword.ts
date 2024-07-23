@@ -37,8 +37,6 @@ export const handler: HttpHandler = async (_, req, context) => {
     return res.notFound("User or password not found");
   }
 
-  user.password = null;
-
   const token = await jwt.signResetPassword({
     id: user._id,
     client: conn.name,

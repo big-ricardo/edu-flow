@@ -129,6 +129,8 @@ export default function FormDraft() {
     formState: { isDirty, isValid },
   } = methods;
 
+  console.log(methods.formState.errors);
+
   const onSubmit = handleSubmit(async (data) => {
     await mutateAsync({ ...data, parent: params.form_id ?? "" });
   });

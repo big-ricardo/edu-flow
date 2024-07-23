@@ -13,6 +13,7 @@ import TableBody, { TableData } from "@components/molecules/Table/TableBody";
 import TableHead, {
   TableHeadProps,
 } from "@components/molecules/Table/TableHead";
+import { useTranslation } from "react-i18next";
 
 type TableProps = {
   columns: TableHeadProps["columns"];
@@ -28,6 +29,7 @@ const Table: React.FC<TableProps> = ({
   isLoading,
 }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const { t } = useTranslation();
 
   return isMobile ? (
     <div>
@@ -39,7 +41,7 @@ const Table: React.FC<TableProps> = ({
 
         {data?.length === 0 && (
           <Text fontSize="sm" color="gray.500">
-            Nenhum dado encontrado
+            {t("table.noData")}
           </Text>
         )}
 
@@ -84,10 +86,12 @@ const CardItem = ({
   column: TableHeadProps["columns"][0];
   data: TableData;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Flex key={column.key} gap={2} direction="column">
       <Text fontSize="sm" fontWeight="bold">
-        {column.label}:
+        {t(column.label)}:
       </Text>
       <Text fontSize="sm">{data[column.key] as React.ReactNode}</Text>
     </Flex>

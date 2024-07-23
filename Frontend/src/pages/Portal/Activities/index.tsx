@@ -5,33 +5,33 @@ import React, { memo, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiRefresh, BiEdit } from "react-icons/bi";
 import Pagination from "@components/organisms/Pagination";
-import Can from "@components/atoms/Can";
 import Filter from "@components/organisms/Filter";
 import Text from "@components/atoms/Inputs/Text";
 import { getActivities } from "@apis/activity";
 import IActivity from "@interfaces/Activitiy";
 import Switch from "@components/atoms/Inputs/Switch";
+import { useTranslation } from "react-i18next";
 
 const columns = [
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "protocol",
-    label: "Protocolo",
+    label: "common.fields.protocol",
   },
   {
     key: "status",
-    label: "Status",
+    label: "common.fields.status",
   },
   {
     key: "users",
-    label: "Usuários",
+    label: "common.fields.users",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
@@ -51,25 +51,8 @@ const Action = memo((activity: Pick<IActivity, "_id">) => {
   );
 });
 
-const Create = memo(() => {
-  const navigate = useNavigate();
-
-  const handleSelect = useCallback(() => {
-    navigate(`/portal/form`);
-  }, [navigate]);
-
-  return (
-    <div>
-      <Can permission="form.create">
-        <Button colorScheme="blue" mr={2} onClick={handleSelect} size="sm">
-          Criar Formulário
-        </Button>
-      </Can>
-    </div>
-  );
-});
-
 const Activities: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const {
@@ -95,7 +78,7 @@ const Activities: React.FC = () => {
 
   return (
     <Box width="100%" p="10">
-      <Heading>Atividades</Heading>
+      <Heading> {t("common.activities")}</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -105,17 +88,22 @@ const Activities: React.FC = () => {
         >
           <BiRefresh size={20} />
         </Button>
-        <Create />
       </Flex>
 
       <Filter.Container>
-        <Text input={{ label: "Nome", id: "name" }} />
+        <Text input={{ label: t("common.fields.name"), id: "name" }} />
 
-        <Text input={{ label: "Protocolo", id: "protocol" }} />
+        <Text input={{ label: t("common.fields.protocol"), id: "protocol" }} />
 
-        <Text input={{ label: "Status", id: "status" }} />
+        <Text input={{ label: t("common.fields.status"), id: "status" }} />
 
-        <Switch input={{ label: "Finalizado", id: "finished_at", defaultValue: false }} />
+        <Switch
+          input={{
+            label: t("common.fields.finished"),
+            id: "finished_at",
+            defaultValue: false,
+          }}
+        />
       </Filter.Container>
 
       <Flex
@@ -133,7 +121,7 @@ const Activities: React.FC = () => {
       </Flex>
       {isError && (
         <Flex justifyContent="center" alignItems="center" mt="4" width="100%">
-          <Heading color="red.500">Erro ao carregar dados</Heading>
+          <Heading color="red.500">{t("table.error")}</Heading>
         </Flex>
       )}
     </Box>

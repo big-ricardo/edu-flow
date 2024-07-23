@@ -7,7 +7,6 @@ const SwitchTheme: React.FC = () => {
 
   return (
     <IconButton
-      mb={4}
       aria-label="toggle theme"
       rounded="full"
       size="xs"

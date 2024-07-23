@@ -25,6 +25,7 @@ import TextArea from "@components/atoms/Inputs/TextArea";
 import Select from "@components/atoms/Inputs/Select";
 import Can from "@components/atoms/Can";
 import { FaArrowLeft } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const statusSchema = z
   .object({
@@ -78,6 +79,7 @@ const statusSchema = z
 type StatusFormSchema = z.infer<typeof statusSchema>;
 
 export default function Workflow() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
@@ -103,7 +105,7 @@ export default function Workflow() {
     mutationFn: createOrUpdateForm,
     onSuccess: (data) => {
       toast({
-        title: `Formulário ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t(`form.${isEditing ? "updated" : "created"}`),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -115,7 +117,7 @@ export default function Workflow() {
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} formulário`,
+        title: t("form.error"),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -166,33 +168,27 @@ export default function Workflow() {
           w="100%"
           maxW="600px"
         >
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            w="fit-content"
-          >
+          <Button variant="ghost" onClick={() => navigate(-1)} w="fit-content">
             <FaArrowLeft />
           </Button>
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {isEditing ? "Editar" : "Criar"} Formulário
+              {t(`form.${isEditing ? "edit" : "create"}`)}
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
             <Text
               input={{
                 id: "name",
-                label: "Nome",
-                placeholder: "Nome",
+                label: t("common.fields.name"),
                 required: true,
-                describe: "Coloque um nome para o formulário",
               }}
             />
 
             <Switch
               input={{
                 id: "active",
-                label: "Ativo",
+                label: t("common.fields.active"),
                 required: true,
               }}
             />
@@ -200,23 +196,20 @@ export default function Workflow() {
             <Text
               input={{
                 id: "slug",
-                label: "Digite um slug único para o formulário",
-                placeholder: "Slug",
+                label: t("common.fields.slug"),
                 required: true,
-                describe: "Slug é utilizado para acessar o formulário",
               }}
             />
             <Flex gap="4">
               <Select
                 input={{
                   id: "type",
-                  label: "Tipo",
-                  placeholder: "Tipo",
+                  label: t("common.fields.type"),
                   required: true,
                   options: [
-                    { label: "Criação de Atividade", value: "created" },
-                    { label: "Interação com Atividade", value: "interaction" },
-                    { label: "Avaliação de Atividade", value: "evaluated" },
+                    { label: t("form.type.created"), value: "created" },
+                    { label: t("form.type.interaction"), value: "interaction" },
+                    { label: t("form.type.evaluated"), value: "evaluated" },
                   ],
                   isDisabled: isEditing,
                 }}
@@ -226,11 +219,9 @@ export default function Workflow() {
                 <Select
                   input={{
                     id: "initial_status",
-                    label: "Status inicial da atividade",
-                    placeholder: "Status inicial",
+                    label: t("form.fields.initialStatus"),
                     required: true,
                     options: formsData?.status ?? [],
-                    describe: "Esse status será o primeiro status da atividade",
                   }}
                   isLoading={isLoadingForms}
                 />
@@ -243,23 +234,17 @@ export default function Workflow() {
                   <Select
                     input={{
                       id: "workflow",
-                      label: "Workflow",
-                      placeholder: "Workflow Acionado",
+                      label: t("form.fields.workflow"),
                       required: true,
                       options: formsData?.workflows ?? [],
-                      describe:
-                        "Esse workflow será acionado quando a atividade for criada e aceita",
                     }}
                     isLoading={isLoadingForms}
                   />
                   <Select
                     input={{
                       id: "institute",
-                      label: "Instituto",
-                      placeholder: "Instituto",
+                      label: t("form.fields.institute"),
                       options: formsData?.institutes ?? [],
-                      describe:
-                        "Seleciona o instituto que deve aparecer o formulário, deixe em branco para todos",
                     }}
                     isLoading={isLoadingForms}
                   />
@@ -270,11 +255,8 @@ export default function Workflow() {
             <TextArea
               input={{
                 id: "description",
-                label: "Descrição",
-                placeholder: "Descrição",
+                label: t("common.fields.description"),
                 required: true,
-                describe:
-                  "Coloque uma descrição para o formulário e sua finalidade",
               }}
             />
 
@@ -307,7 +289,7 @@ export default function Workflow() {
                 variant="outline"
                 onClick={handleCancel}
               >
-                Cancelar
+                {t("form.cancel")}
               </Button>
               <Can permission={isEditing ? "form.update" : "form.create"}>
                 <Button
@@ -317,7 +299,7 @@ export default function Workflow() {
                   type="submit"
                   isDisabled={!isDirty}
                 >
-                  {isEditing ? "Editar" : "Criar"}
+                  {t("form.submit")}
                 </Button>
               </Can>
             </Flex>
@@ -338,6 +320,7 @@ interface FormVersionsProps {
 }
 
 const FormVersions: React.FC<FormVersionsProps> = memo(({ id, formType }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { data: formDrafts, isLoading: isLoadingDrafts } = useQuery({
@@ -361,7 +344,7 @@ const FormVersions: React.FC<FormVersionsProps> = memo(({ id, formType }) => {
   );
   return (
     <Flex mt="8" justify="center" align="center" direction="column" gap="5">
-      <Heading fontSize={"x-large"}>Versões</Heading>
+      <Heading fontSize={"x-large"}>{t("form.drafts")}</Heading>
       <Divider />
 
       {isLoadingDrafts && <Spinner />}
@@ -375,7 +358,7 @@ const FormVersions: React.FC<FormVersionsProps> = memo(({ id, formType }) => {
               onClick={handleNewDraft}
               isLoading={isLoadingDrafts}
             >
-              Criar rascunho
+              {t("form.newDraft")}
             </Button>
           </Can>
         )}

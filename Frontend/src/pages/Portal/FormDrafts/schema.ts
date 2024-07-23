@@ -47,7 +47,7 @@ const formsZodSchema = z
             }),
           ]),
           visible: z.boolean().optional().default(true),
-          predefined: z.enum(["teachers", "students", "institutions"]).nullable(),
+          predefined: z.enum(["teachers", "students", "institutions"]).nullable().optional(),
           system: z.boolean().optional().default(false),
           weight: z.coerce
             .number()

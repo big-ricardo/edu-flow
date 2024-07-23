@@ -11,12 +11,14 @@ import BlockConfig from "@components/molecules/Workflow/FlowPanel/BlockConfig";
 import useDrawer from "@hooks/useDrawer";
 import { NodeTypes } from "@interfaces/WorkflowDraft";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { useOnSelectionChange, useReactFlow } from "reactflow";
 
 interface FlowDrawerProps {}
 
 const FlowDrawer: React.FC<FlowDrawerProps> = () => {
+  const { t } = useTranslation();
   const { isOpen, onClose } = useDrawer();
   const [searchParams, setSearchParams] = useSearchParams();
   const { getNode } = useReactFlow();
@@ -48,7 +50,7 @@ const FlowDrawer: React.FC<FlowDrawerProps> = () => {
       });
       onClose();
     },
-    [setNodes, onClose, node?.id],
+    [setNodes, onClose, node?.id]
   );
 
   return (
@@ -56,7 +58,7 @@ const FlowDrawer: React.FC<FlowDrawerProps> = () => {
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Configurações</DrawerHeader>
+        <DrawerHeader>{t("workflowDraft.config")}</DrawerHeader>
         <Divider />
         <DrawerBody>
           <BlockConfig

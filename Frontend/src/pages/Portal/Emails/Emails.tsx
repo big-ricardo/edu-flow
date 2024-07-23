@@ -21,6 +21,7 @@ import { FaArrowLeft, FaSave, FaTrashAlt } from "react-icons/fa";
 import Can from "@components/atoms/Can";
 import HelpArea from "@components/organisms/HelpArea";
 import HelpSmartValues from "@docs/smart-values";
+import { useTranslation } from "react-i18next";
 
 const emailSchema = z.object({
   slug: z
@@ -37,6 +38,7 @@ const emailSchema = z.object({
 type EmailFormSchema = z.infer<typeof emailSchema>;
 
 const EmailTemplate: React.FC = () => {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
@@ -59,7 +61,7 @@ const EmailTemplate: React.FC = () => {
     mutationFn: createOrUpdateEmail,
     onSuccess: () => {
       toast({
-        title: `Email ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t(`email.${isEditing ? "edited" : "created"}`),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -71,7 +73,7 @@ const EmailTemplate: React.FC = () => {
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} email`,
+        title: t(`email.${isEditing ? "edited" : "created"}`),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -132,14 +134,14 @@ const EmailTemplate: React.FC = () => {
       >
         <Flex direction="row" gap="3" alignItems="center">
           <Heading size="md" fontWeight="bold">
-            {isEditing ? "Editar" : "Criar"} Email
+            {t(`email.${isEditing ? "edit" : "create"}`)}
           </Heading>
           <Button
             colorScheme="blue"
             onClick={handleBack}
             variant="ghost"
             size="sm"
-            title="Voltar"
+            title={t("common.back")}
           >
             <FaArrowLeft />
           </Button>
@@ -151,7 +153,7 @@ const EmailTemplate: React.FC = () => {
             onClick={handleCancel}
             variant="outline"
             size="sm"
-            title="Descartar Alterações"
+            title={t("email.cancel")}
           >
             <FaTrashAlt />
           </Button>
@@ -163,7 +165,7 @@ const EmailTemplate: React.FC = () => {
               size="sm"
               isLoading={isPending}
             >
-              <FaSave /> &nbsp; Salvar Alterações
+              <FaSave /> &nbsp; {t("email.submit")}
             </Button>
           </Can>
 
@@ -178,16 +180,20 @@ const EmailTemplate: React.FC = () => {
           <Text
             input={{
               id: "slug",
-              label: "Slug",
-              placeholder: "Insira um nome de identificação",
+              label: t("common.fields.slug"),
+              placeholder: t("input.enter.male", {
+                field: t("common.fields.slug"),
+              }),
             }}
           />
 
           <Text
             input={{
               id: "subject",
-              label: "Assunto",
-              placeholder: "Insira um assunto pro email",
+              label: t("common.fields.subject"),
+              placeholder: t("input.enter.male", {
+                field: t("common.fields.subject"),
+              }),
             }}
           />
 

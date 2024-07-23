@@ -10,11 +10,13 @@ import * as yup from "yup";
 import res from "../utils/apiResponse";
 import jwt from "../services/jwt";
 import mongo from "../services/mongo";
-import { Connection, ObjectId } from "mongoose";
+import { Connection } from "mongoose";
 import { IInstitute } from "../models/client/Institute";
 import { Permissions } from "../services/permissions";
 import { IUserRoles } from "../models/client/User";
 import Sentry from "../services/sentry";
+import LogRepository from "../repositories/Log";
+import { ILog } from "../models/client/Log";
 
 const hasBody = ["POST", "PUT", "PATCH"];
 
@@ -70,6 +72,7 @@ export default class Http {
   private name: string;
   private permission: string;
   private conn: Connection | null = null;
+  private log: ILog;
 
   constructor(handler: typeof Http.prototype.handler) {
     this.handler = handler;
@@ -116,6 +119,21 @@ export default class Http {
 
       if (user?.slug) {
         this.conn = mongo.connect(user.slug);
+        this.log = await new LogRepository(this.conn).create({
+          route: this.name,
+          data: {
+            body,
+            query,
+            params,
+            headers,
+          },
+          level: "info",
+          timestamp: new Date(),
+          user: {
+            _id: user.id,
+            name: user.name,
+          },
+        });
       }
 
       return await this.handler(
@@ -137,6 +155,17 @@ export default class Http {
         return res.unauthorized("Token expired in " + error.expiredAt);
       }
 
+      if (this.conn) {
+        this.log.level = "error";
+        this.log.data = {
+          ...this.log.data,
+          error: {
+            message: error.message,
+            stack: error.stack,
+          },
+        };
+      }
+
       Sentry.captureException(error);
       if (error.status) {
         return res.error(error.status, null, error.message);
@@ -144,6 +173,10 @@ export default class Http {
 
       return res.internalServerError();
     } finally {
+      if (this.conn) {
+        this.log.response_at = new Date();
+        await this.log.save();
+      }
       // await mongo.disconnect(this.conn);
     }
   };

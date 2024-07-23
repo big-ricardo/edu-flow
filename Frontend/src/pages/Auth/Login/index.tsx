@@ -23,6 +23,8 @@ import Password from "@components/atoms/Inputs/Password";
 import { login } from "@apis/auth";
 import Icon from "@components/atoms/Icon";
 import SwitchTheme from "@components/molecules/SwitchTheme";
+import { useTranslation } from "react-i18next";
+import LocaleSwap from "@components/atoms/LocaleSwap";
 
 const schema = z.object({
   acronym: z
@@ -37,6 +39,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Login: React.FC = () => {
+  const { t } = useTranslation();
+
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -106,7 +110,7 @@ const Login: React.FC = () => {
               textAlign="center"
               color="text.primary"
             >
-              Bem-vindo ao Edu Flow
+              {t("welcome.title")}
             </Text>
             <Text
               fontSize="sm"
@@ -114,14 +118,15 @@ const Login: React.FC = () => {
               color="text.secondary"
               maxW="400px"
             >
-              Faça login para acessar o sistema de gestão acadêmica
+              {t("welcome.description")}
             </Text>
             <SwitchTheme />
+            <LocaleSwap />
           </Flex>
         </Hide>
 
         <Card
-          p={[4,10]}
+          p={[4, 10]}
           w={{ base: "100%", md: "450px" }}
           boxShadow="lg"
           bg={"bg.card"}
@@ -147,24 +152,30 @@ const Login: React.FC = () => {
                 <InputText
                   input={{
                     id: "acronym",
-                    label: "Domínio",
-                    placeholder: "Insira o domínio",
+                    label: t("common.fields.acronym"),
+                    placeholder: t("input.enter.male", {
+                      field: t("common.fields.acronym"),
+                    }),
                   }}
                 />
 
                 <InputText
                   input={{
                     id: "email",
-                    label: "Email",
-                    placeholder: "Insira seu email institucional",
+                    label: t("common.fields.email"),
+                    placeholder: t("input.enter.male", {
+                      field: t("common.fields.email"),
+                    }),
                   }}
                 />
 
                 <Password
                   input={{
                     id: "password",
-                    label: "Senha",
-                    placeholder: "Insira a senha",
+                    label: t("common.fields.password"),
+                    placeholder: t("input.enter.female", {
+                      field: t("common.fields.password"),
+                    }),
                   }}
                 />
 
@@ -174,7 +185,7 @@ const Login: React.FC = () => {
                   isLoading={isPending}
                   colorScheme="blue"
                 >
-                  Entrar
+                  {t("login.submit")}
                 </Button>
               </Flex>
             </form>
@@ -188,7 +199,7 @@ const Login: React.FC = () => {
                 textDecor={"underline"}
                 onClick={handleForgotPassword}
               >
-                Esqueceu a senha?
+                {t("login.forgot")}
               </Text>
             </Box>
           </CardBody>

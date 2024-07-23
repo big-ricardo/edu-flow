@@ -1,6 +1,7 @@
 import { Button, Divider, Flex, Tag, Text } from "@chakra-ui/react";
 import { convertDateTime } from "@utils/date";
 import React, { memo, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { FaEdit } from "react-icons/fa";
 
 type DraftItemProps = {
@@ -16,12 +17,8 @@ type DraftItemProps = {
   onEdit: (draftId: string) => void;
 };
 
-const statusWorkflow = {
-  draft: "Rascunho",
-  published: "Publicado",
-};
-
 const DraftItem: React.FC<DraftItemProps> = memo(({ draft, onEdit }) => {
+  const { t } = useTranslation();
   const handleEdit = useCallback(() => {
     onEdit(draft._id);
   }, [draft._id, onEdit]);
@@ -50,9 +47,11 @@ const DraftItem: React.FC<DraftItemProps> = memo(({ draft, onEdit }) => {
         w="100%"
       >
         <Tag colorScheme={draft.status === "draft" ? "gray" : "green"}>
-          {statusWorkflow[draft.status]}
+          {t(`workflow.status.${draft.status}`)}
         </Tag>
-        <Text size="sm">Versão #{draft.version}</Text>
+        <Text size="sm">
+          {t("common.fields.version")} #{draft.version}
+        </Text>
         <Text fontSize="sm">{createdAt}</Text>
         <Button
           colorScheme="blue"
@@ -64,7 +63,10 @@ const DraftItem: React.FC<DraftItemProps> = memo(({ draft, onEdit }) => {
         </Button>
       </Flex>
       <Divider />
-      <Text fontSize="sm">Criado por: {draft.owner?.name ?? "Anônimo"}</Text>
+      <Text fontSize="sm">
+        {t("common.fields.by")}:
+        {draft.owner?.name ?? t("common.fields.anonymous")}
+      </Text>
     </Flex>
   );
 });

@@ -16,62 +16,64 @@ import { IActivityState } from "@interfaces/Activitiy";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
 import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { FaEye, FaPen } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
     key: "protocol",
-    label: "Protocolo",
+    label: "common.fields.protocol",
   },
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "description",
-    label: "Descrição",
+    label: "common.fields.description",
   },
   {
     key: "createdAt",
-    label: "Data de Criação",
+    label: "common.fields.createdAt",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
 const columnsFinished = [
   {
     key: "protocol",
-    label: "Protocolo",
+    label: "common.fields.protocol",
   },
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "description",
-    label: "Descrição",
+    label: "common.fields.description",
   },
   {
     key: "createdAt",
-    label: "Data de Criação",
+    label: "common.fields.createdAt",
   },
   {
     key: "finished_at",
-    label: "Data de Finalização",
+    label: "common.fields.finishedAt",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
 type IItem = Awaited<ReturnType<typeof getMyActivities>>["activities"][0];
 
 const MyActivities: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
@@ -134,14 +136,14 @@ const MyActivities: React.FC = () => {
   return (
     <Box p={4} mb={4} bg="bg.card" borderRadius="md" id="my-activities">
       <Heading size="md" mb="5">
-        Minhas Atividades
+        {t("dashboard.title.myActivities")}
       </Heading>
       <Divider mb={4} />
 
       <Tabs>
         <TabList>
-          <Tab>Em andamento</Tab>
-          <Tab>Finalizadas</Tab>
+          <Tab>{t("state.inProgress")}</Tab>
+          <Tab>{t("state.finished")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>

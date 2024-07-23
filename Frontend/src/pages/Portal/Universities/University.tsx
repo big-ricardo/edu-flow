@@ -17,6 +17,7 @@ import { getUniversity, createOrUpdateUniversity } from "@apis/univertities";
 import Text from "@components/atoms/Inputs/Text";
 import Switch from "@components/atoms/Inputs/Switch";
 import Can from "@components/atoms/Can";
+import { useTranslation } from "react-i18next";
 
 const universitySchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -29,6 +30,7 @@ const universitySchema = z.object({
 type UniversityFormInputs = z.infer<typeof universitySchema>;
 
 export default function University() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
@@ -47,7 +49,7 @@ export default function University() {
     mutationFn: createOrUpdateUniversity,
     onSuccess: () => {
       toast({
-        title: `Universidade ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t(`university.${isEditing ? "updated" : "created"}`),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -58,7 +60,7 @@ export default function University() {
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} universidade`,
+        title: t(`university.error`),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -107,15 +109,14 @@ export default function University() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {isEditing ? "Editar" : "Criar"} Universidade
+              {t(`university.${isEditing ? "edit" : "create"}`)}
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
             <Text
               input={{
                 id: "name",
-                label: "Nome",
-                placeholder: "Nome",
+                label: t("common.fields.name"),
                 required: true,
               }}
             />
@@ -123,13 +124,14 @@ export default function University() {
             <Text
               input={{
                 id: "acronym",
-                label: "Sigla",
-                placeholder: "Sigla",
+                label: t("common.fields.acronym"),
                 required: true,
               }}
             />
 
-            <Switch input={{ id: "active", label: "Ativo" }} />
+            <Switch
+              input={{ id: "active", label: t("common.fields.active") }}
+            />
 
             <Flex mt="8" justify="flex-end" gap="4">
               <Button
@@ -138,7 +140,7 @@ export default function University() {
                 variant="outline"
                 onClick={handleCancel}
               >
-                Cancelar
+                {t("university.cancel")}
               </Button>
               <Can
                 permission={
@@ -151,7 +153,7 @@ export default function University() {
                   isLoading={isPending || isLoading}
                   type="submit"
                 >
-                  {isEditing ? "Editar" : "Criar"}
+                  {t("university.submit")}
                 </Button>
               </Can>
             </Flex>

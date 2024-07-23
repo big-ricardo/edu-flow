@@ -8,19 +8,20 @@ import { getEmails } from "@apis/email";
 import Pagination from "@components/organisms/Pagination";
 import IEmail from "@interfaces/Email";
 import Can from "@components/atoms/Can";
+import { useTranslation } from "react-i18next";
 
 const columns = [
   {
     key: "slug",
-    label: "Slug",
+    label: "common.fields.slug",
   },
   {
     key: "subject",
-    label: "Titulo",
+    label: "common.fields.subject",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
@@ -43,6 +44,7 @@ const Action = memo((email: IEmail) => {
 });
 
 const Create = memo(() => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
@@ -53,7 +55,7 @@ const Create = memo(() => {
     <div>
       <Can permission="email.create">
         <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-          Criar Template de Email
+          {t("emails.create")}
         </Button>
       </Can>
     </div>
@@ -61,6 +63,7 @@ const Create = memo(() => {
 });
 
 const Statuses: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const page = searchParams.get("page") ?? 1;
@@ -88,7 +91,7 @@ const Statuses: React.FC = () => {
 
   return (
     <Box width="100%" p="10">
-      <Heading>Templates de Emails</Heading>
+      <Heading>{t("emails.title")}</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -115,7 +118,7 @@ const Statuses: React.FC = () => {
       </Flex>
       {isError && (
         <Flex justifyContent="center" alignItems="center" mt="4" width="100%">
-          <Heading color="red.500">Erro ao carregar dados</Heading>
+          <Heading color="red.500">{t("emails.error")}</Heading>
         </Flex>
       )}
     </Box>

@@ -16,21 +16,11 @@ import {
   Hide,
 } from "@chakra-ui/react";
 import useAuth from "@hooks/useAuth";
-
-const rolesMap = (role: string) => {
-  switch (role) {
-    case "student":
-      return "Aluno";
-    case "teacher":
-      return "Professor";
-    case "admin":
-      return "Administrador";
-    default:
-      return "Usuário";
-  }
-};
+import { useTranslation } from "react-i18next";
 
 const AvatarMenu: React.FC = () => {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -59,15 +49,15 @@ const AvatarMenu: React.FC = () => {
         </Flex>
         <Flex flexDir="row" alignItems="center" gap={1}>
           <Text mb={2} fontSize="sm">
-            Perfil:
+            {t("common.fields.profile")}:
           </Text>
           <Text mb={2} fontSize="sm" fontWeight="bold">
-            {roles?.map((role) => rolesMap(role)).join(", ")}
+            {roles?.map((role) => t(`role.${role}`)).join(", ")}
           </Text>
         </Flex>
         <Flex flexDir="row" alignItems="center" gap={1}>
           <Text mb={2} fontSize="sm">
-            Email:
+            {t("common.fields.email")}:
           </Text>
           <Text mb={2} fontSize="sm" fontWeight="bold">
             {email}
@@ -107,7 +97,7 @@ const AvatarMenu: React.FC = () => {
             {userDetails()}
             <Divider my={2} />
             <Button colorScheme="blue" size="sm" onClick={handleLogout}>
-              Logout
+              {t("button.logout")}
             </Button>
           </ModalBody>
         </ModalContent>

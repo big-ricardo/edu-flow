@@ -29,21 +29,22 @@ import { AxiosError } from "axios";
 import { getWorkflowDraft } from "@apis/workflowDraft";
 import Minimap from "@components/atoms/Workflow/Minimap";
 import { workflowSchema } from "@pages/Portal/WorkflowDraft/nodesSchema";
+import { useTranslation } from "react-i18next";
 
 const convertReactFlowObject = (
-  reactFlowObject: ReactFlowJsonObject,
+  reactFlowObject: ReactFlowJsonObject
 ): IWorkflowDraft["steps"] => {
   return reactFlowObject.nodes.map((node) => {
     const edges = reactFlowObject.edges.filter(
-      (edge) => edge.source === node.id,
+      (edge) => edge.source === node.id
     );
 
     const defaultSource = edges.find(
-      (edge) => edge.sourceHandle === "default-source",
+      (edge) => edge.sourceHandle === "default-source"
     )?.target;
 
     const alternativeSource = edges.find(
-      (edge) => edge.sourceHandle === "alternative-source",
+      (edge) => edge.sourceHandle === "alternative-source"
     )?.target;
 
     return {
@@ -81,6 +82,7 @@ interface FlowBoardProps {
 }
 
 const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const params = useParams<{ id?: string; workflow_id: string }>();
   const id = params?.id ?? "";
@@ -107,7 +109,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["forms"] });
       toast({
-        title: `Workflow ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t(`workflowDraft.${isEditing ? "updated" : "created"}`),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -116,9 +118,9 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
       navigate(`/portal/workflow-draft/${data.parent}/${data._id}/view`);
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
-      console.log(error)
+      console.log(error);
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} workflow`,
+        title: t("workflowDraft.error"),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -129,7 +131,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+    [setEdges]
   );
 
   const onSave = useCallback(() => {
@@ -140,8 +142,8 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
       if (!formState.success) {
         toast({
-          title: "Erro ao salvar workflow",
-          description: "O fluxo está inválido",
+          title: t("workflowDraft.error"),
+          description: t("workflowDraft.invalid"),
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -203,7 +205,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
         },
       ]);
     },
-    [reactFlowInstance, setNodes],
+    [reactFlowInstance, setNodes]
   );
 
   const isValidConnection: IsValidConnection = useCallback(
@@ -214,7 +216,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
 
       return true;
     },
-    [isView],
+    [isView]
   );
 
   useEffect(() => {

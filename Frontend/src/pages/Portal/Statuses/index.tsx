@@ -11,27 +11,22 @@ import Can from "@components/atoms/Can";
 import Filter from "@components/organisms/Filter";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
+import { useTranslation } from "react-i18next";
 
 const columns = [
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "type",
-    label: "Tipo",
+    label: "common.fields.type",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
-
-const StatusType = {
-  done: "Concluído",
-  progress: "Em progresso",
-  canceled: "Cancelado",
-};
 
 const Action = memo((status: IStatus) => {
   const navigate = useNavigate();
@@ -50,6 +45,7 @@ const Action = memo((status: IStatus) => {
 });
 
 const Create = memo(() => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
@@ -60,7 +56,7 @@ const Create = memo(() => {
     <div>
       <Can permission="status.create">
         <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-          Criar Status
+          {t("statuses.create")}
         </Button>
       </Can>
     </div>
@@ -68,6 +64,7 @@ const Create = memo(() => {
 });
 
 const Statuses: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const {
@@ -85,14 +82,14 @@ const Statuses: React.FC = () => {
 
     return statuses.map((status) => ({
       ...status,
-      type: StatusType[status.type] ?? "Não definido",
+      type: t(`common.fields.statusType.${status.type}`),
       actions: <Action {...status} />,
     }));
   }, [statuses]);
 
   return (
     <Box width="100%" p="10">
-      <Heading>Status</Heading>
+      <Heading>{t("statuses.title")}</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -109,19 +106,24 @@ const Statuses: React.FC = () => {
         <Text
           input={{
             id: "name",
-            label: "Nome",
-            placeholder: "Digite um nome",
+            label: t("common.fields.name"),
           }}
         />
 
         <Select
           input={{
             id: "type",
-            label: "Tipo",
+            label: t("common.fields.type"),
             options: [
-              { value: "done", label: "Concluído" },
-              { value: "progress", label: "Em progresso" },
-              { value: "canceled", label: "Cancelado" },
+              { value: "done", label: t("common.fields.statusType.done") },
+              {
+                value: "progress",
+                label: t("common.fields.statusType.progress"),
+              },
+              {
+                value: "canceled",
+                label: t("common.fields.statusType.canceled"),
+              },
             ],
           }}
         />
@@ -142,7 +144,7 @@ const Statuses: React.FC = () => {
       </Flex>
       {isError && (
         <Flex justifyContent="center" alignItems="center" mt="4" width="100%">
-          <Heading color="red.500">Erro ao carregar dados</Heading>
+          <Heading color="red.500">{t("satatuses.error")}</Heading>
         </Flex>
       )}
     </Box>

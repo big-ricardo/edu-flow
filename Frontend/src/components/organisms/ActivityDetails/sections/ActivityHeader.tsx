@@ -48,7 +48,7 @@ const ActivityHeader: React.FC<ActivityHeaderProps> = ({
       pb={4}
     >
       <Flex gap={2} alignItems={"center"}>
-        <Heading as="h1" fontSize="2xl">
+        <Heading as="h1" fontSize="2xl" noOfLines={1} title={name}>
           {name}
         </Heading>
         <Text fontSize="xl">#{protocol}</Text>

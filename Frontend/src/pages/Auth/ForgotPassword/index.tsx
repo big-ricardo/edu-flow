@@ -19,6 +19,8 @@ import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import InputText from "@components/atoms/Inputs/Text";
 import { forgotPassword } from "@apis/auth";
+import { useTranslation } from "react-i18next";
+import LocaleSwap from "@components/atoms/LocaleSwap";
 
 const schema = z.object({
   acronym: z
@@ -32,6 +34,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const ForgotPassword: React.FC = () => {
+  const { t } = useTranslation();
+
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -49,7 +53,7 @@ const ForgotPassword: React.FC = () => {
     mutationFn: forgotPassword,
     onSuccess: () => {
       toast({
-        title: "Email enviado com sucesso",
+        title: t("forgotPassword.success"),
         status: "success",
         duration: 9000,
         isClosable: true,
@@ -58,7 +62,7 @@ const ForgotPassword: React.FC = () => {
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
-        title: "Erro ao recuperar senha",
+        title: t("forgotPassword.error"),
         description: error?.response?.data?.message ?? error.message,
         status: "error",
         duration: 9000,
@@ -87,6 +91,7 @@ const ForgotPassword: React.FC = () => {
       gap="10"
       bg={"bg.page"}
     >
+      <LocaleSwap />
       <FormProvider {...methods}>
         <Card
           p={[4, 8]}
@@ -107,16 +112,20 @@ const ForgotPassword: React.FC = () => {
                 <InputText
                   input={{
                     id: "acronym",
-                    label: "Domínio",
-                    placeholder: "insira o domínio",
+                    label: t("common.fields.acronym"),
+                    placeholder: t("input.enter.male", {
+                      field: t("common.fields.acronym"),
+                    }),
                   }}
                 />
 
                 <InputText
                   input={{
                     id: "email",
-                    label: "Email",
-                    placeholder: "Insira o email",
+                    label: t("common.fields.email"),
+                    placeholder: t("input.enter.male", {
+                      field: t("common.fields.email"),
+                    }),
                   }}
                 />
 
@@ -126,7 +135,7 @@ const ForgotPassword: React.FC = () => {
                   isLoading={isPending}
                   colorScheme="blue"
                 >
-                  Recuperar senha
+                  {t("forgotPassword.send")}
                 </Button>
               </Flex>
             </form>
@@ -140,7 +149,7 @@ const ForgotPassword: React.FC = () => {
                 textDecor={"underline"}
                 onClick={handleBackLogin}
               >
-                Voltar para login
+                {t("forgotPassword.back")}
               </Text>
             </Box>
           </CardBody>

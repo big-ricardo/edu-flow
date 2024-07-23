@@ -17,6 +17,7 @@ import { getActivity, setUserEvaluations } from "@apis/activity";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 import InputUser from "@components/atoms/Inputs/InputUser";
 import ActivityProvider from "@contexts/ActivityContext";
+import { useTranslation } from "react-i18next";
 
 const activitySchema = z.object({
   users: z.array(
@@ -46,10 +47,11 @@ const activitySchema = z.object({
 type ActivityFormSchema = z.infer<typeof activitySchema>;
 
 export default function ActivityBoardDefinition() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const params = useParams<{ id: string, evaluation_id: string }>();
+  const params = useParams<{ id: string; evaluation_id: string }>();
   const id = params.id ?? "";
 
   const { data: activity, isLoading } = useQuery({
@@ -61,7 +63,7 @@ export default function ActivityBoardDefinition() {
     mutationFn: setUserEvaluations,
     onSuccess: () => {
       toast({
-        title: "Atividade salvada com sucesso",
+        title: t("activityBoardDefinition.success"),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -73,7 +75,7 @@ export default function ActivityBoardDefinition() {
     },
     onError: () => {
       toast({
-        title: `Erro ao salvar atividade`,
+        title: t("activityBoardDefinition.error"),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -93,9 +95,7 @@ export default function ActivityBoardDefinition() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    const response = confirm(
-      "Deseja confirmar a atividade? Essa ação não poderá ser desfeita"
-    );
+    const response = confirm(t("activityBoardDefinition.confirm"));
 
     if (response) {
       await mutateAsync({
@@ -148,16 +148,16 @@ export default function ActivityBoardDefinition() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              Definição de Avaliadores
+              {t("activityBoardDefinition.title")}
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
             <InputUser
               input={{
                 id: "users",
-                label: "Adicione os avaliadores",
+                label: t("activityBoardDefinition.addBoard"),
                 created: true,
-                 multi: true
+                multi: true,
               }}
             />
 
@@ -168,7 +168,7 @@ export default function ActivityBoardDefinition() {
                 variant="outline"
                 onClick={handleCancel}
               >
-                Cancelar
+                {t("activityBoardDefinition.cancel")}
               </Button>
               <Button
                 mt={4}
@@ -176,7 +176,7 @@ export default function ActivityBoardDefinition() {
                 isLoading={isPending || isLoading}
                 type="submit"
               >
-                Confirmar Atividade
+                {t("activityBoardDefinition.submit")}
               </Button>
             </Flex>
           </CardBody>

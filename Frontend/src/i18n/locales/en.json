@@ -1,0 +1,328 @@
+{
+  "locale": {
+    "en-US": "English",
+    "es": "Spanish",
+    "pt-BR": "Portuguese"
+  },
+  "welcome": {
+    "title": "Welcome to Edu Flow",
+    "description": "Log in to access the academic management system"
+  },
+  "login": {
+    "title": "Log in",
+    "submit": "Enter",
+    "forgot": "Forgot password?"
+  },
+  "common": {
+    "activities": "Activities",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "create": "Create",
+    "fields": {
+      "name": "Name",
+      "description": "Description",
+      "protocol": "Protocol",
+      "acronym": "Domain",
+      "email": "E-mail",
+      "password": "Password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "profile": "Profile",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at",
+      "closedAt": "Closed at",
+      "finishedAt": "Finished at",
+      "status": "Status",
+      "actions": "Actions",
+      "undefined": "Undefined",
+      "users": "Users",
+      "finished": "Finished",
+      "sub_masterminds": "Co-supervisors",
+      "masterminds": "Supervisors",
+      "mastermind": "Master's degree",
+      "doctorate": "Doctorate",
+      "students": "Students",
+      "slug": "Slug",
+      "title": "Title",
+      "subject": "Subject",
+      "profiles": "Profiles",
+      "active": "Active",
+      "inactive": "Inactive",
+      "matriculation": "Registration",
+      "external": "External",
+      "university_degree": "University degree",
+      "institute": "Institute",
+      "university": "University",
+      "statusType": {
+        "done": "Completed",
+        "canceled": "Canceled",
+        "progress": "In progress"
+      },
+      "type": "Type",
+      "version": "Version",
+      "by": "Created by",
+      "anonymous": "Anonymous",
+      "initialStatus": "Initial status",
+      "workflow": "Workflow"
+    }
+  },
+  "input": {
+    "required": "Required field",
+    "invalid": "Invalid field",
+    "enter": {
+      "male": "Enter the {{field}}",
+      "female": "Enter the {{field}}"
+    }
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "description": "Enter your email to recover your password",
+    "submit": "Recover password",
+    "success": "Email sent successfully",
+    "error": "Error sending email",
+    "send": "Recover password",
+    "back": "Back to login"
+  },
+  "alterPassword": {
+    "title": "Change password",
+    "description": "Enter your new password",
+    "submit": "Change password",
+    "success": "Password changed successfully",
+    "error": "Error changing password",
+    "back": "Back to login"
+  },
+  "notFound": {
+    "title": "404 - Page not found",
+    "description": "The page you are looking for does not exist",
+    "back": "Back to home"
+  },
+  "dashboard": {
+    "title": {
+      "openForms": "Open forms",
+      "myActivities": "My activities",
+      "activityTracking": "Activity tracking",
+      "evaluationPending": "Pending evaluations",
+      "interactionPending": "Pending interactions",
+      "activitiesAccept": "Activities by acceptance",
+      "activityProcess": "Activities in progress",
+      "boardDefinition": "Board definition"
+    },
+    "description": {
+      "evaluationPending": "Activities pending evaluation",
+      "interactionPending": "Interactions pending response",
+      "activitiesAccept": "Activities pending acceptance",
+      "activityProcess": "Activities in progress"
+    }
+  },
+  "title": {
+    "dashboard": "Dashboard",
+    "activities": "Activities",
+    "users": "Users",
+    "institutes": "Institutes",
+    "universities": "Universities",
+    "statuses": "Statuses",
+    "workflows": "Workflows",
+    "emails": "Email templates",
+    "forms": "Forms",
+    "reportings": "Reports"
+  },
+  "table": {
+    "noData": "No data found",
+    "error": "Error loading data"
+  },
+  "role": {
+    "admin": "Administrator",
+    "teacher": "Teacher",
+    "student": "Student"
+  },
+  "state": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "inProgress": "In progress",
+    "completed": "Completed",
+    "finished": "Finished"
+  },
+  "button": {
+    "logout": "Logout"
+  },
+  "activityAccept": {
+    "title": "Accept activity",
+    "description": "Do you want to accept the activity?",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "reject": "Reject",
+    "submit": "Accept",
+    "success": "Activity accepted successfully",
+    "error": "Error accepting activity"
+  },
+  "activityBoardDefinition": {
+    "title": "Board definition",
+    "description": "Do you want to define the board for the activity?",
+    "addBoard": "Add evaluators",
+    "confirm": "Do you want to confirm the activity? This action cannot be undone",
+    "cancel": "Cancel",
+    "submit": "Define board",
+    "success": "Board defined successfully",
+    "error": "Error defining board"
+  },
+  "activityConfirm": {
+    "title": "Confirm activity",
+    "description": "Do you want to confirm the activity?",
+    "confirm": "Do you want to confirm the activity? This action cannot be undone",
+    "cancel": "Cancel",
+    "submit": "Confirm activity",
+    "success": "Activity confirmed successfully",
+    "error": "Error confirming activity"
+  },
+  "emails": {
+    "title": "Email template",
+    "create": "Create template",
+    "cancel": "Cancel",
+    "success": "Template saved successfully",
+    "error": "Error saving template"
+  },
+  "email": {
+    "create": "Create template",
+    "edit": "Edit template",
+    "created": "Template created successfully",
+    "edited": "Template edited successfully",
+    "cancel": "Cancel",
+    "submit": "Save changes"
+  },
+  "users": {
+    "title": "Users",
+    "create": "Create user",
+    "cancel": "Cancel",
+    "success": "User saved successfully",
+    "error": "Error saving user"
+  },
+  "user": {
+    "create": "Create user",
+    "edit": "Edit user",
+    "created": "User created successfully",
+    "edited": "User edited successfully",
+    "cancel": "Cancel",
+    "submit": "Save changes",
+    "error": "Error saving user",
+    "reseted": "Password reset successfully",
+    "noReseted": "Error resetting password",
+    "resendEmail": "Reset password"
+  },
+  "institutes": {
+    "title": "Institutes",
+    "create": "Create institute",
+    "cancel": "Cancel",
+    "success": "Institute saved successfully",
+    "error": "Error loading institute"
+  },
+  "institute": {
+    "create": "Create institute",
+    "edit": "Edit institute",
+    "created": "Institute created successfully",
+    "edited": "Institute edited successfully",
+    "cancel": "Cancel",
+    "submit": "Save changes",
+    "error": "Error saving institute"
+  },
+  "statuses": {
+    "title": "Statuses",
+    "create": "Create statuses",
+    "cancel": "Cancel",
+    "success": "Statuses saved successfully",
+    "error": "Error loading statuses"
+  },
+  "status": {
+    "create": "Create status",
+    "edit": "Edit status",
+    "created": "Status created successfully",
+    "edited": "Status edited successfully",
+    "cancel": "Cancel",
+    "submit": "Save changes",
+    "error": "Error saving status"
+  },
+  "universities": {
+    "title": "Universities",
+    "create": "Create university",
+    "cancel": "Cancel",
+    "success": "University saved successfully",
+    "error": "Error loading university"
+  },
+  "university": {
+    "create": "Create university",
+    "edit": "Edit university",
+    "created": "University created successfully",
+    "edited": "University edited successfully",
+    "cancel": "Cancel",
+    "submit": "Save changes",
+    "error": "Error saving university"
+  },
+  "workflows": {
+    "title": "Workflows",
+    "create": "Create workflow",
+    "cancel": "Cancel",
+    "success": "Workflow saved successfully",
+    "error": "Error loading workflow"
+  },
+  "workflow": {
+    "create": "Create workflow",
+    "edit": "Edit workflow",
+    "created": "Workflow created successfully",
+    "edited": "Workflow edited successfully",
+    "cancel": "Cancel",
+    "submit": "Save changes",
+    "error": "Error saving workflow",
+    "status": {
+      "draft": "Draft","published": "Published"
+    },
+    "versions": "Versions"
+  },
+  "workflowDraft": {
+    "title": "Draft",
+    "edit": "Edit workflow",
+    "view": "View workflow",
+    "edited": "Workflow edited successfully",
+    "error": "Error saving workflow",
+    "submit": "Save new version",
+    "create": "Create workflow",
+    "publish": "Publish",
+    "unPublish": "Unpublish",
+    "published": "Workflow published successfully",
+    "invalid": "Invalid workflow",
+    "back": "Back",
+    "config": "Configuration"
+  },
+  "forms": {
+    "title": "Forms",
+    "create": "Create form",
+    "cancel": "Cancel",
+    "success": "Form saved successfully",
+    "error": "Error loading form",
+    "type": {
+      "created": "Creation",
+      "interaction": "Interaction",
+      "evaluation": "Evaluation"
+    }
+  },
+  "form": {
+    "title": "Forms",
+    "create": "Create form",
+    "created": "Form created successfully",
+    "edit": "Edit form",
+    "edited": "Form edited successfully",
+    "cancel": "Cancel",
+    "success": "Form saved successfully",
+    "error": "Error saving form",
+    "submit": "Save changes",
+    "drafts": "Drafts",
+    "newDraft": "Create draft",
+    "type": {
+      "created": "Creation",
+      "interaction": "Interaction",
+      "evaluation": "Evaluation"
+    }
+  }
+}

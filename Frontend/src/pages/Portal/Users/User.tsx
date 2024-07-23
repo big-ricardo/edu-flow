@@ -20,6 +20,9 @@ import { createOrUpdateUser, getUser, getUserForms } from "@apis/users";
 import Password from "@components/atoms/Inputs/Password";
 import { IUserRoles } from "@interfaces/User";
 import Can from "@components/atoms/Can";
+import { forgotPassword } from "@apis/auth";
+import useAuth from "@hooks/useAuth";
+import { useTranslation } from "react-i18next";
 
 const Schema = z
   .object({
@@ -83,10 +86,12 @@ const Schema = z
 type UniversityFormInputs = z.infer<typeof Schema>;
 
 export default function User() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const queryClient = useQueryClient();
+  const [auth] = useAuth();
 
   const isEditing = !!params?.id;
   const id = params?.id ?? "";
@@ -110,7 +115,7 @@ export default function User() {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["forms"] });
       toast({
-        title: `Usuário ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t(`user.${isEditing ? "updated" : "created"}`),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -120,7 +125,7 @@ export default function User() {
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} Usuário`,
+        title: t(`user.error`),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -128,6 +133,29 @@ export default function User() {
       });
     },
   });
+
+  const { mutateAsync: mutateAsyncReset, isPending: isPendingReset } =
+    useMutation({
+      mutationFn: forgotPassword,
+      onSuccess: () => {
+        toast({
+          title: t(`user.reseted`),
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      },
+      onError: () => {
+        toast({
+          title: t(`user.noReseted`),
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      },
+    });
 
   const methods = useForm<UniversityFormInputs>({
     resolver: zodResolver(Schema),
@@ -155,6 +183,12 @@ export default function User() {
     navigate(-1);
   }, [navigate]);
 
+  const handleResendEmail = useCallback(() => {
+    if (!user?.email && !auth?.client) return;
+
+    mutateAsyncReset({ email: user?.email ?? "", acronym: auth?.client ?? "" });
+  }, [user]);
+
   useEffect(() => {
     if (user) {
       reset({
@@ -180,7 +214,7 @@ export default function User() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {isEditing ? "Editar" : "Criar"} Usuário
+              {t(`user.${isEditing ? "edit" : "create"}`)}
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
@@ -188,20 +222,22 @@ export default function User() {
               <Text
                 input={{
                   id: "name",
-                  label: "Nome",
-                  placeholder: "Nome",
+                  label: t("common.fields.name"),
+                  placeholder: t("common.fields.name"),
                   required: true,
                 }}
               />
-              <Switch input={{ id: "active", label: "Ativo" }} />
+              <Switch
+                input={{ id: "active", label: t("common.fields.active") }}
+              />
             </Flex>
             <Flex justify="space-between" gap="4" direction={["column", "row"]}>
               {!isExternal && (
                 <Text
                   input={{
                     id: "matriculation",
-                    label: "Matrícula",
-                    placeholder: "Matrícula",
+                    label: t("common.fields.matriculation"),
+                    placeholder: t("common.fields.matriculation"),
                     required: true,
                   }}
                 />
@@ -209,8 +245,8 @@ export default function User() {
               <Select
                 input={{
                   id: "roles",
-                  label: "Perfil",
-                  placeholder: "Perfil",
+                  label: t("common.fields.profiles"),
+                  placeholder: t("common.fields.profiles"),
                   required: true,
                   options: formsData?.roles ?? [],
                 }}
@@ -220,8 +256,8 @@ export default function User() {
               <Select
                 input={{
                   id: "institute",
-                  label: "Instituto",
-                  placeholder: "Instituto",
+                  label: t("common.fields.institute"),
+                  placeholder: t("common.fields.institute"),
                   required: true,
                   options: formsData?.institutes ?? [],
                 }}
@@ -232,27 +268,29 @@ export default function User() {
               <Text
                 input={{
                   id: "email",
-                  label: "Email",
-                  placeholder: "Email",
+                  label: t("common.fields.email"),
+                  placeholder: t("common.fields.email"),
                   required: true,
                 }}
               />
 
-              <Switch input={{ id: "isExternal", label: "Externo" }} />
+              <Switch
+                input={{ id: "isExternal", label: t("common.fields.external") }}
+              />
 
               {isTeacher && (
                 <Select
                   input={{
                     id: "university_degree",
-                    label: "Titulação",
-                    placeholder: "Titulação",
+                    label: t("common.fields.university_degree"),
+                    placeholder: t("common.fields.university_degree"),
                     options: [
                       {
-                        label: "Mestrado",
+                        label: t("common.fields.mastermind"),
                         value: "mastermind",
                       },
                       {
-                        label: "Doutorado",
+                        label: t("common.fields.doctorate"),
                         value: "doctor",
                       },
                     ],
@@ -260,24 +298,28 @@ export default function User() {
                 />
               )}
             </Flex>
-
-            <Flex justify="space-between" gap="4" direction={["column", "row"]}>
-              <Password
-                input={{
-                  id: "password",
-                  label: "Senha",
-                  placeholder: "Senha",
-                }}
-              />
-
-              <Password
-                input={{
-                  id: "confirmPassword",
-                  label: "Confirmar Senha",
-                  placeholder: "Confirmar Senha",
-                }}
-              />
-            </Flex>
+            {isEditing && (
+              <Flex
+                justify="space-between"
+                gap="4"
+                direction={["column", "row"]}
+              >
+                <Password
+                  input={{
+                    id: "password",
+                    label: t("common.fields.password"),
+                    placeholder: t("common.fields.password"),
+                  }}
+                />
+                <Password
+                  input={{
+                    id: "confirmPassword",
+                    label: t("common.fields.confirmPassword"),
+                    placeholder: t("common.fields.confirmPassword"),
+                  }}
+                />
+              </Flex>
+            )}
 
             <Flex mt="8" justify="flex-end" gap="4">
               <Button
@@ -286,7 +328,15 @@ export default function User() {
                 variant="outline"
                 onClick={handleCancel}
               >
-                Cancelar
+                {t("common.cancel")}
+              </Button>
+
+              <Button
+                mt={4}
+                onClick={handleResendEmail}
+                isLoading={isPendingReset}
+              >
+                {t("user.resendEmail")}
               </Button>
               <Can permission={isEditing ? "user.update" : "user.create"}>
                 <Button
@@ -295,7 +345,7 @@ export default function User() {
                   isLoading={isPending || isLoading}
                   type="submit"
                 >
-                  {isEditing ? "Editar" : "Criar"}
+                  {t("user.submit")}
                 </Button>
               </Can>
             </Flex>

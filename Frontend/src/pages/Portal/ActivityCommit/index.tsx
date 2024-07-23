@@ -24,6 +24,7 @@ import TextArea from "@components/atoms/Inputs/TextArea";
 import ActivityDetails from "@components/organisms/ActivityDetails";
 import InputUser from "@components/atoms/Inputs/InputUser";
 import ActivityProvider from "@contexts/ActivityContext";
+import { useTranslation } from "react-i18next";
 
 const activitySchema = z.object({
   _id: z.string(),
@@ -60,6 +61,7 @@ const activitySchema = z.object({
 type ActivityFormSchema = z.infer<typeof activitySchema>;
 
 export default function ActivityCommit() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -80,7 +82,7 @@ export default function ActivityCommit() {
     mutationFn: committedActivity,
     onSuccess: () => {
       toast({
-        title: "Atividade salvada com sucesso",
+        title: t("activityConfirm.success"),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -92,7 +94,7 @@ export default function ActivityCommit() {
     },
     onError: () => {
       toast({
-        title: `Erro ao salvar atividade`,
+        title: t("activityConfirm.error"),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -112,9 +114,7 @@ export default function ActivityCommit() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    const response = confirm(
-      "Deseja confirmar a atividade? Essa ação não poderá ser desfeita"
-    );
+    const response = confirm(t("activityConfirm.confirm"));
 
     if (response) {
       await mutateAsync(data);
@@ -169,14 +169,14 @@ export default function ActivityCommit() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              Confirmação de Atividade
+              {t("activityConfirm.title")}
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
             <Text
               input={{
                 id: "name",
-                label: "Nome",
+                label: t("common.fields.name"),
                 placeholder: "Nome",
                 required: true,
               }}
@@ -185,8 +185,10 @@ export default function ActivityCommit() {
             <TextArea
               input={{
                 id: "description",
-                label: "Descrição",
-                placeholder: "Descrição",
+                label: t("common.fields.description"),
+                placeholder: t("input.enter.male", {
+                  field: t("common.fields.description"),
+                }),
                 required: true,
               }}
             />
@@ -194,7 +196,7 @@ export default function ActivityCommit() {
             <InputUser
               input={{
                 id: "sub_masterminds",
-                label: "Co-Orientadores",
+                label: t("common.fields.masterminds"),
                 created: true,
               }}
             />
@@ -202,8 +204,10 @@ export default function ActivityCommit() {
             <Select
               input={{
                 id: "users",
-                label: "Alunos",
-                placeholder: "Selecione os alunos",
+                label: t("common.fields.students"),
+                placeholder: t("input.enter.male", {
+                  field: t("common.fields.students"),
+                }),
                 required: true,
                 options: formData?.students ?? [],
               }}
@@ -218,7 +222,7 @@ export default function ActivityCommit() {
                 variant="outline"
                 onClick={handleCancel}
               >
-                Cancelar
+                {t("activityConfirm.cancel")}
               </Button>
               <Button
                 mt={4}
@@ -226,7 +230,7 @@ export default function ActivityCommit() {
                 isLoading={isPending || isLoading}
                 type="submit"
               >
-                Confirmar Atividade
+                {t("activityConfirm.submit")}
               </Button>
             </Flex>
           </CardBody>

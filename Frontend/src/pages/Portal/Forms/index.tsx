@@ -11,23 +11,24 @@ import Can from "@components/atoms/Can";
 import Filter from "@components/organisms/Filter";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
+import { useTranslation } from "react-i18next";
 
 const columns = [
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "type",
-    label: "Tipo",
+    label: "common.fields.type",
   },
   {
     key: "active",
-    label: "Status",
+    label: "common.fields.active",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
@@ -54,6 +55,7 @@ const Action = memo((form: Pick<IForm, "_id" | "slug">) => {
 });
 
 const Create = memo(() => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleSelect = useCallback(() => {
@@ -64,7 +66,7 @@ const Create = memo(() => {
     <div>
       <Can permission="form.create">
         <Button colorScheme="blue" mr={2} onClick={handleSelect} size="sm">
-          Criar Formulário
+          {t("forms.create")}
         </Button>
       </Can>
     </div>
@@ -72,6 +74,7 @@ const Create = memo(() => {
 });
 
 const Forms: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const {
@@ -89,7 +92,9 @@ const Forms: React.FC = () => {
 
     return forms.map((form) => ({
       ...form,
-      active: form.active ? "Ativo" : "Inativo",
+      active: form.active
+        ? t("common.fields.active")
+        : t("common.fields.inactive"),
       type: FormTypes[form.type],
       actions: <Action {...form} />,
     }));
@@ -97,7 +102,7 @@ const Forms: React.FC = () => {
 
   return (
     <Box width="100%" p="10">
-      <Heading>Fomulários</Heading>
+      <Heading>{t("forms.title")}</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -115,9 +120,8 @@ const Forms: React.FC = () => {
 
         <Select
           input={{
-            label: "Tipo",
+            label: t("common.fields.type"),
             id: "type",
-            placeholder: "Selecione um tipo",
             options: Object.entries(FormTypes).map(([key, value]) => ({
               label: value,
               value: key,
@@ -128,16 +132,15 @@ const Forms: React.FC = () => {
 
         <Select
           input={{
-            label: "Ativo",
+            label: t("common.fields.active"),
             id: "active",
-            placeholder: "Selecione um tipo",
             options: [
               {
-                label: "Ativo",
+                label: t("common.fields.active"),
                 value: "true",
               },
               {
-                label: "Inativo",
+                label: t("common.fields.inactive"),
                 value: "false",
               },
             ],
@@ -160,7 +163,7 @@ const Forms: React.FC = () => {
       </Flex>
       {isError && (
         <Flex justifyContent="center" alignItems="center" mt="4" width="100%">
-          <Heading color="red.500">Erro ao carregar dados</Heading>
+          <Heading color="red.500">{t("forms.error")}</Heading>
         </Flex>
       )}
     </Box>

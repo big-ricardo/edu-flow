@@ -18,6 +18,7 @@ import { getStatus, createOrUpdateStatus } from "@apis/status";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
 import Can from "@components/atoms/Can";
+import { useTranslation } from "react-i18next";
 
 const statusSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -36,6 +37,7 @@ const StatusForm: React.FC<StatusFormProps> = ({
   isModal,
   ...props
 }) => {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -52,7 +54,7 @@ const StatusForm: React.FC<StatusFormProps> = ({
     mutationFn: createOrUpdateStatus,
     onSuccess: () => {
       toast({
-        title: `Status ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t(`status.${isEditing ? "updated" : "created"}`),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -64,7 +66,7 @@ const StatusForm: React.FC<StatusFormProps> = ({
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} status`,
+        title: t(`status.error`),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -113,15 +115,14 @@ const StatusForm: React.FC<StatusFormProps> = ({
       >
         <CardHeader>
           <Box textAlign="center" fontSize="lg" fontWeight="bold">
-            {isEditing ? "Editar" : "Criar"} Status
+            {t(`status.${isEditing ? "edit" : "create"}`)}
           </Box>
         </CardHeader>
         <CardBody display="flex" flexDirection="column" gap="4">
           <Text
             input={{
               id: "name",
-              label: "Nome",
-              placeholder: "Nome",
+              label: t("common.fields.name"),
               required: true,
             }}
           />
@@ -129,13 +130,18 @@ const StatusForm: React.FC<StatusFormProps> = ({
           <Select
             input={{
               id: "type",
-              label: "Tipo",
-              placeholder: "Tipo",
+              label: t("common.fields.type"),
               required: true,
               options: [
-                { label: "Em progresso", value: "progress" },
-                { label: "Concluido", value: "done" },
-                { label: "Cancelado", value: "canceled" },
+                { label: t("common.fields.statusType.done"), value: "done" },
+                {
+                  label: t("common.fields.statusType.progress"),
+                  value: "progress",
+                },
+                {
+                  label: t("common.fields.statusType.canceled"),
+                  value: "canceled",
+                },
               ],
             }}
           />
@@ -147,7 +153,7 @@ const StatusForm: React.FC<StatusFormProps> = ({
               variant="outline"
               onClick={handleCancel}
             >
-              Cancelar
+              {t("status.cancel")}
             </Button>
             <Can permission={isEditing ? "status.update" : "status.create"}>
               <Button
@@ -156,7 +162,7 @@ const StatusForm: React.FC<StatusFormProps> = ({
                 isLoading={isPending || isLoading}
                 type="submit"
               >
-                {isEditing ? "Editar" : "Criar"}
+                {t("status.submit")}
               </Button>
             </Can>
           </Flex>

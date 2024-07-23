@@ -22,6 +22,7 @@ import Switch from "@components/atoms/Inputs/Switch";
 import { getWorkflowDrafts } from "@apis/workflowDraft";
 import DraftItem from "@components/molecules/DraftItem";
 import Can from "@components/atoms/Can";
+import { useTranslation } from "react-i18next";
 
 const statusSchema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
@@ -31,6 +32,7 @@ const statusSchema = z.object({
 type StatusFormSchema = z.infer<typeof statusSchema>;
 
 export default function Workflow() {
+  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
@@ -49,7 +51,7 @@ export default function Workflow() {
     mutationFn: createOrUpdateWorkflow,
     onSuccess: (data) => {
       toast({
-        title: `Workflow ${isEditing ? "editada" : "criada"} com sucesso`,
+        title: t(`workflow.${isEditing ? "updated" : "created"}`),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -61,7 +63,7 @@ export default function Workflow() {
     },
     onError: () => {
       toast({
-        title: `Erro ao ${isEditing ? "editar" : "criar"} workflow`,
+        title: t("workflow.error"),
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -110,15 +112,14 @@ export default function Workflow() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {isEditing ? "Editar" : "Criar"} Workflow
+              {t(`woekflow.${isEditing ? "edit" : "create"}`)}
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
             <Text
               input={{
                 id: "name",
-                label: "Nome",
-                placeholder: "Nome",
+                label: t("common.fields.name"),
                 required: true,
               }}
             />
@@ -126,7 +127,7 @@ export default function Workflow() {
             <Switch
               input={{
                 id: "active",
-                label: "Ativo",
+                label: t("common.fields.active"),
               }}
             />
 
@@ -137,7 +138,7 @@ export default function Workflow() {
                 variant="outline"
                 onClick={handleCancel}
               >
-                Cancelar
+                {t("common.cancel")}
               </Button>
               <Can permission="workflow.create">
                 <Button
@@ -147,7 +148,7 @@ export default function Workflow() {
                   type="submit"
                   isDisabled={!isDirty}
                 >
-                  {isEditing ? "Editar" : "Criar"}
+                  {t("workflow.submit")}
                 </Button>
               </Can>
             </Flex>
@@ -167,6 +168,7 @@ interface WorkflowVersionsProps {
 }
 
 const WorkflowVersions: React.FC<WorkflowVersionsProps> = memo(({ id }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { data: workflowDrafts, isLoading: isLoadingDrafts } = useQuery({
@@ -186,7 +188,7 @@ const WorkflowVersions: React.FC<WorkflowVersionsProps> = memo(({ id }) => {
   );
   return (
     <Flex mt="8" justify="center" align="center" direction="column" gap="5">
-      <Heading fontSize={"x-large"}>Versões</Heading>
+      <Heading fontSize={"x-large"}>{t("workflow.versions")}</Heading>
       <Divider />
 
       {isLoadingDrafts && <Spinner />}
@@ -199,7 +201,7 @@ const WorkflowVersions: React.FC<WorkflowVersionsProps> = memo(({ id }) => {
             onClick={handleNewDraft}
             isLoading={isLoadingDrafts}
           >
-            Criar rascunho
+            {t("workflowDraft.create")}
           </Button>
         )}
 

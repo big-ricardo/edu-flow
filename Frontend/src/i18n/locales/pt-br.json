@@ -1,0 +1,329 @@
+{
+  "locale": {
+    "en-US": "Inglês",
+    "es": "Espanhol",
+    "pt-BR": "Português"
+  },
+  "welcome": {
+    "title": "Bem-vindo ao Edu Flow",
+    "description": "Faça login para acessar o sistema de gestão acadêmica"
+  },
+  "login": {
+    "title": "Faça login",
+    "submit": "Entrar",
+    "forgot": "Esqueceu a senha?"
+  },
+  "common": {
+    "activities": "Atividades",
+    "back": "Voltar",
+    "yes": "Sim",
+    "no": "Não",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "create": "Criar",
+    "fields": {
+      "name": "Nome",
+      "description": "Descrição",
+      "protocol": "Protocolo",
+      "acronym": "Domínio",
+      "email": "E-mail",
+      "password": "Senha",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirme a senha",
+      "profile": "Perfil",
+      "createdAt": "Criado em",
+      "updateAt": "Atualizado em",
+      "closedAt": "Fechado em",
+      "finishedAt": "Finalizado em",
+      "status": "Status",
+      "actions": "Ações",
+      "undefined": "Indefinido",
+      "users": "Usuários",
+      "finished": "Finalizado",
+      "sub_masterminds": "Sub-Orientadores",
+      "masterminds": "Orientadores",
+      "mastermind": "Mestrado",
+      "doctorate": "Doutorado",
+      "students": "Alunos",
+      "slug": "Slug",
+      "title": "Titulo",
+      "subject": "Assunto",
+      "profiles": "Perfis",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "matriculation": "Matrícula",
+      "external": "Externo",
+      "university_degree": "Grau universitário",
+      "institute": "Instituto",
+      "university": "Universidade",
+      "statusType": {
+        "done": "Concluído",
+        "canceled": "Cancelado",
+        "progress": "Em andamento"
+      },
+      "type": "Tipo",
+      "version": "Versão",
+      "by": "Criado por",
+      "anonymous": "Anônimo",
+      "initialStatus": "Status inicial",
+      "workflow": "Fluxo"
+    }
+  },
+  "input": {
+    "required": "Campo obrigatório",
+    "invalid": "Campo inválido",
+    "enter": {
+      "male": "Insira o {{field}}",
+      "female": "Insira a {{field}}"
+    }
+  },
+  "forgotPassword": {
+    "title": "Esqueceu a senha",
+    "description": "Digite seu e-mail para recuperar a senha",
+    "submit": "Recuperar senha",
+    "success": "E-mail enviado com sucesso",
+    "error": "Erro ao enviar e-mail",
+    "send": "Recuperar senha",
+    "back": "Voltar para o login"
+  },
+  "alterPassword": {
+    "title": "Alterar senha",
+    "description": "Digite sua nova senha",
+    "submit": "Alterar senha",
+    "success": "Senha alterada com sucesso",
+    "error": "Erro ao alterar senha",
+    "back": "Voltar para o login"
+  },
+  "notFound": {
+    "title": "404 - Página não encontrada",
+    "description": "A página que você está procurando não existe",
+    "back": "Voltar para o início"
+  },
+  "dashboard": {
+    "title": {
+      "openForms": "Formulários abertos",
+      "myActivities": "Minhas atividades",
+      "activityTracking": "Acompanhamento de atividades",
+      "evaluationPending": "Avaliações pendentes",
+      "interactionPending": "Interações pendentes",
+      "activitiesAccept": "Atividades por aceite",
+      "activityProcess": "Atividades em andamento",
+      "boardDefinition": "Definição de banca"
+    },
+    "description": {
+      "evaluationPending": "Atividades que estão pendentes de avaliação",
+      "interactionPending": "Interações que estão pendentes de resposta",
+      "activitiesAccept": "Atividades que estão pendentes de aceite",
+      "activityProcess": "Atividades que estão em andamento"
+    }
+  },
+  "title": {
+    "dashboard": "Dashboard",
+    "activities": "Atividades",
+    "users": "Usuários",
+    "institutes": "Instituições",
+    "universities": "Universidades",
+    "statuses": "Statuses",
+    "workflows": "Fluxos",
+    "emails": "Templates de e-mail",
+    "forms": "Formulários",
+    "reportings": "Relatórios"
+  },
+  "table": {
+    "noData": "Nenhum dado encontrado",
+    "error": "Erro ao carregar dados"
+  },
+  "role": {
+    "admin": "Administrador(a)",
+    "teacher": "Professor(a)",
+    "student": "Aluno(a)"
+  },
+  "state": {
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "pending": "Pendente",
+    "inProgress": "Em andamento",
+    "completed": "Concluído",
+    "finished": "Finalizado"
+  },
+  "button": {
+    "logout": "Sair"
+  },
+  "activityAccept": {
+    "title": "Aceitar atividade",
+    "description": "Deseja aceitar a atividade?",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "reject": "Rejeitar",
+    "submit": "Aceitar",
+    "success": "Atividade aceita com sucesso",
+    "error": "Erro ao aceitar atividade"
+  },
+  "activityBoardDefinition": {
+    "title": "Definição de banca",
+    "description": "Deseja definir a banca para a atividade?",
+    "addBoard": "Adicionar avaliadores",
+    "confirm": "Deseja confirmar a atividade? Essa ação não poderá ser desfeita",
+    "cancel": "Cancelar",
+    "submit": "Definir banca",
+    "success": "Banca definida com sucesso",
+    "error": "Erro ao definir banca"
+  },
+  "activityConfirm": {
+    "title": "Confirmar atividade",
+    "description": "Deseja confirmar a atividade?",
+    "confirm": "Deseja confirmar a atividade? Essa ação não poderá ser desfeita",
+    "cancel": "Cancelar",
+    "submit": "Confirmar Atividade",
+    "success": "Atividade confirmada com sucesso",
+    "error": "Erro ao confirmar atividade"
+  },
+  "emails": {
+    "title": "Template de e-mail",
+    "create": "Criar template",
+    "cancel": "Cancelar",
+    "success": "Template salvo com sucesso",
+    "error": "Erro ao salvar template"
+  },
+  "email": {
+    "create": "Criar template",
+    "edit": "Editar template",
+    "created": "Template criado com sucesso",
+    "edited": "Template editado com sucesso",
+    "cancel": "Cancelar",
+    "submit": "Salvar Alterações"
+  },
+  "users": {
+    "title": "Usuários",
+    "create": "Criar usuário",
+    "cancel": "Cancelar",
+    "success": "Usuário salvo com sucesso",
+    "error": "Erro ao salvar usuário"
+  },
+  "user": {
+    "create": "Criar usuário",
+    "edit": "Editar usuário",
+    "created": "Usuário criado com sucesso",
+    "edited": "Usuário editado com sucesso",
+    "cancel": "Cancelar",
+    "submit": "Salvar Alterações",
+    "error": "Erro ao salvar usuário",
+    "reseted": "Senha redefinida com sucesso",
+    "noReseted": "Erro ao redefinir senha",
+    "resendEmail": "Redefinir senha"
+  },
+  "institutes": {
+    "title": "Instituições",
+    "create": "Criar instituição",
+    "cancel": "Cancelar",
+    "success": "Instituição salva com sucesso",
+    "error": "Erro ao carregar instituição"
+  },
+  "institute": {
+    "create": "Criar instituição",
+    "edit": "Editar instituição",
+    "created": "Instituição criada com sucesso",
+    "edited": "Instituição editada com sucesso",
+    "cancel": "Cancelar",
+    "submit": "Salvar Alterações",
+    "error": "Erro ao salvar instituição"
+  },
+  "statuses": {
+    "title": "Statuses",
+    "create": "Criar statuses",
+    "cancel": "Cancelar",
+    "success": "Statuses salvo com sucesso",
+    "error": "Erro ao carregar os status"
+  },
+  "status": {
+    "create": "Criar status",
+    "edit": "Editar status",
+    "created": "Status criado com sucesso",
+    "edited": "Status editado com sucesso",
+    "cancel": "Cancelar",
+    "submit": "Salvar Alterações",
+    "error": "Erro ao salvar status"
+  },
+  "universities": {
+    "title": "Universidades",
+    "create": "Criar universidade",
+    "cancel": "Cancelar",
+    "success": "Universidade salva com sucesso",
+    "error": "Erro ao carregar universidade"
+  },
+  "university": {
+    "create": "Criar universidade",
+    "edit": "Editar universidade",
+    "created": "Universidade criada com sucesso",
+    "edited": "Universidade editada com sucesso",
+    "cancel": "Cancelar",
+    "submit": "Salvar Alterações",
+    "error": "Erro ao salvar universidade"
+  },
+  "workflows": {
+    "title": "Fluxos",
+    "create": "Criar fluxo",
+    "cancel": "Cancelar",
+    "success": "Fluxo salvo com sucesso",
+    "error": "Erro ao carregar fluxo"
+  },
+  "workflow": {
+    "create": "Criar fluxo",
+    "edit": "Editar fluxo",
+    "created": "Fluxo criado com sucesso",
+    "edited": "Fluxo editado com sucesso",
+    "cancel": "Cancelar",
+    "submit": "Salvar Alterações",
+    "error": "Erro ao salvar fluxo",
+    "status": {
+      "draft": "Rascunho",
+      "published": "Publicado"
+    },
+    "versions": "Versões"
+  },
+  "workflowDraft": {
+    "title": "Rascunho",
+    "edit": "Editar fluxo",
+    "view": "Visualizar fluxo",
+    "edited": "Fluxo editado com sucesso",
+    "error": "Erro ao salvar fluxo",
+    "submit": "Salvar nova versão",
+    "create": "Criar fluxo",
+    "publish": "Publicar",
+    "unPublish": "Despublicar",
+    "published": "Fluxo publicado com sucesso",
+    "invalid": "Fluxo inválido",
+    "back": "Voltar",
+    "config": "Configuração"
+  },
+  "forms": {
+    "title": "Formulários",
+    "create": "Criar formulário",
+    "cancel": "Cancelar",
+    "success": "Formulário salvo com sucesso",
+    "error": "Erro ao carregar formulário",
+    "type": {
+      "created": "Criação",
+      "interaction": "Interação",
+      "evaluation": "Avaliação"
+    }
+  },
+  "form": {
+    "title": "Formulários",
+    "create": "Criar formulário",
+    "created": "Formulário criado com sucesso",
+    "edit": "Editar formulário",
+    "edited": "Formulário editado com sucesso",
+    "cancel": "Cancelar",
+    "success": "Formulário salvo com sucesso",
+    "error": "Erro ao salvar formulário",
+    "submit": "Salvar Alterações",
+    "drafts": "Rascunhos",
+    "newDraft": "Criar rascunho",
+    "type": {
+      "created": "Criação",
+      "interaction": "Interação",
+      "evaluation": "Avaliação"
+    }
+  }
+}

@@ -14,38 +14,26 @@ import IForm from "@interfaces/Form";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
 import React, { memo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const OpenForms: React.FC = () => {
+  const { t } = useTranslation();
   const { data: forms, isLoading } = useQuery({
     queryKey: ["open-forms"],
     queryFn: getOpenForms,
   });
 
-  if (!forms || forms.length === 0) {
-    return (
-      <Box p={4} bg="bg.card" borderRadius="md" id="open-forms">
-        <Heading size="md">Formulários Abertos</Heading>
-        <Text>Nenhuma formulário disponível no momento.</Text>
-      </Box>
-    );
-  }
-
   return (
     <Box p={4} bg="bg.card" borderRadius="md" id="open-forms">
-      <Heading size="md">Formulários Abertos</Heading>
+      <Heading size="md">{t("dashboard.title.openForms")}</Heading>
       <Divider my={2} />
 
       {isLoading && <Spinner />}
 
       {forms && (
-        <Flex
-          gap={4}
-          mt={4}
-          width="100%"
-          flexWrap="wrap"
-        >
+        <Flex gap={4} mt={4} width="100%" flexWrap="wrap">
           {forms?.map((form) => (
             <FormItem key={form._id} form={form} />
           ))}
@@ -62,6 +50,7 @@ interface ActivityItemProps {
 }
 
 const FormItem: React.FC<ActivityItemProps> = memo(({ form }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleView = useCallback(() => {
@@ -100,8 +89,10 @@ const FormItem: React.FC<ActivityItemProps> = memo(({ form }) => {
           {form.description}
         </Text>
         <Text fontSize="sm">
-          Fechamento:{" "}
-          {form.period?.open ? convertDateTime(form.period.close) : "Indefinido"}
+          {t("common.fields.closedAt")}:
+          {form.period?.open
+            ? convertDateTime(form.period.close)
+            : t("common.fields.undefined")}
         </Text>
       </Stack>
     </Card>

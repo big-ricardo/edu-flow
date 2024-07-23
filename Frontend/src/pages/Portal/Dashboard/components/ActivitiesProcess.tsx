@@ -4,35 +4,37 @@ import Table from "@components/organisms/Table";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateTime } from "@utils/date";
 import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { FaPen } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
     key: "protocol",
-    label: "Protocolo",
+    label: "common.fields.protocol",
   },
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "description",
-    label: "Descrição",
+    label: "common.fields.description",
   },
   {
     key: "createdAt",
-    label: "Data de Criação",
+    label: "common.fields.createdAt",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
 type IItem = Awaited<ReturnType<typeof getApprovedActivities>>["activities"][0];
 
 const ApprovedActivities: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
@@ -65,9 +67,9 @@ const ApprovedActivities: React.FC = () => {
 
   return (
     <Box p={4} bg="bg.card" borderRadius="md">
-      <Heading size="md">Atividades para Aprovar</Heading>
+      <Heading size="md">{t("dashboard.title.activityProcess")}</Heading>
       <Text size="sm" color={"text.secondary"}>
-        Atividades pendentes de aprovação.
+        {t("dashboard.description.activityProcess")}
       </Text>
 
       <Divider my={2} />

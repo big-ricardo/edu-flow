@@ -7,27 +7,28 @@ import { BiEdit, BiRefresh } from "react-icons/bi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getInstitutes } from "@apis/institutes";
 import Can from "@components/atoms/Can";
+import { useTranslation } from "react-i18next";
 
 const columns = [
   {
     key: "name",
-    label: "Nome",
+    label: "common.fields.name",
   },
   {
     key: "acronym",
-    label: "Sigla",
+    label: "common.fields.acronym",
   },
   {
     key: "active",
-    label: "Status",
+    label: "common.fields.status",
   },
   {
     key: "university",
-    label: "Universidade",
+    label: "common.fields.university",
   },
   {
     key: "actions",
-    label: "Ações",
+    label: "common.fields.actions",
   },
 ];
 
@@ -48,6 +49,7 @@ const Action = memo((institute: { _id: string }) => {
 });
 
 const Create = memo(() => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCreate = useCallback(() => {
@@ -58,7 +60,7 @@ const Create = memo(() => {
     <div>
       <Can permission="institute.create">
         <Button colorScheme="blue" mr={2} onClick={handleCreate} size="sm">
-          Criar Instituto
+          {t("institutes.create")}
         </Button>
       </Can>
     </div>
@@ -66,6 +68,7 @@ const Create = memo(() => {
 });
 
 const Institutes: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const page = searchParams.get("page") ?? 1;
@@ -86,14 +89,16 @@ const Institutes: React.FC = () => {
     return institutes.map((institute) => ({
       ...institute,
       university: institute.university.acronym,
-      active: institute.active ? "Ativo" : "Inativo",
+      active: institute.active
+        ? t("common.fields.active")
+        : t("common.fields.inactive"),
       actions: <Action {...institute} />,
     }));
-  }, [institutes]);
+  }, [institutes, t]);
 
   return (
     <Box width="100%" p="10">
-      <Heading>Institutos</Heading>
+      <Heading>{t("institutes.title")}</Heading>
       <Flex justifyContent="flex-end" mt="4" width="100%">
         <Button
           onClick={() => refetch()}
@@ -120,7 +125,7 @@ const Institutes: React.FC = () => {
       </Flex>
       {isError && (
         <Flex justifyContent="center" alignItems="center" mt="4" width="100%">
-          <Heading color="red.500">Erro ao carregar dados</Heading>
+          <Heading color="red.500">{t("institutes.error")}</Heading>
         </Flex>
       )}
     </Box>

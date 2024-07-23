@@ -26,6 +26,7 @@ import React from "react";
 import Can from "@components/atoms/Can";
 import Icon from "@components/atoms/Icon";
 import Tutorial, { JoyrideSteps } from "@components/molecules/Tutorial";
+import { useTranslation } from "react-i18next";
 
 const steps: JoyrideSteps = [
   {
@@ -99,7 +100,7 @@ function Sidebar() {
   const location = useLocation();
 
   return (
-    <List fontSize="xl" spacing={4}>
+    <List fontSize="xl" spacing={4} overflowY="auto" maxH="100vh">
       <Tutorial name="navbar" steps={steps} />
 
       <Hide below="md">
@@ -112,7 +113,7 @@ function Sidebar() {
         <NavLink
           id="dashboard"
           to="/portal"
-          label="Dashboard"
+          label="title.dashboard"
           icon={BsHouse}
           active={location.pathname === "/portal"}
         />
@@ -122,7 +123,7 @@ function Sidebar() {
         <NavLink
           id="activities"
           to="/portal/activities"
-          label="Atividades"
+          label="title.activities"
           icon={BsActivity}
           active={location.pathname === "/portal/activities"}
         />
@@ -132,7 +133,7 @@ function Sidebar() {
         <NavLink
           id="users"
           to="/portal/users"
-          label="Usuários"
+          label="title.users"
           icon={BsPerson}
           active={location.pathname === "/portal/users"}
         />
@@ -142,7 +143,7 @@ function Sidebar() {
         <NavLink
           id="institutes"
           to="/portal/institutes"
-          label="Instituições"
+          label="title.institutes"
           icon={BsBuilding}
           active={location.pathname === "/portal/institutes"}
         />
@@ -152,7 +153,7 @@ function Sidebar() {
         <NavLink
           id="universities"
           to="/portal/universities"
-          label="Universidades"
+          label="title.universities"
           icon={FaUniversity}
           active={location.pathname === "/portal/universities"}
         />
@@ -162,7 +163,7 @@ function Sidebar() {
         <NavLink
           id="statuses"
           to="/portal/statuses"
-          label="Status"
+          label="title.statuses"
           icon={BsTag}
           active={location.pathname === "/portal/statuses"}
         />
@@ -172,7 +173,7 @@ function Sidebar() {
         <NavLink
           id="emails"
           to="/portal/emails"
-          label="Emails"
+          label="title.emails"
           icon={FaRegEnvelope}
           active={location.pathname === "/portal/emails"}
         />
@@ -182,7 +183,7 @@ function Sidebar() {
         <NavLink
           id="forms"
           to="/portal/forms"
-          label="Formulários"
+          label="title.forms"
           icon={BsFileEarmarkText}
           active={location.pathname === "/portal/forms"}
         />
@@ -192,7 +193,7 @@ function Sidebar() {
         <NavLink
           id="workflows"
           to="/portal/workflows"
-          label="Fluxos"
+          label="title.workflows"
           icon={GoWorkflow}
           active={location.pathname === "/portal/workflows"}
         />
@@ -202,7 +203,7 @@ function Sidebar() {
         <NavLink
           id="reportings"
           to="/portal/reportings"
-          label="Relatórios"
+          label="title.reportings"
           icon={BsPostcardFill}
           active={location.pathname === "/portal/reportings"}
         />
@@ -224,30 +225,34 @@ const NavLink = React.memo(
     label: string;
     icon: React.ElementType;
     active?: boolean;
-  }) => (
-    <ListItem key={id} id={id}>
-      <ChakraLink as={ReactRouterLink} to={to}>
-        <Tooltip
-          label={label}
-          aria-label="A tooltip"
-          hasArrow
-          size="md"
-          placement="right-end"
-          id={to.replace("/portal/", "")}
-          display="flex"
-        >
-          <CustomCard
-            _hover={{ textDecor: "none", color: "blue.500" }}
-            _focus={{ outline: "none" }}
-            color={active ? "blue.500" : ""}
+  }) => {
+    const { t } = useTranslation();
+
+    return (
+      <ListItem key={id} id={id}>
+        <ChakraLink as={ReactRouterLink} to={to}>
+          <Tooltip
+            label={t(label)}
+            aria-label="A tooltip"
+            hasArrow
+            size="md"
+            placement="right-end"
+            id={to.replace("/portal/", "")}
+            display="flex"
           >
-            <Icon size={24} />
-            <Hide above="md">{label}</Hide>
-          </CustomCard>
-        </Tooltip>
-      </ChakraLink>
-    </ListItem>
-  )
+            <CustomCard
+              _hover={{ textDecor: "none", color: "blue.500" }}
+              _focus={{ outline: "none" }}
+              color={active ? "blue.500" : ""}
+            >
+              <Icon size={24} />
+              <Hide above="md">{t(label)}</Hide>
+            </CustomCard>
+          </Tooltip>
+        </ChakraLink>
+      </ListItem>
+    );
+  }
 );
 
 export default Sidebar;

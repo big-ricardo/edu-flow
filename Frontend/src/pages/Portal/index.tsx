@@ -17,6 +17,7 @@ import Navbar from "@components/organisms/Navbar";
 import { Outlet } from "react-router-dom";
 import ProfileMenu from "@components/organisms/ProfileMenu";
 import SwitchTheme from "@components/molecules/SwitchTheme";
+import LocaleSwap from "@components/atoms/LocaleSwap";
 
 function Dashboard() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -51,6 +52,7 @@ function Dashboard() {
               <DrawerBody>
                 <Flex direction="column" h="100%" gap={2}>
                   <Navbar />
+                  <LocaleSwap />
                   <SwitchTheme />
                   <Divider />
                   <ProfileMenu />
@@ -79,8 +81,9 @@ function Dashboard() {
             bg="bg.navbar"
           >
             <Navbar />
-            <Flex direction="column" mb="4">
+            <Flex direction="column" mb="4" gap="2">
               <SwitchTheme />
+              <LocaleSwap />
               <ProfileMenu />
             </Flex>
           </Flex>

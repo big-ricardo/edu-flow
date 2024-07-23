@@ -2,7 +2,8 @@ import useAuth from "./hooks/useAuth";
 import { publicRoutes, privateRoutes } from "./routes";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import api from "./services/api";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import ReactGA from "react-ga4";
 
 function App() {
   const [auth, setAuth] = useAuth();
@@ -53,6 +54,14 @@ function App() {
       })
       .filter(Boolean);
   }, [permissions]);
+
+  useEffect(() => {
+    ReactGA.send({
+      hitType: "pageview",
+      page: window.location.pathname + window.location.search,
+      title: window.location.pathname.replace("/", "-"),
+    });
+  }, []);
 
   return (
     <BrowserRouter>

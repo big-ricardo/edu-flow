@@ -17,6 +17,7 @@ import { AxiosError } from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { alterPassword } from "@apis/auth";
 import Password from "@components/atoms/Inputs/Password";
+import { useTranslation } from "react-i18next";
 
 const schema = z.object({
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
@@ -27,6 +28,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const AlterPassword: React.FC = () => {
+  const { t } = useTranslation();
+
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -45,7 +48,7 @@ const AlterPassword: React.FC = () => {
     mutationFn: alterPassword,
     onSuccess: () => {
       toast({
-        title: "Senha recuperada com sucesso",
+        title: t("alterPassword.success"),
         status: "success",
         duration: 9000,
         isClosable: true,
@@ -55,7 +58,7 @@ const AlterPassword: React.FC = () => {
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
-        title: "Erro ao recuperar senha",
+        title: t("alterPassword.error"),
         description: error?.response?.data?.message ?? error.message,
         status: "error",
         duration: 9000,
@@ -97,8 +100,10 @@ const AlterPassword: React.FC = () => {
                 <Password
                   input={{
                     id: "password",
-                    label: "Nova senha",
-                    placeholder: "Digite sua nova senha",
+                    label: t("common.fields.newPassword"),
+                    placeholder: t("input.enter.female", {
+                      field: t("common.fields.newPassword"),
+                    }),
                     required: true,
                   }}
                 />
@@ -106,8 +111,10 @@ const AlterPassword: React.FC = () => {
                 <Password
                   input={{
                     id: "confirmPassword",
-                    label: "Confirmar senha",
-                    placeholder: "Confirme sua nova senha",
+                    label: t("common.fields.confirmPassword"),
+                    placeholder: t("input.enter.female", {
+                      field: t("common.fields.confirmPassword"),
+                    }),
                     required: true,
                   }}
                 />
@@ -124,7 +131,7 @@ const AlterPassword: React.FC = () => {
                   isLoading={isPending}
                   colorScheme="blue"
                 >
-                  Recuperar senha
+                  {t("alterPassword.submit")}
                 </Button>
               </Flex>
             </form>
@@ -138,7 +145,7 @@ const AlterPassword: React.FC = () => {
                 textDecor={"underline"}
                 onClick={handleBackLogin}
               >
-                Voltar para login
+                {t("alterPassword.back")}
               </Text>
             </Box>
           </CardBody>

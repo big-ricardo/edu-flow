@@ -1,14 +1,10 @@
 import { publishUnpublish } from "@apis/workflowDraft";
-import {
-  Button,
-  Flex,
-  Heading,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Flex, Heading, useToast } from "@chakra-ui/react";
 import Can from "@components/atoms/Can";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { FaArrowLeft, FaPushed, FaSave, FaEye, FaPen } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { Panel } from "reactflow";
@@ -26,6 +22,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
   isView,
   status,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string; workflow_id: string }>();
   const id = params?.id ?? "";
@@ -36,7 +33,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
     mutationFn: publishUnpublish,
     onSuccess: () => {
       toast({
-        title: `Workflow alterado com sucesso`,
+        title: t("workflowDraft.published"),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -47,7 +44,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({
-        title: `Erro ao alterar workflow`,
+        title: t("workflowDraft.error"),
         description: error?.response?.data?.message ?? error.message,
         status: "error",
         duration: 3000,
@@ -90,14 +87,14 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
       >
         <Flex alignItems="center" gap={2}>
           <Heading size="md" fontWeight="bold">
-            Workflow
+            {t("workflowDraft.title")}
           </Heading>
           <Button
             colorScheme="blue"
             onClick={handleBack}
             variant="ghost"
             size="sm"
-            title="Voltar"
+            title={t("workflowDraft.back")}
           >
             <FaArrowLeft />
           </Button>
@@ -112,7 +109,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
               onClick={handleNavigate}
               variant="outline"
               size="sm"
-              title={isView ? "Editar" : "Visualizar"}
+              title={isView ? t("workflowDraft.edit") : t("workflowDraft.view")}
             >
               {isView ? <FaPen /> : <FaEye />}
             </Button>
@@ -126,10 +123,16 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
                 variant="outline"
                 size="sm"
                 isLoading={isPendingPublish}
-                title={status === "draft" ? "Publicar" : "Despublicar"}
+                title={
+                  status === "draft"
+                    ? t("workflowDraft.publish")
+                    : t("workflowDraft.unPublish")
+                }
               >
                 {status === "draft" ? <FaPushed /> : <FaSave />} &nbsp;
-                {status === "draft" ? "Publicar" : "Publicado"}
+                {status === "draft"
+                  ? t("workflowDraft.publish")
+                  : t("workflowDraft.unPublish")}
               </Button>
             </Can>
           ) : (
@@ -141,7 +144,7 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
                 size="sm"
                 isLoading={isPending}
               >
-                <FaSave /> &nbsp; Salvar Nova Versão
+                <FaSave /> &nbsp; {t("common.submit")}
               </Button>
             </Can>
           )}
