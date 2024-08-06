@@ -2,15 +2,8 @@ import { updateTutorials } from "@apis/users";
 import { useTheme } from "@chakra-ui/react";
 import useAuth from "@hooks/useAuth";
 import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import JoyrideLib, { Props, CallBackProps } from "react-joyride";
-
-const Locale = {
-  back: "Voltar",
-  close: "Fechar",
-  last: "Finalizar",
-  next: "Próximo",
-  skip: "Pular",
-};
 
 interface JoyrideStep {
   target: string;
@@ -38,6 +31,7 @@ const Tutorial: React.FC<JoyrideProps> = (props) => {
 };
 
 const Joyride: React.FC<JoyrideProps> = ({ steps, ...props }) => {
+  const { t } = useTranslation();
   const [auth] = useAuth();
   const theme = useTheme();
   const permissions = auth?.permissions || [];
@@ -48,6 +42,15 @@ const Joyride: React.FC<JoyrideProps> = ({ steps, ...props }) => {
       return permissions.includes(step.permission);
     });
   }, [permissions, steps]);
+
+  const stepsTranslated = useMemo(() => {
+    return filteredSteps.map((step) => {
+      return {
+        ...step,
+        content: t(step.content),
+      };
+    });
+  }, [filteredSteps, t]);
 
   const finishedOrSkipped = useCallback(() => {
     if (!auth) return;
@@ -66,8 +69,6 @@ const Joyride: React.FC<JoyrideProps> = ({ steps, ...props }) => {
     [finishedOrSkipped]
   );
 
-  console.log("theme", theme);
-
   const Styles = useMemo(() => {
     return {
       options: {
@@ -83,11 +84,21 @@ const Joyride: React.FC<JoyrideProps> = ({ steps, ...props }) => {
     };
   }, [theme]);
 
+  const Locale = useMemo(() => {
+    return {
+      back: t("tutorial.back"),
+      close: t("tutorial.close"),
+      last: t("tutorial.last"),
+      next: t("tutorial.next"),
+      skip: t("tutorial.skip"),
+    };
+  }, [t]);
+
   return (
     <JoyrideLib
       {...props}
       run
-      steps={filteredSteps}
+      steps={stepsTranslated}
       continuous={true}
       showProgress={true}
       locale={Locale}

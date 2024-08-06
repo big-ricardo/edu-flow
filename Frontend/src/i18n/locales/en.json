@@ -26,13 +26,13 @@
       "description": "Description",
       "protocol": "Protocol",
       "acronym": "Domain",
-      "email": "E-mail",
+      "email": "Email",
       "password": "Password",
       "newPassword": "New password",
       "confirmPassword": "Confirm password",
       "profile": "Profile",
       "createdAt": "Created at",
-      "updatedAt": "Updated at",
+      "updateAt": "Updated at",
       "closedAt": "Closed at",
       "finishedAt": "Finished at",
       "status": "Status",
@@ -40,9 +40,9 @@
       "undefined": "Undefined",
       "users": "Users",
       "finished": "Finished",
-      "sub_masterminds": "Co-supervisors",
-      "masterminds": "Supervisors",
-      "mastermind": "Master's degree",
+      "sub_masterminds": "Sub-Advisors",
+      "masterminds": "Advisors",
+      "mastermind": "Master's",
       "doctorate": "Doctorate",
       "students": "Students",
       "slug": "Slug",
@@ -51,7 +51,7 @@
       "profiles": "Profiles",
       "active": "Active",
       "inactive": "Inactive",
-      "matriculation": "Registration",
+      "matriculation": "Enrollment",
       "external": "External",
       "university_degree": "University degree",
       "institute": "Institute",
@@ -86,6 +86,27 @@
     "send": "Recover password",
     "back": "Back to login"
   },
+  "navbar": {
+    "joyride": {
+      "dashboard": "Click here to return to the homepage whenever you want.",
+      "activities": "Click here to view your activities.",
+      "users": "Click here to add/view users.",
+      "institutes": "Click here to view institutes.",
+      "universities": "Click here to view universities.",
+      "statuses": "Click here to create/edit statuses.",
+      "emails": "Click here to create/edit email templates.",
+      "forms": "Click here to create/edit forms.",
+      "workflows": "Click here to create/edit workflows.",
+      "reportings": "Click here to create/edit reports."
+    }
+  },
+  "tutorial": {
+    "back": "Back",
+    "close": "Close",
+    "last": "Finish",
+    "next": "Next",
+    "skip": "Skip"
+  },
   "alterPassword": {
     "title": "Change password",
     "description": "Enter your new password",
@@ -97,7 +118,7 @@
   "notFound": {
     "title": "404 - Page not found",
     "description": "The page you are looking for does not exist",
-    "back": "Back to home"
+    "back": "Back to homepage"
   },
   "dashboard": {
     "title": {
@@ -109,6 +130,13 @@
       "activitiesAccept": "Activities by acceptance",
       "activityProcess": "Activities in progress",
       "boardDefinition": "Board definition"
+    },
+    "joyride": {
+      "open-forms": "Welcome to EduFlow! Here you can view the forms available for completion.",
+      "my-activities": "Here you will see the activities you have created.",
+      "activity-tracking": "Here you will see the activities you are participating in and their progress.",
+      "switch-theme": "Click here to switch between light and dark themes.",
+      "profile-menu": "Click here to access your profile and log out."
     },
     "description": {
       "evaluationPending": "Activities pending evaluation",
@@ -134,7 +162,7 @@
     "error": "Error loading data"
   },
   "role": {
-    "admin": "Administrator",
+    "admin": "Admin",
     "teacher": "Teacher",
     "student": "Student"
   },
@@ -232,7 +260,7 @@
     "title": "Statuses",
     "create": "Create statuses",
     "cancel": "Cancel",
-    "success": "Statuses saved successfully",
+    "success": "Status saved successfully",
     "error": "Error loading statuses"
   },
   "status": {
@@ -244,21 +272,21 @@
     "submit": "Save changes",
     "error": "Error saving status"
   },
-  "universities": {
-    "title": "Universities",
-    "create": "Create university",
+  "forms": {
+    "title": "Forms",
+    "create": "Create form",
     "cancel": "Cancel",
-    "success": "University saved successfully",
-    "error": "Error loading university"
+    "success": "Form saved successfully",
+    "error": "Error loading form"
   },
-  "university": {
-    "create": "Create university",
-    "edit": "Edit university",
-    "created": "University created successfully",
-    "edited": "University edited successfully",
+  "form": {
+    "create": "Create form",
+    "edit": "Edit form",
+    "created": "Form created successfully",
+    "edited": "Form edited successfully",
     "cancel": "Cancel",
     "submit": "Save changes",
-    "error": "Error saving university"
+    "error": "Error saving form"
   },
   "workflows": {
     "title": "Workflows",
@@ -274,55 +302,28 @@
     "edited": "Workflow edited successfully",
     "cancel": "Cancel",
     "submit": "Save changes",
-    "error": "Error saving workflow",
-    "status": {
-      "draft": "Draft","published": "Published"
-    },
-    "versions": "Versions"
+    "error": "Error saving workflow"
   },
-  "workflowDraft": {
-    "title": "Draft",
-    "edit": "Edit workflow",
-    "view": "View workflow",
-    "edited": "Workflow edited successfully",
-    "error": "Error saving workflow",
-    "submit": "Save new version",
-    "create": "Create workflow",
-    "publish": "Publish",
-    "unPublish": "Unpublish",
-    "published": "Workflow published successfully",
-    "invalid": "Invalid workflow",
-    "back": "Back",
-    "config": "Configuration"
-  },
-  "forms": {
-    "title": "Forms",
-    "create": "Create form",
+  "reportings": {
+    "title": "Reports",
+    "create": "Create report",
     "cancel": "Cancel",
-    "success": "Form saved successfully",
-    "error": "Error loading form",
-    "type": {
-      "created": "Creation",
-      "interaction": "Interaction",
-      "evaluation": "Evaluation"
-    }
+    "success": "Report saved successfully",
+    "error": "Error loading report"
   },
-  "form": {
-    "title": "Forms",
-    "create": "Create form",
-    "created": "Form created successfully",
-    "edit": "Edit form",
-    "edited": "Form edited successfully",
+  "reporting": {
+    "create": "Create report",
+    "edit": "Edit report",
+    "created": "Report created successfully",
+    "edited": "Report edited successfully",
     "cancel": "Cancel",
-    "success": "Form saved successfully",
-    "error": "Error saving form",
     "submit": "Save changes",
-    "drafts": "Drafts",
-    "newDraft": "Create draft",
-    "type": {
-      "created": "Creation",
-      "interaction": "Interaction",
-      "evaluation": "Evaluation"
-    }
+    "error": "Error saving report"
+  },
+  "confirmDialog": {
+    "title": "Confirmation",
+    "message": "Are you sure you want to proceed?",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

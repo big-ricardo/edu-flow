@@ -14,26 +14,24 @@ import Tutorial, { JoyrideSteps } from "@components/molecules/Tutorial";
 const steps: JoyrideSteps = [
   {
     target: "#open-forms",
-    content:
-      "Seja bem-vindo ao EduFlow! Aqui você pode visualizar os formulários disponíveis para preenchimento.",
+    content: "dashboard.joyride.open-forms",
   },
   {
     target: "#my-activities",
-    content: "Aqui você verá as atividades que você já criou.",
+    content: "dashboard.joyride.my-activities",
   },
   {
     target: "#activity-tracking",
-    content:
-      "Aqui você verá as atividades que você está participando e o andamento delas.",
+    content: "dashboard.joyride.activity-tracking",
     permission: "activity.committed",
   },
   {
     target: "#switch-theme",
-    content: "Clique aqui para alternar entre os temas claro e escuro.",
+    content: "dashboard.joyride.switch-theme",
   },
   {
     target: "#profile-menu",
-    content: "Clique aqui para acessar seu perfil e fazer logout.",
+    content: "dashboard.joyride.profile-menu",
   },
 ];
 

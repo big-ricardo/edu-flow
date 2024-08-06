@@ -31,43 +31,43 @@ import { useTranslation } from "react-i18next";
 const steps: JoyrideSteps = [
   {
     target: "#dashboard",
-    content: "Clique aqui para voltar para a página inicial quando quiser.",
+    content: "navbar.joyride.dashboard",
   },
   {
     target: "#activities",
-    content: "Clique aqui para ver as suas atividades.",
+    content: "navbar.joyride.activities",
   },
   {
     target: "#users",
-    content: "Clique aqui para adicionar/ver usuários.",
+    content: "navbar.joyride.users",
   },
   {
     target: "#institutes",
-    content: "Clique aqui para ver as instituições.",
+    content: "navbar.joyride.institutes",
   },
   {
     target: "#universities",
-    content: "Clique aqui para ver as universidades.",
+    content: "navbar.joyride.universities",
   },
   {
     target: "#statuses",
-    content: "Clique aqui para criar/editar os status.",
+    content: "navbar.joyride.statuses",
   },
   {
     target: "#emails",
-    content: "Clique aqui para criar/editar os templates de emails.",
+    content: "navbar.joyride.emails",
   },
   {
     target: "#forms",
-    content: "Clique aqui para criar/editar os formulários.",
+    content: "navbar.joyride.forms",
   },
   {
     target: "#workflows",
-    content: "Clique aqui para criar/editar os fluxos.",
+    content: "navbar.joyride.workflows",
   },
   {
     target: "#reportings",
-    content: "Clique aqui para criar/editar os relatórios.",
+    content: "navbar.joyride.reportings",
   },
 ];
 

@@ -86,6 +86,27 @@
     "send": "Recuperar senha",
     "back": "Voltar para o login"
   },
+  "navbar": {
+    "joyride": {
+      "dashboard": "Clique aqui para voltar para a página inicial quando quiser.",
+      "activities": "Clique aqui para ver as suas atividades.",
+      "users": "Clique aqui para adicionar/ver usuários.",
+      "institutes": "Clique aqui para ver as instituições.",
+      "universities": "Clique aqui para ver as universidades.",
+      "statuses": "Clique aqui para criar/editar os status.",
+      "emails": "Clique aqui para criar/editar os templates de emails.",
+      "forms": "Clique aqui para criar/editar os formulários.",
+      "workflows": "Clique aqui para criar/editar os fluxos.",
+      "reportings": "Clique aqui para criar/editar os relatórios."
+    }
+  },
+  "tutorial": {
+    "back": "Voltar",
+    "close": "Fechar",
+    "last": "Finalizar",
+    "next": "Próximo",
+    "skip": "Pular"
+  },
   "alterPassword": {
     "title": "Alterar senha",
     "description": "Digite sua nova senha",
@@ -109,6 +130,13 @@
       "activitiesAccept": "Atividades por aceite",
       "activityProcess": "Atividades em andamento",
       "boardDefinition": "Definição de banca"
+    },
+    "joyride": {
+      "open-forms": "Seja bem-vindo ao EduFlow! Aqui você pode visualizar os formulários disponíveis para preenchimento.",
+      "my-activities": "Aqui você verá as atividades que você já criou.",
+      "activity-tracking": "Aqui você verá as atividades que você está participando e o andamento delas.",
+      "switch-theme": "Clique aqui para alternar entre os temas claro e escuro.",
+      "profile-menu": "Clique aqui para acessar seu perfil e fazer logout."
     },
     "description": {
       "evaluationPending": "Atividades que estão pendentes de avaliação",
@@ -229,17 +257,17 @@
     "error": "Erro ao salvar instituição"
   },
   "statuses": {
-    "title": "Statuses",
-    "create": "Criar statuses",
+    "title": "Status",
+    "create": "Criar Status",
     "cancel": "Cancelar",
-    "success": "Statuses salvo com sucesso",
+    "success": "Status salvo com sucesso",
     "error": "Erro ao carregar os status"
   },
   "status": {
     "create": "Criar status",
     "edit": "Editar status",
     "created": "Status criado com sucesso",
-    "edited": "Status editado com sucesso",
+    "updated": "Status editado com sucesso",
     "cancel": "Cancelar",
     "submit": "Salvar Alterações",
     "error": "Erro ao salvar status"
@@ -300,7 +328,7 @@
     "title": "Formulários",
     "create": "Criar formulário",
     "cancel": "Cancelar",
-    "success": "Formulário salvo com sucesso",
+    "created": "Formulário salvo com sucesso",
     "error": "Erro ao carregar formulário",
     "type": {
       "created": "Criação",
@@ -326,11 +354,11 @@
       "evaluation": "Avaliação"
     }
   },
-  "formDraft":{
+  "formDraft": {
     "title": "Rascunho",
     "edit": "Editar formulário",
     "view": "Visualizar formulário",
-    "edited": "Formulário editado com sucesso",
+    "created": "Formulário editado com sucesso",
     "error": "Erro ao salvar formulário",
     "submit": "Salvar nova versão",
     "publish": "Publicar",
