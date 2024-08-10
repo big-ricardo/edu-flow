@@ -209,7 +209,7 @@ export default function Workflow() {
                   options: [
                     { label: t("form.type.created"), value: "created" },
                     { label: t("form.type.interaction"), value: "interaction" },
-                    { label: t("form.type.evaluated"), value: "evaluated" },
+                    { label: t("form.type.evaluation"), value: "evaluated" },
                   ],
                   isDisabled: isEditing,
                 }}

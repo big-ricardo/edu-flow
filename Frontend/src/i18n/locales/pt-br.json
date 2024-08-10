@@ -356,6 +356,7 @@
   },
   "formDraft": {
     "title": "Rascunho",
+    "create": "Criar formulário",
     "edit": "Editar formulário",
     "view": "Visualizar formulário",
     "created": "Formulário editado com sucesso",
