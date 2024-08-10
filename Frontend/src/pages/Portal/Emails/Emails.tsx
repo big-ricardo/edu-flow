@@ -158,7 +158,7 @@ const EmailTemplate: React.FC = () => {
             <FaTrashAlt />
           </Button>
 
-          <Can permission={isEditing ? "email.edit" : "email.create"}>
+          <Can permission={isEditing ? "email.update" : "email.create"}>
             <Button
               colorScheme="green"
               onClick={onSubmit}

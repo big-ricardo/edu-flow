@@ -299,7 +299,7 @@
     "create": "Criar fluxo",
     "edit": "Editar fluxo",
     "created": "Fluxo criado com sucesso",
-    "edited": "Fluxo editado com sucesso",
+    "updated": "Fluxo editado com sucesso",
     "cancel": "Cancelar",
     "submit": "Salvar Alterações",
     "error": "Erro ao salvar fluxo",

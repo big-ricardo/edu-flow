@@ -112,7 +112,7 @@ export default function Workflow() {
         >
           <CardHeader>
             <Box textAlign="center" fontSize="lg" fontWeight="bold">
-              {t(`woekflow.${isEditing ? "edit" : "create"}`)}
+              {t(`workflow.${isEditing ? "edit" : "create"}`)}
             </Box>
           </CardHeader>
           <CardBody display="flex" flexDirection="column" gap="4">
