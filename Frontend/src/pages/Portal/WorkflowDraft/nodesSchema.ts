@@ -47,17 +47,13 @@ const schemas: NodeSchemas = {
       name: z.string().min(3, { message: "Nome é obrigatório" }),
       form_id: z.string().min(3, { message: "Selecione um formulário" }),
       visible: z.boolean().default(true),
-      isDeferred: z.boolean().default(true),
+      isDeferred: z.boolean().default(false),
       average: z.coerce
         .number()
         .min(0, { message: "Avaliação mínima é 0" })
         .max(10, { message: "Avaliação máxima é 10" }),
       to: z.array(z.string()).optional(),
       notUseGrade: z.boolean().default(true),
-      weight: z.coerce
-        .number()
-        .min(0, { message: "Peso mínimo é 0" })
-        .max(100, { message: "Peso máximo é 100" }),
     })
     .refine(
       (data) => {

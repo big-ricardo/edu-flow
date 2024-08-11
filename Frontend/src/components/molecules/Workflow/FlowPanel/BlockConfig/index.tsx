@@ -301,7 +301,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
               }}
             />
 
-            {watch("isDeferred") === false && (
+            {!watch("isDeferred") && (
               <Select
                 input={{
                   label: "Destinatarios",
