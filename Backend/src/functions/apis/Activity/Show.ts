@@ -32,6 +32,9 @@ const handler: HttpHandler = async (conn, req) => {
 
   for (const interactions of activity.interactions) {
     for (const answers of interactions.answers) {
+      if (!answers.data) {
+        continue;
+      }
       for (const field of answers.data.fields) {
         if (field.type === FieldTypes.File) {
           await blobUploader.updateSas(field.value);
