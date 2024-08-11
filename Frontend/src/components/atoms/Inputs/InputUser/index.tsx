@@ -248,8 +248,8 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
     <FormControl id={input.id} isInvalid={!!errors?.[input.id]}>
       <Flex align="start" gap="4" direction={"column"} mb="4">
         <FormLabel>{input?.label}</FormLabel>
-        <InfoTooltip describe={input?.describe} />
         <Flex align="end" gap="4" w="100%">
+        <InfoTooltip describe={input?.describe} />
           <Select
             input={{
               id: `${input.id}-select-user`,

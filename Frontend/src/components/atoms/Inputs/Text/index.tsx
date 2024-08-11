@@ -36,9 +36,9 @@ const Text: React.FC<TextProps> = ({ input }) => {
         }}
       >
         <FormLabel>{input?.label}</FormLabel>
-        <InfoTooltip describe={input?.describe} />
       </div>
 
+      <InfoTooltip describe={input?.describe} />
       <Input
         type={input?.type ?? "text"}
         placeholder={input?.placeholder}

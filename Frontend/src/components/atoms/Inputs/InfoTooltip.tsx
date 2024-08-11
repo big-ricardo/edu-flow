@@ -1,24 +1,22 @@
-import { Box } from "@chakra-ui/react";
-import React from "react";
-import { FaInfo } from "react-icons/fa";
+import { Box, Text } from "@chakra-ui/react";
+import React, { memo } from "react";
 
 interface InfoTooltipProps {
   describe?: string | null;
 }
 
-const InfoTooltip: React.FC<InfoTooltipProps> = ({ describe }) => {
+const InfoTooltip: React.FC<InfoTooltipProps> = memo(({ describe }) => {
   if (!describe) return null;
 
   return (
-    <Box
-      as={FaInfo}
-      color="white"
-      bg="blue.800"
-      borderRadius="50%"
-      p="0.2rem"
-      title={describe}
-    />
+    <Box>
+      {describe.split("\n").map((text, index) => (
+        <Box key={index} display="flex" alignItems="center">
+          <Text fontSize={"sm"}>{text}</Text>
+        </Box>
+      ))}
+    </Box>
   );
-};
+});
 
 export default InfoTooltip;

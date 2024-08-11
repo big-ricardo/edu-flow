@@ -34,8 +34,8 @@ const TextArea: React.FC<TextAreaProps> = ({ input }) => {
         }}
       >
         <FormLabel>{input?.label}</FormLabel>
-        <InfoTooltip describe={input?.describe} />
       </div>
+      <InfoTooltip describe={input?.describe} />
       <Input
         as="textarea"
         placeholder={input?.placeholder}

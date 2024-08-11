@@ -156,8 +156,8 @@ const File: React.FC<FileProps> = ({ input }) => {
         }}
       >
         <FormLabel>{input.label}</FormLabel>
-        <InfoTooltip describe={input.describe} />
       </div>
+      <InfoTooltip describe={input.describe} />
       <InputGroup
         onClick={() => {
           if (uploadStatus !== "uploading") inputRef.current?.click();

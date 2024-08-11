@@ -46,9 +46,9 @@ const NumberInput: React.FC<TextProps> = ({ input, max, min }) => {
         }}
       >
         <FormLabel>{input?.label}</FormLabel>
-        <InfoTooltip describe={input?.describe} />
       </div>
 
+      <InfoTooltip describe={input?.describe} />
       <Controller
         name={input.id}
         render={({ field }) => (

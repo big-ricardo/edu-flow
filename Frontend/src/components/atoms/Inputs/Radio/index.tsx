@@ -44,8 +44,8 @@ const Radio: React.FC<RadioProps> = ({ input }) => {
         }}
       >
         <FormLabel>{input?.label}</FormLabel>
-        <InfoTooltip describe={input?.describe} />
       </div>
+      <InfoTooltip describe={input?.describe} />
       <Controller
         name={input.id}
         control={control}

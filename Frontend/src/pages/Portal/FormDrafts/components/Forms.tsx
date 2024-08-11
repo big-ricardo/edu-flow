@@ -16,16 +16,16 @@ interface FormEditProps {
   isCreated: boolean;
 }
 
-const FormEdit: React.FC<FormEditProps> = memo(({ formType }) => {
+const FormEdit: React.FC<FormEditProps> = memo(({ formType, isEditing }) => {
   const { control, setValue } = useFormContext<formFormSchema>();
 
   const { fields, insert, remove, swap } = useFieldArray({
     control,
     name: "fields",
   });
-
+  
   useEffect(() => {
-    if (formType === "evaluated") {
+    if (formType === "evaluated" && !isEditing) {
       const evaluatedFields = fields.filter(
         (field) => field.type === "evaluated"
       );
@@ -36,7 +36,7 @@ const FormEdit: React.FC<FormEditProps> = memo(({ formType }) => {
         }
       });
     }
-  }, [fields, formType, control]);
+  }, [fields, formType, control, setValue, isEditing]);
 
   return (
     <React.Fragment>

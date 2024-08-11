@@ -56,7 +56,7 @@ const formsZodSchema = z
             .optional(),
           describe: z
             .string()
-            .max(100, "Descrição precisa ter no máximo 100 caracteres")
+            .max(512, "Descrição precisa ter no máximo 512 caracteres")
             .nullable()
             .optional(),
           options: z
