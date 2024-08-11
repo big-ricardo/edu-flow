@@ -62,12 +62,11 @@ const handler: QueueWrapperHandler<TMessage> = async (conn, messageQueue) => {
       const destinationIds = to
         .map((to) => {
           if (to.includes("{{")) {
-            if (to.includes("user")) {
-              return activity.users.map((u) => u._id.toString());
-            }
-
             if (to.includes("masterminds")) {
               return activity.masterminds.map((r) => r.user._id.toString());
+            }
+            if (to.includes("user")) {
+              return activity.users.map((u) => u._id.toString());
             }
           }
           return to;

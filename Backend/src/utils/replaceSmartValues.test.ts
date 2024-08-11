@@ -54,17 +54,22 @@ describe("replaceVariables", () => {
     const data = {
       masterminds: [
         {
-          email: "email1@unifei.edu.br",
+          user: {
+            email: "email1@unifei.edu.br",
+          },
         },
         {
-          email: "email2@unifei.edu.br",
+          user: {
+            email: "email2@unifei.edu.br",
+          },
         },
       ],
     };
 
-    const template = "${{activity.#masterminds.email}}";
+    const template = "Send email to ${{activity.#masterminds.user.email}} ok.";
 
-    const expectedOutput = "email1@unifei.edu.br, email2@unifei.edu.br";
+    const expectedOutput =
+      "Send email to email1@unifei.edu.br, email2@unifei.edu.br ok.";
 
     const result = replaceVariables({ activity: data }, template);
 
