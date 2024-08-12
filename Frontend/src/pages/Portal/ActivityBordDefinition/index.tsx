@@ -28,7 +28,7 @@ const activitySchema = z.object({
         .min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
       email: z.string().email(),
       matriculation: z.string().optional(),
-      isExternal: z.boolean().optional(),
+      isExternal: z.boolean().default(true),
       institute: z.object({
         _id: z.string().optional(),
         name: z.string(),

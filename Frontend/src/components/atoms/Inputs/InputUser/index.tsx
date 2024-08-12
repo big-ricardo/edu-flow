@@ -76,12 +76,16 @@ const UserModal: React.FC<UserModalProps> = ({
 }) => {
   const methods = useForm<IUserForm>({
     resolver: zodResolver(UserSchema),
+    defaultValues: initialData,
   });
 
   const { handleSubmit: handleSubmitForm, reset } = methods;
 
   const handleSubmit = handleSubmitForm((data) => {
-    onSubmit(data);
+    onSubmit({
+      ...data,
+      isExternal: true,
+    });
     reset();
     onClose();
   });

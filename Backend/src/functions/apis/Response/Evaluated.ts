@@ -31,6 +31,8 @@ type DtoCreated = {} & {
   [key: string]: File | string | Array<string> | IUser | Array<IUser>;
 };
 
+const WEIGHT = 10;
+
 const handler: HttpHandler = async (conn, req, context) => {
   const rest = req.body as DtoCreated;
 
@@ -92,9 +94,11 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.badRequest("You already answered this interaction");
   }
 
+  const grade = responseUseCases.getGrade() / WEIGHT;
+
   evaluation.answers[myAnswer].data = formDraft.toObject();
   evaluation.answers[myAnswer].status = IActivityStepStatus.finished;
-  evaluation.answers[myAnswer].grade = responseUseCases.getGrade() / 10;
+  evaluation.answers[myAnswer].grade = parseFloat(grade.toFixed(2));
 
   const isAllAnswered = evaluation.answers.every(
     (answer) => answer.status === IActivityStepStatus.finished

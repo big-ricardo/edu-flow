@@ -128,12 +128,13 @@
       "evaluationPending": "Avaliações pendentes",
       "interactionPending": "Interações pendentes",
       "activitiesAccept": "Atividades por aceite",
-      "activityProcess": "Atividades em andamento",
+      "activityProcess": "Aprovação de atividades",
       "boardDefinition": "Definição de banca"
     },
     "joyride": {
       "open-forms": "Seja bem-vindo ao EduFlow! Aqui você pode visualizar os formulários disponíveis para preenchimento.",
       "my-activities": "Aqui você verá as atividades que você já criou.",
+      "activityProcess": "Aqui você verá as atividades que estão pendentes de aprovação para iniciarem o processo.",
       "activity-tracking": "Aqui você verá as atividades que você está participando e o andamento delas.",
       "switch-theme": "Clique aqui para alternar entre os temas claro e escuro.",
       "profile-menu": "Clique aqui para acessar seu perfil e fazer logout."

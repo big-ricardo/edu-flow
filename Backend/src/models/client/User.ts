@@ -29,11 +29,10 @@ export const schema: Schema = new Schema<IUser>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: true },
-    active: { type: Boolean, default: true },
+    active: { type: Boolean, default: true, index: true },
     isExternal: { type: Boolean, default: false, index: true },
     matriculation: {
       type: String,
-      index: true,
     },
     activities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
     roles: [
