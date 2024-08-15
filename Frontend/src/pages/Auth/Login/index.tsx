@@ -25,6 +25,7 @@ import Icon from "@components/atoms/Icon";
 import SwitchTheme from "@components/molecules/SwitchTheme";
 import { useTranslation } from "react-i18next";
 import LocaleSwap from "@components/atoms/LocaleSwap";
+import { IUserRoles } from "@interfaces/User";
 
 const schema = z.object({
   acronym: z
@@ -64,8 +65,15 @@ const Login: React.FC = () => {
         isClosable: true,
         icon: <FaCheckCircle />,
       });
-      setAuth(data.token);
-      navigate("/portal");
+      const user = setAuth(data.token);
+      navigate(
+        `${
+          user?.roles.includes(IUserRoles.admin) &&
+          !user.tutorials.includes("first-page")
+            ? "/welcome"
+            : "/portal"
+        }`
+      );
     },
     onError: (error: AxiosError<{ message: string; statusCode: number }>) => {
       toast({

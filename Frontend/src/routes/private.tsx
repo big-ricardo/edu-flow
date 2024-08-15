@@ -25,6 +25,9 @@ import ActivityAccept from "@pages/Portal/ActivityAccept";
 import EditResponse from "@pages/Edit";
 import ActivityBoardDefinition from "@pages/Portal/ActivityBordDefinition";
 import Activities from "@pages/Portal/Activities";
+import FirstPage from "@pages/Welcome/Firstpage";
+import SecondPage from "@pages/Welcome/SecondPage";
+import Welcome from "@pages/Welcome";
 
 const routes: RouteType = [
   {
@@ -190,6 +193,20 @@ const routes: RouteType = [
   {
     path: "/response/:slug",
     element: <Response />,
+  },
+  {
+    path: "/welcome",
+    element: <Welcome />,
+    children: [
+      {
+        element: <FirstPage />,
+        index: true,
+      },
+      {
+        element: <SecondPage />,
+        path: "/welcome/second-page",
+      },
+    ],
   },
   {
     path: "/response/:id/edit",

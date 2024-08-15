@@ -7,13 +7,18 @@ import UserRepository from "../../../repositories/User";
 import { IUserRoles } from "../../../models/client/User";
 import UniversityRepository from "../../../repositories/University";
 import InstituteRepository from "../../../repositories/Institute";
+import jwt from "../../../services/jwt";
+import { sendEmail } from "../../../services/email";
+import emailTemplate from "../../../utils/emailTemplate";
+import { StatusType } from "../../../models/client/Status";
 
 interface Body {
   name: string;
   acronym: string;
+  email?: string;
 }
 export const handler: HttpHandler = async (_, req, context) => {
-  const { name, acronym } = req.body as Body;
+  const { name, acronym, email } = req.body as Body;
 
   const adminConn = await connectAdmin();
 
@@ -52,14 +57,53 @@ export const handler: HttpHandler = async (_, req, context) => {
 
   const user = await userRepository.create({
     name: "Admin",
-    email: "admin@eduflow.tech",
+    email: email || "admin@eduflow.tech",
     password,
     roles: [IUserRoles.admin],
     institute: institute,
   });
 
+  await conn.model("Status").insertMany([
+    {
+      name: "Aprovado",
+      type: StatusType.DONE,
+    },
+    {
+      name: "Reprovado",
+      type: StatusType.DONE,
+    },
+  ]);
+
   await instance.save();
   await user.save();
+
+  const token = await jwt.signResetPassword({
+    id: user._id,
+    client: conn.name,
+  });
+
+  const content = `
+    <p>Olá, ${user.name}!</p>
+    <p>Seu cadastro foi realizado com sucesso em nosso site.</p>
+    <p>Sua conta foi criada em ${new Date().toLocaleString()}.</p>
+    <p>Aqui estão algumas informações importantes:</p>
+    <ul>
+        <li>O domínio de sua conta é: ${acronym}</li>
+        <li>Defina sua senha aqui: <a href="${
+          process.env.FRONTEND_URL
+        }/auth/alter-password/${token}">Acessar o painel</a></li>
+        <li>Verifique seu e-mail para mais instruções sobre como aproveitar ao máximo nossos serviços.</li>
+    </ul>
+`;
+
+  const { html, css } = emailTemplate(content);
+
+  await sendEmail(
+    user.email,
+    "EduFlow | Cadastro realizado com sucesso",
+    html,
+    css
+  );
 
   return res.success({
     instance,
@@ -76,6 +120,7 @@ export default new Http(handler)
         .string()
         .matches(/^[a-z]+$/)
         .required(),
+      email: schema.string().email().optional(),
     }),
   }))
   .configure({

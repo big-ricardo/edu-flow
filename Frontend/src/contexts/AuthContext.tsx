@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthContextType {
   token: JwtData | null;
-  setToken: (token: string | null) => void;
+  setToken: (token: string | null) => JwtData | undefined;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -44,6 +44,8 @@ function AuthProvider({ children }: Readonly<AuthProviderProps>) {
     api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
     setToken(decodedToken);
+
+    return decodedToken;
   }, []);
 
   useLayoutEffect(() => {

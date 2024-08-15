@@ -104,8 +104,10 @@
     "back": "Voltar",
     "close": "Fechar",
     "last": "Finalizar",
+    "previous": "Anterior",
     "next": "Próximo",
-    "skip": "Pular"
+    "skip": "Pular",
+    "finish": "Finalizar"
   },
   "alterPassword": {
     "title": "Alterar senha",

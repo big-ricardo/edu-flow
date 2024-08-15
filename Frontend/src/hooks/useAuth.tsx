@@ -4,7 +4,7 @@ import JwtData from "@interfaces/JwtData";
 
 export default function useAuth(): [
   JwtData | null,
-  (token: string | null) => void,
+  (token: string | null) => JwtData | undefined,
 ] {
   const context = React.useContext(AuthContext);
   if (context === undefined) {
