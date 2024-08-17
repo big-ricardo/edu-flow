@@ -2,13 +2,6 @@ import {
   Flex,
   Text,
   Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
   Heading,
   Divider,
 } from "@chakra-ui/react";
