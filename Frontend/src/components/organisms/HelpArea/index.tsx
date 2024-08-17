@@ -18,10 +18,10 @@ const HelpArea = ({ children }: { children: React.ReactNode }) => {
     <>
       <Button colorScheme="blue" onClick={onOpen} variant="outline" size="sm">
         <i>
-          <BiHelpCircle />
+          <BiHelpCircle fontSize="1.25rem" />
         </i>
       </Button>
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="lg">
+      <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="xl">
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />

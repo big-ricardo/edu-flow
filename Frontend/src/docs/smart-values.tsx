@@ -13,43 +13,88 @@ import {
   TableContainer,
   Heading,
   Text,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
+import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { FaCopy } from "react-icons/fa";
+
+const data = [
+  { field: "activity.name", description: "Nome da atividade" },
+  { field: "activity.description", description: "Descrição da atividade" },
+  { field: "activity.#users.name", description: "Nome do Usuário" },
+  { field: "activity.#users.email", description: "Email do Usuário" },
+  {
+    field: "activity.#users.matriculation",
+    description: "Matrícula do Usuário",
+  },
+  {
+    field: "activity.#users.institute.name",
+    description: "Nome do Instituto",
+  },
+  {
+    field: "activity.#users.institute.acronym",
+    description: "Sigla do Instituto",
+  },
+  {
+    field: "activity.#users.institute.university.name",
+    description: "Nome da Universidade",
+  },
+  {
+    field: "activity.#users.institute.university.acronym",
+    description: "Sigla da Universidade",
+  },
+  {
+    field: "activity.#masterminds.user.name",
+    description: "Nome do Orientador",
+  },
+  {
+    field: "activity.#masterminds.user.email",
+    description: "Email do Orientador",
+  },
+  {
+    field: "activity.#masterminds.user.matriculation",
+    description: "Matrícula do Orientador",
+  },
+  {
+    field: "activity.#masterminds.user.university_degree",
+    description: "Grau Universitário do Orientador",
+  },
+  { field: "activity.status.name", description: "Nome do Status" },
+  { field: "activity.status.type", description: "Tipo do Status" },
+  { field: "activity.protocol", description: "Protocolo do Sistema" },
+];
 
 const HelpSmartValues = () => {
-  const data = [
-    { field: "name", description: "Nome do Sistema" },
-    { field: "description", description: "Descrição do Sistema" },
-    { field: "state", description: "Estado do Sistema" },
-    { field: "users[].name", description: "Nome do Usuário" },
-    { field: "users[].email", description: "Email do Usuário" },
-    { field: "users[].matriculation", description: "Matrícula do Usuário" },
-    { field: "users[].institute.name", description: "Nome do Instituto" },
-    {
-      field: "users[].institute.acronym",
-      description: "Acrônimo do Instituto",
+  const toast = useToast();
+  const { t } = useTranslation();
+
+  const handleCopy = useCallback(
+    (text: string) => {
+      navigator.clipboard
+        .writeText("${{" + text + "}}")
+        .then(() => {
+          toast({
+            title: t("common.actions.copy.success"),
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            position: "top-right",
+          });
+        })
+        .catch(() => {
+          toast({
+            title: t("common.actions.copy.error"),
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+            position: "top-right",
+          });
+        });
     },
-    {
-      field: "users[].institute.university.name",
-      description: "Nome da Universidade",
-    },
-    {
-      field: "users[].institute.university.acronym",
-      description: "Acrônimo da Universidade",
-    },
-    { field: "masterminds[].user.name", description: "Nome do Orientador" },
-    { field: "masterminds[].user.email", description: "Email do Orientador" },
-    {
-      field: "masterminds[].user.matriculation",
-      description: "Matrícula do Orientador",
-    },
-    {
-      field: "masterminds[].user.university_degree",
-      description: "Grau Universitário do Orientador",
-    },
-    { field: "status.name", description: "Nome do Status" },
-    { field: "status.type", description: "Tipo do Status" },
-    { field: "protocol", description: "Protocolo do Sistema" },
-  ];
+    [toast]
+  );
 
   return (
     <Flex
@@ -73,6 +118,42 @@ const HelpSmartValues = () => {
         atividade. Isso é útil para personalizar mensagens, e-mails e outros
         conteúdos sem precisar fazer isso manualmente.
       </Text>
+
+      <Box maxW="800px" mx="auto">
+        <Heading as="h1" size="mb" mb={5}>
+          Campos Disponíveis para Smart Values
+        </Heading>
+        <Text mb={5}>
+          Abaixo estão listados os campos que podem ser utilizados no Smart
+          Values para personalizar suas mensagens:
+        </Text>
+        <TableContainer>
+          <Table variant="striped" colorScheme="blue" size={"sm"}>
+            <Thead>
+              <Tr>
+                <Th>Campo</Th>
+                <Th>Descrição</Th>
+                <Th>Copiar</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {data.map((item, index) => (
+                <Tr key={index}>
+                  <Td>
+                    <Code>{item.field}</Code>
+                  </Td>
+                  <Td>{item.description}</Td>
+                  <Td>
+                    <Button onClick={() => handleCopy(item.field)}>
+                      <FaCopy />
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
 
       <Heading as="h2" fontSize="lg" mb={3}>
         Como Funciona?
@@ -159,36 +240,6 @@ const HelpSmartValues = () => {
           da atividade.
         </ListItem>
       </List>
-
-      <Box maxW="800px" mx="auto">
-        <Heading as="h1" size="xl" mb={5}>
-          Campos Disponíveis para Smart Values
-        </Heading>
-        <Text mb={5}>
-          Abaixo estão listados os campos que podem ser utilizados no Smart
-          Values para personalizar suas mensagens:
-        </Text>
-        <TableContainer>
-          <Table variant="striped" colorScheme="blue" size={"sm"}>
-            <Thead>
-              <Tr>
-                <Th>Campo</Th>
-                <Th>Descrição</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {data.map((item, index) => (
-                <Tr key={index}>
-                  <Td>
-                    <Code>{item.field}</Code>
-                  </Td>
-                  <Td>{item.description}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Box>
 
       <Heading as="h2" fontSize="lg" my={3}>
         Campos Customizados

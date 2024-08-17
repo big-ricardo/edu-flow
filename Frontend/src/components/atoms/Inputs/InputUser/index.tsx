@@ -18,6 +18,7 @@ import {
   Text,
   Divider,
   Heading,
+  Box,
 } from "@chakra-ui/react";
 import InputText from "@components/atoms/Inputs/Text";
 import InfoTooltip from "@components/atoms/Inputs/InfoTooltip";
@@ -40,6 +41,7 @@ const UserSchema = z.object({
   _id: z.string().optional(),
   name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
   email: z.string().email(),
+  isExternal: z.boolean().default(true),
   institute: z.object({
     name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
     acronym: z.string(),
@@ -48,10 +50,9 @@ const UserSchema = z.object({
       acronym: z.string(),
     }),
   }),
-  university_degree: z.enum([
-    ITeacherDegrees.mastermind,
-    ITeacherDegrees.doctor,
-  ]).nullable(),
+  university_degree: z
+    .enum([ITeacherDegrees.mastermind, ITeacherDegrees.doctor])
+    .nullable(),
 });
 
 type IUserForm = z.infer<typeof UserSchema>;
@@ -179,7 +180,7 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
     formState: { errors },
     setValue,
   } = useFormContext();
-  
+
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: input.id,
@@ -253,7 +254,7 @@ const InputUser: React.FC<InputUserProps> = ({ input }) => {
       <Flex align="start" gap="4" direction={"column"} mb="4">
         <FormLabel>{input?.label}</FormLabel>
         <Flex align="end" gap="4" w="100%">
-        <InfoTooltip describe={input?.describe} />
+          <InfoTooltip describe={input?.describe} />
           <Select
             input={{
               id: `${input.id}-select-user`,
@@ -330,18 +331,20 @@ const ItemUser: React.FC<{
       mt="4"
     >
       <Flex direction="row" flex="1" justify="space-between" align="center">
-        <div>
+        <Box w="70%">
           <Text fontWeight="bold" noOfLines={1}>
             {field.name}
           </Text>
-          <Text noOfLines={1}>{field.email}</Text>
+          <Text noOfLines={1} fontSize="sm" title={field.email}>
+            {field.email}
+          </Text>
           <Text>{field?.matriculation}</Text>
-        </div>
-        <div>
-          <Text>
+        </Box>
+        <Box w="30%">
+          <Text textAlign={"right"} noOfLines={1}>
             {field.institute.university?.acronym} - {field.institute?.acronym}{" "}
           </Text>
-        </div>
+        </Box>
       </Flex>
       <div>
         {isNewUser && (

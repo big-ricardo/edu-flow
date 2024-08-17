@@ -56,6 +56,8 @@ const Response: React.FC<ResponseProps> = memo(() => {
     handleSubmit,
   } = methods;
 
+  console.log("form", methods.formState.errors);
+
   const { mutateAsync, isPending: isSubmitting } = useMutation({
     mutationFn: responseForm,
     onSuccess: () => {

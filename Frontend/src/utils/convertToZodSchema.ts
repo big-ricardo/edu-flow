@@ -65,25 +65,28 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
         });
         break;
       case "teacher":
-        fieldSchema = z.array(
-          z.object({
-            _id: z.string().optional(),
-            name: z.string(),
-            email: z.string().email(),
-            isExternal: z.boolean().optional(),
-            matriculation: z.string(),
-            institute: z.object({
+        fieldSchema = z
+          .array(
+            z.object({
               _id: z.string().optional(),
               name: z.string(),
-              acronym: z.string(),
-              university: z.object({
+              email: z.string().email(),
+              isExternal: z.boolean().optional(),
+              matriculation: z.string().optional(),
+              university_degree: z.string().optional(),
+              institute: z.object({
                 _id: z.string().optional(),
                 name: z.string(),
                 acronym: z.string(),
+                university: z.object({
+                  _id: z.string().optional(),
+                  name: z.string(),
+                  acronym: z.string(),
+                }),
               }),
-            }),
-          })
-        ).min(field.required ? 1 : 0, "Selecione um professor");
+            })
+          )
+          .min(field.required ? 1 : 0, "Selecione um professor");
         break;
       default:
         fieldSchema = z.string(); // Fallback to string for unknown types

@@ -1,6 +1,8 @@
 import { publishUnpublish } from "@apis/workflowDraft";
 import { Button, Flex, Heading, useToast } from "@chakra-ui/react";
 import Can from "@components/atoms/Can";
+import HelpArea from "@components/organisms/HelpArea";
+import HelpFlowAutomation from "@docs/flow-automation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React from "react";
@@ -148,6 +150,10 @@ const FlowPanel: React.FC<FlowPanelProps> = ({
               </Button>
             </Can>
           )}
+
+          <HelpArea>
+            <HelpFlowAutomation />
+          </HelpArea>
         </Flex>
       </Flex>
     </Panel>

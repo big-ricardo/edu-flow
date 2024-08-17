@@ -40,7 +40,7 @@
       "undefined": "Indefinido",
       "users": "Usuários",
       "finished": "Finalizado",
-      "sub_masterminds": "Sub-Orientadores",
+      "sub_masterminds": "Coorientadores",
       "masterminds": "Orientadores",
       "mastermind": "Mestrado",
       "doctorate": "Doutorado",
@@ -67,6 +67,12 @@
       "anonymous": "Anônimo",
       "initialStatus": "Status inicial",
       "workflow": "Fluxo"
+    },
+    "actions": {
+      "copy": {
+        "success": "Copiado para área de transferência",
+        "error": "Erro ao copiar para área de transferência"
+      }
     }
   },
   "input": {
@@ -154,7 +160,7 @@
     "users": "Usuários",
     "institutes": "Instituições",
     "universities": "Universidades",
-    "statuses": "Statuses",
+    "statuses": "Status",
     "workflows": "Fluxos",
     "emails": "Templates de e-mail",
     "forms": "Formulários",
