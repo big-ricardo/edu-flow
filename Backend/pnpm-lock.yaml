@@ -20,6 +20,9 @@ importers:
       '@sentry/node':
         specifier: ^8.12.0
         version: 8.12.0
+      axios:
+        specifier: ^1.7.5
+        version: 1.7.5
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -883,8 +886,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.7.2:
-    resolution: {integrity: sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==}
+  axios@1.7.5:
+    resolution: {integrity: sha512-fZu86yCo+svH3uqJ/yTdQ0QHpQu5oL+/QE+QPSv6BZSkDAoky9vytxp7u5qk83OJFS3kEBcesWni9WTZAv3tSw==}
 
   azure-functions-core-tools@4.0.5611:
     resolution: {integrity: sha512-Uf+qywuGvPgOdbHqpe+SbtKg3sy8fBHaYtsnqXVWWJJKQ+HyDTTirRSkvgHZGc7R6ZZYmRPJb82REQrF3jzPAA==}
@@ -3376,7 +3379,7 @@ snapshots:
   '@sendgrid/client@8.1.3':
     dependencies:
       '@sendgrid/helpers': 8.0.0
-      axios: 1.7.2
+      axios: 1.7.5
     transitivePeerDependencies:
       - debug
 
@@ -3717,7 +3720,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  axios@1.7.2:
+  axios@1.7.5:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0

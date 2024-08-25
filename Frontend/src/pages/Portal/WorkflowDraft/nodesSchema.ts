@@ -42,6 +42,38 @@ const schemas: NodeSchemas = {
       )
       .optional(),
   }),
+  [NodeTypes.WebRequest]: z.object({
+    name: z.string().min(3, { message: "Nome é obrigatório" }),
+    url: z.string().min(3, { message: "URL é obrigatório" }),
+    method: z.enum(["GET", "POST", "PUT", "DELETE"]),
+    headers: z.array(
+      z.object({
+        key: z.string().min(3, { message: "Chave é obrigatória" }),
+        value: z.string().min(3, { message: "Valor é obrigatório" }),
+      })
+    ),
+    body: z
+      .string()
+      .default("{}")
+      .refine(
+        (data) => {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (e) {
+            return false;
+          }
+        },
+        { message: "Body deve ser um JSON válido" }
+      ),
+    visible: z.boolean().default(false),
+    field_populate: z.array(
+      z.object({
+        id: z.string().min(3, { message: "ID é obrigatório" }),
+        path: z.string().min(3, { message: "Caminho é obrigatório" }),
+      })
+    ),
+  }),
   [NodeTypes.Evaluated]: z
     .object({
       name: z.string().min(3, { message: "Nome é obrigatório" }),
@@ -103,6 +135,7 @@ export const workflowSchema = z.object({
           "swap_workflow",
           "interaction",
           "evaluated",
+          "web_request",
         ])
         .optional(),
       data: z.union([

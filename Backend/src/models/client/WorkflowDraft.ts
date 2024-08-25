@@ -7,6 +7,7 @@ export enum NodeTypes {
   SwapWorkflow = "swap_workflow",
   Interaction = "interaction",
   Evaluated = "evaluated",
+  WebRequest = "web_request",
 }
 
 export interface ISendEmail {
@@ -58,6 +59,24 @@ export interface IEvaluated {
   weight: number;
 }
 
+export interface IWebRequest {
+  name: string;
+  url: string;
+  method: "GET" | "POST" | "PUT" | "DELETE";
+  headers: Array<{
+    key: string;
+    value: string;
+  }>;
+  body: string;
+  visible: false;
+  field_populate?: [
+    {
+      key: string;
+      value: string;
+    }
+  ];
+}
+
 export type IStep = {
   _id: ObjectId;
   id: string;
@@ -91,6 +110,10 @@ export type IStep = {
   | {
       type: NodeTypes.Evaluated;
       data: IEvaluated;
+    }
+  | {
+      type: NodeTypes.WebRequest;
+      data: IWebRequest;
     }
 );
 

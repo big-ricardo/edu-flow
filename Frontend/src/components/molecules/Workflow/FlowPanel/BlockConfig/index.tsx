@@ -11,7 +11,9 @@ import {
 } from "react-hook-form";
 import {
   Button,
+  Divider,
   Flex,
+  Heading,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -28,6 +30,7 @@ import NumberInput from "@components/atoms/Inputs/NumberInput";
 import { getFormWithFields } from "@apis/form";
 import { FaPlusCircle, FaTrash } from "react-icons/fa";
 import StatusForm from "@pages/Portal/Statuses/Form";
+import TextArea from "@components/atoms/Inputs/TextArea";
 
 interface BlockConfigProps {
   type: NodeTypes;
@@ -315,6 +318,60 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             )}
           </>
         );
+      case NodeTypes.WebRequest:
+        return (
+          <>
+            <Text
+              input={{
+                label: "Nome",
+                id: "name",
+                placeholder: "Nome do bloco",
+                required: true,
+              }}
+            />
+            <Text
+              input={{
+                label: "URL",
+                id: "url",
+                placeholder: "URL",
+                required: true,
+              }}
+            />
+            <Select
+              input={{
+                label: "Método",
+                id: "method",
+                placeholder: "Selecione um método",
+                options: [
+                  { label: "GET", value: "GET" },
+                  { label: "POST", value: "POST" },
+                  { label: "PUT", value: "PUT" },
+                  { label: "DELETE", value: "DELETE" },
+                ],
+                required: true,
+              }}
+            />
+            <TextArea
+              input={{
+                label: "Corpo",
+                id: "body",
+                placeholder: "Corpo da requisição",
+                required: true,
+              }}
+            />
+            <KeyValueArray
+              name="headers"
+              label={"Headers"}
+              control={methods.control}
+            />
+
+            <KeyValueArray
+              name="field_populate"
+              label={"Alterar campos da atividade"}
+              control={methods.control}
+            />
+          </>
+        );
       default:
         return <h1>Default</h1>;
     }
@@ -485,3 +542,70 @@ const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
     </Flex>
   );
 });
+
+interface KeyValueArrayProps {
+  name: string;
+  control: any;
+  label: string;
+}
+
+const KeyValueArray: React.FC<KeyValueArrayProps> = memo(
+  ({ name, control, label }) => {
+    const { fields, append, remove } = useFieldArray({
+      name: name,
+      control,
+    });
+
+    return (
+      <Flex direction="column">
+        <Heading size="sm">{label}</Heading>
+        {fields.map((field, index) => (
+          <Flex
+            key={field.id}
+            gap={2}
+            direction="column"
+            alignItems="end"
+            mt={5}
+          >
+            <Text
+              input={{
+                label: "Chave",
+                id: `${name}[${index}].key`,
+                placeholder: "Chave",
+                required: true,
+              }}
+            />
+
+            <Text
+              input={{
+                label: "Valor",
+                id: `${name}[${index}].value`,
+                placeholder: "Valor",
+                required: true,
+              }}
+            />
+            <Flex w="100%" justify="flex-end">
+              <Button
+                size="md"
+                onClick={() => remove(index)}
+                variant="outline"
+                colorScheme="red"
+              >
+                <FaTrash />
+              </Button>
+            </Flex>
+            <Divider />
+          </Flex>
+        ))}
+        <Button
+          onClick={() => {
+            append({ key: "", value: "" });
+          }}
+          mt={5}
+        >
+          Adicionar
+        </Button>
+      </Flex>
+    );
+  }
+);

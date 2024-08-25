@@ -139,6 +139,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
       const flow = reactFlowInstance.toObject();
 
       const formState = workflowSchema.safeParse(flow);
+      
 
       if (!formState.success) {
         toast({
@@ -149,6 +150,7 @@ const FlowBoard: React.FC<FlowBoardProps> = memo(({ isView }) => {
           isClosable: true,
           position: "top-right",
         });
+        console.error(formState);
         return;
       }
 

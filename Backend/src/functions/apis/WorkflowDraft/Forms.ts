@@ -5,6 +5,8 @@ import Status from "../../../models/client/Status";
 import User from "../../../models/client/User";
 import Workflow from "../../../models/client/Workflow";
 import Form, { IFormType } from "../../../models/client/Form";
+import InstituteRepository from "../../../repositories/Institute";
+import UserRepository from "../../../repositories/User";
 
 const handler: HttpHandler = async (conn) => {
   const emails = (
@@ -17,25 +19,21 @@ const handler: HttpHandler = async (conn) => {
     value: email._id,
   }));
 
-  const users = await new User(conn).model().aggregate([
-    {
-      $match: {
-        active: true,
-      },
+  const users = await new UserRepository(conn).find({
+    where: {
+      active: true,
     },
-    {
-      $group: {
-        _id: "$role",
-        label: { $first: "$role" },
-        options: {
-          $push: {
-            value: "$_id",
-            label: "$name",
-          },
-        },
-      },
+    select: {
+      _id: 1,
+      name: 1,
     },
-  ]);
+  });
+
+  const institutes = await new InstituteRepository(conn).find({
+    where: {
+      active: true,
+    },
+  });
 
   const userOptions = [
     {
@@ -51,7 +49,20 @@ const handler: HttpHandler = async (conn) => {
         },
       ],
     },
-    ...users,
+    {
+      label: "Instituições",
+      options: institutes.map((institute) => ({
+        label: institute.name,
+        value: institute._id,
+      })),
+    },
+    {
+      label: "Usuários",
+      options: users.map((user) => ({
+        label: user.name,
+        value: user._id,
+      })),
+    },
   ];
 
   const statuses = (
