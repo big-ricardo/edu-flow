@@ -1,16 +1,16 @@
 const html = `
 <div class="email-container">
     <div class="header">
-        <img src="https://github.com/Luiss1569/edu-flow/assets/39037985/3b60cc92-a928-4586-b36b-907de568c3ee" alt="Edu Flow" />
-        <h1>Edu Flow</h1>
+        <img src="https://github.com/user-attachments/assets/80770cce-faf3-49d1-9c65-42fe614112f3" alt="Edu Flow" />
+        <h1>Streamline</h1>
     </div>
     <div class="content">
         {{content}}
         <p>Atenciosamente,</p>
-        <p>Equipe Edu Flow</p>
+        <p>Equipe Streamline</p>
     </div>
     <div class="footer">
-        <p>&copy; 2024 Edu Flow. Todos os direitos reservados.</p>
+        <p>&copy; 2024 Streamline. Todos os direitos reservados.</p>
     </div>
 </div>
 `;
