@@ -2,7 +2,8 @@ import QueueWrapper, {
   GenericMessage,
   QueueWrapperHandler,
 } from "../../middlewares/queue";
-import { IInteraction } from "../../models/client/WorkflowDraft";
+import { IFormDraft } from "../../models/client/FormDraft";
+import { IConditional, NodeTypes } from "../../models/client/WorkflowDraft";
 import ActivityRepository from "../../repositories/Activity";
 import sendNextQueue from "../../utils/sendNextQueue";
 
@@ -52,23 +53,26 @@ const handler: QueueWrapperHandler<TMessage> = async (
       throw new Error("Step not found");
     }
 
-    const { data } = step as { data: IInteraction };
+    const { data } = step as { data: IConditional };
+
+    const answers: { data: IFormDraft }[] = [];
+
+    if (activity.form.toString() === data.form_id) {
+      answers.push({ data: activity.form_draft });
+    } else {
+      const interaction = activity.interactions.find(
+        (iteration) => iteration.form.toString() === data.form_id
+      );
+
+      if (interaction) {
+        answers.push(...interaction.answers);
+      }
+    }
 
     let path;
 
-    if (data.conditional) {
-      const interaction = activity.interactions.find(
-        (interaction) =>
-          interaction.activity_step_id.toString() ===
-          activity_step_id.toString()
-      );
-
-      if (!interaction) {
-        throw new Error("Interaction not found");
-      }
-
+    if (data.conditional && answers.length) {
       const conditionals = data.conditional;
-      const { answers } = interaction;
 
       const evaluated = answers
         .filter((el) => !!el.data)
@@ -124,8 +128,8 @@ const handler: QueueWrapperHandler<TMessage> = async (
 };
 
 export default new QueueWrapper<TMessage>(handler).configure({
-  name: "WorkInteractionProcess",
+  name: "WorkConditional",
   options: {
-    queueName: "interaction_process",
+    queueName: NodeTypes.Conditional,
   },
 });

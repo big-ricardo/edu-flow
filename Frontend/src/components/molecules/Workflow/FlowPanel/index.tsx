@@ -7,7 +7,7 @@ import { Panel } from "reactflow";
 import { NodeTypes } from "@interfaces/WorkflowDraft";
 import { SwapWorkflowIcon } from "@components/atoms/Workflow/Nodes/SwapWorkflow";
 import { InteractionIcon } from "@components/atoms/Workflow/Nodes/Interaction";
-import { EvaluatedIcon } from "@components/atoms/Workflow/Nodes/Evaluated";
+import { ConditionalIcon } from "@components/atoms/Workflow/Nodes/Conditional";
 import { WebRequestIcon } from "@components/atoms/Workflow/Nodes/WebRequest";
 
 const FlowPanel: React.FC = () => {
@@ -38,6 +38,9 @@ const FlowPanel: React.FC = () => {
         </PanelItem>
         <PanelItem nodeType={NodeTypes.Interaction}>
           <InteractionIcon />
+        </PanelItem>
+        <PanelItem nodeType={NodeTypes.Conditional}>
+          <ConditionalIcon />
         </PanelItem>
         <PanelItem nodeType={NodeTypes.WebRequest}>
           <WebRequestIcon />

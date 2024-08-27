@@ -29,7 +29,7 @@ const nodeValidator = (type: string, schema: typeof import("yup")) => {
     return schema.object().shape({
       name: schema.string().required(),
       form_id: schema.string().required(),
-      to: schema.string().required(),
+      to: schema.array().of(schema.string()).required(),
       visible: schema.boolean().default(true),
       waitForOne: schema.boolean().required(),
     });

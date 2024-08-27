@@ -29,7 +29,9 @@ const schemas: NodeSchemas = {
   }),
   [NodeTypes.Interaction]: z.object({
     name: z.string().min(3, { message: "Nome é obrigatório" }),
-    to: z.string().min(1, { message: "Selecione pelo menos 1 destinatario" }),
+    to: z
+      .array(z.string())
+      .min(1, { message: "Selecione pelo menos 1 destinatario" }),
     form_id: z.string().min(1, { message: "Selecione um formulário" }),
     visible: z.boolean().default(true),
     waitForOne: z.boolean().default(false),
@@ -75,31 +77,23 @@ const schemas: NodeSchemas = {
       })
     ),
   }),
-  [NodeTypes.Evaluated]: z
-    .object({
-      name: z.string().min(3, { message: "Nome é obrigatório" }),
-      form_id: z.string().min(3, { message: "Selecione um formulário" }),
-      visible: z.boolean().default(true),
-      isDeferred: z.boolean().default(false),
-      average: z.coerce
-        .number()
-        .min(0, { message: "Avaliação mínima é 0" })
-        .max(10, { message: "Avaliação máxima é 10" }),
-      to: z.array(z.string()).optional(),
-      notUseGrade: z.boolean().default(true),
-    })
-    .refine(
-      (data) => {
-        if (data.isDeferred === false) {
-          return !!data.to?.length;
-        }
-        return true;
-      },
-      {
-        message: "É necessário selecionar pelo menos um destinatário",
-        path: ["to"],
-      }
-    ),
+  [NodeTypes.Conditional]: z.object({
+    name: z.string().min(3, { message: "Nome é obrigatório" }),
+    form_id: z.string().min(3, { message: "Selecione um formulário" }),
+    conditional: z
+      .array(
+        z.object({
+          field: z.string().min(1, { message: "Selecione um campo" }),
+          value: z.string().min(1, { message: "Valor é obrigatório" }),
+          operator: z.enum(["eq", "ne", "gt", "lt", "gte", "lte", "in"]),
+        })
+      )
+      .length(1, { message: "Adicione pelo menos uma condição" }),
+    visible: z.boolean().default(true),
+    ifNotExists: z
+      .string()
+      .optional()
+  }),
 };
 
 export type SchemaTypes = keyof typeof schemas;
@@ -135,7 +129,7 @@ export const workflowSchema = z.object({
           "circle",
           "swap_workflow",
           "interaction",
-          "evaluated",
+          "conditional",
           "web_request",
         ])
         .optional(),
@@ -145,7 +139,7 @@ export const workflowSchema = z.object({
         schemas[NodeTypes.Circle],
         schemas[NodeTypes.SwapWorkflow],
         schemas[NodeTypes.Interaction],
-        schemas[NodeTypes.Evaluated],
+        schemas[NodeTypes.Conditional],
       ]),
       position: z.object({ x: z.number(), y: z.number() }),
       deletable: z.boolean().optional(),

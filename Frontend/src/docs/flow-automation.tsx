@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { SwapWorkflowIcon } from "@components/atoms/Workflow/Nodes/SwapWorkflow";
 import { InteractionIcon } from "@components/atoms/Workflow/Nodes/Interaction";
-import { EvaluatedIcon } from "@components/atoms/Workflow/Nodes/Evaluated";
+import { ConditionalIcon } from "@components/atoms/Workflow/Nodes/Conditional";
 import { SendEmailIcon } from "@components/atoms/Workflow/Nodes/SendEmail";
 import { ChangeStatusIcon } from "@components/atoms/Workflow/Nodes/ChangeStatus";
 
@@ -37,7 +37,7 @@ const data = [
       "Solicita informações específicas de um destinatário, como entregas parciais ou envio final de documentos.",
   },
   {
-    icon: <EvaluatedIcon />,
+    icon: <ConditionalIcon />,
     title: "Avaliação",
     description:
       "Avalia o desempenho do aluno em diferentes fases do TCC, com critérios configuráveis.",

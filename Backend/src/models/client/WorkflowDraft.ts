@@ -6,7 +6,7 @@ export enum NodeTypes {
   Circle = "circle",
   SwapWorkflow = "swap_workflow",
   Interaction = "interaction",
-  Evaluated = "evaluated",
+  Conditional = "conditional",
   WebRequest = "web_request",
 }
 
@@ -37,7 +37,7 @@ export interface ISwapWorkflow {
 export interface IInteraction {
   name: string;
   form_id: string;
-  to: string;
+  to: string[];
   visible: boolean;
   waitForOne: boolean;
   conditional: [
@@ -49,16 +49,17 @@ export interface IInteraction {
   ];
 }
 
-export interface IEvaluated {
+export type IConditional = {
   name: string;
-  visible: false;
+  visible: boolean;
   form_id: string;
-  isDeferred: boolean;
-  average: number;
-  to: string[];
-  notUseGrade: boolean;
-  weight: number;
-}
+  conditional: Array<{
+    field: string;
+    value: string;
+    operator: "eq" | "ne" | "gt" | "lt" | "gte" | "lte" | "in";
+  }>;
+  ifNotExists: string | null;
+};
 
 export interface IWebRequest {
   name: string;
@@ -109,8 +110,8 @@ export type IStep = {
       data: IInteraction;
     }
   | {
-      type: NodeTypes.Evaluated;
-      data: IEvaluated;
+      type: NodeTypes.Conditional;
+      data: IConditional;
     }
   | {
       type: NodeTypes.WebRequest;

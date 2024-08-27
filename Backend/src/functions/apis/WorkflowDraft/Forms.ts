@@ -103,11 +103,11 @@ const handler: HttpHandler = async (conn) => {
     label: w.name,
   }));
 
-  const formsEvaluated = (
+  const formsCreated = (
     await new Form(conn)
       .model()
       .find({
-        type: IFormType.Evaluated,
+        type: IFormType.Created,
         active: true,
         published: { $exists: true },
       })
@@ -127,7 +127,7 @@ const handler: HttpHandler = async (conn) => {
     workflows,
     forms: {
       interaction: formsInteraction,
-      evaluated: formsEvaluated,
+      created: formsCreated,
     },
   });
 };

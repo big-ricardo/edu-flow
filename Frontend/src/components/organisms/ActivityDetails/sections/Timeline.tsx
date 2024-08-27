@@ -16,13 +16,13 @@ import IActivity, { IActivityStep } from "@interfaces/Activitiy";
 import { IStep, NodeTypes } from "@interfaces/WorkflowDraft";
 import React, { useCallback, useMemo, useState } from "react";
 import { GoMilestone, GoTag, GoWorkflow } from "react-icons/go";
-import { LiaNotesMedicalSolid } from "react-icons/lia";
 import { FaWpforms } from "react-icons/fa";
-import { BiMailSend } from "react-icons/bi";
+import { BiGitRepoForked, BiMailSend } from "react-icons/bi";
 import useActivity from "@hooks/useActivity";
 import IFormDraft, { IField } from "@interfaces/FormDraft";
 import ExtraFields from "./ExtraFields";
 import { BsArrowsFullscreen } from "react-icons/bs";
+import { RiWebhookLine } from "react-icons/ri";
 
 const statusMap = {
   idle: "Aguardando Resposta",
@@ -123,8 +123,10 @@ const TimelineStepItem = ({
         return GoTag;
       case NodeTypes.SwapWorkflow:
         return GoWorkflow;
-      case NodeTypes.Evaluated:
-        return LiaNotesMedicalSolid;
+      case NodeTypes.Conditional:
+        return BiGitRepoForked;
+      case NodeTypes.WebRequest:
+        return RiWebhookLine;
       case NodeTypes.Circle:
         return GoMilestone;
       default:
@@ -141,16 +143,6 @@ const TimelineStepItem = ({
 
     return null;
   }, [data._id, step?.type, interactions]);
-
-  const evaluation = useMemo(() => {
-    if (step?.type === NodeTypes.Evaluated) {
-      return activity?.evaluations?.find(
-        (evaluation) => evaluation.activity_step_id === data._id
-      );
-    }
-
-    return null;
-  }, [data._id, step?.type, activity?.evaluations]);
 
   const handleOpenModalItem = useCallback(
     (data: IFormDraft | null) => {
@@ -210,45 +202,6 @@ const TimelineStepItem = ({
                 <Divider my={2} />
               </Box>
             ))}
-          </Box>
-        )}
-        {evaluation && (
-          <Box w="100%">
-            <Text fontSize="sm">
-              Nota Final: {evaluation.final_grade || "Aguardando avaliação"}
-            </Text>
-            <Divider my={2} />
-            {evaluation?.answers?.map((answer) => (
-              <Box key={answer._id}>
-                <Text fontWeight="bold">{answer.user.name}</Text>
-                <Text fontSize={"sm"}>{answer.user.email}</Text>
-                <Text fontSize={"sm"}>
-                  Nota: {answer.grade || "Aguardando"}
-                </Text>
-                {answer?.data ? (
-                  <Button
-                    size="sm"
-                    mt="1"
-                    onClick={() => handleOpenModalItem(answer.data)}
-                    variant={"outline"}
-                    leftIcon={<BsArrowsFullscreen />}
-                  >
-                    {statusMap[answer.status]}
-                  </Button>
-                ) : (
-                  <Tag size="sm" variant="subtle" colorScheme="gray" mt="2">
-                    {statusMap[answer.status]}
-                  </Tag>
-                )}
-              </Box>
-            ))}
-
-            {!evaluation?.answers?.length && (
-              <Text mt="2" fontSize="sm">
-                Aguardando definição dos avaliadores
-              </Text>
-            )}
-            <Divider my={2} />
           </Box>
         )}
       </Flex>

@@ -68,15 +68,15 @@ const handler: QueueWrapperHandler<TMessage> = async (
 
     const { form_id, to, waitForOne } = data;
 
-    console.log("to", to);
-
-    let destination = [to];
-
-    if (to.includes("{{")) {
-      if (to.includes("user")) {
-        destination = activity.users.map((u) => u._id.toString());
+    let destination: string[] = to.flatMap((t) => {
+      if (t.includes("users")) {
+        return activity.users.map((u) => u._id.toString());
       }
-    }
+
+      return t;
+    });
+
+    console.log("destination", destination);
 
     const institutes = await new InstituteRepository(conn).find({
       where: {

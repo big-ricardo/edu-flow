@@ -10,9 +10,10 @@ export enum FieldTypes {
   checkbox = "checkbox",
   radio = "radio",
   select = "select",
+  multiselect = "multiselect",
   date = "date",
   file = "file",
-  teachers = "teachers",
+  teachers = "teacher",
 }
 
 export type IField = {

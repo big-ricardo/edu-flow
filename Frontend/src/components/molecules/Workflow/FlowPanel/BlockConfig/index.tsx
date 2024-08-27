@@ -26,7 +26,6 @@ import nodesSchema, {
   BlockFormInputs,
 } from "../../../../../pages/Portal/WorkflowDraft/nodesSchema";
 import Switch from "@components/atoms/Inputs/Switch";
-import NumberInput from "@components/atoms/Inputs/NumberInput";
 import { getFormWithFields } from "@apis/form";
 import { FaPlusCircle, FaTrash } from "react-icons/fa";
 import StatusForm from "@pages/Portal/Statuses/Form";
@@ -88,6 +87,12 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
     retryOnMount: false,
     staleTime: 1000 * 60 * 60,
   });
+
+  const formsAll = useMemo(() => {
+    if (!formsData) return;
+
+    return formsData.forms.interaction.concat(formsData.forms.created);
+  }, [formsData]);
 
   const onSubmit = handleSubmit((data) => {
     onSave(data);
@@ -250,6 +255,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 options: formsData?.users ?? [],
                 required: true,
               }}
+              isMulti
             />
 
             <Switch
@@ -265,7 +271,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             )}
           </>
         );
-      case NodeTypes.Evaluated:
+      case NodeTypes.Conditional:
         return (
           <>
             <Text
@@ -281,7 +287,7 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 label: "Formulário",
                 id: "form_id",
                 placeholder: "Selecione o formulário que será avaliado",
-                options: formsData?.forms.evaluated ?? [],
+                options: formsAll ?? [],
                 required: true,
               }}
             />
@@ -294,36 +300,16 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
               }}
             />
 
-            <NumberInput
+            <Select
               input={{
-                placeholder: "Média de Avaliação",
-
-                label: "Média de Avaliação",
-                id: "average",
-                required: true,
+                label: "Caso não tenha resposta",
+                id: "ifNotExists",
+                placeholder: "Selecione um formulário",
+                options: formsData?.workflows ?? [],
               }}
             />
 
-            <Switch
-              input={{
-                label: "Adiar seleção de destinatários",
-                id: "isDeferred",
-                required: true,
-              }}
-            />
-
-            {!watch("isDeferred") && (
-              <Select
-                input={{
-                  label: "Destinatarios",
-                  id: "to",
-                  placeholder: "Selecione os destinatários",
-                  options: formsData?.users ?? [],
-                  required: true,
-                }}
-                isMulti
-              />
-            )}
+            <ConditionalRender form_id={watch("form_id")} />
           </>
         );
       case NodeTypes.WebRequest:
@@ -443,7 +429,7 @@ const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
   const getFieldOptions = useMemo(() => {
     return (
       formsData?.fields?.map((field) => ({
-        label: field.id,
+        label: field.label,
         value: field.id,
       })) ?? []
     );

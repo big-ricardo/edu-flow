@@ -11,6 +11,7 @@ export enum FieldTypes {
   Radio = "radio",
   Select = "select",
   MultiSelect = "multiselect",
+  Checkbox = "checkbox",
   Date = "date",
   File = "file",
   Evaluated = "evaluated",

@@ -17,8 +17,8 @@ const extraOutputsSendEmail = output.serviceBusQueue({
   connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
 });
 
-const extraOutputsEvaluated = output.serviceBusQueue({
-  queueName: "evaluated",
+const extraOutputsConditional = output.serviceBusQueue({
+  queueName: "conditional",
   connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
 });
 
@@ -32,11 +32,6 @@ export const extraOutputsInteractionProcess = output.serviceBusQueue({
   connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
 });
 
-export const extraOutputsEvaluationProcess = output.serviceBusQueue({
-  queueName: "evaluation_process",
-  connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
-});
-
 export const extraOutputsWebRequest = output.serviceBusQueue({
   queueName: "web_request",
   connection: "AZURE_SERVICE_BUS_CONNECTION_STRING",
@@ -46,10 +41,9 @@ const extraOutputs = {
   swap_workflow: extraOutputsSwapWorkflow,
   send_email: extraOutputsSendEmail,
   interaction: extraOutputsInteraction,
-  evaluated: extraOutputsEvaluated,
+  conditional: extraOutputsConditional,
   change_status: extraOutputsChangeStatus,
   interaction_process: extraOutputsInteractionProcess,
-  evaluation_process: extraOutputsEvaluationProcess,
   web_request: extraOutputsWebRequest,
 };
 

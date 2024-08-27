@@ -1,23 +1,28 @@
 import { Box, Flex, useColorModeValue, Text } from "@chakra-ui/react";
 import { NodeProps, Position } from "reactflow";
 import WrapperNode from "./Wrapper";
-import { LiaNotesMedicalSolid } from "react-icons/lia";
+import { BiGitRepoForked } from "react-icons/bi";
 import CustomHandle from "../CustomHandle";
 
-interface EvaluatedProps extends NodeProps {
+interface ConditionalProps extends NodeProps {
   data: {
-    to: string;
-    subject: string;
-    template_id: string;
     name: string;
+    visible: boolean;
+    form_id: string;
+    conditional: Array<{
+      field: string;
+      value: string;
+      operator: "==" | "!=" | ">" | "<" | ">=" | "<=" | "contains";
+    }>;
+    ifNotExists: string;
   };
 }
 
-const Evaluated: React.FC<EvaluatedProps> = (props) => {
+const Conditional: React.FC<ConditionalProps> = (props) => {
   return (
     <WrapperNode {...props} numberOfSources={2}>
       <Box
-        as={LiaNotesMedicalSolid}
+        as={BiGitRepoForked}
         size="30px"
         color={useColorModeValue("gray.500", "gray.300")}
       />
@@ -36,9 +41,9 @@ const Evaluated: React.FC<EvaluatedProps> = (props) => {
   );
 };
 
-export default Evaluated;
+export default Conditional;
 
-export function EvaluatedIcon() {
+export function ConditionalIcon() {
   return (
     <Flex
       bg={"bg.card"}
@@ -52,7 +57,7 @@ export function EvaluatedIcon() {
       borderColor={"bg.page"}
     >
       <Box
-        as={LiaNotesMedicalSolid}
+        as={BiGitRepoForked}
         size="50px"
         color={useColorModeValue("gray.500", "gray.300")}
       />

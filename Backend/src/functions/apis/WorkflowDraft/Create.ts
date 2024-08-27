@@ -1,6 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import WorkflowDraft, {
+import {
   IWorkflowDraft,
   NodeTypes,
 } from "../../../models/client/WorkflowDraft";

@@ -3,14 +3,14 @@ import {
   InvocationContext,
   ServiceBusQueueFunctionOptions,
 } from "@azure/functions";
-import { Connection, ObjectId } from "mongoose";
+import { Connection } from "mongoose";
 import mongo from "../services/mongo";
 import * as yup from "yup";
 import Activity, { IActivityStepStatus } from "../models/client/Activity";
 import sbusOutputs from "../utils/sbusOutputs";
 import { NodeTypes } from "../models/client/WorkflowDraft";
 
-const IS_IDLE_BLOCK = [NodeTypes.Interaction, NodeTypes.Evaluated];
+const IS_IDLE_BLOCK = [NodeTypes.Interaction];
 
 export interface GenericMessage {
   activity_id: string;

@@ -14,8 +14,7 @@ const ExtraFields: React.FC<ExtraFieldsProps> = ({ fields }) => {
       {fields.map((field) => (
         <RenderFieldValue
           key={field.id}
-          label={field.label}
-          value={field.value ?? "Não informado"}
+          field={field}
         />
       ))}
     </Flex>

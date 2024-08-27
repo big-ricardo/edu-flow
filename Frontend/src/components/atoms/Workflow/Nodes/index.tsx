@@ -3,7 +3,7 @@ import CircleNode from "./Circle";
 import Interaction from "./Interaction";
 import SendEmail from "./SendEmail";
 import SwapWorkflow from "./SwapWorkflow";
-import Evaluated from "./Evaluated";
+import Conditional from "./Conditional";
 import WebRequest from "./WebRequest";
 
 export default {
@@ -12,6 +12,6 @@ export default {
   change_status: ChangeStatus,
   swap_workflow: SwapWorkflow,
   interaction: Interaction,
-  evaluated: Evaluated,
+  conditional: Conditional,
   web_request: WebRequest,
 };

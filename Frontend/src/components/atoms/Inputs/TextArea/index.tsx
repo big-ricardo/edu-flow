@@ -1,4 +1,8 @@
-import { FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  Textarea as TextAreaChackra,
+} from "@chakra-ui/react";
 import React from "react";
 import ErrorMessage from "../ErrorMessage";
 import { useFormContext } from "react-hook-form";
@@ -36,8 +40,7 @@ const TextArea: React.FC<TextAreaProps> = ({ input }) => {
         <FormLabel>{input?.label}</FormLabel>
       </div>
       <InfoTooltip describe={input?.describe} />
-      <Input
-        as="textarea"
+      <TextAreaChackra
         placeholder={input?.placeholder}
         {...register(input.id)}
       />

@@ -88,3 +88,11 @@ resource "azurerm_servicebus_queue" "web_request" {
   max_delivery_count = 10
   lock_duration = "PT5M"
 }
+
+resource "azurerm_servicebus_queue" "conditional" {
+  name                = "conditional"
+  namespace_id = azurerm_servicebus_namespace.sbus.id
+  enable_partitioning = false
+  max_delivery_count = 10
+  lock_duration = "PT5M"
+}

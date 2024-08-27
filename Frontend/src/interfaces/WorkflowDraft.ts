@@ -6,7 +6,7 @@ export enum NodeTypes {
   Circle = "circle",
   SwapWorkflow = "swap_workflow",
   Interaction = "interaction",
-  Evaluated = "evaluated",
+  Conditional = "conditional",
   WebRequest = "web_request",
 }
 
@@ -65,19 +65,17 @@ export interface IWebRequest {
   ];
 }
 
-export type IEvaluated = {
+export type IConditional = {
   name: string;
   visible: boolean;
   form_id: string;
-} & (
-  | {
-      isDeferred: false;
-    }
-  | {
-      isDeferred: true;
-      to: Array<string>;
-    }
-);
+  conditional: Array<{
+    field: string;
+    value: string;
+    operator: "==" | "!=" | ">" | "<" | ">=" | "<=" | "contains";
+  }>;
+  ifNotExists: string | null;
+};
 
 export type IStep = {
   _id: string;
@@ -112,8 +110,8 @@ export type IStep = {
       data: IInteraction;
     }
   | {
-      type: NodeTypes.Evaluated;
-      data: IEvaluated;
+      type: NodeTypes.Conditional;
+      data: IConditional;
     }
   | {
       type: NodeTypes.WebRequest;

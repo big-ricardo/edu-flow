@@ -3,7 +3,7 @@ import {
   FormLabel,
   Radio as RadioChackra,
   RadioGroup,
-  Stack,
+  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -51,13 +51,13 @@ const Radio: React.FC<RadioProps> = ({ input }) => {
         control={control}
         render={({ field: { onChange, value } }) => (
           <RadioGroup onChange={onChange} value={value}>
-            <Stack direction="row">
+            <VStack alignItems="start">
               {input.options?.map((item) => (
                 <RadioChackra key={item.label} value={item?.value}>
                   {item.label}
                 </RadioChackra>
               ))}
-            </Stack>
+            </VStack>
           </RadioGroup>
         )}
         rules={{ required: !!input.required }}

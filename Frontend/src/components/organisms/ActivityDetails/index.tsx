@@ -14,7 +14,6 @@ import ActivityHeader from "./sections/ActivityHeader";
 import UserDetails from "./sections/UserDetails";
 import ExtraFields from "./sections/ExtraFields";
 import Accordion from "@components/atoms/Accordion";
-import RenderFieldValue from "@components/atoms/RenderFieldValue";
 import Timeline from "./sections/Timeline";
 import useActivity from "@hooks/useActivity";
 
@@ -71,12 +70,20 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
           state={activity.state}
         />
         <VStack mb={4} align="start">
-          <RenderFieldValue label={"Descrição"} value={activity.description} />
-          <RenderFieldValue
-            label={"Data de Criação"}
-            value={convertDateTime(activity.createdAt)}
-          />
+          <Text fontWeight={"bold"} fontSize="md">
+            Data de Criação
+          </Text>
+          <Text>{convertDateTime(activity.createdAt)}</Text>
           <Divider />
+          {activity.finished_at && (
+            <>
+              <Text fontWeight={"bold"} fontSize="md">
+                Data de finalização
+              </Text>
+              <Text>{convertDateTime(activity.finished_at)}</Text>
+              <Divider />
+            </>
+          )}
           <Text fontWeight={"bold"} fontSize="md">
             Alunos
           </Text>
@@ -85,11 +92,10 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
               <UserDetails key={user._id} user={user} />
             ))}
           </Flex>
-          <Divider />
         </VStack>
         <Accordion.Container defaultIndex={[0, 1]} allowToggle allowMultiple>
           <Accordion.Item>
-            <Accordion.Button>Informações Extra</Accordion.Button>
+            <Accordion.Button>Informações do formulário</Accordion.Button>
             <Accordion.Panel>
               <ExtraFields fields={activity.form_draft.fields} />
             </Accordion.Panel>

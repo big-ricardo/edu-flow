@@ -20,7 +20,7 @@ import {
   BsActivity,
 } from "react-icons/bs";
 import { AiOutlineTeam } from "react-icons/ai";
-import { FaRegEnvelope, FaUniversity } from "react-icons/fa";
+import { FaRegEnvelope } from "react-icons/fa";
 import { GoWorkflow } from "react-icons/go";
 import React from "react";
 import Can from "@components/atoms/Can";
