@@ -47,7 +47,6 @@ const handler: HttpHandler = async (conn, req, context) => {
     email: updatedUser.email,
     matriculation: updatedUser.matriculation,
     roles: updatedUser.roles,
-    university_degree: updatedUser.university_degree,
   });
 };
 
@@ -70,15 +69,6 @@ export default new Http(handler)
         .required(),
       institute: schema.string().optional(),
       isExternal: schema.boolean().optional(),
-      university_degree: schema
-        .string()
-        .optional()
-        .oneOf(["mastermind", "doctor"])
-        .when("role", ([role], schema) =>
-          role === "teacher"
-            ? schema.required()
-            : schema.notRequired().nullable()
-        ),
     }),
     params: schema.object().shape({
       id: schema.string().required(),

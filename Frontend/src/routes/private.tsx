@@ -10,8 +10,6 @@ import EmailTemplate from "@pages/Portal/Emails/Emails";
 import Users from "@pages/Portal/Users";
 import Institutes from "@pages/Portal/Institutes";
 import Institute from "@pages/Portal/Institutes/Institute";
-import University from "@pages/Portal/Universities/University";
-import Universities from "@pages/Portal/Universities";
 import User from "@pages/Portal/Users/User";
 import Statuses from "@pages/Portal/Statuses";
 import Status from "@pages/Portal/Statuses/Status";
@@ -21,13 +19,12 @@ import Response from "@pages/Response";
 import FormDraft from "@pages/Portal/FormDrafts";
 import Activity from "@pages/Portal/Activity";
 import ActivityProcess from "@pages/Portal/ActivityCommit";
-import ActivityAccept from "@pages/Portal/ActivityAccept";
 import EditResponse from "@pages/Edit";
-import ActivityBoardDefinition from "@pages/Portal/ActivityBordDefinition";
 import Activities from "@pages/Portal/Activities";
 import FirstPage from "@pages/Welcome/Firstpage";
 import SecondPage from "@pages/Welcome/SecondPage";
 import Welcome from "@pages/Welcome";
+import NewTicket from "@pages/Portal/NewTicket";
 
 const routes: RouteType = [
   {
@@ -114,21 +111,6 @@ const routes: RouteType = [
         permission: "institute.update",
       },
       {
-        path: "/portal/universities",
-        element: <Universities />,
-        permission: "university.view",
-      },
-      {
-        path: "/portal/university",
-        element: <University />,
-        permission: "university.create",
-      },
-      {
-        path: "/portal/university/:id",
-        element: <University />,
-        permission: "university.update",
-      },
-      {
         path: "/portal/statuses",
         element: <Statuses />,
         permission: "status.view",
@@ -179,14 +161,9 @@ const routes: RouteType = [
         permission: "activity.committed",
       },
       {
-        path: "/portal/activity-accept/:id",
-        element: <ActivityAccept />,
-        permission: "activity.accept",
-      },
-      {
-        path: "/portal/activity/:id/board-definition/:evaluation_id",
-        element: <ActivityBoardDefinition />,
-        permission: "activity.board-definition",
+        path: "/portal/new",
+        element: <NewTicket />,
+        permission: "activity.create",
       },
     ],
   },

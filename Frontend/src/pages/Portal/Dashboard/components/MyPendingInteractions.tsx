@@ -79,10 +79,8 @@ const PendingInteractions: React.FC = () => {
     }));
   }, [data, handleResponse, handleView]);
 
-  if (data && data.length === 0) return null;
-
   return (
-    <Box p={4} bg="bg.card" borderRadius="md">
+    <Box p={4} bg="bg.card" borderRadius="md" id="pending-interactions">
       <Heading size="md">{t("dashboard.title.interactionPending")}</Heading>
       <Text size="sm" color={"text.secondary"}>
         {t("dashboard.description.interactionPending")}

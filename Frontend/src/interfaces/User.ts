@@ -6,12 +6,7 @@ export enum IUserRoles {
   teacher = "teacher",
 }
 
-export enum ITeacherDegrees {
-  mastermind = "mastermind",
-  doctor = "doctor",
-}
-
-type BaseUser = {
+type IUser = {
   _id: string;
   name: string;
   email: string;
@@ -21,9 +16,6 @@ type BaseUser = {
   institute: IInstitute;
   active: boolean;
   roles: IUserRoles[];
-  university_degree?: ITeacherDegrees;
 };
-
-type IUser = BaseUser;
 
 export default IUser;

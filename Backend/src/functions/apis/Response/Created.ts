@@ -1,6 +1,5 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import { IActivityAccepted } from "../../../models/client/Activity";
 import { IFormType } from "../../../models/client/Form";
 import Status from "../../../models/client/Status";
 import { ObjectId } from "mongoose";
@@ -19,18 +18,14 @@ interface IUser {
 }
 
 type DtoCreated = {
-  name: string; // "name"
   description: string; // "description"
-  masterminds:
-    | Pick<IUser, "_id" | "name" | "email">
-    | Array<Pick<IUser, "_id" | "name" | "email">>;
 } & {
   [key: string]: File | string | Array<string> | IUser | Array<IUser>;
 };
 
 const handler: HttpHandler = async (conn, req) => {
   const rest = req.body as DtoCreated;
-  const { name, description, masterminds } = rest;
+  const { description } = rest;
 
   const formRepository = new FormRepository(conn);
   const formDraftRepository = new FormDraftRepository(conn);
@@ -62,24 +57,6 @@ const handler: HttpHandler = async (conn, req) => {
     userRepository
   );
 
-  const mastermindsMapped = responseUseCases.getMastermindsMapped(masterminds);
-
-  const mastermindsExists = await userRepository.find({
-    where: {
-      _id: {
-        $in: mastermindsMapped,
-      },
-    },
-    select: {
-      _id: 1,
-      name: 1,
-      email: 1,
-      matriculation: 1,
-      university_degree: 1,
-      institute: 1,
-    },
-  });
-
   await responseUseCases.processFormFields(rest);
 
   const status = await new Status(conn).model().findById(form.initial_status);
@@ -91,21 +68,16 @@ const handler: HttpHandler = async (conn, req) => {
       name: 1,
       email: 1,
       matriculation: 1,
-      university_degree: 1,
       institute: 1,
     },
   });
 
   const activity = await activityRepository.create({
-    name,
+    name: form.name,
     description,
     form: String(form._id),
     status: status.toObject(),
     users: [user.toObject()],
-    masterminds: mastermindsExists?.map((mastermind) => ({
-      user: mastermind.toObject(),
-      accepted: IActivityAccepted.pending,
-    })),
     form_draft: formDraft.toObject(),
   });
 

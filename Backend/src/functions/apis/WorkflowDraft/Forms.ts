@@ -2,7 +2,6 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import Email from "../../../models/client/Email";
 import Status from "../../../models/client/Status";
-import User from "../../../models/client/User";
 import Workflow from "../../../models/client/Workflow";
 import Form, { IFormType } from "../../../models/client/Form";
 import InstituteRepository from "../../../repositories/Institute";
@@ -40,12 +39,8 @@ const handler: HttpHandler = async (conn) => {
       label: "Especiais",
       options: [
         {
-          label: "Aluno/s",
+          label: "Solicitante",
           value: "${{activity.#users.email}}",
-        },
-        {
-          label: "Orientadores",
-          value: "${{activity.#masterminds.user.email}}",
         },
       ],
     },

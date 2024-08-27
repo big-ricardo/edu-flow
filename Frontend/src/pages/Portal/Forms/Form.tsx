@@ -38,7 +38,7 @@ const statusSchema = z
       .min(3, "Slug precisa ter pelo menos 3 caracteres"),
     status: z.enum(["draft", "published"]).default("draft"),
     initial_status: z.string().optional().nullable(),
-    type: z.enum(["created", "interaction", "evaluated"]),
+    type: z.enum(["created", "interaction"]),
     workflow: z.string().optional().nullable(),
     period: z.object({
       open: z.string().nullable(),
@@ -209,7 +209,6 @@ export default function Workflow() {
                   options: [
                     { label: t("form.type.created"), value: "created" },
                     { label: t("form.type.interaction"), value: "interaction" },
-                    { label: t("form.type.evaluation"), value: "evaluated" },
                   ],
                   isDisabled: isEditing,
                 }}

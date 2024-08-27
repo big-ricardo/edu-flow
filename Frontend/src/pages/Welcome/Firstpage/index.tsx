@@ -20,18 +20,17 @@ const steps = [
     content: (
       <Box mt={4}>
         <Heading size="lg" mb={4}>
-          Bem-vindo ao EduFlow!
+          Bem-vindo ao Streamline!
         </Heading>
         <Text fontSize="lg" mb={4}>
-          Este sistema foi projetado para facilitar o processo de atividades
-          acadêmicas, desde a criação das atividades até a avaliação final.
+          Este sistema foi projetado para facilitar o processo de atividades e
+          demandas, desde a criação das atividades até a finalização.
         </Text>
         <Text>
           Irei guiá-lo através dos principais componentes do sistema, incluindo
           formulários, fluxos de trabalho e modelos de email. Ao final desta
-          jornada, você terá uma visão clara de como o EduFlow pode ser
-          personalizado para atender às necessidades específicas do seu curso de
-          ensino superior.
+          jornada, você terá uma visão clara de como o Streamline pode ser
+          personalizado para atender às necessidades específicas do seu negócio.
         </Text>
       </Box>
     ),
@@ -56,33 +55,16 @@ const steps = [
 
         <Flex align="center" mb={4}>
           <Icon as={FaUserGraduate} boxSize={6} color="blue.500" mr={4} />
-          <Heading size="sm">Aluno</Heading>
+          <Heading size="sm">Usuário</Heading>
         </Flex>
         <Text>
-          O perfil de Aluno é utilizado pelos estudantes que estão desenvolvendo
-          suas atividades. Eles podem criar submissões e acompanhar o feedback
-          dos orientadores.
+          O perfil de Usuário é utilizado pelos usuários finais, para interagir
+          com o sistema e realizar as atividades propostas. Esse perfil é
+          designado a colaborades da empresa que irão interagir com o sistema.
         </Text>
         <Text mt={2}>
           <b>Permissões:</b> Submissão de formulários de criação e interação,
-          consulta das suas atividades;
-        </Text>
-
-        <Divider my={4} />
-
-        <Flex align="center" mb={4}>
-          <Icon as={FaChalkboardTeacher} boxSize={6} color="green.500" mr={4} />
-          <Heading size="sm">Professor</Heading>
-        </Flex>
-        <Text>
-          O perfil de Professor é destinado aos orientadores e membros da banca
-          examinadora. Eles podem avaliar os trabalhos dos alunos, participar
-          como orientadores e membros da banca examinadora.
-        </Text>
-        <Text mt={2}>
-          <b>Permissões:</b> Submissão de formulários de interação e avaliação,
-          consulta das atividades dos seus orientandos, participação como
-          orientador e membro da banca examinadora.
+          consulta das seus tickets;
         </Text>
 
         <Divider my={4} />
@@ -117,10 +99,10 @@ const steps = [
 
         <Text fontSize="lg" mb={4}>
           O sistema permite que as atividades sejam acompanhadas por meio de
-          diferentes status. Esses status indicam a situação atual de cada
-          atividade, facilitando a identificação de tarefas pendentes e
-          concluídas. Esses status são personalizáveis e podem ser adaptados às
-          necessidades específicas de cada curso. Existindo 3 tipos de status:
+          diferentes status. Esses status indicam a situação atual de ticket,
+          facilitando a identificação de tarefas pendentes e concluídas. Esses
+          status são personalizáveis e podem ser adaptados às necessidades
+          específicas de cada curso. Existindo 3 tipos de status:
         </Text>
 
         <Divider my={4} />
@@ -130,7 +112,7 @@ const steps = [
           <Text fontWeight="bold">Em Andamento</Text>
         </Flex>
         <Text>
-          Indica que o TCC está em desenvolvimento e ainda não foi finalizado.
+          Indica que o ticket está em andamento e ainda não foi finalizado.
           Os participantes devem seguir com suas atividades até a conclusão.
         </Text>
 
@@ -139,7 +121,7 @@ const steps = [
           <Text fontWeight="bold">Concluído</Text>
         </Flex>
         <Text>
-          Status atribuído quando todas as etapas da atividade foram
+          Status atribuído quando todas as etapas do ticket foram
           completadas, e o trabalho foi concluído com sucesso.
         </Text>
 
@@ -148,9 +130,9 @@ const steps = [
           <Text fontWeight="bold">Cancelado</Text>
         </Flex>
         <Text>
-          Este status indica que o TCC não atendeu aos critérios necessários e
-          foi cancelado. O aluno deve revisar e submeter novamente ou encerrar o
-          processo.
+          Este status indica que o ticket não atendeu aos critérios necessários e
+          foi cancelado. O solicitante deve revisar as informações e reiniciar o
+          processo, se necessário.
         </Text>
       </Box>
     ),

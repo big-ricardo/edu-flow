@@ -5,8 +5,8 @@
     "pt-BR": "Português"
   },
   "welcome": {
-    "title": "Bem-vindo ao Edu Flow",
-    "description": "Faça login para acessar o sistema de gestão acadêmica"
+    "title": "Bem-vindo ao Streamline",
+    "description": "Faça login para acessar o sistema de automações corporativa"
   },
   "login": {
     "title": "Faça login",
@@ -14,7 +14,7 @@
     "forgot": "Esqueceu a senha?"
   },
   "common": {
-    "activities": "Atividades",
+    "activities": "Tickets",
     "back": "Voltar",
     "yes": "Sim",
     "no": "Não",
@@ -25,7 +25,8 @@
       "name": "Nome",
       "description": "Descrição",
       "protocol": "Protocolo",
-      "acronym": "Domínio",
+      "search": "Pesquisar",
+      "acronym": "Sigla",
       "email": "E-mail",
       "password": "Senha",
       "newPassword": "Nova senha",
@@ -40,11 +41,7 @@
       "undefined": "Indefinido",
       "users": "Usuários",
       "finished": "Finalizado",
-      "sub_masterminds": "Coorientadores",
-      "masterminds": "Orientadores",
-      "mastermind": "Mestrado",
-      "doctorate": "Doutorado",
-      "students": "Alunos",
+      "students": "Usuarios",
       "slug": "Slug",
       "title": "Titulo",
       "subject": "Assunto",
@@ -53,8 +50,7 @@
       "inactive": "Inativo",
       "matriculation": "Matrícula",
       "external": "Externo",
-      "university_degree": "Grau universitário",
-      "institute": "Instituto",
+      "institute": "Grupo",
       "university": "Universidade",
       "statusType": {
         "done": "Concluído",
@@ -95,9 +91,9 @@
   "navbar": {
     "joyride": {
       "dashboard": "Clique aqui para voltar para a página inicial quando quiser.",
-      "activities": "Clique aqui para ver as suas atividades.",
+      "activities": "Clique aqui para ver as seus Tickets.",
       "users": "Clique aqui para adicionar/ver usuários.",
-      "institutes": "Clique aqui para ver as instituições.",
+      "institutes": "Clique aqui para ver os grupos.",
       "universities": "Clique aqui para ver as universidades.",
       "statuses": "Clique aqui para criar/editar os status.",
       "emails": "Clique aqui para criar/editar os templates de emails.",
@@ -130,35 +126,30 @@
   },
   "dashboard": {
     "title": {
-      "openForms": "Formulários abertos",
-      "myActivities": "Minhas atividades",
-      "activityTracking": "Acompanhamento de atividades",
-      "evaluationPending": "Avaliações pendentes",
+      "openForms": "Novo ticket",
+      "myActivities": "Meus Tickets",
       "interactionPending": "Interações pendentes",
-      "activitiesAccept": "Atividades por aceite",
-      "activityProcess": "Aprovação de atividades",
-      "boardDefinition": "Definição de banca"
+      "activityProcess": "Aprovação de Tickets"
     },
     "joyride": {
       "open-forms": "Seja bem-vindo ao EduFlow! Aqui você pode visualizar os formulários disponíveis para preenchimento.",
-      "my-activities": "Aqui você verá as atividades que você já criou.",
-      "activityProcess": "Aqui você verá as atividades que estão pendentes de aprovação para iniciarem o processo.",
-      "activity-tracking": "Aqui você verá as atividades que você está participando e o andamento delas.",
+      "my-activities": "Aqui você verá os tickets que você já criou.",
+      "pending-interactions": "Aqui você verá os tickets que estão pendentes de resposta.",
       "switch-theme": "Clique aqui para alternar entre os temas claro e escuro.",
       "profile-menu": "Clique aqui para acessar seu perfil e fazer logout."
     },
     "description": {
-      "evaluationPending": "Atividades que estão pendentes de avaliação",
+      "evaluationPending": "Tickets que estão pendentes de avaliação",
       "interactionPending": "Interações que estão pendentes de resposta",
-      "activitiesAccept": "Atividades que estão pendentes de aceite",
-      "activityProcess": "Atividades que estão em andamento"
+      "activitiesAccept": "Tickets que estão pendentes de aceite",
+      "activityProcess": "Tickets que estão em andamento"
     }
   },
   "title": {
     "dashboard": "Dashboard",
-    "activities": "Atividades",
+    "activities": "Tickets",
     "users": "Usuários",
-    "institutes": "Instituições",
+    "institutes": "Grupos",
     "universities": "Universidades",
     "statuses": "Status",
     "workflows": "Fluxos",
@@ -173,7 +164,7 @@
   "role": {
     "admin": "Administrador(a)",
     "teacher": "Professor(a)",
-    "student": "Aluno(a)"
+    "user": "Usuário(a)"
   },
   "state": {
     "active": "Ativo",
@@ -250,20 +241,20 @@
     "resendEmail": "Redefinir senha"
   },
   "institutes": {
-    "title": "Instituições",
-    "create": "Criar instituição",
+    "title": "Grupos",
+    "create": "Criar grupo",
     "cancel": "Cancelar",
-    "success": "Instituição salva com sucesso",
+    "success": "Grupo salva com sucesso",
     "error": "Erro ao carregar instituição"
   },
   "institute": {
-    "create": "Criar instituição",
-    "edit": "Editar instituição",
-    "created": "Instituição criada com sucesso",
-    "edited": "Instituição editada com sucesso",
+    "create": "Criar grupo",
+    "edit": "Editar grupo",
+    "created": "Grupo criada com sucesso",
+    "edited": "Grupo editada com sucesso",
     "cancel": "Cancelar",
     "submit": "Salvar Alterações",
-    "error": "Erro ao salvar instituição"
+    "error": "Erro ao salvar grupo"
   },
   "statuses": {
     "title": "Status",

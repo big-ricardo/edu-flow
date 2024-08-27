@@ -86,25 +86,6 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
             ))}
           </Flex>
           <Divider />
-          <Text fontWeight={"bold"} fontSize="md">
-            Orientadores
-          </Text>
-          <Flex flexWrap="wrap">
-            {activity.masterminds.map((mastermind) => (
-              <UserDetails key={mastermind.user._id} {...mastermind} />
-            ))}
-          </Flex>
-          <Text fontWeight={"bold"} fontSize="md">
-            Co-Orientadores
-          </Text>
-          <Flex flexWrap="wrap">
-            {activity.sub_masterminds.map((mastermind) => (
-              <UserDetails key={mastermind._id} user={mastermind} />
-            ))}
-            {!activity.sub_masterminds.length && (
-              <Text>Nenhum co-orientador</Text>
-            )}
-          </Flex>
         </VStack>
         <Accordion.Container defaultIndex={[0, 1]} allowToggle allowMultiple>
           <Accordion.Item>

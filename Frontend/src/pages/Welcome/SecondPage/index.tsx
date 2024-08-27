@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
 import { Box, Flex, Text, Heading, Divider, Icon } from "@chakra-ui/react";
-import { FaTasks, FaFileAlt, FaCheckCircle, FaWpforms } from "react-icons/fa";
+import { FaTasks, FaFileAlt, FaWpforms } from "react-icons/fa";
 import { GoTag, GoWorkflow } from "react-icons/go";
 import { BiMailSend } from "react-icons/bi";
-import { LiaNotesMedicalSolid } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
 import { updateTutorials } from "@apis/users";
 import useAuth from "@hooks/useAuth";
+import { RiWebhookLine } from "react-icons/ri";
 import Steps from "@components/organisms/Steps";
 
 const steps = [
@@ -35,14 +35,13 @@ const steps = [
           </Heading>
         </Flex>
         <Text>
-          Este formulário é utilizado para iniciar novas atividades no sistema,
+          Este formulário é utilizado para criar novos tickets no sistema,
           permitindo a definição de parâmetros iniciais como título, descrição,
           prazo e responsáveis.
         </Text>
         <Text mt={2}>
-          <b>Exemplo de Uso:</b> Um professor pode usar este formulário para
-          criar uma nova atividade de "Entrega do Projeto Final", onde os alunos
-          devem submeter seus trabalhos até uma data específica.
+          <b>Exemplo de Uso:</b> Enviar solicitação de ferias para o RH.
+          Solicitar troca de equipamento.
         </Text>
 
         <Divider my={4} />
@@ -55,30 +54,12 @@ const steps = [
         </Flex>
         <Text>
           Usado durante o fluxo para a submissão de informações necessárias em
-          várias etapas, como entregas parciais de documentos, solicitações de
-          defesa e submissões finais.
+          várias etapas, como ações intermediárias, solicitação de novas
+          informações ou entrega de documentos.
         </Text>
         <Text mt={2}>
-          <b>Exemplo de Uso:</b> Um aluno pode usar este formulário para
-          submeter a versão preliminar de seu TCC para revisão pelo orientador,
-          ou para solicitar a data de defesa do projeto.
-        </Text>
-
-        <Divider my={4} />
-
-        <Flex align="center" mb={4}>
-          <Icon as={FaCheckCircle} boxSize={6} color="green.500" mr={4} />
-          <Heading size="sm">Formulário de Avaliação (Avaliação)</Heading>
-        </Flex>
-        <Text>
-          Destinado à avaliação do desempenho dos alunos em diferentes fases,
-          como entregas parciais, entrega final e defesa. Permite aos
-          avaliadores fornecer notas, comentários e sugestões.
-        </Text>
-        <Text mt={2}>
-          <b>Exemplo de Uso:</b> Após a defesa do TCC, os membros da banca
-          utilizam este formulário para avaliar a apresentação do aluno e dar
-          notas em diferentes critérios, além de fornecer feedback detalhado.
+          <b>Exemplo de Uso:</b> Enviar informações adicionais caso seja
+          aprovado para o cargo.
         </Text>
       </Box>
     ),
@@ -115,9 +96,8 @@ const steps = [
           necessidade.
         </Text>
         <Text mt={2}>
-          <b>Exemplo de Uso:</b> Um email automático pode ser enviado para os
-          alunos lembrando-os do prazo final para submissão de seus TCCs, ou
-          para os orientadores, solicitando a avaliação de uma entrega parcial.
+          <b>Exemplo de Uso:</b> Enviar um email para o solicitante informando
+          que a solicitação foi aprovada.
         </Text>
 
         <Divider my={4} />
@@ -133,10 +113,9 @@ const steps = [
           requisitos específicos.
         </Text>
         <Text mt={2}>
-          <b>Exemplo de Uso:</b> Após a submissão de um TCC, o sistema pode
-          decidir automaticamente se o documento deve passar para um fluxo de
-          revisão ou ser encaminhado diretamente para a defesa, dependendo do
-          feedback recebido.
+          <b>Exemplo de Uso:</b> Após a criação de um ticket, o fluxo pode ser
+          alterado para um fluxo de aprovação específico para determinado tipo
+          de solicitação.
         </Text>
 
         <Divider my={4} />
@@ -152,9 +131,8 @@ const steps = [
           saibam exatamente em que estágio o trabalho se encontra.
         </Text>
         <Text mt={2}>
-          <b>Exemplo de Uso:</b> Após a submissão final do TCC, o status pode
-          ser atualizado para "Aguardando Avaliação", e depois para "Defesa
-          Marcada", conforme o processo avança.
+          <b>Exemplo de Uso:</b> Após a criação de um ticket, o status pode ser
+          alterado para "Em Andamento" para indicar que o trabalho foi iniciado.
         </Text>
       </Box>
     ),
@@ -197,28 +175,19 @@ const steps = [
         <Divider my={4} />
 
         <Flex align="center" mb={4}>
-          <Icon
-            as={LiaNotesMedicalSolid}
-            boxSize={6}
-            color="green.500"
-            mr={4}
-          />
-          <Heading size="sm">Avaliação</Heading>
+          <Icon as={RiWebhookLine} boxSize={6} color="green.500" mr={4} />
+          <Heading size="sm">Requisição Web</Heading>
         </Flex>
         <Text>
-          Utilizado para avaliar o desempenho do aluno em diferentes fases do
-          TCC, como entregas parciais, entrega final e defesa. Pode ser
-          configurado para diferentes critérios de avaliação, assegurando que os
-          feedbacks sejam padronizados e que os avaliadores tenham uma estrutura
-          clara para suas análises. Este componente é ligado a um formulário
-          específico do tipo "Avaliação". É possivel defirnir os avaliadores
-          previamente ou permitir que o sejam definidos quando a atividade for
-          para esta etapa.
+          Utilizado para integrar o sistema com outras ferramentas e serviços,
+          permitindo a troca de informações em tempo real. Este componente pode
+          ser configurado para enviar dados para sistemas externos, como Jira,
+          Discord ou Google Drive, e receber informações de volta para atualizar
+          o status do ticket.
         </Text>
         <Text mt={2}>
-          <b>Exemplo de Uso:</b> Durante a defesa do TCC, os avaliadores podem
-          utilizar este componente para atribuir notas e fornecer feedback
-          detalhado sobre a apresentação do aluno.
+          <b>Exemplo de Uso:</b> Após a submissão de um ticket iformar ao
+          Discord que o ticket foi criado e notificar o usuário.
         </Text>
       </Box>
     ),

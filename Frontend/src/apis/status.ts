@@ -27,7 +27,7 @@ export const getStatus = async ({
   return res.data.data;
 };
 
-export const createUniversity = async (data: Omit<Status, "_id">) => {
+export const createStatus = async (data: Omit<Status, "_id">) => {
   const res = await api.post<ReqStatus>("/status", data);
 
   return res.data.data;
@@ -46,5 +46,5 @@ export const createOrUpdateStatus = async (
     return updateStatus(data as Status);
   }
 
-  return createUniversity(data);
+  return createStatus(data);
 };

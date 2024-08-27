@@ -86,11 +86,6 @@ export type IActivity = {
   users: IUserChild[];
   form: IForm;
   form_draft: IFormDraft;
-  masterminds: {
-    accepted: IActivityAccepted;
-    user: IUserChild;
-  }[];
-  sub_masterminds: IUserChild[];
   status: IStatus;
   comments: IComment[];
   interactions: IActivityInteractions[];

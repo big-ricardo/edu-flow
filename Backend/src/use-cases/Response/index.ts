@@ -37,14 +37,6 @@ class ResponseUseCases {
     this.userRepository = userRepository;
   }
 
-  getMastermindsMapped(
-    masterminds:
-      | Pick<IUser, "_id" | "name" | "email">
-      | Array<Pick<IUser, "_id" | "name" | "email">>
-  ) {
-    return Array.isArray(masterminds) ? masterminds : [masterminds];
-  }
-
   async processFormFields(rest: Record<string, any>) {
     for (const field of this.formDraft.fields) {
       let value = rest[field.id];
@@ -84,7 +76,6 @@ class ResponseUseCases {
           name: 1,
           email: 1,
           matriculation: 1,
-          university_degree: 1,
           institute: 1,
         },
       });

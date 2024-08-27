@@ -73,16 +73,10 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
               email: z.string().email(),
               isExternal: z.boolean().optional(),
               matriculation: z.string().optional(),
-              university_degree: z.string().optional(),
               institute: z.object({
                 _id: z.string().optional(),
                 name: z.string(),
                 acronym: z.string(),
-                university: z.object({
-                  _id: z.string().optional(),
-                  name: z.string(),
-                  acronym: z.string(),
-                }),
               }),
             })
           )

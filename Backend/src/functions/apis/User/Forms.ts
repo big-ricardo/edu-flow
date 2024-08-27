@@ -1,35 +1,26 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
+import InstituteRepository from "../../../repositories/Institute";
 import res from "../../../utils/apiResponse";
-import Institute from "../../../models/client/Institute";
 
 const handler: HttpHandler = async (conn) => {
-  const institutes = await new Institute(conn).model().aggregate([
-    {
-      $match: {
+  const institutes = (
+    await new InstituteRepository(conn).find({
+      where: {
         active: true,
       },
-    },
-    {
-      $unwind: "$university",
-    },
-    {
-      $group: {
-        _id: "$university._id",
-        label: { $first: "$university.acronym" },
-        options: {
-          $push: {
-            value: "$_id",
-            label: "$acronym",
-          },
-        },
+      select: {
+        _id: 1,
+        name: 1,
       },
-    },
-  ]);
+    })
+  ).map((institute) => ({
+    label: institute.name,
+    value: institute._id,
+  }));
 
   const roles = [
     { label: "Admin", value: "admin" },
-    { label: "Docente", value: "teacher" },
-    { label: "Discente", value: "student" },
+    { label: "Usuário", value: "student" },
   ];
 
   return res.success({

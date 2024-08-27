@@ -35,7 +35,6 @@ const columns = [
 const FormTypes = {
   created: "Criação",
   interaction: "Interação",
-  evaluated: "Avaliação",
 };
 
 const Action = memo((form: Pick<IForm, "_id" | "slug">) => {

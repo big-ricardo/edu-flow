@@ -50,54 +50,6 @@ describe("replaceVariables", () => {
     expect(result).toBe(expectedOutput);
   });
 
-  it("should return array of emails of masterminds", () => {
-    const data = {
-      masterminds: [
-        {
-          user: {
-            email: "email1@unifei.edu.br",
-          },
-        },
-        {
-          user: {
-            email: "email2@unifei.edu.br",
-          },
-        },
-      ],
-    };
-
-    const template = "Send email to ${{activity.#masterminds.user.email}} ok.";
-
-    const expectedOutput =
-      "Send email to email1@unifei.edu.br, email2@unifei.edu.br ok.";
-
-    const result = replaceVariables({ activity: data }, template);
-
-    expect(result).toBe(expectedOutput);
-  });
-
-  it("should return array of array", () => {
-    const data = {
-      masterminds: [
-        {
-          email: ["email1@unifei.edu.br", "email1@gmail.com"],
-        },
-        {
-          email: ["email2@unifei.edu.br", "email1@gmail.com"],
-        },
-      ],
-    };
-
-    const template = "${{activity.#masterminds.#email}}";
-
-    const expectedOutput =
-      "email1@unifei.edu.br, email1@gmail.com, email2@unifei.edu.br, email1@gmail.com";
-
-    const result = replaceVariables({ activity: data }, template);
-
-    expect(result).toBe(expectedOutput);
-  });
-
   it("should return array of emails of users", () => {
     const data = {
       users: [
@@ -109,7 +61,6 @@ describe("replaceVariables", () => {
           name: "Luis Ricardo",
           email: "email@unifei.edu.br",
           matriculation: "2021031844",
-          university_degree: null,
           institute: {
             _id: {
               $oid: "6617d0d9b3a6fbb432f0374f",
@@ -117,17 +68,6 @@ describe("replaceVariables", () => {
             name: "Instituto de Matemática e Computação",
             acronym: "IMC",
             active: true,
-            university: {
-              _id: {
-                $oid: "65a327cb3ce32bf8c57f716a",
-              },
-              name: "Universidade Federal de Itajubá",
-              acronym: "UNIFEI",
-              active: true,
-              updatedAt: {
-                $date: "2024-01-14T00:28:34.646Z",
-              },
-            },
             createdAt: {
               $date: "2024-04-11T12:00:25.331Z",
             },

@@ -35,7 +35,6 @@ const handler: HttpHandler = async (conn, req) => {
           const newUser = await new User(conn).model().create({
             ...sub,
             roles: [IUserRoles.teacher],
-            university_degree: "mastermind",
             password: "password",
             isExternal: true,
           });

@@ -13,13 +13,13 @@ import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 
 import {
   BsHouse,
-  BsBuilding,
   BsPerson,
   BsTag,
   BsFileEarmarkText,
   BsPostcardFill,
   BsActivity,
 } from "react-icons/bs";
+import { AiOutlineTeam } from "react-icons/ai";
 import { FaRegEnvelope, FaUniversity } from "react-icons/fa";
 import { GoWorkflow } from "react-icons/go";
 import React from "react";
@@ -44,10 +44,6 @@ const steps: JoyrideSteps = [
   {
     target: "#institutes",
     content: "navbar.joyride.institutes",
-  },
-  {
-    target: "#universities",
-    content: "navbar.joyride.universities",
   },
   {
     target: "#statuses",
@@ -100,115 +96,106 @@ function Sidebar() {
   const location = useLocation();
 
   return (
-    <List fontSize="xl" spacing={4} overflowY="auto" maxH="100vh">
+    <div>
       <Tutorial name="navbar" steps={steps} />
+      <List fontSize="xl" spacing={3} overflowY="auto" maxH="100vh">
+        <Hide below="md">
+          <ListItem>
+            <Icon w="50px" />
+          </ListItem>
+        </Hide>
 
-      <Hide below="md">
-        <ListItem>
-          <Icon w="50px" />
-        </ListItem>
-      </Hide>
+        <Can permission="dashboard.view">
+          <NavLink
+            id="dashboard"
+            to="/portal"
+            label="title.dashboard"
+            icon={BsHouse}
+            active={location.pathname === "/portal"}
+          />
+        </Can>
 
-      <Can permission="dashboard.view">
-        <NavLink
-          id="dashboard"
-          to="/portal"
-          label="title.dashboard"
-          icon={BsHouse}
-          active={location.pathname === "/portal"}
-        />
-      </Can>
+        <Can permission="activity.view">
+          <NavLink
+            id="activities"
+            to="/portal/activities"
+            label="title.activities"
+            icon={BsActivity}
+            active={location.pathname === "/portal/activities"}
+          />
+        </Can>
 
-      <Can permission="activity.view">
-        <NavLink
-          id="activities"
-          to="/portal/activities"
-          label="title.activities"
-          icon={BsActivity}
-          active={location.pathname === "/portal/activities"}
-        />
-      </Can>
+        <Can permission="user.view">
+          <NavLink
+            id="users"
+            to="/portal/users"
+            label="title.users"
+            icon={BsPerson}
+            active={location.pathname === "/portal/users"}
+          />
+        </Can>
 
-      <Can permission="user.view">
-        <NavLink
-          id="users"
-          to="/portal/users"
-          label="title.users"
-          icon={BsPerson}
-          active={location.pathname === "/portal/users"}
-        />
-      </Can>
+        <Can permission="institute.view">
+          <NavLink
+            id="institutes"
+            to="/portal/institutes"
+            label="title.institutes"
+            icon={AiOutlineTeam}
+            active={location.pathname === "/portal/institutes"}
+          />
+        </Can>
 
-      <Can permission="institute.view">
-        <NavLink
-          id="institutes"
-          to="/portal/institutes"
-          label="title.institutes"
-          icon={BsBuilding}
-          active={location.pathname === "/portal/institutes"}
-        />
-      </Can>
+        <Can permission="status.view">
+          <NavLink
+            id="statuses"
+            to="/portal/statuses"
+            label="title.statuses"
+            icon={BsTag}
+            active={location.pathname === "/portal/statuses"}
+          />
+        </Can>
 
-      <Can permission="university.view">
-        <NavLink
-          id="universities"
-          to="/portal/universities"
-          label="title.universities"
-          icon={FaUniversity}
-          active={location.pathname === "/portal/universities"}
-        />
-      </Can>
+        <Can permission="email.view">
+          <NavLink
+            id="emails"
+            to="/portal/emails"
+            label="title.emails"
+            icon={FaRegEnvelope}
+            active={location.pathname === "/portal/emails"}
+          />
+        </Can>
 
-      <Can permission="status.view">
-        <NavLink
-          id="statuses"
-          to="/portal/statuses"
-          label="title.statuses"
-          icon={BsTag}
-          active={location.pathname === "/portal/statuses"}
-        />
-      </Can>
+        <Can permission="form.view">
+          <NavLink
+            id="forms"
+            to="/portal/forms"
+            label="title.forms"
+            icon={BsFileEarmarkText}
+            active={location.pathname === "/portal/forms"}
+          />
+        </Can>
 
-      <Can permission="email.view">
-        <NavLink
-          id="emails"
-          to="/portal/emails"
-          label="title.emails"
-          icon={FaRegEnvelope}
-          active={location.pathname === "/portal/emails"}
-        />
-      </Can>
+        <Can permission="workflow.view">
+          <NavLink
+            id="workflows"
+            to="/portal/workflows"
+            label="title.workflows"
+            icon={GoWorkflow}
+            active={location.pathname === "/portal/workflows"}
+          />
+        </Can>
 
-      <Can permission="form.view">
-        <NavLink
-          id="forms"
-          to="/portal/forms"
-          label="title.forms"
-          icon={BsFileEarmarkText}
-          active={location.pathname === "/portal/forms"}
-        />
-      </Can>
-
-      <Can permission="workflow.view">
-        <NavLink
-          id="workflows"
-          to="/portal/workflows"
-          label="title.workflows"
-          icon={GoWorkflow}
-          active={location.pathname === "/portal/workflows"}
-        />
-      </Can>
-
-      <Can permission="reporting.view">
-        <NavLink
-          id="reportings"
-          to="/portal/reportings"
-          label="title.reportings"
-          icon={BsPostcardFill}
-          active={location.pathname === "/portal/reportings"}
-        />
-      </Can>
-    </List>
+        <Can permission="reporting.view">
+          <NavLink
+            id="reportings"
+            to="/portal/reportings"
+            label="title.reportings"
+            icon={BsPostcardFill}
+            active={location.pathname === "/portal/reportings"}
+          />
+        </Can>
+      </List>
+    </div>
   );
 }
 

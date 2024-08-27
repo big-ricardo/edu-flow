@@ -50,23 +50,6 @@ export const committedActivity = async (data: {
   _id: string;
   name: string;
   description: string;
-  sub_masterminds: {
-    name: string;
-    email: string;
-    institute: {
-      name: string;
-      acronym: string;
-      university: {
-        name: string;
-        acronym: string;
-        _id?: string;
-      };
-      _id?: string;
-    };
-    _id?: string;
-    matriculation?: string;
-    isExternal?: boolean;
-  }[];
 }) => {
   const res = await api.put<ReqActivity>(
     `/activity-committed/${data._id}`,

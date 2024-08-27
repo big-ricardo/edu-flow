@@ -64,7 +64,7 @@ const handler: HttpHandler = async (conn, req, context) => {
 
   await sendEmail(
     user.email,
-    "EduFlow | Cadastro realizado com sucesso",
+    "Streamline | Cadastro realizado com sucesso",
     html,
     css
   );
@@ -94,14 +94,6 @@ export default new Http(handler)
       roles: schema
         .array(schema.mixed().oneOf(["admin", "student", "teacher"]))
         .required(),
-      university_degree: schema
-        .mixed()
-        .oneOf(["mastermind", "doctor"])
-        .when("role", ([role], schema) =>
-          role === "teacher"
-            ? schema.required()
-            : schema.notRequired().nullable()
-        ),
     }),
   }))
   .configure({

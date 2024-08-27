@@ -12,20 +12,10 @@ const handler: HttpHandler = async (conn, req) => {
 
   const instituteRepository = new InstituteRepository(conn);
 
-  const institutes = await instituteRepository
-    .find({
-      skip: (page - 1) * limit,
-      limit,
-      populate: [
-        {
-          path: "university",
-          select: {
-            _id: 1,
-            acronym: 1,
-          },
-        },
-      ],
-    })
+  const institutes = await instituteRepository.find({
+    skip: (page - 1) * limit,
+    limit,
+  });
 
   const total = await instituteRepository.count();
   const totalPages = Math.ceil(total / limit);

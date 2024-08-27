@@ -1,8 +1,8 @@
-import mongoose, { ObjectId, Schema, Types } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 import { IUser } from "./User";
 import { IStatus } from "./Status";
 import { IFormDraft, schema as schemaFormDraft } from "./FormDraft";
-import {  IWorkflowDraft } from "./WorkflowDraft";
+import { IWorkflowDraft } from "./WorkflowDraft";
 import { IForm } from "./Form";
 
 export enum IActivityState {
@@ -35,13 +35,7 @@ export type IComment = {
 
 export type IUserChild = Pick<
   IUser,
-  | "_id"
-  | "name"
-  | "email"
-  | "matriculation"
-  | "university_degree"
-  | "institute"
-  | "isExternal"
+  "_id" | "name" | "email" | "matriculation" | "institute" | "isExternal"
 >;
 
 export enum IActivityStepStatus {
@@ -72,6 +66,7 @@ export type IActivityInteractions = {
   activity_workflow_id: ObjectId;
   activity_step_id: ObjectId;
   form: IForm;
+  waitForOne: boolean;
   answers: mongoose.Types.DocumentArray<{
     _id: ObjectId;
     status: IActivityStepStatus;
@@ -107,27 +102,6 @@ export type IActivity = {
   form: mongoose.Types.ObjectId | string;
   form_draft: IFormDraft;
   finished_at: Date | null;
-  masterminds: {
-    accepted: IActivityAccepted;
-    user: Pick<
-      IUser,
-      | "_id"
-      | "name"
-      | "email"
-      | "matriculation"
-      | "university_degree"
-      | "institute"
-    >;
-  }[];
-  sub_masterminds: Pick<
-    IUser,
-    | "_id"
-    | "name"
-    | "email"
-    | "matriculation"
-    | "university_degree"
-    | "institute"
-  >[];
   status: IStatus;
   comments: IComment[];
   workflows: mongoose.Types.DocumentArray<ActivityWorkflow>;
@@ -148,7 +122,6 @@ const userSchema = new Schema<IUserChild>({
   name: { type: String, required: true },
   email: { type: String, required: true },
   matriculation: { type: String },
-  university_degree: { type: String, required: false },
   institute: { type: Object, required: true },
 });
 
@@ -157,6 +130,7 @@ const interactionSchema = new Schema<IActivityInteractions>({
   activity_workflow_id: { type: Schema.Types.ObjectId, required: true },
   activity_step_id: { type: Schema.Types.ObjectId, required: true },
   form: { type: Object, required: true },
+  waitForOne: { type: Boolean, default: false },
   answers: [
     {
       _id: { type: Schema.Types.ObjectId, auto: true },
@@ -252,21 +226,10 @@ export const schema: Schema = new Schema<IActivity>(
       type: String,
       required: true,
       enum: Object.values(IActivityState),
-      default: IActivityState.created,
+      default: IActivityState.committed,
     },
     users: [{ type: userSchema, required: true }],
     finished_at: { type: Date, required: false, default: null },
-    masterminds: [
-      {
-        accepted: {
-          type: String,
-          enum: Object.values(IActivityAccepted),
-          default: IActivityAccepted.pending,
-        },
-        user: userSchema,
-      },
-    ],
-    sub_masterminds: [{ type: userSchema, required: false, default: [] }],
     status: { type: statusSchema, required: true },
     interactions: [{ type: interactionSchema, required: false, default: [] }],
     evaluations: [{ type: evaluationsSchema, required: false, default: [] }],

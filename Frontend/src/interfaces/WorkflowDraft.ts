@@ -38,7 +38,8 @@ export interface IInteraction {
   name: string;
   form_id: string;
   to: string;
-  visible: true;
+  visible: boolean;
+  waitForOne: boolean;
   conditional: Array<{
     field: string;
     value: string;

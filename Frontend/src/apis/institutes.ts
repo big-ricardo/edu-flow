@@ -3,19 +3,13 @@ import Response from "@interfaces/Response";
 import IInstitute from "@interfaces/Institute";
 import api from "@services/api";
 
-type Institute = Pick<
-  IInstitute,
-  "_id" | "name" | "acronym" | "active" | "university"
->;
+type Institute = Pick<IInstitute, "_id" | "name" | "acronym" | "active">;
 type ReqInstitutes = Response<
   {
     institutes: Institute[];
   } & IPagination
 >;
 type ReqInstitute = Response<Institute>;
-type InstituteDTO = Omit<Institute, "university"> & {
-  university: string;
-};
 
 export const getInstitutes = async ({
   queryKey: [, page = "1", limit = "10"],
@@ -39,36 +33,26 @@ export const getInstitute = async ({
   return res.data.data;
 };
 
-export const createInstitute = async (data: Omit<InstituteDTO, "_id">) => {
+export const createInstitute = async (data: Omit<IInstitute, "_id">) => {
   const res = await api.post<ReqInstitute>("/institute", data);
 
   return res.data.data;
 };
 
-export const updateInstitute = async (data: InstituteDTO) => {
+export const updateInstitute = async (data: IInstitute) => {
   const res = await api.put<ReqInstitute>(`/institute/${data._id}`, data);
 
   return res.data.data;
 };
 
 export const createOrUpdateInstitute = async (
-  data: Omit<Institute, "_id" | "university"> & {
+  data: Omit<Institute, "_id"> & {
     _id?: string;
-    university: string;
   }
 ) => {
   if (data?._id) {
-    return updateInstitute(data as InstituteDTO);
+    return updateInstitute(data as IInstitute);
   }
 
   return createInstitute(data);
-};
-
-type ReqInstituteForms = Response<{
-  universities: { label: string; value: string }[];
-}>;
-export const getInstituteForms = async () => {
-  const res = await api.get<ReqInstituteForms>("/institute/forms");
-
-  return res.data.data;
 };

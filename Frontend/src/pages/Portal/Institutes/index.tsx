@@ -23,10 +23,6 @@ const columns = [
     label: "common.fields.status",
   },
   {
-    key: "university",
-    label: "common.fields.university",
-  },
-  {
     key: "actions",
     label: "common.fields.actions",
   },
@@ -88,7 +84,6 @@ const Institutes: React.FC = () => {
 
     return institutes.map((institute) => ({
       ...institute,
-      university: institute.university.acronym,
       active: institute.active
         ? t("common.fields.active")
         : t("common.fields.inactive"),

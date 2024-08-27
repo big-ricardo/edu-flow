@@ -37,30 +37,6 @@ const data = [
     field: "activity.#users.institute.acronym",
     description: "Sigla do Instituto",
   },
-  {
-    field: "activity.#users.institute.university.name",
-    description: "Nome da Universidade",
-  },
-  {
-    field: "activity.#users.institute.university.acronym",
-    description: "Sigla da Universidade",
-  },
-  {
-    field: "activity.#masterminds.user.name",
-    description: "Nome do Orientador",
-  },
-  {
-    field: "activity.#masterminds.user.email",
-    description: "Email do Orientador",
-  },
-  {
-    field: "activity.#masterminds.user.matriculation",
-    description: "Matrícula do Orientador",
-  },
-  {
-    field: "activity.#masterminds.user.university_degree",
-    description: "Grau Universitário do Orientador",
-  },
   { field: "activity.status.name", description: "Nome do Status" },
   { field: "activity.status.type", description: "Tipo do Status" },
   { field: "activity.protocol", description: "Protocolo do Sistema" },

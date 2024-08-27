@@ -54,12 +54,6 @@ const handler: HttpHandler = async (conn, req) => {
                 {
                   "users._id": req.user.id,
                 },
-                {
-                  "sub_masterminds._id": req.user.id,
-                },
-                {
-                  "masterminds.user._id": req.user.id,
-                },
               ],
             },
           ],

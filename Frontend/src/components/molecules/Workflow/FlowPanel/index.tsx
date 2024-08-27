@@ -42,9 +42,6 @@ const FlowPanel: React.FC = () => {
         <PanelItem nodeType={NodeTypes.WebRequest}>
           <WebRequestIcon />
         </PanelItem>
-        <PanelItem nodeType={NodeTypes.Evaluated}>
-          <EvaluatedIcon />
-        </PanelItem>
       </Flex>
     </Panel>
   );

@@ -40,9 +40,6 @@
       "undefined": "Undefined",
       "users": "Users",
       "finished": "Finished",
-      "sub_masterminds": "Sub-Advisors",
-      "masterminds": "Advisors",
-      "mastermind": "Master's",
       "doctorate": "Doctorate",
       "students": "Students",
       "slug": "Slug",
@@ -53,7 +50,6 @@
       "inactive": "Inactive",
       "matriculation": "Enrollment",
       "external": "External",
-      "university_degree": "University degree",
       "institute": "Institute",
       "university": "University",
       "statusType": {

@@ -16,12 +16,6 @@ const handler: HttpHandler = async (conn, req) => {
     return res.notFound("Activity not found");
   }
 
-  if (!activity.sub_masterminds?.length) {
-    activity.sub_masterminds =
-      activity.form_draft.fields.find((form) => form.id === "submastermind")
-        ?.value ?? [];
-  }
-
   const blobUploader = new BlobUploader(req.user.id);
 
   for (const field of activity.form_draft.fields) {

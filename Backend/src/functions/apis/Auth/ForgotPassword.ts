@@ -55,7 +55,7 @@ export const handler: HttpHandler = async (_, req, context) => {
 
   const { html, css } = emailTemplate(content);
 
-  await sendEmail(email, "EduFlow | Redefinição de senha", html, css);
+  await sendEmail(email, "Streamline | Redefinição de senha", html, css);
 
   return res.success({
     success: true,

@@ -26,7 +26,7 @@ import { BsArrowsFullscreen } from "react-icons/bs";
 
 const statusMap = {
   idle: "Aguardando Resposta",
-  finished: "Resposta Enviada",
+  finished: "Não Enviada",
   error: "Erro",
   in_progress: "Em Progresso",
   in_queue: "Em Fila",
@@ -200,7 +200,7 @@ const TimelineStepItem = ({
                     variant={"outline"}
                     leftIcon={<BsArrowsFullscreen />}
                   >
-                    {statusMap[answer.status]}
+                    Resposta Enviada
                   </Button>
                 ) : (
                   <Tag size="sm" variant="subtle" colorScheme="gray" mt="2">

@@ -5,6 +5,7 @@ import QueueWrapper, {
 import { IInteraction, NodeTypes } from "../../models/client/WorkflowDraft";
 import ActivityRepository from "../../repositories/Activity";
 import FormRepository from "../../repositories/Form";
+import InstituteRepository from "../../repositories/Institute";
 import UserRepository from "../../repositories/User";
 import sendNextQueue from "../../utils/sendNextQueue";
 
@@ -65,7 +66,9 @@ const handler: QueueWrapperHandler<TMessage> = async (
       throw new Error("Data not found");
     }
 
-    const { form_id, to } = data;
+    const { form_id, to, waitForOne } = data;
+
+    console.log("to", to);
 
     let destination = [to];
 
@@ -73,23 +76,39 @@ const handler: QueueWrapperHandler<TMessage> = async (
       if (to.includes("user")) {
         destination = activity.users.map((u) => u._id.toString());
       }
-
-      if (to.includes("masterminds")) {
-        destination = activity.masterminds.map((r) => r.user._id.toString());
-      }
     }
 
+    const institutes = await new InstituteRepository(conn).find({
+      where: {
+        _id: { $in: destination },
+      },
+    });
+
     const users = await userRepository.find({
-      where: { _id: { $in: destination } },
+      where: {
+        $or: [
+          {
+            _id: { $in: destination },
+          },
+          {
+            "institute._id": { $in: institutes.map((i) => i._id) },
+          },
+        ],
+      },
       select: {
         _id: 1,
         name: 1,
         email: 1,
         matriculation: 1,
-        university_degree: 1,
         institute: 1,
       },
     });
+
+    console.log("users", users);
+
+    if (!users.length) {
+      throw new Error("Users not found");
+    }
 
     const form = await formRepository.findById({ id: form_id });
 
@@ -97,6 +116,7 @@ const handler: QueueWrapperHandler<TMessage> = async (
       activity_workflow_id,
       activity_step_id,
       form: form.toObject(),
+      waitForOne: !!waitForOne,
       answers: users.map((u) => ({
         status: "idle",
         user: u,

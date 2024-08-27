@@ -1,7 +1,6 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import {
-  IActivityAccepted,
   IActivityState,
 } from "../../../models/client/Activity";
 import { ObjectId } from "mongoose";
@@ -25,14 +24,13 @@ interface IUser {
 type DtoCreated = {
   name: string; // "name"
   description: string; // "description"
-  masterminds: Pick<IUser, "_id" | "name" | "email">;
 } & {
   [key: string]: File | string | Array<string> | IUser | Array<IUser>;
 };
 
 const handler: HttpHandler = async (conn, req) => {
   const rest = req.body as DtoCreated;
-  const { name, description, masterminds } = rest;
+  const { name, description } = rest;
 
   const activityRepository = new ActivityRepository(conn);
   const userRepository = new UserRepository(conn);
@@ -57,32 +55,10 @@ const handler: HttpHandler = async (conn, req) => {
     userRepository
   );
 
-  const mastermindsMapped = responseUseCases.getMastermindsMapped(masterminds);
-
-  const mastermindsExists = await userRepository.find({
-    where: {
-      _id: {
-        $in: mastermindsMapped.map((mastermind) => mastermind._id),
-      },
-    },
-    select: {
-      _id: 1,
-      name: 1,
-      email: 1,
-      matriculation: 1,
-      university_degree: 1,
-      institute: 1,
-    },
-  });
-
   await responseUseCases.processFormFields(rest);
 
   activity.name = name;
   activity.description = description;
-  activity.masterminds = mastermindsExists?.map((mastermind) => ({
-    user: mastermind.toObject(),
-    accepted: IActivityAccepted.pending,
-  }));
   activity.state = IActivityState.created;
   activity.form_draft = formDraft;
 

@@ -7,7 +7,7 @@ export enum IUserRoles {
   teacher = "teacher",
 }
 
-type BaseUser = {
+export type IUser = {
   _id: ObjectId;
   name: string;
   email: string;
@@ -18,11 +18,14 @@ type BaseUser = {
   institute: IInstitute;
   active: boolean;
   isExternal: boolean;
-  university_degree?: string;
   tutorials: string[];
 } & mongoose.Document;
 
-export type IUser = BaseUser;
+export const instituteSchema = new Schema<IInstitute>({
+  name: { type: String, required: true },
+  acronym: { type: String, required: true },
+  active: { type: Boolean, default: true },
+});
 
 export const schema: Schema = new Schema<IUser>(
   {
@@ -44,13 +47,8 @@ export const schema: Schema = new Schema<IUser>(
       },
     ],
     institute: {
-      type: Object,
+      type: instituteSchema,
       required: true,
-    },
-    university_degree: {
-      type: String,
-      required: () => (this as IUser).roles?.includes(IUserRoles.teacher),
-      enum: ["mastermind", "doctor"],
     },
     tutorials: [{ type: String }],
   },
@@ -58,9 +56,6 @@ export const schema: Schema = new Schema<IUser>(
     timestamps: true,
   }
 ).pre("save", function (next) {
-  if (!this.roles.includes(IUserRoles.teacher)) {
-    this.university_degree = null;
-  }
   if (this.isExternal) {
     this.matriculation = null;
   }

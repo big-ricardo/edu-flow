@@ -12,6 +12,7 @@ interface Query {
   matriculation?: string;
   active?: boolean;
   isExternal?: boolean;
+  institute?: string;
 }
 
 const filterQueryBuilder = new FilterQueryBuilder({
@@ -19,6 +20,7 @@ const filterQueryBuilder = new FilterQueryBuilder({
   matriculation: WhereEnum.EQUAL,
   active: WhereEnum.BOOLEAN,
   isExternal: WhereEnum.BOOLEAN,
+  institute: { type: WhereEnum.ILIKE, alias: "institute._id" },
 });
 
 const handler: HttpHandler = async (conn, req) => {
@@ -64,7 +66,7 @@ export default new Http(handler)
           .optional()
           .transform((v) => Number(v)),
         name: schema.string().min(3).max(255).optional().default(undefined),
-        matricula: schema
+        matriculation: schema
           .string()
           .min(3)
           .max(255)
@@ -72,6 +74,7 @@ export default new Http(handler)
           .default(undefined),
         active: schema.boolean().optional(),
         isExternal: schema.boolean().optional(),
+        institute: schema.string().min(3).max(255).optional(),
       })
       .optional(),
   }))

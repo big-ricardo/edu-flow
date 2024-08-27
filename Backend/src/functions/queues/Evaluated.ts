@@ -62,9 +62,6 @@ const handler: QueueWrapperHandler<TMessage> = async (conn, messageQueue) => {
       const destinationIds = to
         .map((to) => {
           if (to.includes("{{")) {
-            if (to.includes("masterminds")) {
-              return activity.masterminds.map((r) => r.user._id.toString());
-            }
             if (to.includes("user")) {
               return activity.users.map((u) => u._id.toString());
             }
@@ -78,7 +75,6 @@ const handler: QueueWrapperHandler<TMessage> = async (conn, messageQueue) => {
         select: {
           _id: 1,
           email: 1,
-          university_degree: 1,
           name: 1,
           role: 1,
           institute: 1,

@@ -18,8 +18,6 @@ interface IActivityUpdate {
   name: string;
   description: string;
   users: string[];
-  masterminds: Omit<IUser, "password">[];
-  sub_masterminds: Omit<IUser, "password">[];
 }
 
 const handler: HttpHandler = async (conn, req, context) => {
@@ -36,38 +34,8 @@ const handler: HttpHandler = async (conn, req, context) => {
     return res.error(404, {}, "Activity not found");
   }
 
-  const { name, description, users, sub_masterminds } =
+  const { name, description, users } =
     req.body as IActivityUpdate;
-
-  const subMastermind = await Promise.all(
-    sub_masterminds.map(async (sub) => {
-      if (sub.isExternal) {
-        const subMastermindData = await userRepository.findOne({
-          where: { email: sub.email },
-        });
-        if (!subMastermindData) {
-          const newUser = await userRepository.create({
-            ...sub,
-            roles: [IUserRoles.teacher],
-            password: "password",
-            isExternal: true,
-          });
-
-          return newUser.toObject();
-        }
-
-        return subMastermindData.toObject();
-      }
-      return sub;
-    })
-  );
-
-  if (subMastermind.includes(null)) {
-    return res.error(400, {}, "Invalid sub mastermind id");
-  }
-
-  activityData.sub_masterminds = subMastermind;
-  activityData.save();
 
   const userData = await userRepository.find({
     where: { _id: { $in: users } },
@@ -80,7 +48,6 @@ const handler: HttpHandler = async (conn, req, context) => {
   activityData.name = name;
   activityData.description = description;
   activityData.users = userData.map((user) => user.toObject());
-  activityData.sub_masterminds = subMastermind;
   activityData.state = IActivityState.processing;
 
   const form = (await formRepository.findById({
@@ -137,15 +104,6 @@ export default new Http(handler)
       name: schema.string().required(),
       description: schema.string().required(),
       users: schema.array(schema.string()).required(),
-      sub_masterminds: schema
-        .array(
-          schema.object({
-            _id: schema.string().optional(),
-            name: schema.string().required(),
-            email: schema.string().email().required(),
-          })
-        )
-        .required(),
     }),
   }))
   .configure({

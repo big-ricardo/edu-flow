@@ -15,9 +15,6 @@ type IForm = {
   | {
       type: "interaction";
     }
-  | {
-      type: "evaluated";
-    }
 );
 
 export default IForm;

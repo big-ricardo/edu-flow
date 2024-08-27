@@ -34,11 +34,16 @@ class BaseRepository<T extends Document> {
   async findOne({
     where,
     select,
+    populate,
   }: {
     where: FilterQuery<T>;
     select?: QueryOptions<T>["select"];
+    populate?: {
+      path: string;
+      select?: Record<string, number>;
+    }[];
   }): Promise<T | null> {
-    return this.model.findOne(where).select(select).exec();
+    return this.model.findOne(where).select(select).populate(populate).exec();
   }
 
   async find({

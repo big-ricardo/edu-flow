@@ -7,7 +7,7 @@ import { FileUploaded } from "@interfaces/Answer";
 
 type Institute = Pick<
   IInstitute,
-  "_id" | "name" | "acronym" | "active" | "university"
+  "_id" | "name" | "acronym" | "active"
 >;
 
 type ReqInstitute = Response<Institute[]>;

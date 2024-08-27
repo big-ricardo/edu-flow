@@ -101,8 +101,13 @@ const handler: HttpHandler = async (conn, req, context) => {
     (answer) => answer.status === IActivityStepStatus.finished
   );
 
-  if (isAllAnswered) {
+  if (interaction.waitForOne || isAllAnswered) {
     interaction.finished = true;
+    interaction.answers.forEach((answer) => {
+      if (answer.status === IActivityStepStatus.idle) {
+        answer.status = IActivityStepStatus.finished;
+      }
+    });
 
     sendToQueue({
       context,

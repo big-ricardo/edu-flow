@@ -42,33 +42,17 @@ const Schema = z
         acronym: z.string(),
         name: z.string(),
         active: z.boolean(),
-        university: z.object({
-          _id: z.string(),
-          name: z.string(),
-          acronym: z.string(),
-          active: z.boolean(),
-        }),
       }),
     ]),
     active: z.boolean(),
     password: z.string().optional(),
     confirmPassword: z.string().optional(),
-    university_degree: z.enum(["mastermind", "doctor"]).optional().nullable(),
   })
   .refine(
     (data) => !data.isExternal || (data.isExternal && !data.matriculation),
     {
       message: "Matrícula não é necessária para usuários externos",
       path: ["matriculation"],
-    }
-  )
-  .refine(
-    (data) =>
-      !data.roles.includes(IUserRoles.teacher) ||
-      (data.roles.includes(IUserRoles.teacher) && data.university_degree),
-    {
-      message: "Titulação é obrigatória para professores",
-      path: ["university_degree"],
     }
   )
   .refine(
@@ -172,7 +156,6 @@ export default function User() {
     formState: { errors },
   } = methods;
 
-  const isTeacher = watch("roles")?.includes(IUserRoles.teacher);
   const isExternal = watch("isExternal");
 
   const onSubmit = handleSubmit(async (data) => {
@@ -277,26 +260,6 @@ export default function User() {
               <Switch
                 input={{ id: "isExternal", label: t("common.fields.external") }}
               />
-
-              {isTeacher && (
-                <Select
-                  input={{
-                    id: "university_degree",
-                    label: t("common.fields.university_degree"),
-                    placeholder: t("common.fields.university_degree"),
-                    options: [
-                      {
-                        label: t("common.fields.mastermind"),
-                        value: "mastermind",
-                      },
-                      {
-                        label: t("common.fields.doctorate"),
-                        value: "doctor",
-                      },
-                    ],
-                  }}
-                />
-              )}
             </Flex>
             {isEditing && (
               <Flex

@@ -35,27 +35,6 @@ const activitySchema = z.object({
   users: z
     .array(z.string())
     .nonempty({ message: "Selecione pelo menos um aluno" }),
-  sub_masterminds: z.array(
-    z.object({
-      _id: z.string().optional(),
-      name: z
-        .string()
-        .min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
-      email: z.string().email(),
-      matriculation: z.string().optional(),
-      isExternal: z.boolean().optional(),
-      institute: z.object({
-        _id: z.string().optional(),
-        name: z.string(),
-        acronym: z.string(),
-        university: z.object({
-          _id: z.string().optional(),
-          name: z.string(),
-          acronym: z.string(),
-        }),
-      }),
-    })
-  ),
 });
 
 type ActivityFormSchema = z.infer<typeof activitySchema>;
@@ -130,9 +109,6 @@ export default function ActivityCommit() {
       reset({
         ...activity,
         users: activity.users.map((user) => user._id),
-        sub_masterminds: activity.sub_masterminds.map(
-          (subMastermind) => subMastermind
-        ),
       });
     }
   }, [activity, reset]);
@@ -190,14 +166,6 @@ export default function ActivityCommit() {
                   field: t("common.fields.description"),
                 }),
                 required: true,
-              }}
-            />
-
-            <InputUser
-              input={{
-                id: "sub_masterminds",
-                label: t("common.fields.sub_masterminds"),
-                created: true,
               }}
             />
 

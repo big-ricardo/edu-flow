@@ -5,7 +5,6 @@ import { connect, connectAdmin } from "../../../services/mongo";
 import AdminClient from "../../../models/admin/Client";
 import UserRepository from "../../../repositories/User";
 import { IUserRoles } from "../../../models/client/User";
-import UniversityRepository from "../../../repositories/University";
 import InstituteRepository from "../../../repositories/Institute";
 import jwt from "../../../services/jwt";
 import { sendEmail } from "../../../services/email";
@@ -37,22 +36,14 @@ export const handler: HttpHandler = async (_, req, context) => {
 
   const conn = connect(instance.acronym);
 
-  const universityRepository = new UniversityRepository(conn);
   const instituteRepository = new InstituteRepository(conn);
   const userRepository = new UserRepository(conn);
   const password = await bcrypt.hash("admin", 10);
-
-  const university = await universityRepository.create({
-    name: "Universidade Federal de Itajubá",
-    acronym: "UNIFEI",
-    active: true,
-  });
 
   const institute = await instituteRepository.create({
     name: "Instituto de Matemática e Computação",
     acronym: "IMC",
     active: true,
-    university,
   });
 
   const user = await userRepository.create({
@@ -100,7 +91,7 @@ export const handler: HttpHandler = async (_, req, context) => {
 
   await sendEmail(
     user.email,
-    "EduFlow | Cadastro realizado com sucesso",
+    "Streamline | Cadastro realizado com sucesso",
     html,
     css
   );
@@ -118,7 +109,7 @@ export default new Http(handler)
       name: schema.string().required(),
       acronym: schema
         .string()
-        .matches(/^[a-z]+$/)
+        .matches(/^[a-z0-9_-]+$/)
         .required(),
       email: schema.string().email().optional(),
     }),

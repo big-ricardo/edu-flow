@@ -47,27 +47,6 @@ describe("ResponseUseCases", () => {
     );
   });
 
-  describe("getMastermindsMapped", () => {
-    it("should return an array when passed an array of masterminds", () => {
-      const masterminds = [
-        { _id: "1", name: "John", email: "john@example.com" },
-        { _id: "2", name: "Jane", email: "jane@example.com" },
-      ];
-
-      const result = responseUseCases.getMastermindsMapped(masterminds);
-
-      expect(result).toEqual(masterminds);
-    });
-
-    it("should return an array when passed a single mastermind", () => {
-      const mastermind = { _id: "1", name: "John", email: "john@example.com" };
-
-      const result = responseUseCases.getMastermindsMapped(mastermind);
-
-      expect(result).toEqual([mastermind]);
-    });
-  });
-
   describe("processFormFields", () => {
     it("should process form fields correctly", async () => {
       const rest = {

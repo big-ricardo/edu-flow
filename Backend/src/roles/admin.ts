@@ -62,10 +62,6 @@ export const AdminRole: Role = {
       permissions: ["view", "read", "create", "publish", "delete"],
     },
     {
-      name: "university",
-      permissions: ["view", "read", "create", "update", "delete"],
-    },
-    {
       name: "institute",
       permissions: ["view", "read", "create", "update", "delete"],
     },

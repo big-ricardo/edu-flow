@@ -29,7 +29,7 @@ const columns = [
   },
   {
     key: "institute",
-    label: "Instituto",
+    label: "common.fields.institute",
   },
   {
     key: "active",

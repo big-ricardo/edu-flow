@@ -13,14 +13,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  getInstitute,
-  createOrUpdateInstitute,
-  getInstituteForms,
-} from "@apis/institutes";
+import { getInstitute, createOrUpdateInstitute } from "@apis/institutes";
 import Text from "@components/atoms/Inputs/Text";
 import Switch from "@components/atoms/Inputs/Switch";
-import Select from "@components/atoms/Inputs/Select";
 import Can from "@components/atoms/Can";
 import { useTranslation } from "react-i18next";
 
@@ -28,8 +23,11 @@ const Schema = z.object({
   name: z.string().min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
   acronym: z
     .string()
+    .regex(/^[a-z0-9-_]{2,}$/, {
+      message:
+        "Sigla deve conter apenas letras minúsculas, números, hífen e underline",
+    })
     .min(2, { message: "Sigla deve ter no mínimo 2 caracteres" }),
-  university: z.string().min(3, { message: "Universidade é obrigatória" }),
   active: z.boolean(),
 });
 
@@ -50,14 +48,7 @@ export default function Institute() {
     queryFn: getInstitute,
     enabled: isEditing,
   });
-
-  const { data: formsData, isLoading: isLoadingForms } = useQuery({
-    queryKey: ["forms", "institute"],
-    queryFn: getInstituteForms,
-    retryOnMount: false,
-    staleTime: 1000 * 60 * 60,
-  });
-
+  
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createOrUpdateInstitute,
     onSuccess: () => {
@@ -104,7 +95,6 @@ export default function Institute() {
     if (institute) {
       reset({
         ...institute,
-        university: institute.university._id,
       });
     }
   }, [institute, reset]);
@@ -146,16 +136,6 @@ export default function Institute() {
 
             <Switch
               input={{ id: "active", label: t("common.fields.active") }}
-            />
-
-            <Select
-              input={{
-                id: "university",
-                label: t("common.fields.university"),
-                required: true,
-                options: formsData?.universities ?? [],
-              }}
-              isLoading={isLoadingForms}
             />
 
             <Flex mt="8" justify="flex-end" gap="4">

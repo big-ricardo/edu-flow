@@ -235,6 +235,15 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
             />
             <Select
               input={{
+                label: "Formulário",
+                id: "form_id",
+                placeholder: "Selecione o formulário que será enviado",
+                options: formsData?.forms.interaction ?? [],
+                required: true,
+              }}
+            />
+            <Select
+              input={{
                 label: "Destinatario",
                 id: "to",
                 placeholder: "Selecione um formulário",
@@ -242,12 +251,11 @@ const BlockConfig: React.FC<BlockConfigProps> = ({ type, data, onSave }) => {
                 required: true,
               }}
             />
-            <Select
+
+            <Switch
               input={{
-                label: "Formulário",
-                id: "form_id",
-                placeholder: "Selecione o formulário que será enviado",
-                options: formsData?.forms.interaction ?? [],
+                label: "Aguardar apenas uma resposta",
+                id: "waitForOne",
                 required: true,
               }}
             />
@@ -413,7 +421,7 @@ interface ConditionalProps {
 
 const ConditionalRender = memo(({ form_id }: ConditionalProps) => {
   const { data: formsData, isLoading } = useQuery({
-    queryKey: ["forms", form_id],
+    queryKey: ["formDraft", form_id],
     queryFn: getFormWithFields,
     retryOnMount: false,
     select(data) {

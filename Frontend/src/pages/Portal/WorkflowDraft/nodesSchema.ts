@@ -32,6 +32,7 @@ const schemas: NodeSchemas = {
     to: z.string().min(1, { message: "Selecione pelo menos 1 destinatario" }),
     form_id: z.string().min(1, { message: "Selecione um formulário" }),
     visible: z.boolean().default(true),
+    waitForOne: z.boolean().default(false),
     conditional: z
       .array(
         z.object({

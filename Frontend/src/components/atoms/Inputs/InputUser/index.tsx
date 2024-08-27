@@ -24,7 +24,7 @@ import InputText from "@components/atoms/Inputs/Text";
 import InfoTooltip from "@components/atoms/Inputs/InfoTooltip";
 import Select from "@components/atoms/Inputs/Select";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ITeacherDegrees, IUserRoles } from "@interfaces/User";
+import { IUserRoles } from "@interfaces/User";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import {
@@ -45,22 +45,10 @@ const UserSchema = z.object({
   institute: z.object({
     name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
     acronym: z.string(),
-    university: z.object({
-      name: z.string().min(3, "Digite um nome com no mínimo 3 caracteres"),
-      acronym: z.string(),
-    }),
   }),
-  university_degree: z
-    .enum([ITeacherDegrees.mastermind, ITeacherDegrees.doctor])
-    .nullable(),
 });
 
 type IUserForm = z.infer<typeof UserSchema>;
-
-const ITeacherDegreesMap = {
-  [ITeacherDegrees.mastermind]: "Mestre",
-  [ITeacherDegrees.doctor]: "Doutor",
-};
 
 interface UserModalProps {
   isOpen: boolean;
@@ -113,34 +101,12 @@ const UserModal: React.FC<UserModalProps> = ({
             <Flex direction="column" gap="4">
               <InputText input={{ id: "name", label: "Nome" }} />
               <InputText input={{ id: "email", label: "Email" }} />
-              <Select
-                input={{
-                  id: "university_degree",
-                  label: "Grau Acadêmico",
-                  options: Object.entries(ITeacherDegreesMap).map(
-                    ([key, value]) => ({
-                      value: key,
-                      label: value,
-                    })
-                  ),
-                }}
-              />
               <Divider />
               <Heading as={"h5"} fontSize={"lg"}>
                 Instituto
               </Heading>
               <InputText input={{ id: "institute.name", label: "Nome" }} />
               <InputText input={{ id: "institute.acronym", label: "Sigla" }} />
-              <Divider />
-              <Heading as={"h5"} fontSize={"lg"}>
-                Universidade
-              </Heading>
-              <InputText
-                input={{ id: "institute.university.name", label: "Nome" }}
-              />
-              <InputText
-                input={{ id: "institute.university.acronym", label: "Sigla" }}
-              />
             </Flex>
           </FormProvider>
         </ModalBody>
@@ -342,7 +308,7 @@ const ItemUser: React.FC<{
         </Box>
         <Box w="30%">
           <Text textAlign={"right"} noOfLines={1}>
-            {field.institute.university?.acronym} - {field.institute?.acronym}{" "}
+            {field.institute?.acronym}{" "}
           </Text>
         </Box>
       </Flex>
