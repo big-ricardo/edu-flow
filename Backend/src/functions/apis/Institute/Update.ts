@@ -2,6 +2,7 @@ import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
 import InstituteRepository from "../../../repositories/Institute";
 import UniversityRepository from "../../../repositories/University";
+import UserRepository from "../../../repositories/User";
 
 interface DtoUniversity {
   name?: string;
@@ -16,6 +17,7 @@ const handler: HttpHandler = async (conn, req) => {
 
   const instituteRepository = new InstituteRepository(conn);
   const universityRepository = new UniversityRepository(conn);
+  const userRepo = new UserRepository(conn);
 
   const haveUniversity = await universityRepository.findById({
     id: university,
@@ -32,7 +34,7 @@ const handler: HttpHandler = async (conn, req) => {
   if (!updatedUniversity) {
     return res.notFound("Institute not found");
   }
-
+  
   return res.success(updatedUniversity);
 };
 

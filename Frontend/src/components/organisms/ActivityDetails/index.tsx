@@ -71,11 +71,32 @@ const ActivityDetails: React.FC<ActivityDetailsProps> = memo(
           state={activity.state}
         />
         <VStack mb={4} align="start">
-          <RenderFieldValue label={"Descrição"} value={activity.description} />
-          <RenderFieldValue
-            label={"Data de Criação"}
-            value={convertDateTime(activity.createdAt)}
-          />
+          <Flex direction={"column"}>
+            <Text fontSize="sm" mr={2}>
+              Descrição:
+            </Text>
+            <Text fontSize="sm" fontWeight={"bold"}>
+              {activity.description ?? "N/A"}
+            </Text>
+          </Flex>
+          <Flex direction={"column"}>
+            <Text fontSize="sm" mr={2}>
+              Data de Início:
+            </Text>
+            <Text fontSize="sm" fontWeight={"bold"}>
+              {convertDateTime(activity.createdAt)}
+            </Text>
+          </Flex>
+          {activity.finished_at && (
+            <Flex direction={"column"}>
+              <Text fontSize="sm" mr={2}>
+                Data de Término:
+              </Text>
+              <Text fontSize="sm" fontWeight={"bold"}>
+                {convertDateTime(activity.finished_at)}
+              </Text>
+            </Flex>
+          )}
           <Divider />
           <Text fontWeight={"bold"} fontSize="md">
             Alunos

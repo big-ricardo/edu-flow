@@ -9,6 +9,7 @@ import NumberInput from "./NumberInput";
 import Evaluated from "./Evaluated";
 import InputUser from "./InputUser";
 import { IField } from "@interfaces/FormDraft";
+import Password from "./Password";
 
 interface Props {
   fields: IField[];
@@ -25,6 +26,9 @@ const fieldComponents: {
   default: typeof Text;
   evaluated: typeof NumberInput;
   teacher: typeof InputUser;
+  text: typeof Text;
+  email: typeof Text;
+  password: typeof Password;
 } = {
   select: Select,
   multiselect: Select,
@@ -36,6 +40,9 @@ const fieldComponents: {
   number: NumberInput,
   evaluated: Evaluated,
   teacher: InputUser,
+  text: Text,
+  email: Text,
+  password: Password,
 };
 
 const Inputs: React.FC<Props> = memo(({ fields }) => {

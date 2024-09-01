@@ -12,7 +12,8 @@ export enum FieldTypes {
   select = "select",
   date = "date",
   file = "file",
-  teachers = "teachers",
+  teachers = "teacher",
+  multiselect = "multiselect"
 }
 
 export type IField = {

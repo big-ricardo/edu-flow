@@ -1,92 +1,152 @@
 import { Flex, Text } from "@chakra-ui/react";
-import UserDetails from "@components/organisms/ActivityDetails/sections/UserDetails";
 import { FileUploaded } from "@interfaces/Answer";
 import { memo } from "react";
 import FileItem from "../FileItem";
+import { FieldTypes, IField } from "@interfaces/FormDraft";
+import { convertDateTime } from "@utils/date";
+import UserDetails from "@components/organisms/ActivityDetails/sections/UserDetails";
 
-const RenderFieldValue = memo(
-  ({
-    label,
-    value,
-  }: {
-    label: string;
-    value?:
-      | string
-      | { name: string; email: string; matriculation: string }
-      | { name: string; email: string; matriculation: string }[]
-      | FileUploaded;
-  }) => {
-    if (!label || !value) return null;
+const RenderFieldValue = memo(({ field }: { field: IField }) => {
+  if (!field) {
+    return null;
+  }
 
-    if (!value)
-      return (
-        <Flex direction={"column"}>
-          <Text fontSize="sm" mr={2}>
-            {label}:
-          </Text>
-          <Text fontSize="sm" fontWeight={"bold"}>
-            Não informado
-          </Text>
-        </Flex>
-      );
+  const { label = "", value = "", type } = field;
 
-    if (typeof value === "string" && value) {
-      return (
-        <Flex direction={"column"}>
-          <Text fontSize="sm" mr={2}>
-            {label}:
-          </Text>
-          <Text fontSize="sm" fontWeight={"bold"}>
-            {value}
-          </Text>
-        </Flex>
-      );
-    }
+  if (
+    type === FieldTypes.textarea ||
+    type === FieldTypes.text ||
+    value === ""
+  ) {
+    <Flex direction={"column"}>
+      <Text fontSize="sm" mr={2}>
+        {label}:
+      </Text>
+      <Text fontSize="sm" fontWeight={"bold"}>
+        {/* @ts-ignore */}
+        {value ?? "N/A"}
+      </Text>
+    </Flex>;
+  }
 
-    if (typeof value === "object") {
-      if ("mimeType" in value) {
-        return (
-          <Flex direction={"column"}>
-            <Text fontSize="sm" mr={2} mb={2}>
-              {label}:
-            </Text>
-            <FileItem file={value} />
-          </Flex>
-        );
-      }
+  if (type === FieldTypes.file) {
+    return (
+      <Flex direction={"column"}>
+        <Text fontSize="sm" mr={2}>
+          {label}:
+        </Text>
+        <FileItem file={value as FileUploaded} />
+      </Flex>
+    );
+  }
 
-      if (Array.isArray(value)) {
-        return value.map((el) => (
-          <Flex direction={"column"}>
-            <Text fontSize="sm" mr={2} mb={2}>
-              {label}:
-            </Text>
-            <UserDetails user={el} />
-          </Flex>
-        ));
-      }
-
-      return (
-        <Flex direction={"column"}>
+  if (type === FieldTypes.teachers) {
+    if (Array.isArray(value)) {
+      return value.map((el) => (
+        <Flex direction={"column"} key={el.id}>
           <Text fontSize="sm" mr={2} mb={2}>
             {label}:
           </Text>
-          <UserDetails user={value} />
+          <UserDetails user={el} />
         </Flex>
-      );
+      ));
     }
 
+    return (
+      <Flex direction={"column"}>
+        <Text fontSize="sm" mr={2} mb={2}>
+          {label}:
+        </Text>
+        {/* @ts-ignore */}
+        <UserDetails user={value} />
+      </Flex>
+    );
+  }
+
+  if (type === FieldTypes.checkbox && Array.isArray(value)) {
+    return (
+      <Flex direction={"column"}>
+        <Text fontSize="sm" mr={2}>
+          {label}:
+        </Text>
+        {value
+          .map(
+            (el) =>
+              // @ts-ignore
+              field?.options?.find((option) => option?.value === el)?.label
+          )
+          .join(", ")}
+      </Flex>
+    );
+  }
+
+  if (type === FieldTypes.radio) {
+    return (
+      <Flex direction={"column"}>
+        <Text fontSize="sm" mr={2}>
+          {label}:
+        </Text>
+        {/* @ts-ignore */}
+        {field?.options?.find((option) => option?.value === value)?.label}
+      </Flex>
+    );
+  }
+
+  if (type === FieldTypes.select) {
+    return (
+      <Flex direction={"column"}>
+        <Text fontSize="sm" mr={2}>
+          {label}:
+        </Text>
+        {/* @ts-ignore */}
+        {field?.options?.find((option) => option?.value === value)?.label}
+      </Flex>
+    );
+  }
+
+  if (type === FieldTypes.multiselect) {
+    return (
+      <Flex direction={"column"}>
+        <Text fontSize="sm" mr={2}>
+          {label}:
+        </Text>
+        {/* @ts-ignore */}
+        {value?.map(
+            // @ts-ignore
+            (el) =>
+              // @ts-ignore
+              field?.options?.find((option) => option?.value === el)?.label
+          )
+          .join(", ")}
+      </Flex>
+    );
+  }
+
+  if (type === FieldTypes.date) {
     return (
       <Flex direction={"column"}>
         <Text fontSize="sm" mr={2}>
           {label}:
         </Text>
         <Text fontSize="sm" fontWeight={"bold"}>
-          {value}
+          {/* @ts-ignore */}
+          {convertDateTime(value)}
         </Text>
       </Flex>
     );
   }
-);
+
+  return (
+    <Flex direction={"column"}>
+      <Text fontSize="sm" mr={2}>
+        {label}:
+      </Text>
+      <Text fontSize="sm" fontWeight={"bold"}>
+        {/* @ts-ignore */}
+        {value}
+      </Text>
+    </Flex>
+  );
+});
 
 export default RenderFieldValue;

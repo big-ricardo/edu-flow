@@ -2,7 +2,7 @@ import { Flex, Button, useColorModeValue } from "@chakra-ui/react";
 import Text from "@components/atoms/Inputs/Text";
 import Select from "@components/atoms/Inputs/Select";
 import { formFormSchema } from "../schema";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import {
   FieldArrayWithId,
   UseFieldArrayRemove,
@@ -47,7 +47,7 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
   ({ field, index, remove, swap, isEnd }) => {
     const border = useColorModeValue("gray.200", "gray.600");
 
-    const { watch } = useFormContext<formFormSchema>();
+    const { watch, setValue } = useFormContext<formFormSchema>();
 
     const isEvaluated = watch(`type`) === "evaluated";
     const fieldType = watch(`fields.${index}.type`);
@@ -56,6 +56,12 @@ const FieldArray: React.FC<FieldFormsProps> = memo(
       fieldType
     );
     const isUser = ["teacher"].includes(fieldType);
+
+    useEffect(() => {
+      if (!haveOptions) {
+        setValue(`fields.${index}.options`, undefined);
+      }
+    }, [fieldType, setValue, index]);
 
     return (
       <Flex

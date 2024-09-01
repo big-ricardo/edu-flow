@@ -12,11 +12,7 @@ const ExtraFields: React.FC<ExtraFieldsProps> = ({ fields }) => {
   return (
     <Flex flexWrap="wrap" gap={4} direction={"column"}>
       {fields.map((field) => (
-        <RenderFieldValue
-          key={field.id}
-          label={field.label}
-          value={field.value ?? "Não informado"}
-        />
+        <RenderFieldValue key={field.id} field={field} />
       ))}
     </Flex>
   );
