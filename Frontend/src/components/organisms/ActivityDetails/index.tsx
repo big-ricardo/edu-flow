@@ -14,7 +14,6 @@ import ActivityHeader from "./sections/ActivityHeader";
 import UserDetails from "./sections/UserDetails";
 import ExtraFields from "./sections/ExtraFields";
 import Accordion from "@components/atoms/Accordion";
-import RenderFieldValue from "@components/atoms/RenderFieldValue";
 import Timeline from "./sections/Timeline";
 import useActivity from "@hooks/useActivity";
 
