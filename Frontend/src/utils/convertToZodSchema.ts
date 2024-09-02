@@ -31,8 +31,6 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
         fieldSchema = z.coerce.number();
         break;
       case "checkbox":
-        fieldSchema = z.boolean();
-        break;
       case "select":
       case "radio":
       case "multiselect":
@@ -50,7 +48,7 @@ export default function convertToZodSchema(fields: IField[]): z.ZodObject<any> {
         }
         break;
       case "date":
-        fieldSchema = z.date();
+        fieldSchema = z.string();
         break;
       case "evaluated":
         fieldSchema = z.coerce.number();
