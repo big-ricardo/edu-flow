@@ -28,6 +28,7 @@ import Activities from "@pages/Portal/Activities";
 import FirstPage from "@pages/Welcome/Firstpage";
 import SecondPage from "@pages/Welcome/SecondPage";
 import Welcome from "@pages/Welcome";
+import ActivitiesDashboard from "@pages/Portal/Reports";
 
 const routes: RouteType = [
   {
@@ -188,6 +189,11 @@ const routes: RouteType = [
         element: <ActivityBoardDefinition />,
         permission: "activity.board-definition",
       },
+      {
+        path: "/portal/reportings",
+        element: <ActivitiesDashboard />,
+        permission: "reporting.view",
+      }
     ],
   },
   {

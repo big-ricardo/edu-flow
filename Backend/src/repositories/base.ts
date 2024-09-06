@@ -116,6 +116,10 @@ class BaseRepository<T extends Document> {
   async delete({ where }: { where: FilterQuery<T> }) {
     return this.model.deleteMany(where).exec();
   }
+
+  async aggregate(pipeline: any[]) {
+    return this.model.aggregate(pipeline).exec();
+  }
 }
 
 export default BaseRepository;

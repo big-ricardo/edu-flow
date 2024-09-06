@@ -3,6 +3,7 @@ import IActivity from "@interfaces/Activitiy";
 import api from "@services/api";
 import IUser from "@interfaces/User";
 import IPagination from "@interfaces/Pagination";
+import Dashboard from "@interfaces/Dashboard";
 
 type ReqActivity = Response<IActivity>;
 
@@ -100,6 +101,17 @@ export const acceptActivity = async (data: {
   accepted: "accepted" | "rejected";
 }) => {
   const res = await api.put<ReqActivity>(`/activity-accept/${data._id}`, data);
+
+  return res.data.data;
+};
+
+type ReqDashboard = Response<Dashboard & IPagination>;
+export const getActivitiesDashboard = async ({
+  queryKey: [, params],
+}: {
+  queryKey: string[];
+}) => {
+  const res = await api.get<ReqDashboard>(`activities/dashboard?${params}`);
 
   return res.data.data;
 };

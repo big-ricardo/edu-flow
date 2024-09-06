@@ -69,5 +69,9 @@ export const AdminRole: Role = {
       name: "institute",
       permissions: ["view", "read", "create", "update", "delete"],
     },
+    {
+      name: "reporting",
+      permissions: ["view", "read"],
+    },
   ],
 };
