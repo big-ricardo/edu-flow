@@ -63,6 +63,10 @@ export default new Http(handler)
       description: schema.string().optional().nullable().default(""),
       published: schema.string().optional().nullable().default(null),
       institute: schema.string().nullable().default(null),
+      pre_requisites: schema.object().shape({
+        form: schema.string().nullable().default(null),
+        status: schema.string().nullable().default(null),
+      }),
     }),
   }))
   .configure({

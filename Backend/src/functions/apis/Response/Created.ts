@@ -50,6 +50,29 @@ const handler: HttpHandler = async (conn, req) => {
     return res.notFound("Form not found");
   }
 
+  console.log(JSON.stringify(form, null, 2));
+
+  if (form.pre_requisites?.form && form.pre_requisites?.status) {
+    const exist = await activityRepository.findOne({
+      where: {
+        form: form.pre_requisites.form,
+        status: form.pre_requisites.status,
+        "users._id": req.user.id,
+      },
+      select: {
+        _id: 1,
+      },
+    });
+
+    console.log("exist", !!exist);
+
+    if (!exist) {
+      return res.badRequest(
+        "You don't have permission to create this activity because you don't have the necessary prerequisites"
+      );
+    }
+  }
+
   const formDraft = await formDraftRepository.findById({ id: form.published });
 
   if (!formDraft) {

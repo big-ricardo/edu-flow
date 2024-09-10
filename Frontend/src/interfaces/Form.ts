@@ -6,6 +6,10 @@ type IForm = {
   type: "created" | "interaction" | "evaluated";
   period: { open?: string | null; close?: string | null };
   description: string;
+  pre_requisites: {
+    form: string | null;
+    status: string | null;
+  };
 } & (
   | {
       type: "created";

@@ -50,6 +50,10 @@ const statusSchema = z
       .max(255, "O tamanho máximo é 255 caracteres")
       .min(3, "Minimo 3 letras"),
     institute: z.string().optional().nullable(),
+    pre_requisites: z.object({
+      form: z.string().nullable().default(null),
+      status: z.string().nullable().default(null),
+    }),
   })
   .refine(
     (data) => {
@@ -281,6 +285,34 @@ export default function Workflow() {
                 }}
               />
             </Flex>
+
+            <Box>
+              <Divider my={4} />
+              <Heading fontSize={"large"} mb={4}>
+                {t("common.fields.pre_requisites.title")}
+              </Heading>
+              <p>{t("common.fields.pre_requisites.description")}</p>
+
+              <Flex gap="4" mt={4}>
+                <Select
+                  input={{
+                    id: "pre_requisites.form",
+                    label: t("common.fields.pre_requisites.form"),
+                    options:
+                      formsData?.forms.filter((f) => f.value !== id) ?? [],
+                  }}
+                  isLoading={isLoadingForms}
+                />
+                <Select
+                  input={{
+                    id: "pre_requisites.status",
+                    label: t("common.fields.pre_requisites.status"),
+                    options: formsData?.status ?? [],
+                  }}
+                  isLoading={isLoadingForms}
+                />
+              </Flex>
+            </Box>
 
             <Flex justify="flex-end" gap="4">
               <Button

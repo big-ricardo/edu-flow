@@ -1,15 +1,12 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Status, { StatusType } from "../../../models/client/Status";
+import Status from "../../../models/client/Status";
 import Workflow from "../../../models/client/Workflow";
 import Institute from "../../../models/client/Institute";
+import Form, { IFormType } from "../../../models/client/Form";
 
 const handler: HttpHandler = async (conn) => {
-  const status = (
-    await new Status(conn).model().find().where({
-      type: StatusType.PROGRESS,
-    })
-  ).map((s) => ({
+  const status = (await new Status(conn).model().find()).map((s) => ({
     value: s._id,
     label: s.name,
   }));
@@ -47,10 +44,28 @@ const handler: HttpHandler = async (conn) => {
     label: w.acronym,
   }));
 
+  const forms = (
+    await new Form(conn)
+      .model()
+      .find()
+      .select({
+        _id: 1,
+        name: 1,
+      })
+      .where({
+        active: true,
+        type: IFormType.Created,
+      })
+  ).map((w) => ({
+    value: w._id,
+    label: w.name,
+  }));
+
   return res.success({
     status,
     workflows,
     institutes,
+    forms,
   });
 };
 
