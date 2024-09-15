@@ -4,6 +4,8 @@ import ActivityRepository from "../../../repositories/Activity";
 import FilterQueryBuilder, {
   WhereEnum,
 } from "../../../utils/filterQueryBuilder";
+import FormRepository from "../../../repositories/Form";
+import { ObjectId } from "mongoose";
 
 interface Query {
   page?: number;
@@ -11,7 +13,7 @@ interface Query {
   name?: string;
   protocol?: string;
   status?: string;
-  form?: string;
+  form?: string | ObjectId;
   date_type?: "createdAt" | "finished_at";
   start_date?: string;
   end_date?: string;
@@ -27,7 +29,10 @@ const filterQueryBuilder = new FilterQueryBuilder(
     protocol: WhereEnum.ILIKE,
     createdAt: WhereEnum.CUSTOM,
     finished_at: WhereEnum.CUSTOM,
-    form: WhereEnum.EQUAL,
+    form: {
+      type: WhereEnum.EQUAL,
+      alias: "form",
+    },
   },
   {
     createdAt: (value) => ({
@@ -50,6 +55,22 @@ const handler: HttpHandler = async (conn, req) => {
     end_date,
     ...filters
   } = req.query as Query;
+
+  if (filters?.form) {
+    const formRepository = new FormRepository(conn);
+    const form = await formRepository.findById({
+      id: filters.form,
+      select: {
+        name: 1,
+      },
+    });
+
+    if (!form) {
+      return res.notFound("Form does not exist");
+    }
+
+    filters.form = form._id;
+  }
 
   const activityRepository = new ActivityRepository(conn);
   const where = filterQueryBuilder.build({
@@ -115,18 +136,61 @@ const handler: HttpHandler = async (conn, req) => {
     },
   });
 
+  const countByMastermindPromise = await activityRepository.aggregate([
+    { $match: where },
+    // Desestrutura a array de masterminds
+    { $unwind: "$masterminds" },
+
+    // Agrupa por mastermind e status
+    {
+      $group: {
+        _id: {
+          mastermind: "$masterminds.user._id", // ID do mastermind
+          status: "$status.name", // Nome do status
+        },
+        count: { $sum: 1 }, // Conta o número de atividades
+      },
+    },
+
+    // Opção para pegar mais detalhes do mastermind, como nome e email
+    {
+      $lookup: {
+        from: "users", // Nome da collection de usuários
+        localField: "_id.mastermind",
+        foreignField: "_id",
+        as: "mastermindDetails",
+      },
+    },
+
+    // Desestrutura o array de mastermindDetails
+    { $unwind: "$mastermindDetails" },
+
+    // Formata a saída para exibir o nome do mastermind e o status
+    {
+      $project: {
+        _id: 0,
+        mastermindId: "$_id.mastermind",
+        mastermindName: "$mastermindDetails.name",
+        status: "$_id.status",
+        count: 1,
+      },
+    },
+  ]);
+
   const [
     activities,
     statusCounts,
     formTypeCounts,
     openActivitiesCount,
     closedActivitiesCount,
+    countByMastermind,
   ] = await Promise.all([
     activitiesPromise,
     statusCountsPromise,
     formTypeCountsPromise,
     openActivitiesCountPromise,
     closedActivitiesCountPromise,
+    countByMastermindPromise,
   ]);
 
   const total = await activityRepository.count({ where });
@@ -138,6 +202,7 @@ const handler: HttpHandler = async (conn, req) => {
     formTypeCounts,
     openActivitiesCount,
     closedActivitiesCount,
+    countByMastermind,
     pagination: {
       page: Number(page),
       total,

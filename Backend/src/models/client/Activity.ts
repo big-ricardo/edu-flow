@@ -227,7 +227,6 @@ export const ActivityStepSchema = new Schema<IActivityStep>({
     default: IActivityStepStatus.idle,
   },
   data: { type: Object, required: false, default: {} },
-  interactions: [{ type: Object, required: false, default: [] }],
 });
 
 export const ActivityWorkflowSchema = new Schema<ActivityWorkflow>({

@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+
 export enum WhereEnum {
   EQUAL = "equal",
   NUMBER = "number",
@@ -22,7 +24,7 @@ export default class FilterQueryBuilder {
   }
 
   public build(
-    filters: Record<string, string | boolean | number>
+    filters: Record<string, string | boolean | number | ObjectId>
   ): Record<string, any> {
     const where: Record<string, any> = {};
 

@@ -1,65 +1,24 @@
-import React, { memo, useCallback, useMemo } from "react";
-import {
-  Box,
-  Heading,
-  Flex,
-  Card,
-  CardBody,
-  IconButton,
-  Button,
-} from "@chakra-ui/react";
+import React, { useMemo, useCallback } from "react";
+import { Box, Heading, Flex, IconButton } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import Chart from "react-apexcharts";
-import { getActivitiesDashboard } from "@apis/activity";
-import { useTranslation } from "react-i18next";
 import { FaSync } from "react-icons/fa";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { BiEdit } from "react-icons/bi";
+import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import Pagination from "@components/organisms/Pagination";
-import IActivity from "@interfaces/Activitiy";
 import Table from "@components/organisms/Table";
-import Filter from "@components/organisms/Filter";
-import Text from "@components/atoms/Inputs/Text";
-import Select from "@components/atoms/Inputs/Select";
+import { getActivitiesDashboard } from "@apis/activity";
+import Action from "./components/Action";
+import Filters from "./components/Filters";
+import MetricsCards from "./components/MetricisCards";
+import { PieChart, BarChart } from "./components/Charts";
 
 const columns = [
-  {
-    key: "name",
-    label: "common.fields.name",
-  },
-  {
-    key: "protocol",
-    label: "common.fields.protocol",
-  },
-  {
-    key: "status",
-    label: "common.fields.status",
-  },
-  {
-    key: "users",
-    label: "common.fields.users",
-  },
-  {
-    key: "actions",
-    label: "common.fields.actions",
-  },
+  { key: "name", label: "common.fields.name" },
+  { key: "protocol", label: "common.fields.protocol" },
+  { key: "status", label: "common.fields.status" },
+  { key: "users", label: "common.fields.users" },
+  { key: "actions", label: "common.fields.actions" },
 ];
-
-const Action = memo((activity: Pick<IActivity, "_id">) => {
-  const navigate = useNavigate();
-
-  const handleSee = useCallback(() => {
-    navigate(`/portal/activity/${activity._id}`);
-  }, [navigate, activity._id]);
-
-  return (
-    <div>
-      <Button mr={2} onClick={handleSee} size="sm">
-        <BiEdit size={20} />
-      </Button>
-    </div>
-  );
-});
 
 const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
@@ -79,12 +38,11 @@ const DashboardPage: React.FC = () => {
 
   const data = useMemo(() => {
     if (!metrics?.activities) return [];
-
     return metrics.activities.map((activity) => ({
       ...activity,
       status: activity.status.name,
       users: activity.users.map((user) => user.name).join(", "),
-      actions: <Action {...activity} />,
+      actions: <Action activity={activity} />,
     }));
   }, [metrics?.activities]);
 
@@ -108,19 +66,63 @@ const DashboardPage: React.FC = () => {
     };
   }, [metrics]);
 
+  const mastermindChartData = useMemo(() => {
+    if (!metrics) return { categories: [], series: [] };
+
+    const mastermindsMap = metrics.countByMastermind.reduce(
+      (acc, mastermind) => {
+        const { mastermindId, mastermindName, status, count } = mastermind;
+
+        // Se o mastermindId ainda não existe no acumulador, inicializa o objeto
+        if (!acc[mastermindId]) {
+          acc[mastermindId] = {
+            mastermindName: mastermindName || t("common.unknown"),
+            statusCounts: {}, // Armazena contagens por status
+          };
+        }
+
+        // Acumula a contagem de status por mastermind
+        acc[mastermindId].statusCounts[status] =
+          (acc[mastermindId].statusCounts[status] || 0) + count;
+
+        return acc;
+      },
+      {} as Record<
+        string,
+        { mastermindName: string; statusCounts: Record<string, number> }
+      >
+    );
+
+    // Extrai os nomes dos masterminds para o eixo X (categories)
+    const categories = Object.values(mastermindsMap).map(
+      (mastermind) => mastermind.mastermindName
+    );
+
+    // Define os possíveis status para a série (ex: "aberto", "fechado")
+    const statusKeys = [
+      ...new Set(metrics.countByMastermind.map((item) => item.status)),
+    ];
+
+    // Cria uma série de dados para cada status
+    const series = statusKeys.map((statusKey) => ({
+      name: statusKey, // Nome do status
+      data: Object.values(mastermindsMap).map(
+        (mastermind) => mastermind.statusCounts[statusKey] || 0
+      ),
+    }));
+
+    return { categories, series };
+  }, [metrics, t]);
+
   const handleRefresh = useCallback(() => {
     refetch();
   }, [refetch]);
 
-  if (isLoading) {
-    return <Heading>Carregando...</Heading>;
-  }
-
-  if (isError || !metrics) {
+  if (isLoading) return <Heading>Carregando...</Heading>;
+  if (isError || !metrics)
     return (
       <Heading color="red.500">Erro ao carregar dados do dashboard</Heading>
     );
-  }
 
   return (
     <Box p="10" w="100%">
@@ -128,109 +130,41 @@ const DashboardPage: React.FC = () => {
         <Heading size="lg" mb="6">
           Dashboard de Atividades
         </Heading>
-        <Box>
-          <IconButton
-            aria-label="Refresh"
-            onClick={handleRefresh}
-            isLoading={isRefetching}
-          >
-            <FaSync />
-          </IconButton>
-        </Box>
+        <IconButton
+          aria-label="Refresh"
+          onClick={handleRefresh}
+          isLoading={isRefetching}
+        >
+          <FaSync />
+        </IconButton>
       </Flex>
 
-      <Card w="100%" p={0} mb={6}>
-        <CardBody>
-          <Filter.Container>
-            <Select
-              input={{
-                id: "date_type",
-                options: [
-                  { label: "Data de Criação", value: "createdAt" },
-                  { label: "Data de Finalização", value: "finished_at" },
-                ],
-                placeholder: "Selecione uma opção",
-                label: "Tipo de Data",
-              }}
-            />
+      <Filters />
 
-            <Text
-              input={{
-                id: "start_date",
-                type: "date",
-                label: "Data Inicial",
-              }}
-            />
-
-            <Text
-              input={{
-                id: "end_date",
-                type: "date",
-                label: "Data Final",
-              }}
-            />
-          </Filter.Container>
-        </CardBody>
-      </Card>
+      <MetricsCards
+        openActivitiesCount={metrics.openActivitiesCount}
+        closedActivitiesCount={metrics.closedActivitiesCount}
+      />
 
       <Flex
-        justifyContent="space-between"
-        mb="6"
-        wrap="wrap"
+        justifyContent="space-around"
         direction={["column", "row"]}
         w="100%"
       >
-        <Card>
-          <CardBody>
-            <Heading size="md">Atividades Abertas</Heading>
-            <Heading size="lg" color="green.500">
-              {metrics.openActivitiesCount}
-            </Heading>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Heading size="md">Atividades Fechadas</Heading>
-            <Heading size="lg" color="red.500">
-              {metrics.closedActivitiesCount}
-            </Heading>
-          </CardBody>
-        </Card>
+        <PieChart
+          title="Distribuição de Status das Atividades"
+          data={statusChartData}
+        />
+        <PieChart
+          title="Distribuição por Tipo de Formulário"
+          data={formTypeChartData}
+        />
       </Flex>
 
-      <Card w="100%">
-        <CardBody>
-          <Flex justifyContent="space-around" direction={["column", "row"]}>
-            <Box mb="6">
-              <Heading size="md" mb="4">
-                Distribuição de Status das Atividades
-              </Heading>
-              <Chart
-                type="pie"
-                options={{
-                  labels: statusChartData.labels,
-                }}
-                series={statusChartData.series}
-                height={300}
-              />
-            </Box>
-
-            <Box>
-              <Heading size="md" mb="4">
-                Distribuição por Tipo de Formulário
-              </Heading>
-              <Chart
-                type="pie"
-                options={{
-                  labels: formTypeChartData.labels,
-                }}
-                series={formTypeChartData.series}
-                height={300}
-              />
-            </Box>
-          </Flex>
-        </CardBody>
-      </Card>
+      <BarChart
+        title="Contagem de Status por Orientador"
+        data={mastermindChartData}
+      />
 
       <Flex
         justifyContent="center"
@@ -240,10 +174,11 @@ const DashboardPage: React.FC = () => {
         p="4"
         borderRadius="md"
         direction="column"
-        bg={"bg.card"}
+        overflow="auto"
+        bg="bg.card"
       >
-        <Table columns={columns} data={data} />
-        <Pagination pagination={metrics.pagination} isLoading={isFetching} />
+        <Table columns={columns} data={data} isLoading={isFetching} />
+        <Pagination pagination={metrics.pagination} />
       </Flex>
     </Box>
   );

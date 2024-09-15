@@ -115,3 +115,15 @@ export const getActivitiesDashboard = async ({
 
   return res.data.data;
 };
+
+type ReqDashboardForms = Response<{
+  forms: {
+    value: string;
+    label: string;
+  }[];
+}>;
+export const getActivitiesDashboardForms = async () => {
+  const res = await api.get<ReqDashboardForms>("activities/dashboard/forms");
+
+  return res.data.data;
+};
