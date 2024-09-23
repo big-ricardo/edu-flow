@@ -16,6 +16,7 @@ export const TeacherRole: Role = {
         "update",
         "read",
         "accept",
+        "board-definition",
       ],
     },
     {
