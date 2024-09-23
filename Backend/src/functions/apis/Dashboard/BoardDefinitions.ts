@@ -1,7 +1,7 @@
 import Http, { HttpHandler } from "../../../middlewares/http";
 import res from "../../../utils/apiResponse";
-import Activity from "../../../models/client/Activity";
 import ActivityRepository from "../../../repositories/Activity";
+import UserRepository from "../../../repositories/User";
 
 interface Query {
   page?: number;
@@ -12,9 +12,27 @@ export const handler: HttpHandler = async (conn, req, context) => {
   const { page = 1, limit = 10 } = req.query as Query;
 
   const activityRepository = new ActivityRepository(conn);
+  const userRepository = new UserRepository(conn);
+
+  const user = await userRepository.findById({ id: req.user.id });
 
   const pendingActivities = await activityRepository.find({
-    where: { "evaluations.not_defined_board": true },
+    where: {
+      "evaluations.not_defined_board": true,
+      finished_at: null,
+      $and: [
+        {
+          $or: [
+            {
+              "masterminds.user._id": user._id,
+            },
+            {
+              "sub_masterminds._id": user._id,
+            },
+          ],
+        },
+      ],
+    },
     select: {
       _id: 1,
       protocol: 1,
